@@ -163,13 +163,16 @@ var current_match_id: int = 0
 ## time, so it's the reliable place to catch "your tournament match is ready"
 ## and jump into the game regardless of what's currently on screen. Ranked/
 ## solo match_found already navigates fine via queue_screen/start_singleplayer,
-## so this only NAVIGATES for tournament matches (non-empty tournament_ctx),
-## but tracks current_match_id for every match_found.
+## so this only NAVIGATES for tournament matches (non-empty tournament_ctx).
+## It always stashes last_match_info + current_match_id though: solo fires
+## match_found synchronously from start_singleplayer BEFORE game_ui exists to
+## catch it, so Session is the only listener alive in time to keep the payload
+## (opponent avatar/frame/bg) for game_ui._ready to read.
 func _on_tournament_match_found(info: Dictionary) -> void:
 	current_match_id = int(info.get("match_id", 0))
+	last_match_info = info
 	if (info.get("tournament_ctx", {}) as Dictionary).is_empty():
 		return
-	last_match_info = info
 	goto("res://client/game_ui.tscn")
 
 
