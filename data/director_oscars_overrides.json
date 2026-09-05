@@ -1,0 +1,13 @@
+{
+  "_comment": "User-verified career Oscar-win totals (per person) that override whatever source_data/Movie_DB.xlsx's 'Director Oscar Wins' column says for that row, applied by scripts/build_cards.py. Added 2026-09-04 after a consistency check found the xlsx disagreeing with itself across a director's own films (e.g. Coppola listed as 5/5/4). For a card credited to multiple people, the MAX of the listed people's totals is used (the more Oscar-decorated of the pair) when at least one of them has an override; a co-director not in this file doesn't block the other's override from applying.",
+  "overrides": {
+    "Francis Ford Coppola": 5,
+    "Steven Spielberg": 3,
+    "James Cameron": 3,
+    "Hayao Miyazaki": 2,
+    "Brad Bird": 2,
+    "Andrew Adamson": 1,
+    "Walter Salles": 0,
+    "Joel Coen": 4
+  }
+}

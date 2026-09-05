@@ -1,0 +1,8 @@
+{
+	"rewards": [
+		{ "id": "sleeve_classic",  "type": "sleeve",    "name": "Classic Sleeve",  "cost": 0 },
+		{ "id": "sleeve_noir",     "type": "sleeve",    "name": "Noir Sleeve",     "cost": 150 },
+		{ "id": "back_reel",       "type": "card_back", "name": "Film Reel Back",   "cost": 200 },
+		{ "id": "avatar_director", "type": "avatar",    "name": "Director Avatar",  "cost": 300 }
+	]
+}

@@ -1,0 +1,89 @@
+[gd_scene load_steps=1 format=3]
+
+[ext_resource type="Script" path="res://client/deckbuilder_screen.gd" id="1_script"]
+
+[node name="DeckbuilderScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_script")
+
+[node name="BackgroundRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.09, 0.09, 0.11, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="Root" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TopBar" type="HBoxContainer" parent="MarginContainer/Root"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="BackButton" type="Button" parent="MarginContainer/Root/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "← Back"
+
+[node name="HeaderLabel" type="Label" parent="MarginContainer/Root/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+text = "Deckbuilder"
+
+[node name="Body" type="HBoxContainer" parent="MarginContainer/Root"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="DeckList" type="PanelContainer" parent="MarginContainer/Root/Body"]
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Root/Body/DeckList"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/Root/Body/DeckList/VBoxContainer"]
+layout_mode = 2
+text = "Decks"
+theme_override_font_sizes/font_size = 14
+
+[node name="FullCollectionButton" type="Button" parent="MarginContainer/Root/Body/DeckList/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+disabled = true
+text = "Full Collection (auto)"
+
+[node name="GridScroll" type="ScrollContainer" parent="MarginContainer/Root/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="CardGrid" type="GridContainer" parent="MarginContainer/Root/Body/GridScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 5
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12

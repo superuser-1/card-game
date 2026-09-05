@@ -1,0 +1,327 @@
+[gd_scene format=3 uid="uid://bk14wdndof14t"]
+
+[ext_resource type="Script" uid="uid://b7umm3qghg4bt" path="res://client/main_menu.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://7qsulcuykn64" path="res://assets/background_menu.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://cultrt1ha0nub" path="res://assets/multiplayer.png" id="3_mp"]
+[ext_resource type="Texture2D" uid="uid://ct3l3jfypavwk" path="res://assets/singleplayer.png" id="4_sp"]
+[ext_resource type="Texture2D" uid="uid://cq4oy7liifv1d" path="res://assets/ladder.png" id="5_ladder"]
+[ext_resource type="Texture2D" uid="uid://bgoj2g1o5gsmu" path="res://assets/Deckbuilder.png" id="6_deck"]
+[ext_resource type="Texture2D" uid="uid://ve8ow1gajqkk" path="res://assets/options.png" id="7_options"]
+[ext_resource type="Shader" path="res://client/frame_overlay.gdshader" id="8_frame_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_frame_overlay"]
+shader = ExtResource("8_frame_shader")
+
+[sub_resource type="StyleBoxFlat" id="sb_panel"]
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
+bg_color = Color(0.06, 0.06, 0.09, 0.72)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.12)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="sb_avatar_tile"]
+content_margin_left = 3.0
+content_margin_top = 3.0
+content_margin_right = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(0.06, 0.06, 0.09, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="sb_quest"]
+bg_color = Color(1, 1, 1, 0.06)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="MainMenu" type="Control" unique_id=1719074338]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="BackgroundRect" type="TextureRect" parent="." unique_id=1183857089]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="TopBar" type="HBoxContainer" parent="." unique_id=1690680898]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 28.0
+offset_top = 24.0
+offset_right = -300.0
+offset_bottom = 150.0
+grow_horizontal = 2
+theme_override_constants/separation = 16
+
+[node name="AvatarFrame" type="PanelContainer" parent="TopBar" unique_id=1373045740]
+custom_minimum_size = Vector2(126, 126)
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_avatar_tile")
+
+[node name="PortraitBgImage" type="TextureRect" parent="TopBar/AvatarFrame" unique_id=1632728412]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AvatarCenter" type="CenterContainer" parent="TopBar/AvatarFrame" unique_id=1632728411]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="AvatarImage" type="TextureRect" parent="TopBar/AvatarFrame/AvatarCenter" unique_id=1632728409]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(108, 108)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PortraitFrameImage" type="TextureRect" parent="TopBar/AvatarFrame" unique_id=1632728410]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+material = SubResource("ShaderMaterial_frame_overlay")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AccountPanel" type="PanelContainer" parent="TopBar" unique_id=2133547091]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("sb_panel")
+
+[node name="AccountVBox" type="VBoxContainer" parent="TopBar/AccountPanel" unique_id=873368517]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="NameLabel" type="Label" parent="TopBar/AccountPanel/AccountVBox" unique_id=798773740]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Player"
+
+[node name="StatsLabel" type="Label" parent="TopBar/AccountPanel/AccountVBox" unique_id=1756722537]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
+theme_override_font_sizes/font_size = 13
+text = "Elo 0 · Rank #—"
+
+[node name="RecordLabel" type="Label" parent="TopBar/AccountPanel/AccountVBox" unique_id=636875260]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 13
+text = "0 W – 0 L · 0 pts"
+
+[node name="LogoutButton" type="Button" parent="TopBar/AccountPanel/AccountVBox" unique_id=204977322]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme_override_font_sizes/font_size = 11
+text = "Log out"
+flat = true
+
+[node name="MenuGrid" type="GridContainer" parent="." unique_id=2002909414]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 60.0
+offset_top = 165.0
+offset_right = -332.0
+offset_bottom = -113.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 22
+theme_override_constants/v_separation = 22
+columns = 2
+
+[node name="MultiplayerButton" type="TextureButton" parent="MenuGrid" unique_id=61864380]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("3_mp")
+ignore_texture_size = true
+stretch_mode = 6
+
+[node name="SingleplayerButton" type="TextureButton" parent="MenuGrid" unique_id=211173932]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("4_sp")
+ignore_texture_size = true
+stretch_mode = 6
+
+[node name="LadderButton" type="TextureButton" parent="MenuGrid" unique_id=2117471826]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("5_ladder")
+ignore_texture_size = true
+stretch_mode = 6
+
+[node name="DeckbuilderButton" type="TextureButton" parent="MenuGrid" unique_id=1014479108]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("6_deck")
+ignore_texture_size = true
+stretch_mode = 6
+
+[node name="OptionsButton" type="TextureButton" parent="." unique_id=141055001]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 61.0
+offset_top = -98.0
+offset_right = 205.0
+offset_bottom = -25.0
+grow_vertical = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("7_options")
+ignore_texture_size = true
+stretch_mode = 6
+
+[node name="MultiplayerGrid" type="GridContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 60.0
+offset_top = 165.0
+offset_right = -332.0
+offset_bottom = -113.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 22
+theme_override_constants/v_separation = 22
+columns = 2
+
+[node name="RankedButton" type="Button" parent="MultiplayerGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+text = "Ranked Play"
+
+[node name="TournamentButton" type="Button" parent="MultiplayerGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+text = "Tournament Play"
+
+[node name="CustomGameButton" type="Button" parent="MultiplayerGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+text = "Custom Game"
+
+[node name="MpPlaceholderButton" type="Button" parent="MultiplayerGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+text = "Coming Soon"
+
+[node name="BackButton" type="Button" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 221.0
+offset_top = -98.0
+offset_right = 365.0
+offset_bottom = -25.0
+grow_vertical = 0
+mouse_default_cursor_shape = 2
+text = "‹  Back"
+
+[node name="QuestPanel" type="PanelContainer" parent="." unique_id=1913497850]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -280.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("sb_panel")
+
+[node name="QuestVBox" type="VBoxContainer" parent="QuestPanel" unique_id=1259167355]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="QuestHeader" type="Label" parent="QuestPanel/QuestVBox" unique_id=1844501860]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Quests"
+horizontal_alignment = 1

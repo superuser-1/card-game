@@ -1,0 +1,11 @@
+{
+	"quests": [
+		{"id": "win_1", "type": "wins", "target": 1, "points": 10, "name": "Win a Game"},
+		{"id": "win_3", "type": "wins", "target": 3, "points": 40, "name": "Win 3 Games"},
+		{"id": "win_10", "type": "wins", "target": 10, "points": 150, "name": "Win 10 Games"},
+		{"id": "perfect_win", "type": "perfect_win", "target": 1, "points": 50, "name": "Win a Perfect Game (7–0)"},
+		{"id": "perfect_loss", "type": "perfect_loss", "target": 1, "points": 60, "name": "Lose a Game 0–7"},
+		{"id": "money_game", "type": "group_win", "group": "money", "min_picks": 2, "target": 1, "points": 40, "name": "Win a Money Game"},
+		{"id": "time_game", "type": "group_win", "group": "time", "min_picks": 2, "target": 1, "points": 40, "name": "Win a Time Game"}
+	]
+}

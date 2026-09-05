@@ -1,0 +1,98 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://client/card_view.gd" id="1_card"]
+[ext_resource type="Texture2D" path="res://assets/cards/card_border1.png" id="2_border"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_transparent"]
+
+[node name="CardView" type="PanelContainer"]
+custom_minimum_size = Vector2(240, 340)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_transparent")
+script = ExtResource("1_card")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ArtFrame" type="Control" parent="Margin"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ArtRect" type="TextureRect" parent="Margin/ArtFrame"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0569
+anchor_top = 0.0404
+anchor_right = 0.9408
+anchor_bottom = 0.9684
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="BorderRect" type="TextureRect" parent="Margin/ArtFrame"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("2_border")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="InfoOverlay" type="Control" parent="Margin/ArtFrame"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0569
+anchor_top = 0.6591
+anchor_right = 0.9408
+anchor_bottom = 0.9684
+mouse_filter = 2
+
+[node name="Backplate" type="ColorRect" parent="Margin/ArtFrame/InfoOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="TextMargin" type="MarginContainer" parent="Margin/ArtFrame/InfoOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 4
+
+[node name="TextVBox" type="VBoxContainer" parent="Margin/ArtFrame/InfoOverlay/TextMargin"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="NameLabel" type="Label" parent="Margin/ArtFrame/InfoOverlay/TextMargin/TextVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 17
+horizontal_alignment = 1
+autowrap_mode = 2
+text = "Movie Name"
+
+[node name="DirectorLabel" type="Label" parent="Margin/ArtFrame/InfoOverlay/TextMargin/TextVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.82, 0.82, 0.82, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+autowrap_mode = 2
+text = "Director"

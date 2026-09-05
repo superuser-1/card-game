@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://522apxiarvvu"
+path="res://.godot/imported/staw_win_sound.mp3-36ef217a2bf783f892049319b983dd39.mp3str"
+
+[deps]
+
+source_file="res://assets/sounds/sound raw editing/staw_win_sound.mp3"
+dest_files=["res://.godot/imported/staw_win_sound.mp3-36ef217a2bf783f892049319b983dd39.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

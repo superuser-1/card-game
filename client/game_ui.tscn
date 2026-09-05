@@ -1,0 +1,335 @@
+[gd_scene format=3 uid="uid://dqx1n2m3k4l5j"]
+
+[ext_resource type="Script" uid="uid://bvjogtl4k7umt" path="res://client/game_ui.gd" id="1_ui"]
+[ext_resource type="Texture2D" uid="uid://dqtgy12ukib6f" path="res://assets/background_game_canvas_1.jpg" id="2_background"]
+[ext_resource type="Shader" uid="uid://c4qxcw02kx7jh" path="res://client/frame_overlay.gdshader" id="3_frame_shader"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_player_panel"]
+content_margin_left = 10.0
+content_margin_top = 12.0
+content_margin_right = 10.0
+content_margin_bottom = 12.0
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_frame_overlay"]
+shader = ExtResource("3_frame_shader")
+shader_parameter/white_threshold = 0.9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_last_round_backplate"]
+bg_color = Color(0, 0, 0, 0.55)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="GameUI" type="Control" unique_id=1322342531]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ui")
+
+[node name="BackgroundRect" type="TextureRect" parent="." unique_id=1779297718]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_background")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1594898393]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -256.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatusLabel" type="Label" parent="VBox" unique_id=1465797420]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Connecting..."
+
+[node name="ScoreLabel" type="Label" parent="VBox" unique_id=646255350]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="TurnTimerLabel" type="Label" parent="VBox" unique_id=1487860578]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="TableRow" type="HBoxContainer" parent="VBox" unique_id=1957514880]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="LeftCardSlot" type="Control" parent="VBox/TableRow" unique_id=862744832]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 340)
+layout_mode = 2
+
+[node name="CategoryBox" type="HBoxContainer" parent="VBox/TableRow" unique_id=759172773]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="RightCardSlot" type="Control" parent="VBox/TableRow" unique_id=451423939]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 340)
+layout_mode = 2
+
+[node name="TableLabel" type="Label" parent="VBox" unique_id=1871142410]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="LeftPlayerPanel" type="PanelContainer" parent="." unique_id=1220576569]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 38.0
+offset_top = -260.0
+offset_right = 178.0
+offset_bottom = -77.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_player_panel")
+
+[node name="LeftPlayerBox" type="VBoxContainer" parent="LeftPlayerPanel" unique_id=1691413574]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="LeftAvatarWrap" type="Control" parent="LeftPlayerPanel/LeftPlayerBox" unique_id=2083160627]
+custom_minimum_size = Vector2(112, 112)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="LeftBg" type="TextureRect" parent="LeftPlayerPanel/LeftPlayerBox/LeftAvatarWrap" unique_id=2083160629]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LeftAvatar" type="TextureRect" parent="LeftPlayerPanel/LeftPlayerBox/LeftAvatarWrap" unique_id=2083160626]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LeftFrame" type="TextureRect" parent="LeftPlayerPanel/LeftPlayerBox/LeftAvatarWrap" unique_id=2083160628]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_frame_overlay")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LeftName" type="Label" parent="LeftPlayerPanel/LeftPlayerBox" unique_id=1149921768]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="LeftElo" type="Label" parent="LeftPlayerPanel/LeftPlayerBox" unique_id=899368921]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+
+[node name="RightPlayerPanel" type="PanelContainer" parent="." unique_id=1354325337]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -181.0
+offset_top = -260.0
+offset_right = -41.0
+offset_bottom = -77.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_player_panel")
+
+[node name="RightPlayerBox" type="VBoxContainer" parent="RightPlayerPanel" unique_id=1542548144]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="RightAvatarWrap" type="Control" parent="RightPlayerPanel/RightPlayerBox" unique_id=536153065]
+custom_minimum_size = Vector2(112, 112)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="RightBg" type="TextureRect" parent="RightPlayerPanel/RightPlayerBox/RightAvatarWrap" unique_id=536153067]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+flip_h = true
+
+[node name="RightAvatar" type="TextureRect" parent="RightPlayerPanel/RightPlayerBox/RightAvatarWrap" unique_id=536153064]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+flip_h = true
+
+[node name="RightFrame" type="TextureRect" parent="RightPlayerPanel/RightPlayerBox/RightAvatarWrap" unique_id=536153066]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_frame_overlay")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+flip_h = true
+
+[node name="RightName" type="Label" parent="RightPlayerPanel/RightPlayerBox" unique_id=1860825040]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="RightElo" type="Label" parent="RightPlayerPanel/RightPlayerBox" unique_id=2072326500]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+
+[node name="HandBox" type="Control" parent="." unique_id=844244485]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -240.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ExitButton" type="Button" parent="." unique_id=1233704446]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -132.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 47.0
+grow_horizontal = 0
+text = "Give Up"
+
+[node name="ForfeitDialog" type="ConfirmationDialog" parent="." unique_id=1151939433]
+unique_name_in_owner = true
+title = "Forfeit"
+initial_position = 1
+size = Vector2i(340, 120)
+ok_button_text = "Give Up"
+dialog_text = "Give up the match? This counts as a loss."
+
+[node name="LastRoundPanel" type="PanelContainer" parent="." unique_id=1829644199]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -174.0
+offset_top = 569.0
+offset_right = -16.0
+offset_bottom = 701.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_last_round_backplate")
+
+[node name="LastRoundMargin" type="MarginContainer" parent="LastRoundPanel" unique_id=527965997]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 4
+
+[node name="LastRoundLabel" type="Label" parent="LastRoundPanel/LastRoundMargin" unique_id=1514869928]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 2
+autowrap_mode = 2

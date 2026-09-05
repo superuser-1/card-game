@@ -1,0 +1,113 @@
+[gd_scene load_steps=3 format=3 uid="uid://c2p7d4v5q8n1m"]
+
+[ext_resource type="Script" path="res://client/avatar_picker.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.13, 0.14, 0.19, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.32, 0.4, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="AvatarPicker" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_script")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.08, 0.94)
+mouse_filter = 0
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -250.0
+offset_right = 260.0
+offset_bottom = 250.0
+custom_minimum_size = Vector2(520, 500)
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="Box" type="VBoxContainer" parent="Panel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Panel/MarginContainer/Box"]
+layout_mode = 2
+text = "Choose your avatar"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="CategoryTabs" type="HBoxContainer" parent="Panel/MarginContainer/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AvatarTabButton" type="Button" parent="Panel/MarginContainer/Box/CategoryTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_pressed = true
+text = "Avatars"
+
+[node name="FrameTabButton" type="Button" parent="Panel/MarginContainer/Box/CategoryTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Frames"
+
+[node name="BackgroundTabButton" type="Button" parent="Panel/MarginContainer/Box/CategoryTabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Backgrounds"
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/MarginContainer/Box"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_horizontal = 3
+horizontal_scroll_mode = 0
+
+[node name="Grid" type="GridContainer" parent="Panel/MarginContainer/Box/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+
+[node name="SelectButton" type="Button" parent="Panel/MarginContainer/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Select"
+
+[node name="CancelButton" type="Button" parent="Panel/MarginContainer/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Cancel"
