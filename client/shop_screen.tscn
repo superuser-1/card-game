@@ -14,7 +14,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.1, 0.1, 0.15, 1)
+color = Color(0.078, 0.078, 0.114, 1)
 mouse_filter = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -22,48 +22,59 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 28
 
 [node name="Root" type="VBoxContainer" parent="MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-separation = 10
+theme_override_constants/separation = 16
 
 [node name="TopBar" type="HBoxContainer" parent="MarginContainer/Root"]
 layout_mode = 2
+theme_override_constants/separation = 14
 
 [node name="BackButton" type="Button" parent="MarginContainer/Root/TopBar"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "← Back"
+text = "  ← Back  "
 
 [node name="TitleLabel" type="Label" parent="MarginContainer/Root/TopBar"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 22
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 26
 text = "Shop"
 
-[node name="PointsLabel" type="Label" parent="MarginContainer/Root"]
+[node name="PointsLabel" type="Label" parent="MarginContainer/Root/TopBar"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "Points: 0"
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(1, 0.843, 0.4, 1)
+text = "◈ 0"
 
 [node name="TypeTabs" type="HBoxContainer" parent="MarginContainer/Root"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/Root"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="ItemsGrid" type="GridContainer" parent="MarginContainer/Root/ScrollContainer"]
-unique_name_in_owner = true
+[node name="GridWrap" type="HBoxContainer" parent="MarginContainer/Root/ScrollContainer"]
+layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="ItemsGrid" type="GridContainer" parent="MarginContainer/Root/ScrollContainer/GridWrap"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 18
+theme_override_constants/v_separation = 18
 columns = 4

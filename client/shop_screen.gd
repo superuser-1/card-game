@@ -1,4 +1,19 @@
 extends Control
+## Cosmetics shop. Server is authoritative on price + ownership (see
+## ServerStore.purchase / the equip-gate); this screen only renders the
+## catalog and fires Net.shop_purchase / Net.set_<type>.
+
+const CARD_W := 190
+const ART := 166
+
+const COL_CARD_BG := Color(0.129, 0.129, 0.176)
+const COL_CARD_BORDER := Color(1, 1, 1, 0.075)
+const COL_ART_BG := Color(0.09, 0.09, 0.125)
+const COL_GOLD := Color(1, 0.843, 0.4)
+const COL_MUTED := Color(0.56, 0.56, 0.63)
+const COL_BUY := Color(0.192, 0.573, 0.353)
+const COL_EQUIPPED := Color(0.243, 0.435, 0.678)
+const COL_OWNED := Color(0.27, 0.27, 0.33)
 
 ## Which ShopCatalog.TYPES index is currently shown.
 var _active_tab := 0
@@ -16,18 +31,35 @@ func _ready() -> void:
 	_show_tab(0)
 
 
+# --- tabs -----------------------------------------------------------------
+
 ## One filter button per item type — TabContainer isn't used because its tabs
 ## come from child controls, not an add_tab() call.
 func _render_tabs() -> void:
 	for c in %TypeTabs.get_children():
 		c.queue_free()
-
 	var types: Array[String] = ShopCatalog.TYPES
 	for i in range(types.size()):
 		var btn := Button.new()
-		btn.text = types[i].capitalize()
+		btn.text = "  %s  " % types[i].capitalize()
+		btn.focus_mode = Control.FOCUS_NONE
 		btn.pressed.connect(_show_tab.bind(i))
 		%TypeTabs.add_child(btn)
+
+
+func _style_tab(btn: Button, active: bool) -> void:
+	var sb := StyleBoxFlat.new()
+	sb.set_corner_radius_all(8)
+	sb.content_margin_top = 7
+	sb.content_margin_bottom = 7
+	sb.content_margin_left = 14
+	sb.content_margin_right = 14
+	sb.bg_color = COL_EQUIPPED if active else Color(0.16, 0.16, 0.21)
+	for s in ["normal", "hover", "pressed", "disabled", "focus"]:
+		btn.add_theme_stylebox_override(s, sb)
+	btn.add_theme_color_override("font_color", Color.WHITE if active else COL_MUTED)
+	btn.add_theme_color_override("font_disabled_color", Color.WHITE if active else COL_MUTED)
+	btn.disabled = active  # active tab isn't clickable
 
 
 func _show_tab(tab_index: int) -> void:
@@ -36,122 +68,171 @@ func _show_tab(tab_index: int) -> void:
 		return
 	_active_tab = tab_index
 
-	# Reflect the active filter on the buttons.
 	var tab_buttons := %TypeTabs.get_children()
 	for i in range(tab_buttons.size()):
-		(tab_buttons[i] as Button).disabled = (i == tab_index)
+		_style_tab(tab_buttons[i] as Button, i == tab_index)
 
-	var type_name := types[tab_index]
-	var item_ids := ShopCatalog.ids_of_type(type_name)
+	%PointsLabel.text = "◈ %d" % int(Session.account.get("points", 0))
 
-	# Update points balance
-	%PointsLabel.text = "Points: %d" % int(Session.account.get("points", 0))
-
-	# Clear existing tiles
 	for c in %ItemsGrid.get_children():
 		c.queue_free()
 
-	# Create tiles for each item
+	var type_name := types[tab_index]
+	var item_ids := ShopCatalog.ids_of_type(type_name)
+	if item_ids.is_empty():
+		var empty := Label.new()
+		empty.text = "Nothing here yet."
+		empty.add_theme_color_override("font_color", COL_MUTED)
+		%ItemsGrid.add_child(empty)
+		return
 	for item_id in item_ids:
-		var def := ShopCatalog.def_for(item_id)
-		_add_item_tile(item_id, def, type_name)
+		_add_item_tile(item_id, ShopCatalog.def_for(item_id), type_name)
+
+
+# --- item card ----------------------------------------------------------
+
+func _card_style() -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = COL_CARD_BG
+	sb.set_corner_radius_all(12)
+	sb.set_border_width_all(1)
+	sb.border_color = COL_CARD_BORDER
+	sb.set_content_margin_all(12)
+	return sb
 
 
 func _add_item_tile(item_id: String, def: Dictionary, type_name: String) -> void:
-	var tile := VBoxContainer.new()
-	tile.alignment = BoxContainer.ALIGNMENT_CENTER
-	tile.custom_minimum_size = Vector2(120, 160)
+	var card := PanelContainer.new()
+	card.custom_minimum_size = Vector2(CARD_W, 0)
+	card.add_theme_stylebox_override("panel", _card_style())
 
-	# Preview art
-	var preview := TextureRect.new()
-	preview.custom_minimum_size = Vector2(100, 100)
-	preview.expand_mode = TextureRect.EXPAND_FIT_WIDTH
-	preview.texture = _get_preview_texture(item_id, type_name)
-	tile.add_child(preview)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 9)
+	card.add_child(box)
 
-	# Name
+	# --- art (square, cropped not stretched) ---
+	var art_frame := PanelContainer.new()
+	art_frame.custom_minimum_size = Vector2(ART, ART)
+	art_frame.clip_contents = true
+	var art_bg := StyleBoxFlat.new()
+	art_bg.bg_color = COL_ART_BG
+	art_bg.set_corner_radius_all(8)
+	art_frame.add_theme_stylebox_override("panel", art_bg)
+	box.add_child(art_frame)
+
+	var tex := _get_preview_texture(item_id, type_name)
+	if tex != null:
+		var art := TextureRect.new()
+		art.texture = tex
+		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		art.custom_minimum_size = Vector2(ART, ART)
+		art_frame.add_child(art)
+	else:
+		var ph := Label.new()
+		ph.text = "No preview"
+		ph.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		ph.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		ph.add_theme_color_override("font_color", COL_MUTED)
+		ph.add_theme_font_size_override("font_size", 12)
+		art_frame.add_child(ph)
+
+	# --- name ---
 	var name_label := Label.new()
 	name_label.text = str(def.get("name", item_id))
-	name_label.add_theme_font_size_override("font_size", 12)
-	name_label.custom_minimum_size.x = 120
-	tile.add_child(name_label)
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_label.clip_text = true
+	name_label.add_theme_font_size_override("font_size", 15)
+	box.add_child(name_label)
 
-	# Price or unlock info
-	var price_label := Label.new()
+	# --- price / source line ---
 	var source := str(def.get("source", ""))
+	var price := int(def.get("price", 0))
+	var info := Label.new()
+	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	info.add_theme_font_size_override("font_size", 13)
 	if source == "shop":
-		price_label.text = "Price: %d" % int(def.get("price", 0))
+		info.text = "◈ %d" % price
+		info.add_theme_color_override("font_color", COL_GOLD)
 	else:
-		price_label.text = "Achievement"
-	price_label.add_theme_font_size_override("font_size", 10)
-	tile.add_child(price_label)
+		info.text = "Achievement reward"
+		info.add_theme_color_override("font_color", COL_MUTED)
+	box.add_child(info)
 
-	# State button
-	var button := Button.new()
+	# --- action button ---
 	var owned: Array = Session.account.get("owned_rewards", [])
 	var equipped_id := _get_equipped_id(item_id, type_name)
 	var is_owned := item_id in owned
 	var is_equipped := equipped_id == item_id
 	var points := int(Session.account.get("points", 0))
-	var price := int(def.get("price", 0))
+
+	var btn := Button.new()
+	btn.focus_mode = Control.FOCUS_NONE
+	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	if is_equipped:
-		button.text = "Equipped"
-		button.disabled = true
+		_style_button(btn, "Equipped", COL_EQUIPPED, true)
 	elif is_owned:
-		button.text = "Equip"
-		button.pressed.connect(func(): _equip_item(item_id, type_name))
+		_style_button(btn, "Equip", COL_BUY, false)
+		btn.pressed.connect(_equip_item.bind(item_id, type_name))
+	elif source == "shop" and points >= price:
+		_style_button(btn, "Buy  ◈%d" % price, COL_BUY, false)
+		btn.pressed.connect(_purchase_item.bind(item_id))
 	elif source == "shop":
-		if points >= price:
-			button.text = "Buy"
-			button.pressed.connect(func(): _purchase_item(item_id))
-		else:
-			button.text = "Can't afford"
-			button.disabled = true
+		_style_button(btn, "Need ◈%d" % price, COL_OWNED, true)
 	else:
-		button.text = "Unlock via Achievement"
-		button.disabled = true
+		_style_button(btn, "Locked", COL_OWNED, true)
 
-	tile.add_child(button)
-	%ItemsGrid.add_child(tile)
+	box.add_child(btn)
+	%ItemsGrid.add_child(card)
 
+
+func _style_button(btn: Button, text: String, col: Color, disabled: bool) -> void:
+	btn.text = text
+	btn.disabled = disabled
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = col if not disabled else col.darkened(0.15)
+	sb.set_corner_radius_all(8)
+	sb.content_margin_top = 8
+	sb.content_margin_bottom = 8
+	var hover := sb.duplicate()
+	hover.bg_color = col.lightened(0.12)
+	btn.add_theme_stylebox_override("normal", sb)
+	btn.add_theme_stylebox_override("hover", hover)
+	btn.add_theme_stylebox_override("pressed", sb)
+	btn.add_theme_stylebox_override("disabled", sb)
+	btn.add_theme_stylebox_override("focus", sb)
+	btn.add_theme_color_override("font_color", Color.WHITE)
+	btn.add_theme_color_override("font_disabled_color", Color(1, 1, 1, 0.7))
+	btn.add_theme_font_size_override("font_size", 14)
+
+
+# --- helpers ----------------------------------------------------------
 
 func _get_preview_texture(item_id: String, type_name: String) -> Texture2D:
 	match type_name:
-		"avatar":
-			return Avatars.texture_for(item_id)
-		"frame":
-			return Frames.texture_for(item_id)
-		"background":
-			return Backgrounds.texture_for(item_id)
-		"sleeve":
-			return Sleeves.texture_for(item_id)
+		"avatar": return Avatars.texture_for(item_id)
+		"frame": return Frames.texture_for(item_id)
+		"background": return Backgrounds.texture_for(item_id)
+		"sleeve": return Sleeves.texture_for(item_id)
 	return null
 
 
 func _get_equipped_id(item_id: String, type_name: String) -> String:
 	match type_name:
-		"avatar":
-			return str(Session.account.get("avatar", ""))
-		"frame":
-			return str(Session.account.get("frame", ""))
-		"background":
-			return str(Session.account.get("background", ""))
-		"sleeve":
-			return str(Session.account.get("sleeve", ""))
+		"avatar": return str(Session.account.get("avatar", ""))
+		"frame": return str(Session.account.get("frame", ""))
+		"background": return str(Session.account.get("background", ""))
+		"sleeve": return str(Session.account.get("sleeve", ""))
 	return ""
 
 
 func _equip_item(item_id: String, type_name: String) -> void:
 	match type_name:
-		"avatar":
-			Net.set_avatar(item_id)
-		"frame":
-			Net.set_frame(item_id)
-		"background":
-			Net.set_background(item_id)
-		"sleeve":
-			Net.set_sleeve(item_id)
+		"avatar": Net.set_avatar(item_id)
+		"frame": Net.set_frame(item_id)
+		"background": Net.set_background(item_id)
+		"sleeve": Net.set_sleeve(item_id)
 
 
 func _purchase_item(item_id: String) -> void:
@@ -160,7 +241,6 @@ func _purchase_item(item_id: String) -> void:
 
 func _on_purchase_result(account: Dictionary) -> void:
 	Session.account = account
-	%PointsLabel.text = "Points: %d" % int(account.get("points", 0))
 	_show_tab(_active_tab)
 
 
