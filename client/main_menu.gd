@@ -2,6 +2,9 @@ extends Control
 
 const AVATAR_PICKER := preload("res://client/avatar_picker.tscn")
 const ROUND_SHADER := preload("res://client/rounded_button.gdshader")
+const TOURNAMENT_CREATION_MODAL := preload("res://client/tournament_creation_modal.tscn")
+const FRIEND_INVITE_MODAL := preload("res://client/friend_invite_modal.tscn")
+const JOIN_CUSTOM_GAME_MODAL := preload("res://client/join_custom_game_modal.tscn")
 
 # Menu button feel: rounded art via ROUND_SHADER, and on hover the border
 # lights up while the button swells 5%.
@@ -12,6 +15,12 @@ const EDGE_BORDER_ON := 0.02         # rounded_button.gdshader border_width whil
 
 var _rank := 0
 var _avatar_onboard: Control = null
+
+## Which of MenuGrid / MultiplayerGrid / CustomGrid is currently shown, so
+## Back knows whether to go up one level (Custom -> Multiplayer) or all the
+## way out (Multiplayer -> the main 4 tiles) instead of always jumping to the
+## top. "main" | "multiplayer" | "custom".
+var _view := "main"
 
 
 func _ready() -> void:
@@ -44,25 +53,53 @@ func _ready() -> void:
 	%LadderButton.pressed.connect(_on_ladder_screen)
 	%DeckbuilderButton.pressed.connect(_on_deckbuilder)
 	%OptionsButton.pressed.connect(_on_options)
+	%ShopButton.pressed.connect(_on_shop)
+	%AchievementsButton.pressed.connect(_on_achievements)
 	%LogoutButton.pressed.connect(_on_logout)
+
+	Net.tournament_joined.connect(func(_r): _render_tournament_status())
+	Net.tournament_withdrawn.connect(func(_r): _render_tournament_status())
+	Net.tournament_checked_in.connect(func(_r): _render_tournament_status())
+	Net.tournament_updated.connect(func(_t): _render_tournament_status())
+	Net.my_tournament_status.connect(func(_t): _render_tournament_status())
+	_render_tournament_status()
+	# Session only learns about a signup/check-in reactively from signals
+	# fired during THIS session — a fresh login otherwise shows no status
+	# card at all even with a real signup sitting on the server. Ask fresh
+	# every time the menu loads.
+	Net.request_my_tournament()
 
 	_decorate_image_button(%MultiplayerButton, "multiplayer")
 	_decorate_image_button(%SingleplayerButton, "solo play")
 	_decorate_image_button(%LadderButton, "ladder")
 	_decorate_image_button(%DeckbuilderButton, "deckbuilder")
 	_decorate_image_button(%OptionsButton, "options")
+	_decorate_image_button(%ShopButton, "shop")
+	_decorate_image_button(%AchievementsButton, "achievements")
+	_decorate_image_button(%RankedButton, "ranked")
+	_decorate_image_button(%TournamentButton, "tournament")
+	_decorate_image_button(%CustomGameButton, "custom")
+	_decorate_image_button(%CustomFriendInviteButton, "friend invite")
+	_decorate_image_button(%CreateTournamentButton, "create tournament")
+	_decorate_image_button(%JoinCustomGameButton, "join custom game")
 
-	# Multiplayer submenu — swaps in over the main 4 tiles, side panels stay.
+	# Multiplayer submenu — swaps in over the main 4 tiles, side panels (top
+	# bar, quests) stay untouched throughout since this never leaves
+	# main_menu.tscn.
 	%RankedButton.pressed.connect(_on_ranked_play)
 	%TournamentButton.pressed.connect(_on_tournament_play)
-	%CustomGameButton.pressed.connect(_on_custom_game)
+	%CustomGameButton.pressed.connect(_show_custom)
 	%MpPlaceholderButton.pressed.connect(_coming_soon.bind("That mode"))
-	%BackButton.pressed.connect(_show_main)
-	_decorate_panel_button(%RankedButton, false)
-	_decorate_panel_button(%TournamentButton, true)
-	_decorate_panel_button(%CustomGameButton, true)
+	%BackButton.pressed.connect(_on_back_pressed)
 	_decorate_panel_button(%MpPlaceholderButton, true)
 	_decorate_panel_button(%BackButton, false)
+
+	# Custom submenu — one level deeper than Multiplayer, same in-place swap.
+	%CustomFriendInviteButton.pressed.connect(_open_friend_invite)
+	%CreateTournamentButton.pressed.connect(_open_tournament_creation)
+	%JoinCustomGameButton.pressed.connect(_open_join_custom_game)
+	%CustomPlaceholder2Button.pressed.connect(_coming_soon.bind("That mode"))
+	_decorate_panel_button(%CustomPlaceholder2Button, true)
 
 	# Click the portrait to change avatar.
 	%AvatarImage.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -172,17 +209,39 @@ func _on_singleplayer() -> void:
 
 
 ## Multiplayer opens a submenu in place of the main 4 tiles; the top bar,
-## quest panel and Options button stay put. Back returns to the main tiles.
+## quest panel and Options button stay put — this never leaves main_menu.tscn.
 func _show_multiplayer() -> void:
+	_view = "multiplayer"
 	%MenuGrid.visible = false
 	%MultiplayerGrid.visible = true
+	%CustomGrid.visible = false
+	%BackButton.visible = true
+
+
+## Custom is one level deeper than Multiplayer — same in-place swap, still
+## the same scene/background/side panels.
+func _show_custom() -> void:
+	_view = "custom"
+	%MultiplayerGrid.visible = false
+	%CustomGrid.visible = true
 	%BackButton.visible = true
 
 
 func _show_main() -> void:
+	_view = "main"
 	%MultiplayerGrid.visible = false
+	%CustomGrid.visible = false
 	%MenuGrid.visible = true
 	%BackButton.visible = false
+
+
+## Back steps up exactly one level: Custom -> Multiplayer, Multiplayer -> the
+## main 4 tiles. Never jumps straight to the top from Custom.
+func _on_back_pressed() -> void:
+	if _view == "custom":
+		_show_multiplayer()
+	else:
+		_show_main()
 
 
 func _on_ranked_play() -> void:
@@ -193,8 +252,225 @@ func _on_tournament_play() -> void:
 	Session.goto("res://client/tournament_list_screen.tscn")
 
 
-func _on_custom_game() -> void:
-	Session.goto("res://client/custom_game_screen.tscn")
+const TOURNAMENT_CARD_WIDTH := 176.0
+
+## Live countdowns currently on screen: {label: Label, target_ts: int, prefix: String}.
+## Ticked once a second from _process — see _update_tournament_countdowns.
+var _tournament_countdowns: Array = []
+var _countdown_accum := 0.0
+
+
+func _process(delta: float) -> void:
+	_countdown_accum += delta
+	if _countdown_accum < 1.0:
+		return
+	_countdown_accum = 0.0
+	_update_tournament_countdowns()
+
+
+func _update_tournament_countdowns() -> void:
+	for c in _tournament_countdowns:
+		if not is_instance_valid(c.label):
+			continue
+		c.label.text = "%s%s" % [c.prefix, _format_time_until(int(c.target_ts))]
+
+
+func _register_countdown(label: Label, target_ts: int, prefix: String) -> void:
+	label.text = "%s%s" % [prefix, _format_time_until(target_ts)]
+	_tournament_countdowns.append({"label": label, "target_ts": target_ts, "prefix": prefix})
+
+
+## Within 10 minutes: a live-ticking "Xm Ys" countdown. Further out: the
+## absolute date/time, which doesn't need a live countdown to be useful.
+func _format_time_until(target_ts: int) -> String:
+	var now := int(Time.get_unix_time_from_system())
+	var diff := target_ts - now
+	if diff <= 600:
+		return _format_countdown(diff)
+	return Time.get_datetime_string_from_unix_time(target_ts, true).replace("T", " ")
+
+
+func _format_countdown(seconds_left: int) -> String:
+	if seconds_left <= 0:
+		return "any moment"
+	var h := seconds_left / 3600
+	var m := (seconds_left % 3600) / 60
+	var s := seconds_left % 60
+	if h > 0:
+		return "%dh %dm" % [h, m]
+	if m > 0:
+		return "%dm %ds" % [m, s]
+	return "%ds" % s
+
+
+func _on_tournament_check_in_pressed(tournament_id: int, btn: Button) -> void:
+	btn.disabled = true
+	Net.tournament_check_in(tournament_id)
+
+
+func _on_tournament_cancel_pressed(tournament_id: int, btn: Button) -> void:
+	btn.disabled = true
+	Net.withdraw_tournament(tournament_id)
+
+
+## Clicking a card (anywhere but its Check In button, which consumes its own
+## click first) jumps to the bracket/tree screen for that tournament — works
+## at any stage (signup/check-in/in-progress) since the bracket screen falls
+## back to browse mode whenever it isn't your own live run
+## (Session.active_tournament_id).
+func _on_tournament_card_input(event: InputEvent, tournament_id: int) -> void:
+	if not (event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT):
+		return
+	get_tree().set_meta("browse_tournament_id", tournament_id)
+	Session.goto("res://client/tournament_bracket_screen.tscn")
+
+
+## Reflects Session.my_tournaments (kept fresh by Session itself as
+## tournament_joined/checked_in/updated/my_tournament_status signals arrive)
+## as one narrow card per tournament in %TournamentStatusContainer — up to a
+## few can show side by side (name, status line, participant count, and while
+## check-in is open and not yet done, a one-click Check In button).
+func _render_tournament_status() -> void:
+	var container := %TournamentStatusContainer
+	for child in container.get_children():
+		child.queue_free()
+	_tournament_countdowns.clear()
+
+	var my_id := int(Session.account.get("id", 0))
+	for t in (Session.my_tournaments as Dictionary).values():
+		container.add_child(_make_tournament_card(t, my_id))
+	_update_tournament_countdowns()
+
+
+func _make_tournament_card(t: Dictionary, my_id: int) -> PanelContainer:
+	var tid := int(t.get("id", 0))
+	var status := str(t.get("status", ""))
+	var participants: Array = t.get("participants", [])
+	var bracket_size := int(t.get("bracket_size", 0))
+	var checked_in := false
+	var eliminated_round := 0
+	for p in participants:
+		if int(p.get("account_id", -1)) == my_id:
+			checked_in = bool(p.get("checked_in", false))
+			eliminated_round = int(p.get("eliminated_round", 0))
+			break
+
+	var card := PanelContainer.new()
+	card.custom_minimum_size = Vector2(TOURNAMENT_CARD_WIDTH, 0)
+	card.size_flags_horizontal = 0
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.06, 0.06, 0.09, 0.72)
+	sb.border_color = Color(1, 1, 1, 0.12)
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(12)
+	sb.set_content_margin_all(10)
+	card.add_theme_stylebox_override("panel", sb)
+	card.mouse_filter = Control.MOUSE_FILTER_STOP
+	card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	card.gui_input.connect(_on_tournament_card_input.bind(tid))
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 2)
+	card.add_child(vbox)
+
+	var name_label := Label.new()
+	name_label.text = str(t.get("name", "Tournament"))
+	name_label.add_theme_font_size_override("font_size", 14)
+	name_label.clip_text = true
+	vbox.add_child(name_label)
+
+	const GREEN := Color(0.4, 0.9, 0.45)
+	const YELLOW := Color(0.95, 0.85, 0.35)
+	const NEUTRAL := Color(0.85, 0.85, 0.85)
+
+	var status_label := Label.new()
+	status_label.add_theme_font_size_override("font_size", 12)
+	var time_label := Label.new()
+	time_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8, 1))
+	time_label.add_theme_font_size_override("font_size", 11)
+	time_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var show_time_label := true
+
+	match status:
+		"signup":
+			status_label.text = "Signed up"
+			status_label.add_theme_color_override("font_color", GREEN)
+			_register_countdown(time_label, int(t.get("check_in_open_ts", 0)), "Check-in opens ")
+		"check_in":
+			if checked_in:
+				status_label.text = "Checked-In"
+				status_label.add_theme_color_override("font_color", GREEN)
+			else:
+				status_label.text = "Signed up"
+				status_label.add_theme_color_override("font_color", YELLOW)
+			_register_countdown(time_label, int(t.get("start_ts", 0)), "Starts ")
+		"in_progress":
+			status_label.text = "Round %d in progress" % int(t.get("current_round", 0))
+			status_label.add_theme_color_override("font_color", NEUTRAL)
+			show_time_label = false
+		_:
+			status_label.text = status.capitalize()
+			status_label.add_theme_color_override("font_color", NEUTRAL)
+			show_time_label = false
+	vbox.add_child(status_label)
+	if show_time_label:
+		vbox.add_child(time_label)
+
+	var info_label := Label.new()
+	info_label.text = "%d / %d players" % [participants.size(), bracket_size]
+	info_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8, 1))
+	info_label.add_theme_font_size_override("font_size", 11)
+	vbox.add_child(info_label)
+
+	if status == "check_in" and not checked_in:
+		var btn := Button.new()
+		btn.text = "Check In"
+		btn.add_theme_font_size_override("font_size", 12)
+		btn.pressed.connect(_on_tournament_check_in_pressed.bind(tid, btn))
+		vbox.add_child(btn)
+
+	# Cancel only ever shows up (and only ever works) pre-check-in — same
+	# reasoning as the tournament list screen's Cancel button.
+	if status == "signup":
+		var cancel_btn := Button.new()
+		cancel_btn.text = "Cancel"
+		cancel_btn.add_theme_font_size_override("font_size", 12)
+		cancel_btn.pressed.connect(_on_tournament_cancel_pressed.bind(tid, cancel_btn))
+		vbox.add_child(cancel_btn)
+
+	if eliminated_round != 0:
+		var elim_label := Label.new()
+		elim_label.text = "ELIMINATED"
+		elim_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		elim_label.add_theme_color_override("font_color", Color(0.95, 0.3, 0.3))
+		elim_label.add_theme_font_size_override("font_size", 12)
+		vbox.add_child(elim_label)
+
+	return card
+
+
+func _open_tournament_creation() -> void:
+	_open_modal(TOURNAMENT_CREATION_MODAL, "TournamentCreationLayer")
+
+
+func _open_friend_invite() -> void:
+	_open_modal(FRIEND_INVITE_MODAL, "FriendInviteLayer")
+
+
+func _open_join_custom_game() -> void:
+	_open_modal(JOIN_CUSTOM_GAME_MODAL, "JoinCustomGameLayer")
+
+
+func _open_modal(scene: PackedScene, layer_name: String) -> void:
+	if get_node_or_null(layer_name) != null:
+		return
+	var layer := CanvasLayer.new()
+	layer.name = layer_name
+	layer.layer = 100
+	var modal: Control = scene.instantiate()
+	modal.tree_exited.connect(layer.queue_free)
+	layer.add_child(modal)
+	add_child(layer)
 
 
 func _coming_soon(what: String) -> void:
@@ -242,6 +518,14 @@ func _on_deckbuilder() -> void:
 
 func _on_options() -> void:
 	Session.open_options()
+
+
+func _on_shop() -> void:
+	Session.goto("res://client/shop_screen.tscn")
+
+
+func _on_achievements() -> void:
+	Session.goto("res://client/achievements_screen.tscn")
 
 
 func _on_logout() -> void:

@@ -1,0 +1,105 @@
+{
+	"_comment": "Reference mirror of AchievementSystem.CATALOG. Not loaded by code — the catalog lives in server/achievement_system.gd.",
+	"achievements": [
+		{
+			"id": "veteran",
+			"name": "Veteran",
+			"stat": "games",
+			"tiers": [
+				{"threshold": 10, "points": 20, "reward": ""},
+				{"threshold": 100, "points": 100, "reward": ""},
+				{"threshold": 1000, "points": 500, "reward": "frame_veteran"}
+			]
+		},
+		{
+			"id": "winner",
+			"name": "Winner",
+			"stat": "wins",
+			"tiers": [
+				{"threshold": 10, "points": 20, "reward": ""},
+				{"threshold": 100, "points": 150, "reward": ""},
+				{"threshold": 1000, "points": 750, "reward": "avatar_champion"}
+			]
+		},
+		{
+			"id": "on_fire",
+			"name": "On Fire",
+			"stat": "win_streak_best",
+			"tiers": [
+				{"threshold": 3, "points": 20, "reward": ""},
+				{"threshold": 5, "points": 60, "reward": ""},
+				{"threshold": 10, "points": 200, "reward": "sleeve_flame"}
+			]
+		},
+		{
+			"id": "perfectionist",
+			"name": "Perfectionist",
+			"stat": "perfect_wins",
+			"tiers": [
+				{"threshold": 1, "points": 30, "reward": ""},
+				{"threshold": 10, "points": 120, "reward": ""},
+				{"threshold": 50, "points": 400, "reward": ""}
+			]
+		},
+		{
+			"id": "tycoon",
+			"name": "Tycoon",
+			"stat": "money_games_won",
+			"tiers": [
+				{"threshold": 5, "points": 30, "reward": ""},
+				{"threshold": 25, "points": 100, "reward": ""},
+				{"threshold": 100, "points": 300, "reward": ""}
+			]
+		},
+		{
+			"id": "historian",
+			"name": "Historian",
+			"stat": "time_games_won",
+			"tiers": [
+				{"threshold": 5, "points": 30, "reward": ""},
+				{"threshold": 25, "points": 100, "reward": ""},
+				{"threshold": 100, "points": 300, "reward": ""}
+			]
+		},
+		{
+			"id": "laureate",
+			"name": "Laureate",
+			"stat": "awards_games_won",
+			"tiers": [
+				{"threshold": 5, "points": 30, "reward": ""},
+				{"threshold": 25, "points": 100, "reward": ""},
+				{"threshold": 100, "points": 300, "reward": ""}
+			]
+		},
+		{
+			"id": "competitor",
+			"name": "Competitor",
+			"stat": "tournaments_played",
+			"tiers": [
+				{"threshold": 1, "points": 20, "reward": ""},
+				{"threshold": 10, "points": 100, "reward": ""},
+				{"threshold": 50, "points": 400, "reward": ""}
+			]
+		},
+		{
+			"id": "champion",
+			"name": "Champion",
+			"stat": "tournaments_won",
+			"tiers": [
+				{"threshold": 1, "points": 100, "reward": ""},
+				{"threshold": 5, "points": 300, "reward": ""},
+				{"threshold": 25, "points": 1000, "reward": "frame_champion"}
+			]
+		},
+		{
+			"id": "high_roller",
+			"name": "High Roller",
+			"stat": "points_earned_total",
+			"tiers": [
+				{"threshold": 1000, "points": 0, "reward": ""},
+				{"threshold": 10000, "points": 100, "reward": ""},
+				{"threshold": 100000, "points": 500, "reward": ""}
+			]
+		}
+	]
+}

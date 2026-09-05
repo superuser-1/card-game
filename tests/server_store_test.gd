@@ -33,6 +33,17 @@ func _initialize() -> void:
 	test_tournament_sign_up()
 	test_tournament_check_in()
 	test_tournament_persistence()
+	test_shop_purchase_happy_path()
+	test_shop_purchase_insufficient()
+	test_shop_purchase_already_owned()
+	test_shop_purchase_not_for_sale()
+	test_grant_reward()
+	test_equip_premium_not_owned()
+	test_equip_premium_owned()
+	test_equip_legacy()
+	test_set_sleeve()
+	test_apply_match_stats()
+	test_apply_tournament_stat()
 
 	# Print final result
 	if _fail_count == 0:
@@ -715,3 +726,210 @@ func test_tournament_persistence() -> void:
 	# Verify both tournaments visible in s2
 	var all_t_s2 = s2_persistent.all_tournaments()
 	assert_equal(all_t_s2.size(), 2, "s2 sees both tournaments after fresh open")
+
+
+func test_shop_purchase_happy_path() -> void:
+	print("\n=== Shop Purchase Happy Path ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account = res.account
+
+	# Set up account with enough points
+	account["points"] = 100
+	s._save_accounts()
+
+	# Purchase item
+	var p_res = s.purchase(int(account.id), "avatar_gold_reel")
+	assert_equal(p_res.ok, true, "Purchase succeeds")
+	assert_equal(p_res.account.points, 95, "Points debited correctly (100 - 5)")
+	assert_true("avatar_gold_reel" in p_res.account.owned_rewards, "Item added to owned_rewards")
+
+
+func test_shop_purchase_insufficient() -> void:
+	print("\n=== Shop Purchase Insufficient Points ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account = res.account
+	account["points"] = 2
+	s._save_accounts()
+
+	var p_res = s.purchase(int(account.id), "avatar_gold_reel")
+	assert_equal(p_res.ok, false, "Purchase fails with insufficient points")
+	assert_equal(p_res.error, "insufficient", "Error is 'insufficient'")
+	assert_equal(account.points, 2, "Points not changed")
+	assert_true("avatar_gold_reel" not in account.owned_rewards, "Item not added")
+
+
+func test_shop_purchase_already_owned() -> void:
+	print("\n=== Shop Purchase Already Owned ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account = res.account
+	account["points"] = 100
+	account["owned_rewards"].append("avatar_gold_reel")
+	s._save_accounts()
+
+	var p_res = s.purchase(int(account.id), "avatar_gold_reel")
+	assert_equal(p_res.ok, false, "Purchase fails for already-owned item")
+	assert_equal(p_res.error, "already_owned", "Error is 'already_owned'")
+
+
+func test_shop_purchase_not_for_sale() -> void:
+	print("\n=== Shop Purchase Not For Sale ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account = res.account
+	account["points"] = 100
+	s._save_accounts()
+
+	# Try to purchase an achievement-only item
+	var p_res = s.purchase(int(account.id), "frame_champion")
+	assert_equal(p_res.ok, false, "Purchase fails for non-shop item")
+	assert_equal(p_res.error, "not_for_sale", "Error is 'not_for_sale'")
+
+
+func test_grant_reward() -> void:
+	print("\n=== Grant Reward ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account = res.account
+	account["points"] = 10
+	s._save_accounts()
+
+	var g_res = s.grant_reward(account, 50, ["frame_champion", "sleeve_flame"])
+	assert_equal(g_res.points_total, 60, "Points awarded (10 + 50)")
+	assert_equal(g_res.granted.size(), 2, "Both items granted")
+	assert_true("frame_champion" in account.owned_rewards, "frame_champion added")
+	assert_true("sleeve_flame" in account.owned_rewards, "sleeve_flame added")
+
+	# Idempotency test: grant same items again
+	var g_res2 = s.grant_reward(account, 10, ["frame_champion", "avatar_champion"])
+	assert_equal(g_res2.granted.size(), 1, "Only new item granted (avatar_champion)")
+	assert_true("avatar_champion" in account.owned_rewards, "avatar_champion added")
+
+
+func test_equip_premium_not_owned() -> void:
+	print("\n=== Equip Premium Not Owned ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account_id = int(res.account.id)
+
+	# Try to equip premium item not owned
+	var eq_res = s.set_avatar(account_id, "avatar_gold_reel")
+	assert_equal(eq_res.ok, false, "Cannot equip unowned premium avatar")
+	assert_equal(eq_res.error, "not_owned", "Error is 'not_owned'")
+
+
+func test_equip_premium_owned() -> void:
+	print("\n=== Equip Premium Owned ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account = res.account
+	account["owned_rewards"].append("avatar_gold_reel")
+	s._save_accounts()
+
+	var eq_res = s.set_avatar(int(account.id), "avatar_gold_reel")
+	assert_equal(eq_res.ok, true, "Can equip owned premium avatar")
+	assert_equal(eq_res.account.avatar, "avatar_gold_reel", "Avatar set correctly")
+
+
+func test_equip_legacy() -> void:
+	print("\n=== Equip Legacy (Non-Catalog) ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account_id = int(res.account.id)
+
+	# Legacy avatars (not in ShopCatalog) should equip without ownership check
+	var eq_res = s.set_avatar(account_id, "avatar_female_01")
+	assert_equal(eq_res.ok, true, "Can equip legacy avatar without ownership")
+
+
+func test_set_sleeve() -> void:
+	print("\n=== Set Sleeve ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account = res.account
+	account["owned_rewards"].append("sleeve_noir")
+	s._save_accounts()
+
+	var eq_res = s.set_sleeve(int(account.id), "sleeve_noir")
+	assert_equal(eq_res.ok, true, "Can set owned premium sleeve")
+	assert_equal(eq_res.account.sleeve, "sleeve_noir", "Sleeve set correctly")
+
+	# Unequip with empty string
+	var uneq_res = s.set_sleeve(int(account.id), "")
+	assert_equal(uneq_res.ok, true, "Can unequip sleeve with empty string")
+	assert_equal(uneq_res.account.sleeve, "", "Sleeve cleared")
+
+
+func test_apply_match_stats() -> void:
+	print("\n=== Apply Match Stats ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account_id = int(res.account.id)
+
+	# First match: an ordinary 7-3 win (NOT perfect — opp scored).
+	var ctx = {
+		"outcome": "win",
+		"your_score": 7,
+		"opp_score": 3,
+		"your_group_picks": {"money": 0, "time": 0, "awards": 0},
+		"your_pick_count": 0,
+	}
+	var res1 = s.apply_match_stats(account_id, ctx)
+	var account = s.get_account(account_id)
+	var stats = account.stats
+
+	assert_equal(stats.games, 1, "games incremented to 1")
+	assert_equal(stats.wins, 1, "wins incremented to 1")
+	assert_equal(stats.win_streak_current, 1, "win_streak_current set to 1")
+	assert_equal(stats.win_streak_best, 1, "win_streak_best set to 1")
+	assert_equal(int(stats.get("perfect_wins", 0)), 0, "perfect_wins still 0 (opp scored 3)")
+	assert_equal(res1.achievement_points, 0, "No achievements unlocked yet")
+
+	# Second match: a true 7-0 perfect win.
+	var perfect_ctx = {
+		"outcome": "win",
+		"your_score": 7,
+		"opp_score": 0,
+		"your_group_picks": {"money": 0, "time": 0, "awards": 0},
+		"your_pick_count": 0,
+	}
+	s.apply_match_stats(account_id, perfect_ctx)
+	stats = s.get_account(account_id).stats
+	assert_equal(int(stats.get("perfect_wins", 0)), 1, "perfect_wins set to 1 after a 7-0")
+	assert_equal(stats.win_streak_current, 2, "win_streak_current now 2")
+
+	# A loss resets the streak but not the best.
+	s.apply_match_stats(account_id, {
+		"outcome": "loss", "your_score": 2, "opp_score": 7,
+		"your_group_picks": {"money": 0, "time": 0, "awards": 0}, "your_pick_count": 0,
+	})
+	stats = s.get_account(account_id).stats
+	assert_equal(stats.win_streak_current, 0, "streak reset to 0 on loss")
+	assert_equal(stats.win_streak_best, 2, "best streak stays at 2")
+
+
+func test_apply_tournament_stat() -> void:
+	print("\n=== Apply Tournament Stat ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account_id = int(res.account.id)
+
+	var res1 = s.apply_tournament_stat(account_id, "tournaments_played")
+	var account = s.get_account(account_id)
+	assert_equal(account.stats.tournaments_played, 1, "tournaments_played incremented")
+	# competitor Bronze threshold IS 1 (PLAN_achievements §1) -> unlocks now.
+	assert_equal(res1.size(), 1, "competitor Bronze unlocks on first tournament")
+	assert_equal(str(res1[0].id), "competitor", "the unlock is competitor")
+	assert_equal(int(account.achievements.unlocked.competitor), 0, "competitor recorded at tier index 0")
+
+	# A second played tournament does not re-unlock Bronze.
+	var res_again = s.apply_tournament_stat(account_id, "tournaments_played")
+	assert_equal(res_again.size(), 0, "no re-unlock on the second tournament")
+
+	# tournaments_won=1 -> champion Bronze (threshold 1) unlocks.
+	var res2 = s.apply_tournament_stat(account_id, "tournaments_won")
+	account = s.get_account(account_id)
+	assert_equal(account.stats.tournaments_won, 1, "tournaments_won incremented")
+	assert_true(account.achievements.unlocked.has("champion"), "champion achievement unlocked")

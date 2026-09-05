@@ -13,6 +13,10 @@ func _ready() -> void:
 	%ToggleModeButton.pressed.connect(_toggle_mode)
 	%PasswordField.text_submitted.connect(_on_submit)
 
+	if Session.kicked_message != "":
+		%ErrorLabel.text = Session.kicked_message
+		Session.kicked_message = ""
+
 	var saved: String = Session.load_token()
 	if saved != "":
 		_resuming = true

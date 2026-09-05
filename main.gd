@@ -8,6 +8,9 @@ extends Node
 ## Bot client:  godot --headless -- --bot [--address=127.0.0.1] [--port=8910]
 ##   (headless auto-playing NETWORK client, for network smoke-testing — see
 ##   tests/bot_client.gd. Not to be confused with --solo's BotPlayer opponent.)
+## Custom-game test: godot --headless -- --custom-game-test --role=host|guest|guest2 --game-name=X
+##   (headless auto-playing client that drives the friend-invite custom-game
+##   flow — create/join/full-lobby-rejection — see tests/custom_game_bot_client.gd.)
 
 func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
@@ -18,12 +21,15 @@ func _ready() -> void:
 	var is_solo := false
 	var is_solo_test := false
 	var is_drag_test := false
+	var is_custom_game_test := false
 
 	for arg: String in args:
 		if arg == "--server":
 			is_server = true
 		elif arg == "--bot":
 			is_bot = true
+		elif arg == "--custom-game-test":
+			is_custom_game_test = true
 		elif arg == "--solo":
 			is_solo = true
 		elif arg == "--solo-test":
@@ -42,6 +48,9 @@ func _ready() -> void:
 	elif is_bot:
 		Net.start_client(address, port)
 		add_child(preload("res://tests/bot_client.gd").new())
+	elif is_custom_game_test:
+		Net.start_client(address, port)
+		add_child(preload("res://tests/custom_game_bot_client.gd").new())
 	elif is_solo:
 		# UI (or the headless test driver) must be in the tree — so its
 		# _ready() connects Net's signals — BEFORE start_solo() fires the

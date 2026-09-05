@@ -43,6 +43,7 @@ func _show_empty_state() -> void:
 	%PointsLabel.visible = false
 	%RankLabel.visible = false
 	%QuestLabel.visible = false
+	%AchievementLabel.visible = false
 
 
 func _show_result(s: Dictionary) -> void:
@@ -50,9 +51,15 @@ func _show_result(s: Dictionary) -> void:
 	var outcome_map: Dictionary = {"win": "Victory", "loss": "Defeat", "draw": "Draw"}
 	%OutcomeLabel.text = outcome_map.get(outcome, "Match Over")
 
-	var your_score: int = int(s.get("your_score", 0))
-	var opponent_score: int = int(s.get("opponent_score", 0))
-	%ScoreLabel.text = "You %d — %d Opponent" % [your_score, opponent_score]
+	var match_format: int = int(s.get("match_format", 1))
+	if match_format > 1:
+		var games_won: int = int(s.get("games_won", 0))
+		var games_won_opponent: int = int(s.get("games_won_opponent", 0))
+		%ScoreLabel.text = "You %d — %d Opponent  (Best of %d)" % [games_won, games_won_opponent, match_format]
+	else:
+		var your_score: int = int(s.get("your_score", 0))
+		var opponent_score: int = int(s.get("opponent_score", 0))
+		%ScoreLabel.text = "You %d — %d Opponent" % [your_score, opponent_score]
 
 	var is_ranked: bool = bool(s.get("ranked", false))
 	if is_ranked:
@@ -68,6 +75,10 @@ func _show_result(s: Dictionary) -> void:
 		else:
 			%PointsLabel.text = "Points +%d  (total %d)" % [points_delta, points_total]
 
+		var apts: int = int(s.get("achievement_points", 0))
+		if apts > 0:
+			%PointsLabel.text += "  (+%d achievements)" % apts
+
 		var qc: Array = s.get("quest_completions", [])
 		if qc.is_empty():
 			%QuestLabel.visible = false
@@ -77,6 +88,20 @@ func _show_result(s: Dictionary) -> void:
 				parts.append("%s  +%d" % [str(q.get("name", "Quest")), int(q.get("points", 0))])
 			%QuestLabel.text = "Quests complete — " + "  ·  ".join(parts)
 
+		var ac: Array = s.get("achievement_unlocks", [])
+		if ac.is_empty():
+			%AchievementLabel.visible = false
+		else:
+			var aparts := []
+			for a in ac:
+				aparts.append("%s (%s)  +%d" % [
+					str(a.get("name", "Achievement")),
+					str(a.get("tier_name", "")),
+					int(a.get("points", 0)),
+				])
+			%AchievementLabel.visible = true
+			%AchievementLabel.text = "Achievements — " + "  ·  ".join(aparts)
+
 		var new_rank: int = int(s.get("new_rank", 0))
 		%RankLabel.text = "Rank #%d" % new_rank
 	else:
@@ -84,3 +109,4 @@ func _show_result(s: Dictionary) -> void:
 		%PointsLabel.text = "Unranked game"
 		%RankLabel.visible = false
 		%QuestLabel.visible = false
+		%AchievementLabel.visible = false

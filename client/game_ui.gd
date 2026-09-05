@@ -22,11 +22,13 @@ extends Control
 @onready var _left_bg: TextureRect = %LeftBg
 @onready var _left_name: Label = %LeftName
 @onready var _left_elo: Label = %LeftElo
+@onready var _left_stars: Label = %LeftStars
 @onready var _right_avatar: TextureRect = %RightAvatar
 @onready var _right_frame: TextureRect = %RightFrame
 @onready var _right_bg: TextureRect = %RightBg
 @onready var _right_name: Label = %RightName
 @onready var _right_elo: Label = %RightElo
+@onready var _right_stars: Label = %RightStars
 
 const CARD_VIEW_SCENE := preload("res://client/card_view.tscn")
 const CATEGORY_VIEW_SCENE := preload("res://client/category_view.tscn")
@@ -272,13 +274,23 @@ func _on_match_ended(summary: Dictionary) -> void:
 	# Stash for the result screen (signals aren't queued across a scene swap),
 	# then navigate — but only after any in-progress round-reveal choreography
 	# has finished, so the final round still plays out on screen.
+	var ending_match_id := int(summary.get("match_id", 0))
 	Session.last_match_summary = summary
 	await _wait_for_reveal_to_finish()
 	var tournament_ctx: Dictionary = summary.get("tournament_ctx", {})
-	if not tournament_ctx.is_empty() and ResourceLoader.exists(TOURNAMENT_BRACKET_SCENE):
-		Session.last_match_info = {}
-		Session.goto(TOURNAMENT_BRACKET_SCENE)
-	elif ResourceLoader.exists(MATCH_RESULT_SCENE):
+	if not tournament_ctx.is_empty():
+		# The server can create and push the NEXT tournament round's
+		# match_found while we were still mid-reveal above — Session's global
+		# listener already jumped us straight into that new match. Don't stomp
+		# back over it by navigating to the bracket screen for a match that's
+		# already stale.
+		if Session.current_match_id != 0 and Session.current_match_id != ending_match_id:
+			return
+		if ResourceLoader.exists(TOURNAMENT_BRACKET_SCENE):
+			Session.last_match_info = {}
+			Session.goto(TOURNAMENT_BRACKET_SCENE)
+			return
+	if ResourceLoader.exists(MATCH_RESULT_SCENE):
 		Session.goto(MATCH_RESULT_SCENE)
 	else:
 		_status_label.text = "Match over — %s" % str(summary.get("outcome", ""))
@@ -350,6 +362,7 @@ func _render() -> void:
 	_score_label.text = "You: %d   Opponent: %d   Round %d" % [
 		s.own_score, s.opponent_score, s.round_number
 	]
+	_render_series_stars(s)
 
 	var am_active: bool = s.active_player == _my_player_id
 	var awaiting_category: bool = s.phase == "awaiting_category"
@@ -397,6 +410,32 @@ func _render() -> void:
 	# reject shake). The reveal path re-renders the hand with draggable=false.
 	_render_table()
 	_render_hand(s.own_hand, true)
+
+
+## A Bo3/Bo5 match plays as a series of full 7-card games — each finished game
+## is one star next to the winner's avatar, filled left-to-right as games are
+## won. Hidden entirely for a plain Bo1 match, where there's only ever one
+## game and a star row would be redundant with the outcome screen.
+func _render_series_stars(s: Dictionary) -> void:
+	var games_to_win: int = int(s.get("games_to_win", 1))
+	if games_to_win <= 1:
+		_left_stars.visible = false
+		_right_stars.visible = false
+		return
+	var series_wins: Dictionary = s.get("series_wins", {})
+	var my_wins: int = int(series_wins.get(_my_player_id, 0))
+	var opp_wins: int = int(series_wins.get(3 - _my_player_id, 0))
+	_left_stars.visible = true
+	_right_stars.visible = true
+	_left_stars.text = _star_string(my_wins, games_to_win)
+	_right_stars.text = _star_string(opp_wins, games_to_win)
+
+
+func _star_string(games_won: int, games_to_win: int) -> String:
+	var out := ""
+	for i in range(games_to_win):
+		out += "★" if i < games_won else "☆"
+	return out
 
 
 func _play_timeout_sequence(result: Dictionary) -> void:

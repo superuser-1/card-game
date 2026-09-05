@@ -26,6 +26,14 @@ signal error_received(message: String)
 signal player_assigned(player_id: int)
 
 # --- new client-facing signals ---
+## Fired when the ENet connection to the server drops for any reason —
+## crucially including the server forcibly disconnecting this peer because the
+## same account just logged in from somewhere else (see _bind_session's
+## one-connection-per-account rule). Session listens globally (it's the one
+## thing alive across every screen) and forces a return to the login screen,
+## since a screen-local error_received handler only helps if the player
+## happens to be looking at a screen that listens for it.
+signal kicked()
 signal auth_completed(result: Dictionary)       # {ok, error, token, account}
 signal queue_updated(state: String, elapsed_s: float)   # "searching" | "cancelled"
 signal match_found(info: Dictionary)
@@ -35,13 +43,22 @@ signal profile_received(data: Dictionary)
 signal avatar_updated(account: Dictionary)      # fresh account snapshot after set_avatar
 signal frame_updated(account: Dictionary)       # fresh account snapshot after set_frame
 signal background_updated(account: Dictionary)  # fresh account snapshot after set_background
+signal sleeve_updated(account: Dictionary)      # fresh account snapshot after set_sleeve
+signal shop_purchase_result(account: Dictionary) # fresh account snapshot after shop_purchase
+signal achievements_unlocked(list: Array)       # from out-of-band tournament stat apply
+
+# --- custom (friend-invite) game signals ---
+signal custom_game_created(result: Dictionary)      # {ok, error, name}
+signal custom_game_join_result(result: Dictionary)  # {ok, error, name}
 
 # --- tournament signals ---
 signal tournament_list_received(rows: Array)
 signal tournament_created(result: Dictionary)          # {ok, error, tournament}
 signal tournament_joined(result: Dictionary)            # {ok, error, tournament}
+signal tournament_withdrawn(result: Dictionary)         # {ok, error, tournament}
 signal tournament_checked_in(result: Dictionary)        # {ok, error, tournament}
 signal tournament_updated(tournament: Dictionary)       # full bracket snapshot
+signal my_tournament_status(tournaments: Array)         # every live tournament this account has a stake in
 
 const BOT_THINK_SECONDS := 0.7
 const BOT_FILL_SECONDS := 15.0
@@ -85,6 +102,17 @@ var _peer_match: Dictionary = {}        # peer_id -> match_id
 var _next_match_id := 1
 var _queue: Array = []                  # [{account_id, peer_id, elo, since_ms}]
 var _mm_timer: Timer = null
+
+## Open friend-invite lobbies waiting for a second player, keyed by the game
+## name lowercased+trimmed (so "Movie Night" and "movie night " collide, which
+## is the point — names must be unique among currently-open lobbies so a
+## second creator can't silently shadow the first). A lobby is consumed
+## (erased) the instant a join succeeds, so a second join attempt on the same
+## name always sees "not_found" rather than needing a separate "full" state —
+## with exactly 2 seats, "gone because someone already joined" and "full" are
+## the same thing.
+## {name, creator_account_id, creator_peer_id, match_format, created_ms}
+var _custom_games: Dictionary = {}
 
 # --- tournaments (server-only) ---
 var _tournament_timer: Timer = null
@@ -195,7 +223,10 @@ func start_client(address: String = NetConfig.DEFAULT_ADDRESS, port: int = NetCo
 	multiplayer.multiplayer_peer = peer
 	multiplayer.connected_to_server.connect(func(): print("Client: connected to server"))
 	multiplayer.connection_failed.connect(func(): error_received.emit("Could not connect to server."))
-	multiplayer.server_disconnected.connect(func(): error_received.emit("Disconnected from server."))
+	multiplayer.server_disconnected.connect(func():
+		error_received.emit("Disconnected from server.")
+		kicked.emit()
+	)
 
 
 ## --- Client -> Server auth wrappers (the UI calls these) ---
@@ -220,6 +251,18 @@ func set_frame(frame: String) -> void:
 ## back on `background_updated` with a fresh account snapshot.
 func set_background(background: String) -> void:
 	_rpc_set_background.rpc_id(1, background)
+
+
+## Set (or clear, with "") the logged-in account's card-back sleeve. Reply comes
+## back on `sleeve_updated` with a fresh account snapshot.
+func set_sleeve(sleeve: String) -> void:
+	_rpc_set_sleeve.rpc_id(1, sleeve)
+
+
+## Purchase a shop item by id. Reply comes back on `shop_purchase_result` with
+## a fresh account snapshot, or `error_received` if the purchase fails.
+func shop_purchase(item_id: String) -> void:
+	_rpc_shop_purchase.rpc_id(1, item_id)
 
 
 func auth_login(username: String, password: String) -> void:
@@ -293,8 +336,13 @@ func end_singleplayer() -> void:
 # Match structure
 # =========================================================================
 
+## `match_format` is the number of games needed to decide the whole match: 1
+## (single game, the historical default), 3 (best of 3, first to 2 game wins)
+## or 5 (best of 5, first to 3 game wins). `games_to_win` is derived once here
+## rather than recomputed everywhere a decision needs it.
 func _new_match(engine: GameEngine, seats: Dictionary, account_ids: Dictionary,
-		names: Dictionary, bot_seat: int, is_bot_match: bool, tournament_ctx := {}) -> Dictionary:
+		names: Dictionary, bot_seat: int, is_bot_match: bool, tournament_ctx := {},
+		match_format := 1) -> Dictionary:
 	var m := {
 		"id": _next_match_id,
 		"engine": engine,
@@ -309,6 +357,9 @@ func _new_match(engine: GameEngine, seats: Dictionary, account_ids: Dictionary,
 		# {tournament_id, round, bracket_size} when this match is a tournament
 		# round; empty for ranked/solo/bot-fill matches.
 		"tournament_ctx": tournament_ctx,
+		"match_format": match_format,
+		"games_to_win": (match_format / 2) + 1,
+		"series_wins": {1: 0, 2: 0},  # completed games won by each seat so far
 	}
 	_next_match_id += 1
 	_matches[m.id] = m
@@ -369,6 +420,9 @@ func _broadcast_match(m: Dictionary) -> void:
 		else:
 			st["on_clock_player"] = 0
 			st["turn_seconds_left"] = -1.0
+		st["match_format"] = int(m.get("match_format", 1))
+		st["games_to_win"] = int(m.get("games_to_win", 1))
+		st["series_wins"] = (m.get("series_wins", {1: 0, 2: 0}) as Dictionary).duplicate()
 		if target == LOCAL_SEAT:
 			_last_state = st
 			state_updated.emit(st)
@@ -436,8 +490,40 @@ func _after_move(m: Dictionary) -> void:
 	var engine: GameEngine = m.get("engine")
 	_broadcast_match(m)
 	if engine.is_game_over():
-		_finish_match(m)
+		_handle_game_over(m)
 	else:
+		_maybe_trigger_bot(m)
+
+
+## One 7-card GameEngine game just ended. For a plain Bo1 match (the historical
+## default) that's always the whole match. For Bo3/Bo5 it only ends the match
+## once a side has reached games_to_win — otherwise a fresh game is dealt to
+## the same two seats and the series continues. A drawn game (equal score at
+## hands-empty) awards neither seat a series win, so the series simply plays
+## another game instead of getting stuck undecided.
+func _handle_game_over(m: Dictionary) -> void:
+	var engine: GameEngine = m.engine
+	var game_winner := engine.get_winner()
+	var format := int(m.get("match_format", 1))
+	var games_to_win := int(m.get("games_to_win", 1))
+	if game_winner != 0:
+		m.series_wins[game_winner] = int(m.series_wins.get(game_winner, 0)) + 1
+
+	var series_winner := -1
+	if int(m.series_wins.get(1, 0)) >= games_to_win:
+		series_winner = 1
+	elif int(m.series_wins.get(2, 0)) >= games_to_win:
+		series_winner = 2
+	elif format == 1:
+		series_winner = game_winner  # Bo1: the single game's result (including a draw) is final.
+
+	if series_winner != -1:
+		_finish_match(m, series_winner)
+	else:
+		var next_engine := GameEngine.new(engine.get_card_pool())
+		next_engine.deal_hands()
+		m.engine = next_engine
+		_broadcast_match(m)
 		_maybe_trigger_bot(m)
 
 
@@ -545,6 +631,8 @@ func _finish_match(m: Dictionary, forced_winner := -1) -> void:
 
 	if not tournament_ctx.is_empty():
 		_finish_tournament_match(m, winner, tournament_ctx)
+	elif bool(m.get("is_custom_match", false)):
+		_finish_custom_match(m, winner)
 	elif is_solo or _store == null:
 		var seat := 1
 		var summary := {
@@ -556,6 +644,9 @@ func _finish_match(m: Dictionary, forced_winner := -1) -> void:
 			"points_delta": 0, "points_total": 0, "new_rank": 0,
 			"quest_completions": [],
 			"quest_points": 0,
+			"match_format": int(m.get("match_format", 1)),
+			"games_won": int(m.series_wins.get(seat, 0)),
+			"games_won_opponent": int(m.series_wins.get(3 - seat, 0)),
 		}
 		match_ended.emit(summary)
 	else:
@@ -572,6 +663,8 @@ func _finish_match(m: Dictionary, forced_winner := -1) -> void:
 			var after := int(rec.get("elo_%d_after" % seat, 0))
 			var quest_completions := []
 			var quest_points := 0
+			var achievement_unlocks := []
+			var achievement_points := 0
 			if not bool(m.is_bot_match):
 				var q_ctx := {
 					"outcome": _outcome_str(winner, seat),
@@ -583,6 +676,9 @@ func _finish_match(m: Dictionary, forced_winner := -1) -> void:
 				var q_res := _store.apply_quest_progress(acc_id, q_ctx)
 				quest_completions = q_res["completed"]
 				quest_points = int(q_res["points_awarded"])
+				var a_res := _store.apply_match_stats(acc_id, q_ctx)
+				achievement_unlocks = a_res["achievement_unlocks"]
+				achievement_points = int(a_res["achievement_points"])
 			var summary := {
 				"outcome": _outcome_str(winner, seat),
 				"your_score": engine.scores[seat],
@@ -596,10 +692,38 @@ func _finish_match(m: Dictionary, forced_winner := -1) -> void:
 				"new_rank": _store.rank_of(acc_id),
 				"quest_completions": quest_completions,
 				"quest_points": quest_points,
+				"achievement_unlocks": achievement_unlocks,
+				"achievement_points": achievement_points,
+				"match_format": int(m.get("match_format", 1)),
+				"games_won": int(m.series_wins.get(seat, 0)),
+				"games_won_opponent": int(m.series_wins.get(3 - seat, 0)),
 			}
 			_rpc_match_ended.rpc_id(target, summary)
 
 	_cleanup_match(m)
+
+
+## A friend-invite custom game: two real human seats, always unranked (no
+## ServerStore.record_match, no quest progress — same "just play a game"
+## spirit as a tournament match, but outside any bracket).
+func _finish_custom_match(m: Dictionary, winner: int) -> void:
+	var engine: GameEngine = m.engine
+	for seat in [1, 2]:
+		var target = m.seats[seat]
+		if typeof(target) != TYPE_INT or target <= 0:
+			continue
+		_rpc_match_ended.rpc_id(target, {
+			"outcome": _outcome_str(winner, seat),
+			"your_score": engine.scores[seat],
+			"opponent_score": engine.scores[3 - seat],
+			"ranked": false,
+			"elo_before": 0, "elo_after": 0, "elo_delta": 0,
+			"points_delta": 0, "points_total": 0, "new_rank": 0,
+			"quest_completions": [], "quest_points": 0,
+			"match_format": int(m.get("match_format", 1)),
+			"games_won": int(m.series_wins.get(seat, 0)),
+			"games_won_opponent": int(m.series_wins.get(3 - seat, 0)),
+		})
 
 
 func _outcome_str(winner: int, seat: int) -> String:
@@ -611,7 +735,14 @@ func _outcome_str(winner: int, seat: int) -> String:
 func _cleanup_match(m: Dictionary) -> void:
 	for seat in [1, 2]:
 		var target = m.seats[seat]
-		if typeof(target) == TYPE_INT and target > 0:
+		# Only erase if it's still THIS match's mapping. A tournament match's
+		# _finish_match runs _finish_tournament_match (which can synchronously
+		# dispatch the player's NEXT round match, overwriting _peer_match[target]
+		# with the new match's id) before reaching this cleanup — an
+		# unconditional erase here would then wipe the brand-new mapping
+		# instead of this match's stale one, silently breaking every move
+		# submission for the next round.
+		if typeof(target) == TYPE_INT and target > 0 and _peer_match.get(target) == m.id:
 			_peer_match.erase(target)
 	_matches.erase(m.id)
 	if m.id == _solo_match_id:
@@ -667,10 +798,21 @@ func _tick_tournaments() -> void:
 				if now >= int(t.signup_close_ts):
 					t.status = "check_in"
 					_store.persist_tournament(t)
+					_broadcast_tournament(t)
 			"check_in":
 				if now >= int(t.start_ts):
 					_start_tournament(t)
 			"in_progress":
+				# Re-check the current round every tick, not just when a new
+				# one is created — _dispatch_round is idempotent and, since
+				# _matches is purely in-memory, this is what recovers a slot
+				# whose match got orphaned by a server restart mid-tournament
+				# (see _dispatch_round's staleness check below).
+				var round_idx := int(t.current_round) - 1
+				if round_idx >= 0 and round_idx < (t.rounds as Array).size():
+					if _dispatch_round(t, round_idx):
+						_store.persist_tournament(t)
+						_broadcast_tournament(t)
 				_maybe_advance_round(t)
 
 
@@ -685,16 +827,28 @@ func _start_tournament(t: Dictionary) -> void:
 
 
 ## Starts (or instantly resolves) every not-yet-started slot in one round.
-## Idempotent per slot (guarded by resolved/match_id) so a stray re-dispatch
-## can't double-create matches.
-func _dispatch_round(t: Dictionary, round_idx: int) -> void:
+## Idempotent per slot: a slot with a `match_id` that's still live in
+## `_matches` is left alone. A slot whose `match_id` points to nothing live —
+## `_matches` is purely in-memory, so a server restart mid-tournament orphans
+## whatever match was in flight — gets its match recreated here instead of
+## being stuck unresolved forever; a fresh match_found is sent to the human
+## side(s) same as the first time.
+func _dispatch_round(t: Dictionary, round_idx: int) -> bool:
 	var round: Array = t.rounds[round_idx]
-	var ctx := {"tournament_id": int(t.id), "round": round_idx + 1, "bracket_size": int(t.bracket_size)}
+	var ctx := {
+		"tournament_id": int(t.id), "round": round_idx + 1, "bracket_size": int(t.bracket_size),
+		"match_format": int(t.get("match_format", 1)),
+	}
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(t.rng_seed) + round_idx + 1
+	var changed := false
 	for slot in round:
-		if bool(slot.resolved) or int(slot.match_id) != 0:
+		if bool(slot.resolved):
 			continue
+		if int(slot.match_id) != 0 and _matches.has(int(slot.match_id)):
+			continue
+		slot.match_id = 0
+		changed = true
 		if TournamentSystem.is_bot_vs_bot(slot):
 			TournamentSystem.resolve_bot_vs_bot(slot, rng)
 		elif bool(slot.is_bot_a) or bool(slot.is_bot_b):
@@ -704,6 +858,7 @@ func _dispatch_round(t: Dictionary, round_idx: int) -> void:
 		else:
 			var m := _create_pvp_match_for_accounts(int(slot.account_id_a), int(slot.account_id_b), ctx)
 			slot.match_id = m.id
+	return changed
 
 
 func _maybe_advance_round(t: Dictionary) -> void:
@@ -753,7 +908,7 @@ func _create_pvp_match_for_accounts(account_a: int, account_b: int, ctx: Diction
 		{1: peer_a, 2: peer_b},
 		{1: account_a, 2: account_b},
 		{1: name_a, 2: name_b},
-		0, false, ctx
+		0, false, ctx, int(ctx.get("match_format", 1))
 	)
 	if peer_a > 0:
 		_send_match_found(m, 1)
@@ -773,7 +928,7 @@ func _create_bot_match_for_account(account_human: int, ctx: Dictionary) -> Dicti
 		{1: peer, 2: BOT_SEAT},
 		{1: account_human, 2: 0},
 		{1: name, 2: "Bot"},
-		2, true, ctx
+		2, true, ctx, int(ctx.get("match_format", 1))
 	)
 	if peer > 0:
 		_send_match_found(m, 1)
@@ -807,6 +962,10 @@ func _finish_tournament_match(m: Dictionary, winner: int, ctx: Dictionary) -> vo
 			"points_delta": 0, "points_total": 0, "new_rank": 0,
 			"quest_completions": [], "quest_points": 0,
 			"tournament_ctx": ctx,
+			"match_id": m.id,
+			"match_format": int(m.get("match_format", 1)),
+			"games_won": int(m.series_wins.get(seat, 0)),
+			"games_won_opponent": int(m.series_wins.get(3 - seat, 0)),
 		})
 
 	_record_tournament_result(m, actual_winner, ctx)
@@ -834,8 +993,10 @@ func _record_tournament_result(m: Dictionary, winner: int, ctx: Dictionary) -> v
 	slot.winner_is_bot = winner_acc_id == 0
 	slot.winner_account_id = winner_acc_id
 	var seat_for_a := 1 if int(m.account_ids[1]) == int(slot.account_id_a) else 2
-	slot.score_a = int(m.engine.scores[seat_for_a])
-	slot.score_b = int(m.engine.scores[3 - seat_for_a])
+	# Games won (not the last game's card score) so a Bo3/Bo5 bracket reads as
+	# "2-1", not just whatever the deciding game's score happened to be.
+	slot.score_a = int(m.series_wins.get(seat_for_a, 0))
+	slot.score_b = int(m.series_wins.get(3 - seat_for_a, 0))
 
 	if loser_acc_id != 0:
 		for p in (t.participants as Array):
@@ -854,8 +1015,8 @@ func _record_tournament_result(m: Dictionary, winner: int, ctx: Dictionary) -> v
 # =========================================================================
 
 func create_tournament(name: String, bracket_size: int, signup_close_ts: int,
-		check_in_open_ts: int, start_ts: int, is_dev_bot: bool) -> void:
-	_rpc_create_tournament.rpc_id(1, name, bracket_size, signup_close_ts, check_in_open_ts, start_ts, is_dev_bot)
+		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1) -> void:
+	_rpc_create_tournament.rpc_id(1, name, bracket_size, signup_close_ts, check_in_open_ts, start_ts, is_dev_bot, match_format)
 
 
 func list_tournaments() -> void:
@@ -864,6 +1025,13 @@ func list_tournaments() -> void:
 
 func join_tournament(tournament_id: int) -> void:
 	_rpc_join_tournament.rpc_id(1, tournament_id)
+
+
+## Withdraw from a tournament's sign-up list — only works while it's still in
+## "signup" status (before check-in opens); the UI only shows the Cancel
+## button then too, but the server re-checks regardless.
+func withdraw_tournament(tournament_id: int) -> void:
+	_rpc_withdraw_tournament.rpc_id(1, tournament_id)
 
 
 func tournament_check_in(tournament_id: int) -> void:
@@ -876,9 +1044,17 @@ func request_tournament(tournament_id: int) -> void:
 	_rpc_request_tournament.rpc_id(1, tournament_id)
 
 
+## "Which live tournament (if any) am I signed up for?" — fires
+## my_tournament_status({} if none) with the full record if so. Session calls
+## this on login/menu load so the menu's status card survives a relog instead
+## of only ever appearing reactively from signals fired during THIS session.
+func request_my_tournament() -> void:
+	_rpc_request_my_tournament.rpc_id(1)
+
+
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: int,
-		check_in_open_ts: int, start_ts: int, is_dev_bot: bool) -> void:
+		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1) -> void:
 	if not is_server or is_solo:
 		return
 	var peer_id := multiplayer.get_remote_sender_id()
@@ -893,7 +1069,7 @@ func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: in
 		return
 	var res := _store.create_tournament(
 		int(account.id), name, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
-		is_dev_bot, _dev_tournaments
+		is_dev_bot, _dev_tournaments, match_format
 	)
 	_rpc_tournament_created.rpc_id(peer_id, res)
 
@@ -917,6 +1093,20 @@ func _rpc_join_tournament(tournament_id: int) -> void:
 		_rpc_receive_error.rpc_id(peer_id, "Not authenticated.")
 		return
 	_rpc_tournament_join_result.rpc_id(peer_id, _store.sign_up(tournament_id, int(_peer_account[peer_id])))
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_withdraw_tournament(tournament_id: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not _require_auth(peer_id):
+		_rpc_receive_error.rpc_id(peer_id, "Not authenticated.")
+		return
+	var res := _store.withdraw(tournament_id, int(_peer_account[peer_id]))
+	_rpc_tournament_withdraw_result.rpc_id(peer_id, res)
+	if bool(res.get("ok", false)):
+		_broadcast_tournament(res.tournament)
 
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -945,6 +1135,32 @@ func _rpc_request_tournament(tournament_id: int) -> void:
 		_rpc_tournament_snapshot.rpc_id(peer_id, t)
 
 
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_request_my_tournament() -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not _require_auth(peer_id):
+		return
+	var acc_id := int(_peer_account[peer_id])
+	var found := []
+	for t in _store.all_tournaments():
+		if str(t.status) in ["completed", "cancelled"]:
+			continue
+		for p in (t.participants as Array):
+			if int(p.account_id) == acc_id:
+				found.append(t)
+				break
+	_rpc_my_tournament_status.rpc_id(peer_id, found)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_my_tournament_status(tournaments: Array) -> void:
+	if is_server:
+		return
+	my_tournament_status.emit(tournaments)
+
+
 @rpc("authority", "call_remote", "reliable")
 func _rpc_tournament_created(result: Dictionary) -> void:
 	if is_server:
@@ -964,6 +1180,13 @@ func _rpc_tournament_join_result(result: Dictionary) -> void:
 	if is_server:
 		return
 	tournament_joined.emit(result)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_tournament_withdraw_result(result: Dictionary) -> void:
+	if is_server:
+		return
+	tournament_withdrawn.emit(result)
 
 
 @rpc("authority", "call_remote", "reliable")
@@ -997,6 +1220,9 @@ func _on_peer_disconnected(peer_id: int) -> void:
 
 	_queue = _queue.filter(func(e): return e.peer_id != peer_id)
 	_peer_tournament_lock.erase(peer_id)
+	for key in _custom_games.keys().duplicate():
+		if int(_custom_games[key].creator_peer_id) == peer_id:
+			_custom_games.erase(key)
 
 	if _peer_token.has(peer_id):
 		var tok: String = _peer_token[peer_id]
@@ -1154,6 +1380,38 @@ func _rpc_set_background(background: String) -> void:
 	_rpc_background_result.rpc_id(peer_id, _store.account_snapshot(res.account))
 
 
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_set_sleeve(sleeve: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not _require_auth(peer_id):
+		_rpc_receive_error.rpc_id(peer_id, "Not authenticated.")
+		return
+	var acc_id := int(_peer_account[peer_id])
+	var res := _store.set_sleeve(acc_id, Sleeves.sanitize(sleeve))
+	if not res.ok:
+		_rpc_receive_error.rpc_id(peer_id, "Could not save sleeve.")
+		return
+	_rpc_sleeve_result.rpc_id(peer_id, _store.account_snapshot(res.account))
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_shop_purchase(item_id: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not _require_auth(peer_id):
+		_rpc_receive_error.rpc_id(peer_id, "Not authenticated.")
+		return
+	var acc_id := int(_peer_account[peer_id])
+	var res := _store.purchase(acc_id, item_id)
+	if not res.ok:
+		_rpc_receive_error.rpc_id(peer_id, "Purchase failed: %s" % res.get("error", "unknown error"))
+		return
+	_rpc_shop_purchase_result.rpc_id(peer_id, _store.account_snapshot(res.account))
+
+
 # =========================================================================
 # Matchmaking
 # =========================================================================
@@ -1249,6 +1507,140 @@ func _push_queue_status() -> void:
 	var now := Time.get_ticks_msec()
 	for e in _queue:
 		_rpc_queue_status.rpc_id(e.peer_id, "searching", (now - e.since_ms) / 1000.0)
+
+
+# =========================================================================
+# Custom games (friend invite)
+# =========================================================================
+
+func create_custom_game(name: String, match_format: int) -> void:
+	_rpc_create_custom_game.rpc_id(1, name, match_format)
+
+
+func join_custom_game(name: String) -> void:
+	_rpc_join_custom_game.rpc_id(1, name)
+
+
+## Withdraw a lobby this peer is hosting, if it hasn't been joined yet. Silent
+## no-op if there's nothing to cancel (already joined, already gone, or was
+## never this peer's) — mirrors cancel_queue's "just clean up if there's
+## anything to clean up" shape.
+func cancel_custom_game() -> void:
+	_rpc_cancel_custom_game.rpc_id(1)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_create_custom_game(name: String, match_format: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not _require_auth(peer_id):
+		_rpc_receive_error.rpc_id(peer_id, "Not authenticated.")
+		return
+	if _blocked_by_tournament_lock(peer_id):
+		_rpc_custom_game_created.rpc_id(peer_id, {"ok": false, "error": "tournament_lock", "name": ""})
+		return
+	if _peer_match.has(peer_id):
+		_rpc_custom_game_created.rpc_id(peer_id, {"ok": false, "error": "already_in_match", "name": ""})
+		return
+	for lobby in _custom_games.values():
+		if int(lobby.creator_peer_id) == peer_id:
+			_rpc_custom_game_created.rpc_id(peer_id, {"ok": false, "error": "already_hosting", "name": ""})
+			return
+
+	var clean_name := name.strip_edges()
+	if clean_name.length() < 1 or clean_name.length() > 40:
+		_rpc_custom_game_created.rpc_id(peer_id, {"ok": false, "error": "bad_name", "name": ""})
+		return
+	var key := clean_name.to_lower()
+	if _custom_games.has(key):
+		_rpc_custom_game_created.rpc_id(peer_id, {"ok": false, "error": "name_taken", "name": ""})
+		return
+	var format := match_format if match_format in [1, 3, 5] else 1
+
+	_custom_games[key] = {
+		"name": clean_name,
+		"creator_account_id": int(_peer_account[peer_id]),
+		"creator_peer_id": peer_id,
+		"match_format": format,
+		"created_ms": Time.get_ticks_msec(),
+	}
+	_rpc_custom_game_created.rpc_id(peer_id, {"ok": true, "error": "", "name": clean_name})
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_join_custom_game(name: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not _require_auth(peer_id):
+		_rpc_receive_error.rpc_id(peer_id, "Not authenticated.")
+		return
+	if _blocked_by_tournament_lock(peer_id):
+		_rpc_custom_game_join_result.rpc_id(peer_id, {"ok": false, "error": "tournament_lock", "name": ""})
+		return
+	if _peer_match.has(peer_id):
+		_rpc_custom_game_join_result.rpc_id(peer_id, {"ok": false, "error": "already_in_match", "name": ""})
+		return
+
+	var key := name.strip_edges().to_lower()
+	if not _custom_games.has(key):
+		# Covers "never existed", "typo'd", and "someone else already joined
+		# it" (a joined lobby is erased immediately below) all with one error —
+		# with exactly 2 seats, "full" and "gone" are indistinguishable to a
+		# second would-be joiner anyway.
+		_rpc_custom_game_join_result.rpc_id(peer_id, {"ok": false, "error": "not_found", "name": ""})
+		return
+	var lobby: Dictionary = _custom_games[key]
+	if int(lobby.creator_peer_id) == peer_id:
+		_rpc_custom_game_join_result.rpc_id(peer_id, {"ok": false, "error": "cant_join_own_game", "name": ""})
+		return
+	if not _peer_account.has(int(lobby.creator_peer_id)):
+		# Defensive: the creator's peer disconnect should already have erased
+		# this lobby (see _on_peer_disconnected) — but never hand a joiner a
+		# match against a peer that isn't there any more.
+		_custom_games.erase(key)
+		_rpc_custom_game_join_result.rpc_id(peer_id, {"ok": false, "error": "not_found", "name": ""})
+		return
+
+	# Consumed immediately (before any further await/broadcast work) so a
+	# second near-simultaneous join attempt sees "not_found", never a race
+	# where both joiners think they got in.
+	_custom_games.erase(key)
+	var joiner_account := int(_peer_account[peer_id])
+	_rpc_custom_game_join_result.rpc_id(peer_id, {"ok": true, "error": "", "name": lobby.name})
+	_create_custom_match(lobby, peer_id, joiner_account)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_cancel_custom_game() -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	for key in _custom_games.keys():
+		if int(_custom_games[key].creator_peer_id) == peer_id:
+			_custom_games.erase(key)
+			return
+
+
+func _create_custom_match(lobby: Dictionary, joiner_peer: int, joiner_account: int) -> void:
+	var creator_peer: int = int(lobby.creator_peer_id)
+	var creator_account: int = int(lobby.creator_account_id)
+	var engine := GameEngine.new(CardLoader.load_cards())
+	engine.deal_hands()
+	var name_a := str(_store.get_account(creator_account).get("display_name", "Player"))
+	var name_b := str(_store.get_account(joiner_account).get("display_name", "Player"))
+	var m := _new_match(
+		engine,
+		{1: creator_peer, 2: joiner_peer},
+		{1: creator_account, 2: joiner_account},
+		{1: name_a, 2: name_b},
+		0, false, {}, int(lobby.match_format)
+	)
+	m.is_custom_match = true
+	_send_match_found(m, 1)
+	_send_match_found(m, 2)
+	_broadcast_match(m)
 
 
 func _create_pvp_match(a: Dictionary, b: Dictionary) -> void:
@@ -1435,6 +1827,20 @@ func _rpc_match_found(info: Dictionary) -> void:
 
 
 @rpc("authority", "call_remote", "reliable")
+func _rpc_custom_game_created(result: Dictionary) -> void:
+	if is_server:
+		return
+	custom_game_created.emit(result)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_custom_game_join_result(result: Dictionary) -> void:
+	if is_server:
+		return
+	custom_game_join_result.emit(result)
+
+
+@rpc("authority", "call_remote", "reliable")
 func _rpc_match_ended(summary: Dictionary) -> void:
 	if is_server:
 		return
@@ -1474,6 +1880,27 @@ func _rpc_background_result(account: Dictionary) -> void:
 	if is_server:
 		return
 	background_updated.emit(account)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_sleeve_result(account: Dictionary) -> void:
+	if is_server:
+		return
+	sleeve_updated.emit(account)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_shop_purchase_result(account: Dictionary) -> void:
+	if is_server:
+		return
+	shop_purchase_result.emit(account)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_achievements_unlocked(newly: Array) -> void:
+	if is_server:
+		return
+	achievements_unlocked.emit(newly)
 
 
 @rpc("authority", "call_remote", "reliable")

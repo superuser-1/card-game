@@ -7,7 +7,15 @@
 [ext_resource type="Texture2D" uid="uid://cq4oy7liifv1d" path="res://assets/ladder.png" id="5_ladder"]
 [ext_resource type="Texture2D" uid="uid://bgoj2g1o5gsmu" path="res://assets/Deckbuilder.png" id="6_deck"]
 [ext_resource type="Texture2D" uid="uid://ve8ow1gajqkk" path="res://assets/options.png" id="7_options"]
+[ext_resource type="Texture2D" uid="uid://b6vqljwjccfx7" path="res://assets/ranked.png" id="8_ranked"]
+[ext_resource type="Texture2D" uid="uid://baad0mbh1wsgb" path="res://assets/tournament.png" id="9_tournament"]
+[ext_resource type="Texture2D" uid="uid://d05kgn1t6ruj6" path="res://assets/custom.png" id="10_custom"]
+[ext_resource type="Texture2D" uid="uid://bx4pw23q7ddk0" path="res://assets/custom_friend.png" id="11_custom_friend"]
+[ext_resource type="Texture2D" uid="uid://dk1lpsmsu7h72" path="res://assets/custom_tournament.png" id="12_custom_tournament"]
+[ext_resource type="Texture2D" uid="uid://desbgniuwgfr8" path="res://assets/join_custom.png" id="13_join_custom"]
 [ext_resource type="Shader" path="res://client/frame_overlay.gdshader" id="8_frame_shader"]
+[ext_resource type="Texture2D" uid="uid://ci0a7g0bnsgh3" path="res://assets/shop.png" id="14_shop"]
+[ext_resource type="Texture2D" uid="uid://dc36u34ymhtyy" path="res://assets/achievements.png" id="15_achievements"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_frame_overlay"]
 shader = ExtResource("8_frame_shader")
@@ -93,7 +101,15 @@ custom_minimum_size = Vector2(126, 126)
 layout_mode = 2
 theme_override_styles/panel = SubResource("sb_avatar_tile")
 
-[node name="PortraitBgImage" type="TextureRect" parent="TopBar/AvatarFrame" unique_id=1632728412]
+[node name="PortraitBgMargin" type="MarginContainer" parent="TopBar/AvatarFrame"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 3
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 3
+theme_override_constants/margin_bottom = 3
+
+[node name="PortraitBgImage" type="TextureRect" parent="TopBar/AvatarFrame/PortraitBgMargin"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -120,8 +136,9 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="AccountPanel" type="PanelContainer" parent="TopBar" unique_id=2133547091]
+custom_minimum_size = Vector2(230, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 0
 theme_override_styles/panel = SubResource("sb_panel")
 
 [node name="AccountVBox" type="VBoxContainer" parent="TopBar/AccountPanel" unique_id=873368517]
@@ -156,6 +173,12 @@ size_flags_vertical = 8
 theme_override_font_sizes/font_size = 11
 text = "Log out"
 flat = true
+
+[node name="TournamentStatusContainer" type="HBoxContainer" parent="TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
 
 [node name="MenuGrid" type="GridContainer" parent="." unique_id=2002909414]
 unique_name_in_owner = true
@@ -233,6 +256,38 @@ texture_normal = ExtResource("7_options")
 ignore_texture_size = true
 stretch_mode = 6
 
+[node name="ShopButton" type="TextureButton" parent="." unique_id=1]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 221.0
+offset_top = -98.0
+offset_right = 365.0
+offset_bottom = -25.0
+grow_vertical = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("14_shop")
+ignore_texture_size = true
+stretch_mode = 6
+
+[node name="AchievementsButton" type="TextureButton" parent="." unique_id=2]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 381.0
+offset_top = -98.0
+offset_right = 525.0
+offset_bottom = -25.0
+grow_vertical = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("15_achievements")
+ignore_texture_size = true
+stretch_mode = 6
+
 [node name="MultiplayerGrid" type="GridContainer" parent="."]
 unique_name_in_owner = true
 visible = false
@@ -250,34 +305,99 @@ theme_override_constants/h_separation = 22
 theme_override_constants/v_separation = 22
 columns = 2
 
-[node name="RankedButton" type="Button" parent="MultiplayerGrid"]
+[node name="RankedButton" type="TextureButton" parent="MultiplayerGrid"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 210)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
-text = "Ranked Play"
+texture_normal = ExtResource("8_ranked")
+ignore_texture_size = true
+stretch_mode = 6
 
-[node name="TournamentButton" type="Button" parent="MultiplayerGrid"]
+[node name="TournamentButton" type="TextureButton" parent="MultiplayerGrid"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 210)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
-text = "Tournament Play"
+texture_normal = ExtResource("9_tournament")
+ignore_texture_size = true
+stretch_mode = 6
 
-[node name="CustomGameButton" type="Button" parent="MultiplayerGrid"]
+[node name="CustomGameButton" type="TextureButton" parent="MultiplayerGrid"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 210)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
-text = "Custom Game"
+texture_normal = ExtResource("10_custom")
+ignore_texture_size = true
+stretch_mode = 6
 
 [node name="MpPlaceholderButton" type="Button" parent="MultiplayerGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+text = "Coming Soon"
+
+[node name="CustomGrid" type="GridContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 60.0
+offset_top = 165.0
+offset_right = -332.0
+offset_bottom = -113.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 22
+theme_override_constants/v_separation = 22
+columns = 2
+
+[node name="CustomFriendInviteButton" type="TextureButton" parent="CustomGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("11_custom_friend")
+ignore_texture_size = true
+stretch_mode = 6
+
+[node name="CreateTournamentButton" type="TextureButton" parent="CustomGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("12_custom_tournament")
+ignore_texture_size = true
+stretch_mode = 6
+
+[node name="JoinCustomGameButton" type="TextureButton" parent="CustomGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("13_join_custom")
+ignore_texture_size = true
+stretch_mode = 6
+
+[node name="CustomPlaceholder2Button" type="Button" parent="CustomGrid"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 210)
 layout_mode = 2

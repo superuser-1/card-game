@@ -1,15 +1,27 @@
 extends Control
 
+const BracketCanvasScript := preload("res://client/bracket_canvas.gd")
+
 var _tournament_id := 0
 var _tournament: Dictionary = {}
+var _bracket_canvas: Control = null
 
 
 func _ready() -> void:
 	%BackButton.pressed.connect(func(): Session.goto("res://client/main_menu.tscn"))
 
-	_tournament_id = Session.active_tournament_id
-	if _tournament_id == 0:
-		_tournament_id = int(get_tree().get_meta("browse_tournament_id", 0))
+	# An explicit "View Bracket" click always wins over whichever tournament we
+	# happen to be actively checked into — otherwise, with a live check-in,
+	# every click here would show that same active tournament regardless of
+	# which one was actually clicked. The meta is a one-shot handoff (cleared
+	# immediately after reading) so it can never leak into a LATER automatic
+	# load of this screen (e.g. the between-rounds redirect for our own live
+	# run), which must fall back to Session.active_tournament_id instead.
+	var browse_tid := 0
+	if get_tree().has_meta("browse_tournament_id"):
+		browse_tid = int(get_tree().get_meta("browse_tournament_id"))
+		get_tree().remove_meta("browse_tournament_id")
+	_tournament_id = browse_tid if browse_tid != 0 else Session.active_tournament_id
 
 	if _tournament_id == 0:
 		%ErrorLabel.visible = true
@@ -65,31 +77,15 @@ func _render_bracket() -> void:
 	%ParticipantsList.visible = false
 	%ScrollContainer.visible = true
 
-	var rounds_hbox = %RoundsHBox
-	for child in rounds_hbox.get_children():
-		child.queue_free()
-
-	var bracket_size := int(_tournament.get("bracket_size", 0))
 	var current_round := int(_tournament.get("current_round", 0))
 	var my_id := int(Session.account.get("id", 0))
 	var is_my_tournament := Session.active_tournament_id == _tournament_id
 
-	for round_idx in range(len(rounds)):
-		var round_slots = rounds[round_idx]
-		var round_vbox := VBoxContainer.new()
-		round_vbox.add_theme_constant_override("separation", 8)
-
-		var round_label := Label.new()
-		round_label.text = "Round %d" % (round_idx + 1)
-		round_label.add_theme_font_size_override("font_size", 12)
-		round_label.modulate = Color(1, 1, 1, 0.6)
-		round_vbox.add_child(round_label)
-
-		for slot in round_slots:
-			var slot_panel := _make_slot_display(slot, participants)
-			round_vbox.add_child(slot_panel)
-
-		rounds_hbox.add_child(round_vbox)
+	if _bracket_canvas == null:
+		_bracket_canvas = Control.new()
+		_bracket_canvas.set_script(BracketCanvasScript)
+		%RoundsHBox.add_child(_bracket_canvas)
+	_bracket_canvas.set_data(rounds, participants, my_id)
 
 	%WaitingLabel.visible = false
 	if is_my_tournament and status == "in_progress":
@@ -131,65 +127,6 @@ func _render_participants_list(participants: Array) -> void:
 		p_hbox.add_child(status_label)
 
 		%ParticipantsList.add_child(p_hbox)
-
-
-func _make_slot_display(slot: Dictionary, participants: Array) -> PanelContainer:
-	var panel := PanelContainer.new()
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.08, 0.08, 0.10, 0.9)
-	sb.border_color = Color(1, 1, 1, 0.1)
-	sb.set_border_width_all(1)
-	sb.set_corner_radius_all(6)
-	sb.set_content_margin_all(8)
-	panel.add_theme_stylebox_override("panel", sb)
-
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 4)
-
-	var account_id_a := int(slot.get("account_id_a", 0))
-	var account_id_b := int(slot.get("account_id_b", 0))
-	var is_bot_a := bool(slot.get("is_bot_a", false))
-	var is_bot_b := bool(slot.get("is_bot_b", false))
-	var resolved := bool(slot.get("resolved", false))
-	var winner_account_id := int(slot.get("winner_account_id", 0))
-	var winner_is_bot := bool(slot.get("winner_is_bot", false))
-	var score_a := int(slot.get("score_a", 0))
-	var score_b := int(slot.get("score_b", 0))
-
-	var name_a := _get_display_name(account_id_a, is_bot_a, participants)
-	var name_b := _get_display_name(account_id_b, is_bot_b, participants)
-
-	var label_a := Label.new()
-	label_a.text = "%s — %d" % [name_a, score_a]
-	label_a.add_theme_font_size_override("font_size", 13)
-	if resolved and ((winner_account_id == account_id_a and not winner_is_bot) or (winner_is_bot and is_bot_a)):
-		label_a.add_theme_color_override("font_color", Color(0.4, 0.9, 0.45))
-		label_a.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.5))
-		label_a.add_theme_constant_override("outline_size", 2)
-	vbox.add_child(label_a)
-
-	var label_b := Label.new()
-	label_b.text = "%s — %d" % [name_b, score_b]
-	label_b.add_theme_font_size_override("font_size", 13)
-	if resolved and ((winner_account_id == account_id_b and not winner_is_bot) or (winner_is_bot and is_bot_b)):
-		label_b.add_theme_color_override("font_color", Color(0.4, 0.9, 0.45))
-		label_b.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.5))
-		label_b.add_theme_constant_override("outline_size", 2)
-	vbox.add_child(label_b)
-
-	panel.add_child(vbox)
-	return panel
-
-
-func _get_display_name(account_id: int, is_bot: bool, participants: Array) -> String:
-	if is_bot or account_id == 0:
-		return "Bot"
-
-	for p in participants:
-		if int(p.get("account_id", -1)) == account_id:
-			return str(p.get("display_name", "Unknown"))
-
-	return "Unknown"
 
 
 func _get_winner_name() -> String:

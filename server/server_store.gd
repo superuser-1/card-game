@@ -117,6 +117,7 @@ func create_account(username: String, password: String, avatar := "") -> Diction
 		"avatar": avatar_id,
 		"frame": "",
 		"background": "",
+		"sleeve": "",
 		"auth_provider": "password",
 		"pw_salt": hashed["salt"],
 		"pw_hash": hashed["hash"],
@@ -131,6 +132,8 @@ func create_account(username: String, password: String, avatar := "") -> Diction
 		"season_id": 1,
 		"created_ts": int(Time.get_unix_time_from_system()),
 		"quests": {"day": "", "state": {}},
+		"stats": {},
+		"achievements": {"unlocked": {}},
 		"is_admin": false,
 	}
 	_accounts.append(account)
@@ -177,6 +180,8 @@ func set_avatar(account_id: int, avatar_id: String) -> Dictionary:
 	var clean := avatar_id.strip_edges()
 	if clean == "" or clean.length() > 40:
 		return {"ok": false, "error": "bad_avatar", "account": {}}
+	if ShopCatalog.is_premium(clean) and clean not in account.get("owned_rewards", []):
+		return {"ok": false, "error": "not_owned", "account": {}}
 	account["avatar"] = clean
 	_save_accounts()
 	return {"ok": true, "error": "", "account": account}
@@ -193,6 +198,8 @@ func set_frame(account_id: int, frame_id: String) -> Dictionary:
 	var clean := frame_id.strip_edges()
 	if clean.length() > 40:
 		return {"ok": false, "error": "bad_frame", "account": {}}
+	if ShopCatalog.is_premium(clean) and clean not in account.get("owned_rewards", []):
+		return {"ok": false, "error": "not_owned", "account": {}}
 	account["frame"] = clean
 	_save_accounts()
 	return {"ok": true, "error": "", "account": account}
@@ -209,12 +216,33 @@ func set_background(account_id: int, background_id: String) -> Dictionary:
 	var clean := background_id.strip_edges()
 	if clean.length() > 40:
 		return {"ok": false, "error": "bad_background", "account": {}}
+	if ShopCatalog.is_premium(clean) and clean not in account.get("owned_rewards", []):
+		return {"ok": false, "error": "not_owned", "account": {}}
 	account["background"] = clean
 	_save_accounts()
 	return {"ok": true, "error": "", "account": account}
 
 
+## Store a chosen sleeve id (face-down card art) on an existing account. Unlike
+## avatars, "" (no sleeve/use default) is a valid choice — it un-equips whatever
+## sleeve was set. The RPC layer runs the id through Sleeves.sanitize first so
+## only real ids (or "") reach disk.
+func set_sleeve(account_id: int, sleeve_id: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+	var clean := sleeve_id.strip_edges()
+	if clean.length() > 40:
+		return {"ok": false, "error": "bad_sleeve", "account": {}}
+	if ShopCatalog.is_premium(clean) and clean not in account.get("owned_rewards", []):
+		return {"ok": false, "error": "not_owned", "account": {}}
+	account["sleeve"] = clean
+	_save_accounts()
+	return {"ok": true, "error": "", "account": account}
+
+
 func account_snapshot(account: Dictionary) -> Dictionary:
+	_ensure_stats(account)
 	return {
 		"id": account.get("id"),
 		"username": account.get("username"),
@@ -222,6 +250,7 @@ func account_snapshot(account: Dictionary) -> Dictionary:
 		"avatar": account.get("avatar", ""),
 		"frame": account.get("frame", ""),
 		"background": account.get("background", ""),
+		"sleeve": account.get("sleeve", ""),
 		"elo": account.get("elo"),
 		"games": account.get("games"),
 		"wins": account.get("wins"),
@@ -231,6 +260,10 @@ func account_snapshot(account: Dictionary) -> Dictionary:
 		"owned_rewards": (account.get("owned_rewards", []) as Array).duplicate(),
 		"is_provisional": int(account.get("games", 0)) < PROVISIONAL_GAMES,
 		"quests": _quest_rows(QuestSystem.ensure_day(account.get("quests", {}), QuestSystem.today_key())),
+		"stats": (account.get("stats", {}) as Dictionary).duplicate(),
+		"achievements": {
+			"unlocked": (account.get("achievements", {}).get("unlocked", {}) as Dictionary).duplicate()
+		},
 	}
 
 
@@ -264,6 +297,151 @@ func apply_quest_progress(account_id: int, match_ctx: Dictionary, day_override :
 		"points_total": int(account.get("points", 0)),
 		"quests": _quest_rows(normalised),
 	}
+
+
+## Credit `points_award` into account["points"] and grant every id in
+## `item_ids` the account does not already own. Persists. Returns
+## {"points_total": int, "granted": Array of newly-owned ids}.
+func grant_reward(account: Dictionary, points_award: int, item_ids: Array) -> Dictionary:
+	if int(points_award) > 0:
+		account["points"] = int(account.get("points", 0)) + int(points_award)
+	var granted := []
+	var owned: Array = account.get("owned_rewards", [])
+	for id in item_ids:
+		var id_str := str(id)
+		if id_str != "" and id_str not in owned:
+			owned.append(id_str)
+			granted.append(id_str)
+	_save_accounts()
+	return {
+		"points_total": int(account.get("points", 0)),
+		"granted": granted,
+	}
+
+
+## Purchase a shop item. Returns error dict if the purchase fails, or
+## {"ok": true, "error": "", "account": account} on success.
+func purchase(account_id: int, item_id: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+
+	var def := ShopCatalog.def_for(item_id)
+	if def.is_empty():
+		return {"ok": false, "error": "no_such_item", "account": {}}
+	if str(def.source) != "shop":
+		return {"ok": false, "error": "not_for_sale", "account": {}}
+
+	var owned: Array = account.get("owned_rewards", [])
+	if item_id in owned:
+		return {"ok": false, "error": "already_owned", "account": {}}
+
+	var price := int(def.price)
+	var points := int(account.get("points", 0))
+	if points < price:
+		return {"ok": false, "error": "insufficient", "account": {}}
+
+	account["points"] = points - price
+	owned.append(item_id)
+	_save_accounts()
+	return {"ok": true, "error": "", "account": account}
+
+
+## Ensure account has stats and achievements dicts initialized.
+func _ensure_stats(account: Dictionary) -> void:
+	if not account.has("stats") or typeof(account["stats"]) != TYPE_DICTIONARY:
+		account["stats"] = {}
+	if not account.has("achievements") or typeof(account["achievements"]) != TYPE_DICTIONARY:
+		account["achievements"] = {"unlocked": {}}
+	if not account["achievements"].has("unlocked"):
+		account["achievements"]["unlocked"] = {}
+
+
+## Apply a ranked, non-bot match result to this account's stats and achievements.
+## Mutates + persists the account. Called from net_node._finish_match.
+## Returns:
+##   {"achievement_unlocks": Array, "achievement_points": int}
+func apply_match_stats(account_id: int, match_ctx: Dictionary) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		push_error("ServerStore.apply_match_stats: account not found: %d" % account_id)
+		return {"achievement_unlocks": [], "achievement_points": 0}
+
+	_ensure_stats(account)
+	var stats: Dictionary = account["stats"]
+
+	# Bump match counters
+	stats["games"] = int(stats.get("games", 0)) + 1
+	match str(match_ctx.get("outcome", "")):
+		"win":
+			stats["wins"] = int(stats.get("wins", 0)) + 1
+			stats["win_streak_current"] = int(stats.get("win_streak_current", 0)) + 1
+		"loss":
+			stats["losses"] = int(stats.get("losses", 0)) + 1
+			stats["win_streak_current"] = 0
+		"draw":
+			stats["draws"] = int(stats.get("draws", 0)) + 1
+			stats["win_streak_current"] = 0
+
+	# Update best streak
+	var current_streak := int(stats.get("win_streak_current", 0))
+	var best_streak := int(stats.get("win_streak_best", 0))
+	if current_streak > best_streak:
+		stats["win_streak_best"] = current_streak
+
+	# Perfect win: your_score >= 7 && opp_score == 0 && outcome == win
+	if str(match_ctx.get("outcome", "")) == "win" \
+			and int(match_ctx.get("your_score", 0)) >= 7 \
+			and int(match_ctx.get("opp_score", 0)) == 0:
+		stats["perfect_wins"] = int(stats.get("perfect_wins", 0)) + 1
+
+	# Group wins (money/time/awards)
+	var picks: Dictionary = match_ctx.get("your_group_picks", {})
+	var pick_count := int(match_ctx.get("your_pick_count", 0))
+	if str(match_ctx.get("outcome", "")) == "win":
+		for group in ["money", "time", "awards"]:
+			var in_group := int(picks.get(group, 0))
+			if in_group >= 2 and in_group == pick_count:
+				var key := "%s_games_won" % group
+				stats[key] = int(stats.get(key, 0)) + 1
+
+	# Points earned total (from match points delta)
+	var points_delta := ServerStore.points_delta(str(match_ctx.get("outcome", "")))
+	stats["points_earned_total"] = int(stats.get("points_earned_total", 0)) + points_delta
+
+	# Evaluate achievements
+	var ach_res := AchievementSystem.evaluate(stats, account["achievements"]["unlocked"])
+	account["achievements"]["unlocked"] = ach_res["unlocked"]
+
+	# Grant rewards (do NOT include achievement payouts in points_earned_total)
+	grant_reward(account, int(ach_res["points_awarded"]), ach_res["reward_ids"])
+
+	return {
+		"achievement_unlocks": ach_res["newly"],
+		"achievement_points": int(ach_res["points_awarded"]),
+	}
+
+
+## Apply a tournament stat bump (tournaments_played or tournaments_won).
+## Mutates, evaluates achievements, grants rewards, persists.
+## Returns newly-unlocked achievements list (for out-of-band push to client).
+func apply_tournament_stat(account_id: int, key: String) -> Array:
+	var account := get_account(account_id)
+	if account.is_empty():
+		push_error("ServerStore.apply_tournament_stat: account not found: %d" % account_id)
+		return []
+
+	_ensure_stats(account)
+	var stats: Dictionary = account["stats"]
+
+	if key in ["tournaments_played", "tournaments_won"]:
+		stats[key] = int(stats.get(key, 0)) + 1
+
+	var ach_res := AchievementSystem.evaluate(stats, account["achievements"]["unlocked"])
+	account["achievements"]["unlocked"] = ach_res["unlocked"]
+	grant_reward(account, int(ach_res["points_awarded"]), ach_res["reward_ids"])
+
+	return ach_res["newly"]
 
 
 ## Flat rows for the client (menu quest panel + result screen). Reads a
@@ -539,7 +717,7 @@ func is_admin_account(account: Dictionary) -> bool:
 ## per the locked design — sign-ups close exactly when check-in opens).
 func create_tournament(created_by: int, name: String, requested_bracket_size: int,
 		signup_close_ts: int, check_in_open_ts: int, start_ts: int,
-		is_dev_bot: bool, allow_small := false) -> Dictionary:
+		is_dev_bot: bool, allow_small := false, requested_match_format := 1) -> Dictionary:
 	var clean_name := name.strip_edges()
 	if clean_name.length() < 1 or clean_name.length() > 60:
 		return {"ok": false, "error": "bad_name", "tournament": {}}
@@ -547,12 +725,16 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		return {"ok": false, "error": "bad_schedule", "tournament": {}}
 
 	var bracket_size := TournamentSystem.resolve_bracket_size(requested_bracket_size, allow_small)
+	# Only Bo1/Bo3/Bo5 are valid match formats; anything else silently falls
+	# back to Bo1 rather than rejecting the whole creation call.
+	var match_format := requested_match_format if requested_match_format in [1, 3, 5] else 1
 	var tournament := {
 		"id": _next_tournament_id,
 		"name": clean_name,
 		"created_by_account_id": created_by,
 		"is_dev_bot_tournament": is_dev_bot,
 		"bracket_size": bracket_size,
+		"match_format": match_format,
 		"status": "signup",
 		"signup_close_ts": signup_close_ts,
 		"check_in_open_ts": check_in_open_ts,
@@ -581,6 +763,7 @@ func list_tournaments(status_filter := "") -> Array:
 			"status": t.status,
 			"is_dev_bot_tournament": t.is_dev_bot_tournament,
 			"bracket_size": t.bracket_size,
+			"match_format": t.get("match_format", 1),
 			"participant_count": (t.participants as Array).size(),
 			"signup_close_ts": t.signup_close_ts,
 			"check_in_open_ts": t.check_in_open_ts,
@@ -619,6 +802,14 @@ func sign_up(tournament_id: int, account_id: int) -> Dictionary:
 	participants.append({
 		"account_id": account_id,
 		"display_name": str(account.get("display_name", "Player")),
+		# Snapshotted at signup time (same convention as display_name) so the
+		# bracket card shows what this account looked like when it joined,
+		# not a live-updating portrait — consistent, simpler, and avoids
+		# needing a lookup back to ServerStore just to render a bracket.
+		"avatar": str(account.get("avatar", "")),
+		"frame": str(account.get("frame", "")),
+		"background": str(account.get("background", "")),
+		"elo": int(account.get("elo", START_ELO)),
 		"signed_up_ts": int(Time.get_unix_time_from_system()),
 		"checked_in": false,
 		"eliminated_round": 0,
@@ -639,6 +830,25 @@ func check_in(tournament_id: int, account_id: int) -> Dictionary:
 			if bool(p.checked_in):
 				return {"ok": false, "error": "already_checked_in", "tournament": t}
 			p.checked_in = true
+			_save_tournaments()
+			return {"ok": true, "error": "", "tournament": t}
+	return {"ok": false, "error": "not_signed_up", "tournament": {}}
+
+
+## Withdraws a signed-up participant. Allowed only while status is "signup" —
+## once check-in opens, the bracket-fill logic (bot-replaces-no-show) already
+## handles a missing player, and letting someone un-sign-up mid-check-in would
+## complicate that; a plain cancel is a pre-check-in-only courtesy.
+func withdraw(tournament_id: int, account_id: int) -> Dictionary:
+	var t := get_tournament(tournament_id)
+	if t.is_empty():
+		return {"ok": false, "error": "no_such_tournament", "tournament": {}}
+	if str(t.status) != "signup":
+		return {"ok": false, "error": "too_late", "tournament": {}}
+	var participants: Array = t.participants
+	for i in range(participants.size()):
+		if int(participants[i].account_id) == account_id:
+			participants.remove_at(i)
 			_save_tournaments()
 			return {"ok": true, "error": "", "tournament": t}
 	return {"ok": false, "error": "not_signed_up", "tournament": {}}

@@ -37,10 +37,10 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -240.0
-offset_top = -280.0
+offset_top = -310.0
 offset_right = 240.0
-offset_bottom = 280.0
-custom_minimum_size = Vector2(480, 560)
+offset_bottom = 310.0
+custom_minimum_size = Vector2(480, 620)
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
@@ -108,6 +108,23 @@ min_value = 1.0
 max_value = 10080.0
 step = 1.0
 value = 5.0
+
+[node name="MatchFormatLabel" type="Label" parent="Panel/MarginContainer/Box"]
+layout_mode = 2
+text = "Match Format"
+theme_override_font_sizes/font_size = 14
+
+[node name="MatchFormatOptionButton" type="OptionButton" parent="Panel/MarginContainer/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+selected = 0
+popup/item_0/text = "Best of 1"
+popup/item_0/id = 0
+popup/item_1/text = "Best of 3"
+popup/item_1/id = 1
+popup/item_2/text = "Best of 5"
+popup/item_2/id = 2
 
 [node name="DevBotLabel" type="Label" parent="Panel/MarginContainer/Box"]
 layout_mode = 2
