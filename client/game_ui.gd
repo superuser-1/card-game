@@ -152,6 +152,7 @@ var _draw_sfx: AudioStreamPlayer = null
 
 
 const MATCH_RESULT_SCENE := "res://client/match_result_screen.tscn"
+const TOURNAMENT_BRACKET_SCENE := "res://client/tournament_bracket_screen.tscn"
 
 func _ready() -> void:
 	Net.player_assigned.connect(_on_player_assigned)
@@ -273,7 +274,11 @@ func _on_match_ended(summary: Dictionary) -> void:
 	# has finished, so the final round still plays out on screen.
 	Session.last_match_summary = summary
 	await _wait_for_reveal_to_finish()
-	if ResourceLoader.exists(MATCH_RESULT_SCENE):
+	var tournament_ctx: Dictionary = summary.get("tournament_ctx", {})
+	if not tournament_ctx.is_empty() and ResourceLoader.exists(TOURNAMENT_BRACKET_SCENE):
+		Session.last_match_info = {}
+		Session.goto(TOURNAMENT_BRACKET_SCENE)
+	elif ResourceLoader.exists(MATCH_RESULT_SCENE):
 		Session.goto(MATCH_RESULT_SCENE)
 	else:
 		_status_label.text = "Match over — %s" % str(summary.get("outcome", ""))

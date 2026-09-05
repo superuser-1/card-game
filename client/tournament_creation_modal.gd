@@ -1,0 +1,75 @@
+extends Control
+
+
+func _ready() -> void:
+	mouse_filter = Control.MOUSE_FILTER_STOP
+
+	Net.tournament_created.connect(_on_tournament_created)
+	%CreateButton.pressed.connect(_on_create_pressed)
+	%CancelButton.pressed.connect(_close)
+
+
+func _on_create_pressed() -> void:
+	var name_text := (%NameLineEdit.text as String).strip_edges()
+	if name_text.is_empty():
+		_toast("Enter a tournament name")
+		return
+
+	var bracket_size := int(%BracketSizeSpinBox.value)
+	var minutes_until_close := int(%MinutesUntilCloseSpinBox.value)
+	var minutes_until_start := int(%MinutesUntilStartSpinBox.value)
+	var is_dev_bot := %DevBotCheckBox.button_pressed
+
+	var now := int(Time.get_unix_time_from_system())
+	var signup_close_ts := now + minutes_until_close * 60
+	var check_in_open_ts := signup_close_ts
+	var start_ts := now + minutes_until_start * 60
+
+	%CreateButton.disabled = true
+	Net.create_tournament(name_text, bracket_size, signup_close_ts, check_in_open_ts, start_ts, is_dev_bot)
+
+
+func _on_tournament_created(result: Dictionary) -> void:
+	%CreateButton.disabled = false
+	if bool(result.get("ok", false)):
+		_toast("Tournament created!")
+		await get_tree().create_timer(0.5).timeout
+		_close()
+	else:
+		var error := str(result.get("error", "Unknown error"))
+		_toast("Error: %s" % error)
+
+
+func _toast(msg: String) -> void:
+	var box := PanelContainer.new()
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.anchor_left = 0.4
+	box.anchor_right = 0.4
+	box.anchor_top = 0.86
+	box.anchor_bottom = 0.86
+	box.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	box.grow_vertical = Control.GROW_DIRECTION_BOTH
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.05, 0.05, 0.07, 0.92)
+	sb.border_color = Color(1, 1, 1, 0.15)
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(8)
+	sb.set_content_margin_all(10)
+	box.add_theme_stylebox_override("panel", sb)
+	var lbl := Label.new()
+	lbl.text = msg
+	lbl.add_theme_font_size_override("font_size", 15)
+	box.add_child(lbl)
+	add_child(box)
+
+	box.modulate.a = 0.0
+	var tw := create_tween()
+	tw.tween_property(box, "modulate:a", 1.0, 0.15)
+	tw.tween_interval(1.4)
+	tw.tween_property(box, "modulate:a", 0.0, 0.4)
+	await tw.finished
+	box.queue_free()
+
+
+func _close() -> void:
+	queue_free()

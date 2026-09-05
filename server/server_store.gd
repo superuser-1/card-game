@@ -25,16 +25,20 @@ const MIN_PASSWORD_LEN := 1
 var _dir: String
 var _accounts: Array
 var _matches: Array
+var _tournaments: Array
 var _next_account_id: int
 var _next_match_id: int
+var _next_tournament_id: int
 
 
 func open(dir := "user://flickbattle/") -> void:
 	_dir = dir
 	_accounts = []
 	_matches = []
+	_tournaments = []
 	_next_account_id = 1
 	_next_match_id = 1
+	_next_tournament_id = 1
 
 	if not DirAccess.dir_exists_absolute(dir):
 		DirAccess.make_dir_recursive_absolute(dir)
@@ -64,6 +68,19 @@ func open(dir := "user://flickbattle/") -> void:
 						_next_match_id = int(m["id"]) + 1
 	else:
 		_save_matches()
+
+	var tournaments_path := dir + "tournaments.json"
+	if FileAccess.file_exists(tournaments_path):
+		var file := FileAccess.open(tournaments_path, FileAccess.READ)
+		if file != null:
+			var parsed = JSON.parse_string(file.get_as_text())
+			if parsed is Dictionary and parsed.has("tournaments"):
+				_tournaments = parsed["tournaments"]
+				for t in _tournaments:
+					if int(t.get("id", 0)) >= _next_tournament_id:
+						_next_tournament_id = int(t["id"]) + 1
+	else:
+		_save_tournaments()
 
 
 # --- auth ------------------------------------------------------------------
@@ -114,6 +131,7 @@ func create_account(username: String, password: String, avatar := "") -> Diction
 		"season_id": 1,
 		"created_ts": int(Time.get_unix_time_from_system()),
 		"quests": {"day": "", "state": {}},
+		"is_admin": false,
 	}
 	_accounts.append(account)
 	_next_account_id += 1
@@ -508,6 +526,131 @@ func recent_matches(account_id: int, limit := 10) -> Array:
 	return out
 
 
+# --- tournaments ------------------------------------------------------------
+
+func is_admin_account(account: Dictionary) -> bool:
+	return bool(account.get("is_admin", false))
+
+
+## Creates a tournament in "signup" status. `bracket_size` is coerced to a
+## power of 2 via TournamentSystem (floor 32 unless `allow_small`, e.g. a dev
+## admin testing with a tiny bracket). Timestamps are unix seconds and must be
+## strictly increasing (signup_close_ts == check_in_open_ts is allowed/typical
+## per the locked design — sign-ups close exactly when check-in opens).
+func create_tournament(created_by: int, name: String, requested_bracket_size: int,
+		signup_close_ts: int, check_in_open_ts: int, start_ts: int,
+		is_dev_bot: bool, allow_small := false) -> Dictionary:
+	var clean_name := name.strip_edges()
+	if clean_name.length() < 1 or clean_name.length() > 60:
+		return {"ok": false, "error": "bad_name", "tournament": {}}
+	if not (signup_close_ts <= check_in_open_ts and check_in_open_ts < start_ts):
+		return {"ok": false, "error": "bad_schedule", "tournament": {}}
+
+	var bracket_size := TournamentSystem.resolve_bracket_size(requested_bracket_size, allow_small)
+	var tournament := {
+		"id": _next_tournament_id,
+		"name": clean_name,
+		"created_by_account_id": created_by,
+		"is_dev_bot_tournament": is_dev_bot,
+		"bracket_size": bracket_size,
+		"status": "signup",
+		"signup_close_ts": signup_close_ts,
+		"check_in_open_ts": check_in_open_ts,
+		"start_ts": start_ts,
+		"rng_seed": 0,
+		"participants": [],
+		"rounds": [],
+		"current_round": 0,
+		"winner_account_id": 0,
+	}
+	_tournaments.append(tournament)
+	_next_tournament_id += 1
+	_save_tournaments()
+	return {"ok": true, "error": "", "tournament": tournament}
+
+
+## Trimmed rows for the browse screen — no bracket payload.
+func list_tournaments(status_filter := "") -> Array:
+	var rows := []
+	for t in _tournaments:
+		if status_filter != "" and str(t.get("status", "")) != status_filter:
+			continue
+		rows.append({
+			"id": t.id,
+			"name": t.name,
+			"status": t.status,
+			"is_dev_bot_tournament": t.is_dev_bot_tournament,
+			"bracket_size": t.bracket_size,
+			"participant_count": (t.participants as Array).size(),
+			"signup_close_ts": t.signup_close_ts,
+			"check_in_open_ts": t.check_in_open_ts,
+			"start_ts": t.start_ts,
+		})
+	rows.sort_custom(func(a, b): return int(a.start_ts) < int(b.start_ts))
+	return rows
+
+
+func get_tournament(id: int) -> Dictionary:
+	for t in _tournaments:
+		if int(t.get("id", -1)) == id:
+			return t
+	return {}
+
+
+func all_tournaments() -> Array:
+	return _tournaments
+
+
+func sign_up(tournament_id: int, account_id: int) -> Dictionary:
+	var t := get_tournament(tournament_id)
+	if t.is_empty():
+		return {"ok": false, "error": "no_such_tournament", "tournament": {}}
+	if str(t.status) != "signup":
+		return {"ok": false, "error": "signup_closed", "tournament": {}}
+	var participants: Array = t.participants
+	for p in participants:
+		if int(p.account_id) == account_id:
+			return {"ok": false, "error": "already_signed_up", "tournament": t}
+	if participants.size() >= int(t.bracket_size):
+		return {"ok": false, "error": "tournament_full", "tournament": {}}
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "tournament": {}}
+	participants.append({
+		"account_id": account_id,
+		"display_name": str(account.get("display_name", "Player")),
+		"signed_up_ts": int(Time.get_unix_time_from_system()),
+		"checked_in": false,
+		"eliminated_round": 0,
+	})
+	_save_tournaments()
+	return {"ok": true, "error": "", "tournament": t}
+
+
+func check_in(tournament_id: int, account_id: int) -> Dictionary:
+	var t := get_tournament(tournament_id)
+	if t.is_empty():
+		return {"ok": false, "error": "no_such_tournament", "tournament": {}}
+	if str(t.status) != "check_in":
+		return {"ok": false, "error": "check_in_not_open", "tournament": {}}
+	var participants: Array = t.participants
+	for p in participants:
+		if int(p.account_id) == account_id:
+			if bool(p.checked_in):
+				return {"ok": false, "error": "already_checked_in", "tournament": t}
+			p.checked_in = true
+			_save_tournaments()
+			return {"ok": true, "error": "", "tournament": t}
+	return {"ok": false, "error": "not_signed_up", "tournament": {}}
+
+
+## Tournament records are references into `_tournaments` (GDScript Dictionaries
+## are by-reference), so in-place mutation elsewhere (e.g. Net's bracket
+## advancement) just needs this to flush to disk.
+func persist_tournament(_record: Dictionary) -> void:
+	_save_tournaments()
+
+
 # --- disk ------------------------------------------------------------------
 
 func _save_accounts() -> void:
@@ -520,3 +663,9 @@ func _save_matches() -> void:
 	var file := FileAccess.open(_dir + "matches.json", FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify({"matches": _matches}, "\t"))
+
+
+func _save_tournaments() -> void:
+	var file := FileAccess.open(_dir + "tournaments.json", FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify({"tournaments": _tournaments}, "\t"))

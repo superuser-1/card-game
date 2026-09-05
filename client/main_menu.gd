@@ -54,8 +54,8 @@ func _ready() -> void:
 
 	# Multiplayer submenu — swaps in over the main 4 tiles, side panels stay.
 	%RankedButton.pressed.connect(_on_ranked_play)
-	%TournamentButton.pressed.connect(_coming_soon.bind("Tournament Play"))
-	%CustomGameButton.pressed.connect(_coming_soon.bind("Custom Game"))
+	%TournamentButton.pressed.connect(_on_tournament_play)
+	%CustomGameButton.pressed.connect(_on_custom_game)
 	%MpPlaceholderButton.pressed.connect(_coming_soon.bind("That mode"))
 	%BackButton.pressed.connect(_show_main)
 	_decorate_panel_button(%RankedButton, false)
@@ -163,6 +163,9 @@ func _on_ladder(data: Dictionary) -> void:
 
 
 func _on_singleplayer() -> void:
+	if Session.active_tournament_id != 0:
+		_toast("Checked in to a tournament — finish it first.")
+		return
 	var reveal: bool = bool(Session.settings.get("sp_reveal_mode", false))
 	Net.start_singleplayer(reveal)
 	Session.goto("res://client/game_ui.tscn")
@@ -184,6 +187,14 @@ func _show_main() -> void:
 
 func _on_ranked_play() -> void:
 	Session.goto("res://client/queue_screen.tscn")
+
+
+func _on_tournament_play() -> void:
+	Session.goto("res://client/tournament_list_screen.tscn")
+
+
+func _on_custom_game() -> void:
+	Session.goto("res://client/custom_game_screen.tscn")
 
 
 func _coming_soon(what: String) -> void:

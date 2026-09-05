@@ -41,7 +41,9 @@ Write-Host "Starting server..."
 #   --mm-any               pair the two test clients regardless of Elo drift
 #   --bot-fill-seconds=600  effectively disable bot-fill so queuing one client
 #                           a bit before the other still results in a PvP match
-$server = Start-Process -FilePath $godot -ArgumentList @("--path", $project, "--headless", "--", "--server", "--mm-any", "--bot-fill-seconds=600") -PassThru -RedirectStandardOutput (Join-Path $env:TEMP "flickbattle_server.log") -RedirectStandardError (Join-Path $env:TEMP "flickbattle_server.err.log")
+#   --dev-tournaments       every account may create tournaments (no is_admin
+#                           check) so either test client can test the flow
+$server = Start-Process -FilePath $godot -ArgumentList @("--path", $project, "--headless", "--", "--server", "--mm-any", "--bot-fill-seconds=600", "--dev-tournaments") -PassThru -RedirectStandardOutput (Join-Path $env:TEMP "flickbattle_server.log") -RedirectStandardError (Join-Path $env:TEMP "flickbattle_server.err.log")
 $trackedLines += "$($server.Id),$($server.StartTime.Ticks)"
 Start-Sleep -Seconds 2
 

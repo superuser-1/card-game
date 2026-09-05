@@ -47,6 +47,13 @@ var last_match_summary: Dictionary = {}
 ## then reads it on _ready since the signal already fired.
 var last_match_info: Dictionary = {}
 
+## Non-zero while this client is checked into a tournament (set on a
+## successful Net.tournament_check_in reply, cleared on elimination/victory/
+## the tournament completing — see Net's tournament_checked_in/
+## tournament_updated signals). Used client-side to block Singleplayer, since
+## solo has no server RPC for the check-in lock to gate.
+var active_tournament_id: int = 0
+
 const _DEFAULT_SETTINGS := {
 	"master_volume": 0.8,
 	"fullscreen": false,
@@ -66,6 +73,9 @@ func _ready() -> void:
 	load_settings()
 	apply_settings()
 	load_token()
+
+	Net.tournament_checked_in.connect(_on_tournament_checked_in)
+	Net.tournament_updated.connect(_on_tournament_updated)
 
 
 # --- account / token ---------------------------------------------------------
@@ -98,6 +108,28 @@ func clear() -> void:
 
 func is_logged_in() -> bool:
 	return not account.is_empty()
+
+
+# --- tournament lock tracking (Session, not a screen, so it survives scene
+# swaps between the bracket/wait screen, the game screen, and back) ---
+
+func _on_tournament_checked_in(result: Dictionary) -> void:
+	if bool(result.get("ok", false)):
+		active_tournament_id = int(result.get("tournament", {}).get("id", 0))
+
+
+func _on_tournament_updated(tournament: Dictionary) -> void:
+	if active_tournament_id == 0 or int(tournament.get("id", 0)) != active_tournament_id:
+		return
+	var status := str(tournament.get("status", ""))
+	if status == "completed" or status == "cancelled":
+		active_tournament_id = 0
+		return
+	var my_id := int(account.get("id", 0))
+	for p in (tournament.get("participants", []) as Array):
+		if int(p.get("account_id", -1)) == my_id and int(p.get("eliminated_round", 0)) != 0:
+			active_tournament_id = 0
+			return
 
 
 # --- settings --------------------------------------------------------------

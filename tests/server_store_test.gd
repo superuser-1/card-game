@@ -28,6 +28,11 @@ func _initialize() -> void:
 	test_rank_and_ladder()
 	test_recent_matches()
 	test_quest_progress_and_daily_reset()
+	test_tournament_create_validation()
+	test_tournament_create_success()
+	test_tournament_sign_up()
+	test_tournament_check_in()
+	test_tournament_persistence()
 
 	# Print final result
 	if _fail_count == 0:
@@ -446,3 +451,267 @@ func test_quest_progress_and_daily_reset() -> void:
 	assert_equal(q_res4["completed"].size(), 0, "Unknown account returns no completions")
 	assert_equal(q_res4["points_awarded"], 0, "Unknown account returns 0 points")
 	assert_equal(q_res4["points_total"], 0, "Unknown account returns 0 total")
+
+
+func test_tournament_create_validation() -> void:
+	print("\n=== Tournament Create Validation ===")
+	var s = fresh()
+
+	# Valid creation should succeed
+	var now = int(Time.get_unix_time_from_system())
+	var result = s.create_tournament(1, "Test Tournament", 32, now, now + 3600, now + 7200, false)
+	assert_equal(result.ok, true, "Valid tournament creation succeeds")
+	assert_equal(result.tournament.status, "signup", "New tournament has status 'signup'")
+
+	# Empty name after strip_edges
+	var result_empty = s.create_tournament(1, "   ", 32, now, now + 3600, now + 7200, false)
+	assert_equal(result_empty.ok, false, "Empty name after strip_edges fails")
+	assert_equal(result_empty.error, "bad_name", "Error is 'bad_name' for empty")
+
+	# Name over 60 chars
+	var long_name = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"  # 62 chars
+	var result_long = s.create_tournament(1, long_name, 32, now, now + 3600, now + 7200, false)
+	assert_equal(result_long.ok, false, "Name over 60 chars fails")
+	assert_equal(result_long.error, "bad_name", "Error is 'bad_name' for over-long name")
+
+	# signup_close_ts > check_in_open_ts
+	var result_schedule1 = s.create_tournament(1, "Bad Schedule", 32, now + 7200, now + 3600, now + 10800, false)
+	assert_equal(result_schedule1.ok, false, "signup_close_ts > check_in_open_ts fails")
+	assert_equal(result_schedule1.error, "bad_schedule", "Error is 'bad_schedule'")
+
+	# check_in_open_ts >= start_ts
+	var result_schedule2 = s.create_tournament(1, "Bad Schedule 2", 32, now, now + 7200, now + 3600, false)
+	assert_equal(result_schedule2.ok, false, "check_in_open_ts >= start_ts fails")
+	assert_equal(result_schedule2.error, "bad_schedule", "Error is 'bad_schedule'")
+
+
+func test_tournament_create_success() -> void:
+	print("\n=== Tournament Create Success ===")
+	var s = fresh()
+
+	var now = int(Time.get_unix_time_from_system())
+
+	# Request 10, allow_small=false -> should be 32
+	var result1 = s.create_tournament(1, "Tournament 1", 10, now, now + 3600, now + 7200, false, false)
+	assert_equal(result1.ok, true, "Tournament creation with bracket_size coercion succeeds")
+	assert_equal(result1.tournament.bracket_size, 32, "Requested 10 + allow_small=false -> stored 32")
+	assert_equal(result1.tournament.participants.size(), 0, "New tournament has empty participants")
+	assert_equal(result1.tournament.rounds.size(), 0, "New tournament has empty rounds")
+
+	# Request 10, allow_small=true -> should be 16
+	var result2 = s.create_tournament(1, "Tournament 2", 10, now, now + 3600, now + 7200, false, true)
+	assert_equal(result2.ok, true, "Tournament creation with allow_small=true succeeds")
+	assert_equal(result2.tournament.bracket_size, 16, "Requested 10 + allow_small=true -> stored 16")
+
+	# Request 40 (either allow_small) -> should be 64
+	var result3 = s.create_tournament(1, "Tournament 3", 40, now, now + 3600, now + 7200, false, false)
+	assert_equal(result3.tournament.bracket_size, 64, "Requested 40 + allow_small=false -> stored 64")
+
+	var result4 = s.create_tournament(1, "Tournament 4", 40, now, now + 3600, now + 7200, false, true)
+	assert_equal(result4.tournament.bracket_size, 64, "Requested 40 + allow_small=true -> stored 64")
+
+	# Request 32, allow_small=false -> should be 32
+	var result5 = s.create_tournament(1, "Tournament 5", 32, now, now + 3600, now + 7200, false, false)
+	assert_equal(result5.tournament.bracket_size, 32, "Requested 32 + allow_small=false -> stored 32")
+
+
+func test_tournament_sign_up() -> void:
+	print("\n=== Tournament Sign Up ===")
+	var s = fresh()
+
+	# Create two accounts
+	s.create_account("Alice", "pass1")
+	s.create_account("Bob", "pass2")
+	var alice_id = s._accounts[0].id
+	var bob_id = s._accounts[1].id
+
+	var now = int(Time.get_unix_time_from_system())
+
+	# Create a tournament with small bracket for easier full-test
+	var t_result = s.create_tournament(1, "Test Tournament", 4, now, now + 3600, now + 7200, false, true)
+	var tournament_id = t_result.tournament.id
+
+	# Try to sign up non-existent user FIRST (before filling tournament)
+	var signup_nouser = s.sign_up(tournament_id, 9999)
+	assert_equal(signup_nouser.ok, false, "Sign-up for non-existent user fails")
+	assert_equal(signup_nouser.error, "no_such_user", "Error is 'no_such_user'")
+
+	# Sign up Alice successfully
+	var signup1 = s.sign_up(tournament_id, alice_id)
+	assert_equal(signup1.ok, true, "Alice signs up successfully")
+	assert_equal(signup1.tournament.participants.size(), 1, "Participant count is 1")
+	assert_equal(signup1.tournament.participants[0].account_id, alice_id, "First participant is Alice")
+
+	# Try duplicate sign-up by Alice
+	var signup2 = s.sign_up(tournament_id, alice_id)
+	assert_equal(signup2.ok, false, "Duplicate sign-up fails")
+	assert_equal(signup2.error, "already_signed_up", "Error is 'already_signed_up'")
+
+	# Sign up Bob successfully
+	var signup3 = s.sign_up(tournament_id, bob_id)
+	assert_equal(signup3.ok, true, "Bob signs up successfully")
+	assert_equal(signup3.tournament.participants.size(), 2, "Participant count is 2")
+
+	# Fill up tournament to bracket_size (4)
+	s.create_account("Charlie", "pass3")
+	s.create_account("Diana", "pass4")
+	var charlie_id = s._accounts[2].id
+	var diana_id = s._accounts[3].id
+
+	s.sign_up(tournament_id, charlie_id)
+	s.sign_up(tournament_id, diana_id)
+	assert_equal(s.get_tournament(tournament_id).participants.size(), 4, "Tournament now full (4/4)")
+
+	# Try to sign up a 5th person
+	s.create_account("Eve", "pass5")
+	var eve_id = s._accounts[4].id
+	var signup_full = s.sign_up(tournament_id, eve_id)
+	assert_equal(signup_full.ok, false, "Sign-up to full tournament fails")
+	assert_equal(signup_full.error, "tournament_full", "Error is 'tournament_full'")
+
+	# Try to sign up to non-existent tournament
+	var signup_notourney = s.sign_up(9999, alice_id)
+	assert_equal(signup_notourney.ok, false, "Sign-up to non-existent tournament fails")
+	assert_equal(signup_notourney.error, "no_such_tournament", "Error is 'no_such_tournament'")
+
+	# Try to sign up when status is no longer "signup"
+	var t = s.get_tournament(tournament_id)
+	t.status = "check_in"  # Direct mutation (no public method yet)
+	s.persist_tournament(t)
+	var signup_closed = s.sign_up(tournament_id, s._accounts[4].id)
+	assert_equal(signup_closed.ok, false, "Sign-up to non-signup-status tournament fails")
+	assert_equal(signup_closed.error, "signup_closed", "Error is 'signup_closed'")
+
+
+func test_tournament_check_in() -> void:
+	print("\n=== Tournament Check In ===")
+	var s = fresh()
+
+	# Create accounts and tournament
+	s.create_account("Alice", "pass1")
+	s.create_account("Bob", "pass2")
+	var alice_id = s._accounts[0].id
+	var bob_id = s._accounts[1].id
+
+	var now = int(Time.get_unix_time_from_system())
+	var t_result = s.create_tournament(1, "Check-In Tournament", 4, now, now + 3600, now + 7200, false, true)
+	var tournament_id = t_result.tournament.id
+
+	# Sign up both
+	s.sign_up(tournament_id, alice_id)
+	s.sign_up(tournament_id, bob_id)
+
+	# Try to check in while status is still "signup" -> should fail
+	var checkin_early = s.check_in(tournament_id, alice_id)
+	assert_equal(checkin_early.ok, false, "Check-in while status is signup fails")
+	assert_equal(checkin_early.error, "check_in_not_open", "Error is 'check_in_not_open'")
+
+	# Transition tournament to "check_in" status
+	var t = s.get_tournament(tournament_id)
+	t.status = "check_in"
+	s.persist_tournament(t)
+
+	# Now check in should work
+	var checkin_alice = s.check_in(tournament_id, alice_id)
+	assert_equal(checkin_alice.ok, true, "Check-in succeeds when status is check_in")
+
+	# Verify Alice is checked in
+	var alice_participant = null
+	for p in checkin_alice.tournament.participants:
+		if int(p.account_id) == alice_id:
+			alice_participant = p
+			break
+	assert_equal(alice_participant.checked_in, true, "Alice participant.checked_in is true")
+
+	# Try to check in Alice again -> should fail
+	var checkin_duplicate = s.check_in(tournament_id, alice_id)
+	assert_equal(checkin_duplicate.ok, false, "Duplicate check-in fails")
+	assert_equal(checkin_duplicate.error, "already_checked_in", "Error is 'already_checked_in'")
+
+	# Try to check in Bob (he's signed up)
+	var checkin_bob = s.check_in(tournament_id, bob_id)
+	assert_equal(checkin_bob.ok, true, "Bob check-in succeeds")
+
+	# Try to check in someone not signed up
+	s.create_account("Charlie", "pass3")
+	var charlie_id = s._accounts[2].id
+	var checkin_notsignedup = s.check_in(tournament_id, charlie_id)
+	assert_equal(checkin_notsignedup.ok, false, "Check-in for non-signed-up account fails")
+	assert_equal(checkin_notsignedup.error, "not_signed_up", "Error is 'not_signed_up'")
+
+	# Try to check in to non-existent tournament
+	var checkin_notourney = s.check_in(9999, alice_id)
+	assert_equal(checkin_notourney.ok, false, "Check-in to non-existent tournament fails")
+	assert_equal(checkin_notourney.error, "no_such_tournament", "Error is 'no_such_tournament'")
+
+
+func test_tournament_persistence() -> void:
+	print("\n=== Tournament Persistence ===")
+	var s1 = fresh()
+
+	# Create an account and tournament in first ServerStore
+	s1.create_account("Alice", "pass1")
+	var alice_id = s1._accounts[0].id
+
+	var now = int(Time.get_unix_time_from_system())
+	var t_result = s1.create_tournament(1, "Persistent Tournament", 32, now, now + 3600, now + 7200, false)
+	var t1_id = t_result.tournament.id
+	var t1_name = t_result.tournament.name
+	var t1_bracket_size = t_result.tournament.bracket_size
+
+	# Sign up Alice in first store
+	s1.sign_up(t1_id, alice_id)
+
+	# Verify tournament exists and has 1 participant
+	assert_equal(s1.get_tournament(t1_id).participants.size(), 1, "Tournament has 1 participant in s1")
+
+	# Open a FRESH ServerStore on the SAME directory
+	var s2 = fresh()
+
+	# s2's fresh() call already increments _fresh_seq, so it will use the SAME directory as s1
+	# (actually, no - fresh() creates a new subdirectory based on _fresh_seq)
+	# We need to explicitly use the same directory. Let me re-check the test pattern...
+	# Actually, looking at the test pattern in the existing file, fresh() creates:
+	# _dir + _fresh_seq + "/"
+	# So each fresh() call gets a unique directory. To test persistence, I need to
+	# open the SAME directory twice without clearing fresh_seq in between.
+
+	# Let me rewrite this part to use the same directory explicitly:
+	var persistent_dir = "%spersist_test/" % _dir
+	var s2_manual = ServerStore.new()
+	s2_manual.open(persistent_dir)
+
+	# First, make s1 use this persistent_dir
+	var s1_manual = ServerStore.new()
+	s1_manual.open(persistent_dir)
+
+	# Create tournament in s1_manual
+	s1_manual.create_account("Alice", "pass1")
+	var alice_id_manual = s1_manual._accounts[0].id
+
+	var t_result_manual = s1_manual.create_tournament(1, "Persistent Tournament", 32, now, now + 3600, now + 7200, false)
+	var t1_id_manual = t_result_manual.tournament.id
+	var t1_name_manual = t_result_manual.tournament.name
+	var t1_bracket_size_manual = t_result_manual.tournament.bracket_size
+
+	s1_manual.sign_up(t1_id_manual, alice_id_manual)
+	assert_equal(s1_manual.get_tournament(t1_id_manual).participants.size(), 1, "s1_manual tournament has 1 participant")
+
+	# Now open s2 on the SAME directory
+	var s2_persistent = ServerStore.new()
+	s2_persistent.open(persistent_dir)
+
+	# Check that tournament exists in s2
+	var t_from_s2 = s2_persistent.get_tournament(t1_id_manual)
+	assert_equal(t_from_s2.name, t1_name_manual, "Tournament name persisted")
+	assert_equal(t_from_s2.bracket_size, t1_bracket_size_manual, "Tournament bracket_size persisted")
+	assert_equal(t_from_s2.participants.size(), 1, "Tournament participant persisted")
+
+	# Create another tournament in s2 and verify its id is incremented correctly
+	var t_result_s2 = s2_persistent.create_tournament(1, "Second Tournament", 16, now, now + 3600, now + 7200, false, true)
+	var t2_id = t_result_s2.tournament.id
+	assert_equal(t2_id, t1_id_manual + 1, "s2 creates tournament with id incremented correctly past s1's highest")
+
+	# Verify both tournaments visible in s2
+	var all_t_s2 = s2_persistent.all_tournaments()
+	assert_equal(all_t_s2.size(), 2, "s2 sees both tournaments after fresh open")
