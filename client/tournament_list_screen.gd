@@ -7,6 +7,12 @@ extends Control
 var _last_rows: Array = []
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		Session.goto("res://client/main_menu.tscn")
+		get_viewport().set_input_as_handled()
+
+
 func _ready() -> void:
 	%BackButton.pressed.connect(func(): Session.goto("res://client/main_menu.tscn"))
 	%FinishedToggleButton.toggled.connect(_on_finished_toggled)

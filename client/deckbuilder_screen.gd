@@ -12,6 +12,12 @@ const MAIN_MENU := "res://client/main_menu.tscn"
 @onready var _back: Button = %BackButton
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		Session.goto(MAIN_MENU)
+		get_viewport().set_input_as_handled()
+
+
 func _ready() -> void:
 	_back.pressed.connect(func(): Session.goto(MAIN_MENU))
 

@@ -31,6 +31,12 @@ func _ready() -> void:
 	_show_tab(0)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		Session.goto("res://client/main_menu.tscn")
+		get_viewport().set_input_as_handled()
+
+
 # --- tabs -----------------------------------------------------------------
 
 ## One filter button per item type — TabContainer isn't used because its tabs

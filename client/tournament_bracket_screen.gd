@@ -7,6 +7,12 @@ var _tournament: Dictionary = {}
 var _bracket_canvas: Control = null
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		Session.goto("res://client/main_menu.tscn")
+		get_viewport().set_input_as_handled()
+
+
 func _ready() -> void:
 	%BackButton.pressed.connect(func(): Session.goto("res://client/main_menu.tscn"))
 

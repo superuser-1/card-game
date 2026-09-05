@@ -12,6 +12,12 @@ func _ready() -> void:
 	Net.enqueue_match()
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		_on_cancel()
+		get_viewport().set_input_as_handled()
+
+
 func _process(delta: float) -> void:
 	if _searching:
 		_elapsed += delta

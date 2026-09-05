@@ -6,6 +6,12 @@ func _ready() -> void:
 	Net.request_ladder(50, 0)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		Session.goto("res://client/main_menu.tscn")
+		get_viewport().set_input_as_handled()
+
+
 func _on_ladder(data: Dictionary) -> void:
 	%StatusLabel.visible = false
 

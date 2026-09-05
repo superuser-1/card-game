@@ -22,6 +22,12 @@ func _ready() -> void:
 	%MenuButton.pressed.connect(_on_menu)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		_on_menu()
+		get_viewport().set_input_as_handled()
+
+
 func _on_again() -> void:
 	if _was_solo:
 		# Straight into a fresh bot game — no queue, we're already local.
