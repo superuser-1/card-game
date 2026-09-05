@@ -1,9 +1,9 @@
 # Plan: In-Game Shop
 
-Status: **SPEC — awaiting a few open-question confirmations (§7), otherwise ready.**
-Owner split per `feedback-haiku-delegation`: Sonnet writes this spec + runs every
-headless test pass; Haiku writes the files to spec. Sibling feature:
-`PLAN_achievements.md` (shares the reward-granting plumbing in §3).
+Status: **SPEC — ready for implementation.** All open questions resolved with the
+user 2026-09-05 (§7). Owner split per `feedback-haiku-delegation`: Sonnet writes
+this spec + runs every headless test pass; Haiku writes the files to spec.
+Sibling feature: `PLAN_achievements.md` (shares the reward-granting plumbing in §3).
 
 ---
 
@@ -13,11 +13,13 @@ headless test pass; Haiku writes the files to spec. Sibling feature:
 |---|---|
 | Currency | **Single pool.** Shop debits `account["points"]` — the same pool earned from matches + quests. No second currency. Spending points does **not** touch Elo/rank. |
 | Legacy cosmetics | **Old art stays free.** Every avatar/frame/background currently auto-scanned from its asset folder remains freely equippable. The shop only ever sells **new** items added from now on. **No migration, no retroactive gating.** |
+| Launch catalog | **Debug placeholder.** Ship a small starter set, **every item priced `5`** so purchase/equip flows can be exercised cheaply. The user adds the real cosmetics + real prices later — pure data edits to `ShopCatalog.CATALOG`, no code change. |
+| Sleeves | A "sleeve" **is** the face-down card art. The default sleeve = the current `res://assets/cards/card_back1.png`; a premium sleeve replaces it. Implement the full ownership/equip/RPC mechanics now; **rendering the equipped sleeve on the table is deferred to M2** (§8) — nothing about faced-down cards changes visually in M1. |
+| Menu placement | Standalone **Shop** + **Achievements** `TextureButton`s anchored bottom-left **next to `OptionsButton`** (same style as Options — *not* in `MenuGrid`, *not* a "Collection" sub-grid). |
 
 Sensible defaults chosen without asking (flag in §7 if you want them tuned):
 
 - **No refunds, no re-buy.** A purchase is permanent; owning an item forever.
-- **Prices are hand-set per item** in the catalog (no rarity-tier auto-pricing).
 - **Static catalog.** No sales / rotating featured slots this pass.
 - **Catalog is not secret.** Prices are shipped in a shared `class_name` module
   the client reads directly (same as `Avatars`/`Frames`). The server is the sole
@@ -55,20 +57,18 @@ extends RefCounted
 
 # type ∈ "avatar" | "frame" | "background" | "sleeve"
 # source ∈ "shop" (buyable) | "achievement" (granted only, price ignored)
+# NOTE: every shop price is 5 on purpose — debug placeholder. Real cosmetics +
+# real prices get added here later by the user; this is a data edit only.
 const CATALOG: Array = [
-    {"id": "avatar_gold_reel", "type": "avatar",     "name": "Gold Reel",      "price": 500, "source": "shop"},
-    {"id": "avatar_director",  "type": "avatar",     "name": "The Director",   "price": 750, "source": "shop"},
-    {"id": "frame_neon",       "type": "frame",      "name": "Neon",          "price": 300, "source": "shop"},
-    {"id": "frame_gilded",     "type": "frame",      "name": "Gilded",        "price": 600, "source": "shop"},
-    {"id": "bg_starfield",     "type": "background", "name": "Starfield",     "price": 300, "source": "shop"},
-    {"id": "bg_red_carpet",    "type": "background", "name": "Red Carpet",    "price": 450, "source": "shop"},
-    {"id": "sleeve_noir",      "type": "sleeve",     "name": "Noir",          "price": 400, "source": "shop"},
-    {"id": "sleeve_technicolor","type": "sleeve",    "name": "Technicolor",   "price": 400, "source": "shop"},
+    {"id": "avatar_gold_reel", "type": "avatar",     "name": "Gold Reel",     "price": 5, "source": "shop"},
+    {"id": "frame_neon",       "type": "frame",      "name": "Neon",          "price": 5, "source": "shop"},
+    {"id": "bg_starfield",     "type": "background", "name": "Starfield",     "price": 5, "source": "shop"},
+    {"id": "sleeve_noir",      "type": "sleeve",     "name": "Noir",          "price": 5, "source": "shop"},
     # --- achievement-only (see PLAN_achievements.md §1); not buyable ---
-    {"id": "frame_champion",   "type": "frame",      "name": "Champion",      "price": 0,   "source": "achievement"},
-    {"id": "frame_veteran",    "type": "frame",      "name": "Veteran",       "price": 0,   "source": "achievement"},
-    {"id": "avatar_champion",  "type": "avatar",     "name": "Grand Champion","price": 0,   "source": "achievement"},
-    {"id": "sleeve_flame",     "type": "sleeve",     "name": "Flame",         "price": 0,   "source": "achievement"},
+    {"id": "frame_champion",   "type": "frame",      "name": "Champion",      "price": 0, "source": "achievement"},
+    {"id": "frame_veteran",    "type": "frame",      "name": "Veteran",       "price": 0, "source": "achievement"},
+    {"id": "avatar_champion",  "type": "avatar",     "name": "Grand Champion","price": 0, "source": "achievement"},
+    {"id": "sleeve_flame",     "type": "sleeve",     "name": "Flame",         "price": 0, "source": "achievement"},
 ]
 
 const TYPES: Array[String] = ["avatar", "frame", "background", "sleeve"]
@@ -179,11 +179,14 @@ Achievement-source items appear in their type tab with a **"Unlock via
 
 ### 5.3 Menu entry
 
-Add a **Shop** button to `%MenuGrid` in `client/main_menu.tscn`, wired like the
-existing **Ladder** button (`change_scene_to_file("res://client/shop_screen.tscn")`).
-Per `feedback_menu_navigation`, Shop is a leaf screen (like Ladder/Deckbuilder),
-**not** a new in-place grid tier — confirm in §7 if you'd rather group
-Shop + Achievements + Deckbuilder under one "Collection" sub-grid toggle.
+Add a **Shop** `TextureButton` to `client/main_menu.tscn` anchored bottom-left
+**immediately right of `OptionsButton`** (the same standalone-button style, not a
+child of `MenuGrid`). `OptionsButton` is at `offset_left = 61 .. offset_right =
+205`; place Shop next to it (e.g. `offset_left = 221 .. 365`) and Achievements
+(PLAN_achievements §5.2) next again. Art: `res://assets/shop.png` /
+`res://assets/achievements.png` — code falls back to a plain text button until
+the user drops the art in (same pattern as the category icons). `pressed` →
+`change_scene_to_file("res://client/shop_screen.tscn")`.
 
 ---
 
@@ -207,21 +210,13 @@ Shop + Achievements + Deckbuilder under one "Collection" sub-grid toggle.
 
 ---
 
-## 7. Open questions for the user
+## 7. Open questions — all resolved 2026-09-05
 
-1. **Menu placement** — Shop as its own button on the main grid (assumed), or
-   fold Shop + Achievements + Deckbuilder into a single "Collection" sub-grid?
-2. **Launch catalog** — the §2 list is a placeholder. Do you have specific
-   premium avatars/frames/backgrounds/sleeves + prices in mind, or should I ship
-   this set as a starting point for you to tune?
-3. **Sleeve default id** — OK to call the free card back `classic` and map it to
-   the existing `card_back1.png`? (Matches the `sleeve_classic` already seeded in
-   `owned_rewards`.)
-4. **Sleeve-in-gameplay** — ship as Milestone 2 (portrait/shop first, faced-down
-   card art second), or does the sleeve need to render on the table from day one?
-5. **Price ceiling sanity** — points earn rate is win +10 / loss +3 / draw +5
-   plus up to ~390/day from quests. Are 300–750-point cosmetics the right
-   magnitude, or do you want them pricier/cheaper?
+1. Menu placement → standalone button next to `OptionsButton` (§0, §5.3).
+2. Launch catalog → debug set, everything priced `5`; real items added later (§0, §2).
+3. Sleeve default → `classic` → existing `card_back1.png` (matches seeded `sleeve_classic`).
+4. Sleeve in gameplay → mechanics in M1, table rendering in M2 (§0, §8).
+5. Prices → all `5` for now, not a concern until real cosmetics land.
 
 ---
 

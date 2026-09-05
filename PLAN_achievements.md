@@ -1,10 +1,10 @@
 # Plan: Achievement System
 
-Status: **SPEC — awaiting a few open-question confirmations (§7), otherwise ready.**
-Owner split per `feedback-haiku-delegation`: Sonnet writes this spec + runs every
-headless test pass; Haiku writes the files to spec. Sibling feature:
-`PLAN_shop.md` — this plan reuses its `ShopCatalog` (for reward items) and the
-`ServerStore.grant_reward` helper (PLAN_shop §3).
+Status: **SPEC — ready for implementation.** All open questions resolved with the
+user 2026-09-05 (§7). Owner split per `feedback-haiku-delegation`: Sonnet writes
+this spec + runs every headless test pass; Haiku writes the files to spec.
+Sibling feature: `PLAN_shop.md` — this plan reuses its `ShopCatalog` (for reward
+items) and the `ServerStore.grant_reward` helper (PLAN_shop §3).
 
 ---
 
@@ -15,6 +15,10 @@ headless test pass; Haiku writes the files to spec. Sibling feature:
 | Stat scope | **Ranked human-vs-human matches only** (`not m.is_bot_match`, real opponent). Bot-fill, solo, and friend/custom games never move a stat. Same anti-farm gate as quests. Tournament counters are the one exception (they come from the bracket flow, which is always human). |
 | Structure | **Tiered.** One achievement has 3 thresholds (Bronze / Silver / Gold), each with its own points + optional cosmetic reward. |
 | Rewards can grant items | Yes — a tier's `reward` is a `ShopCatalog` id with `source == "achievement"`, granted into `owned_rewards`. Not every tier needs an item; most give points only, the **Gold** tier usually also gives a cosmetic. |
+| History seeding | **None.** Achievement progress starts at 0 for everyone at launch and only counts matches *going forward*. Do **not** seed `stats` from the historical `account["games"]/["wins"]/…` totals. |
+| Catalog values | The §1 thresholds / points / tier rewards ship **as written** for now — a starting set the user tunes later (data edit to `CATALOG`, no code change). |
+| Stat list | The §2 list is the full set for this pass. More stats get added "later down the line". |
+| Menu placement | Standalone **Achievements** `TextureButton` next to `OptionsButton` (see PLAN_shop §5.3). |
 
 Sensible defaults chosen without asking (flag in §7 if you want them tuned):
 
@@ -77,8 +81,8 @@ default `0`. Mutated **only** server-side.
 
 > **`stats.games/wins/...` are separate counters from the existing top-level
 > `account["games"]/["wins"]/...`** — those already count bot-fill matches
-> (`record_match` runs for bot matches), which the locked scope excludes. See §7
-> Q2 for whether to *seed* `stats` from the historical totals on first backfill.
+> (`record_match` runs for bot matches), which the locked scope excludes. Per §0,
+> `stats` is **not** seeded from those totals — every account starts at 0.
 
 ---
 
@@ -200,8 +204,10 @@ Rows come straight from `AchievementSystem.rows(...)` off `Session.account`.
 
 ### 5.2 Menu entry
 
-**Achievements** button on `%MenuGrid` in `client/main_menu.tscn`, wired like
-**Ladder** (leaf screen, not an in-place grid tier — see PLAN_shop §5.3 / §7 Q1).
+**Achievements** `TextureButton` in `client/main_menu.tscn`, anchored bottom-left
+next to the **Shop** button (which sits next to `OptionsButton`) — see
+PLAN_shop §5.3 for the exact offsets and the art-fallback pattern.
+`pressed` → `change_scene_to_file("res://client/achievements_screen.tscn")`.
 
 ### 5.3 Toast
 
@@ -239,31 +245,18 @@ Rows come straight from `AchievementSystem.rows(...)` off `Session.account`.
 
 ---
 
-## 7. Open questions for the user
+## 7. Open questions — resolved 2026-09-05
 
-1. **Menu placement** — same question as PLAN_shop §7 Q1: standalone
-   Achievements button, or a shared "Collection" sub-grid with Shop + Deckbuilder?
-2. **Seed stats from history?** — existing accounts have top-level
-   `account["games"]/["wins"]/["losses"]/["draws"]` (which *include* bot-fill
-   matches). On first `stats` backfill, do we:
-   - **(a, recommended)** seed `stats.games/wins/losses/draws` from those totals
-     so long-time players get immediate credit (accepting minor bot-fill
-     inflation), or
-   - **(b)** start every achievement from 0 as of the feature launch?
-3. **Catalog values** — thresholds, points, and which tiers grant cosmetics in §1
-   are my proposal. Want them as-is to start, or do you have specific
-   milestones/rewards in mind?
-4. **Tier count** — 3 tiers (Bronze/Silver/Gold) per achievement everywhere. OK,
-   or do you want some achievements single-shot and others 5-tier?
-5. **`tournaments_played` trigger** — count at check-in→`running` (assumed), or
-   only once a player has actually played ≥1 bracket match (stricter, ignores
-   no-shows who checked in)?
-6. **More stats to track?** You mentioned "etc etc etc" — current list is games /
-   wins / losses / draws / streak / perfect wins / 3 group-win counters /
-   tournaments played / tournaments won / lifetime points. Anything specific
-   missing (e.g. total rounds played, categories mastered, days-active streak,
-   friend/custom games)? Custom games are currently out of scope by the locked
-   stat-scope decision.
+1. Menu placement → standalone button next to `OptionsButton` (§0, §5.2).
+2. Seed stats from history → **no**, start from 0 going forward (§0).
+3. Catalog values → ship §1 as written, tune later (§0).
+4. Tier count → 3 tiers everywhere (Bronze/Silver/Gold).
+5. Stat list → §2 as written, more later (§0).
+
+One default chosen without a specific answer, easy to change: `tournaments_played`
+increments when a tournament enters `running` for each **checked-in** participant
+(a no-show who checked in but never played still gets the credit). Switch to
+"≥1 bracket match actually played" if you'd rather.
 
 ---
 
