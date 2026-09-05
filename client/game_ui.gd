@@ -190,6 +190,17 @@ func _ready() -> void:
 	_hand_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
+## ESC raises the Give Up confirmation — same as the exit button. Once a
+## forfeit is already in flight (button disabled) or the dialog is up, it's
+## a no-op; the dialog handles its own ESC-to-dismiss.
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed("ui_cancel"):
+		return
+	if not _forfeit_dialog.visible and not _exit_button.disabled:
+		_forfeit_dialog.popup_centered()
+	get_viewport().set_input_as_handled()
+
+
 func _on_player_assigned(player_id: int) -> void:
 	_my_player_id = player_id
 	_status_label.text = "You are Player %d. Waiting for opponent..." % player_id

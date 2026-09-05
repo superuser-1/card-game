@@ -244,6 +244,15 @@ func _on_back_pressed() -> void:
 		_show_main()
 
 
+## ESC steps back one submenu level, mirroring the Back button. On the top
+## level there's nowhere to go, so it's left unhandled. An open modal
+## consumes ui_cancel itself (marks it handled) before this runs.
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") and _view != "main":
+		_on_back_pressed()
+		get_viewport().set_input_as_handled()
+
+
 func _on_ranked_play() -> void:
 	Session.goto("res://client/queue_screen.tscn")
 
