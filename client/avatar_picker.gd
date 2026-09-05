@@ -87,6 +87,19 @@ func _list_ids(cat: String) -> Array:
 	return Backgrounds.list_ids()
 
 
+## Only the cosmetics this player may actually equip: free (non-catalog) items,
+## plus premium items they own — bought in the shop or granted by an unlock.
+## Everything still for sale is hidden here (it lives in the shop instead).
+func _is_available(id: String) -> bool:
+	if not ShopCatalog.is_premium(id):
+		return true
+	return id in (Session.account.get("owned_rewards", []) as Array)
+
+
+func _available(ids: Array) -> Array:
+	return ids.filter(_is_available)
+
+
 func _texture_for(cat: String, id: String) -> Texture2D:
 	if cat == CAT_FRAME:
 		return Frames.texture_for(id)
@@ -102,14 +115,14 @@ func _build_grid() -> void:
 	_tiles.clear()
 
 	if _category == CAT_AVATAR:
-		for id: String in Avatars.list_ids():
+		for id: String in _available(Avatars.list_ids()):
 			_add_tile(id, Avatars.texture_for(id))
 		_select.disabled = _selected_avatar_id == ""
 		if _tiles.has(_selected_avatar_id):
 			_tiles[_selected_avatar_id].add_theme_stylebox_override("panel", _frame_style(true))
 	else:
 		_add_tile(NONE_TILE, null)
-		for id: String in _list_ids(_category):
+		for id: String in _available(_list_ids(_category)):
 			_add_tile(id, _texture_for(_category, id))
 		var touched: bool = _touched[_category]
 		_select.disabled = not touched
