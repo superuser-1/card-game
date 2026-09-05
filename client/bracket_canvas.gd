@@ -270,14 +270,15 @@ func _make_layer_texture(tex: Texture2D, mat: ShaderMaterial) -> TextureRect:
 
 
 ## Bots have no real account, so give each bot SLOT a stable-looking (seeded,
-## not re-rolled every redraw) random avatar/frame/background combo instead
-## of one fixed "bot" identity for every bot in the bracket.
+## not re-rolled every redraw) identity instead of one fixed "bot" for every
+## bot in the bracket. Portraits come only from the bot-only pool
+## (Avatars.bot_pool()); frame/background are still a decorative random pick.
 func _bot_identity(seed_val: int) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_val
 
-	var avatar_ids := Avatars.list_ids()
-	var avatar_id: String = avatar_ids[rng.randi() % avatar_ids.size()] if not avatar_ids.is_empty() else Avatars.DEFAULT_ID
+	var avatar_ids := Avatars.bot_pool()
+	var avatar_id: String = avatar_ids[rng.randi() % avatar_ids.size()] if not avatar_ids.is_empty() else Avatars.BOT_ID
 
 	var frame_ids := Frames.list_ids()
 	var frame_id: String = frame_ids[rng.randi() % frame_ids.size()] if not frame_ids.is_empty() else Frames.NONE_ID

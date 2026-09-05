@@ -292,6 +292,7 @@ func start_singleplayer(reveal := false) -> void:
 	engine.deal_hands()
 
 	var m := _new_match(engine, {1: LOCAL_SEAT, 2: BOT_SEAT}, {1: 0, 2: 0}, {1: "You", 2: "Bot"}, 2, false)
+	m["bot_avatar"] = Avatars.random_bot_id()
 	_solo_match_id = m.id
 	print("Singleplayer: match started, %d cards, vs bot" % cards.size())
 
@@ -304,7 +305,7 @@ func start_singleplayer(reveal := false) -> void:
 		"match_id": m.id,
 		"your_seat": 1,
 		"opponent_name": "Bot",
-		"opponent_avatar": Avatars.BOT_ID,
+		"opponent_avatar": m["bot_avatar"],
 		"opponent_frame": "",
 		"opponent_background": "",
 		"opponent_elo": ServerStore.START_ELO,
@@ -1681,7 +1682,11 @@ func _create_bot_match(a: Dictionary) -> void:
 func _seat_identity(m: Dictionary, seat: int) -> Dictionary:
 	var acc_id := int(m.account_ids.get(seat, 0))
 	if acc_id == 0:
-		return {"name": "Bot", "avatar": Avatars.BOT_ID, "frame": "", "background": "", "elo": ServerStore.START_ELO, "is_bot": true}
+		# One portrait per match, drawn from the bot-only pool and kept stable
+		# for the life of the match (both re-reads and both seats see the same).
+		if not m.has("bot_avatar"):
+			m["bot_avatar"] = Avatars.random_bot_id()
+		return {"name": "Bot", "avatar": str(m["bot_avatar"]), "frame": "", "background": "", "elo": ServerStore.START_ELO, "is_bot": true}
 	var acc := _store.get_account(acc_id)
 	return {
 		"name": str(acc.get("display_name", "Player")),
