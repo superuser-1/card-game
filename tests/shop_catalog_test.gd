@@ -85,9 +85,9 @@ func test_achievement_source_price_zero() -> void:
 
 func test_def_for() -> void:
 	print("\n=== def_for ===")
-	var def := ShopCatalog.def_for("avatar_gold_reel")
-	assert_true(not def.is_empty(), "def_for finds avatar_gold_reel")
-	assert_equal(str(def.get("name")), "Gold Reel", "def_for returns correct name")
+	var def := ShopCatalog.def_for("aphrodite")
+	assert_true(not def.is_empty(), "def_for finds aphrodite")
+	assert_equal(str(def.get("name")), "Aphrodite", "def_for returns correct name")
 
 	var missing := ShopCatalog.def_for("nonexistent_id")
 	assert_true(missing.is_empty(), "def_for returns {} for unknown id")
@@ -95,7 +95,7 @@ func test_def_for() -> void:
 
 func test_is_premium() -> void:
 	print("\n=== is_premium ===")
-	assert_true(ShopCatalog.is_premium("avatar_gold_reel"), "avatar_gold_reel is premium")
+	assert_true(ShopCatalog.is_premium("aphrodite"), "aphrodite is premium")
 	assert_true(ShopCatalog.is_premium("frame_champion"), "frame_champion (achievement) is premium")
 	assert_true(not ShopCatalog.is_premium("nonexistent_id"), "nonexistent_id is not premium")
 	assert_true(not ShopCatalog.is_premium(""), "empty id is not premium")
@@ -103,7 +103,7 @@ func test_is_premium() -> void:
 
 func test_is_buyable() -> void:
 	print("\n=== is_buyable ===")
-	assert_true(ShopCatalog.is_buyable("avatar_gold_reel"), "avatar_gold_reel is buyable")
+	assert_true(ShopCatalog.is_buyable("aphrodite"), "aphrodite is buyable")
 	assert_true(not ShopCatalog.is_buyable("frame_champion"), "frame_champion (achievement source) is not buyable")
 	assert_true(not ShopCatalog.is_buyable("nonexistent_id"), "nonexistent_id is not buyable")
 
@@ -112,7 +112,7 @@ func test_ids_of_type() -> void:
 	print("\n=== ids_of_type ===")
 	var avatars := ShopCatalog.ids_of_type("avatar")
 	assert_true(avatars.size() > 0, "avatar type has at least one item")
-	assert_true("avatar_gold_reel" in avatars, "avatar_gold_reel in avatar type")
+	assert_true("aphrodite" in avatars, "aphrodite in avatar type")
 
 	var frames := ShopCatalog.ids_of_type("frame")
 	assert_true(frames.size() > 0, "frame type has at least one item")

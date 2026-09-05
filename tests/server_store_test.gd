@@ -739,10 +739,10 @@ func test_shop_purchase_happy_path() -> void:
 	s._save_accounts()
 
 	# Purchase item
-	var p_res = s.purchase(int(account.id), "avatar_gold_reel")
+	var p_res = s.purchase(int(account.id), "aphrodite")
 	assert_equal(p_res.ok, true, "Purchase succeeds")
 	assert_equal(p_res.account.points, 95, "Points debited correctly (100 - 5)")
-	assert_true("avatar_gold_reel" in p_res.account.owned_rewards, "Item added to owned_rewards")
+	assert_true("aphrodite" in p_res.account.owned_rewards, "Item added to owned_rewards")
 
 
 func test_shop_purchase_insufficient() -> void:
@@ -753,11 +753,11 @@ func test_shop_purchase_insufficient() -> void:
 	account["points"] = 2
 	s._save_accounts()
 
-	var p_res = s.purchase(int(account.id), "avatar_gold_reel")
+	var p_res = s.purchase(int(account.id), "aphrodite")
 	assert_equal(p_res.ok, false, "Purchase fails with insufficient points")
 	assert_equal(p_res.error, "insufficient", "Error is 'insufficient'")
 	assert_equal(account.points, 2, "Points not changed")
-	assert_true("avatar_gold_reel" not in account.owned_rewards, "Item not added")
+	assert_true("aphrodite" not in account.owned_rewards, "Item not added")
 
 
 func test_shop_purchase_already_owned() -> void:
@@ -766,10 +766,10 @@ func test_shop_purchase_already_owned() -> void:
 	var res = s.create_account("Alice", "secret1")
 	var account = res.account
 	account["points"] = 100
-	account["owned_rewards"].append("avatar_gold_reel")
+	account["owned_rewards"].append("aphrodite")
 	s._save_accounts()
 
-	var p_res = s.purchase(int(account.id), "avatar_gold_reel")
+	var p_res = s.purchase(int(account.id), "aphrodite")
 	assert_equal(p_res.ok, false, "Purchase fails for already-owned item")
 	assert_equal(p_res.error, "already_owned", "Error is 'already_owned'")
 
@@ -815,7 +815,7 @@ func test_equip_premium_not_owned() -> void:
 	var account_id = int(res.account.id)
 
 	# Try to equip premium item not owned
-	var eq_res = s.set_avatar(account_id, "avatar_gold_reel")
+	var eq_res = s.set_avatar(account_id, "aphrodite")
 	assert_equal(eq_res.ok, false, "Cannot equip unowned premium avatar")
 	assert_equal(eq_res.error, "not_owned", "Error is 'not_owned'")
 
@@ -825,12 +825,12 @@ func test_equip_premium_owned() -> void:
 	var s = fresh()
 	var res = s.create_account("Alice", "secret1")
 	var account = res.account
-	account["owned_rewards"].append("avatar_gold_reel")
+	account["owned_rewards"].append("aphrodite")
 	s._save_accounts()
 
-	var eq_res = s.set_avatar(int(account.id), "avatar_gold_reel")
+	var eq_res = s.set_avatar(int(account.id), "aphrodite")
 	assert_equal(eq_res.ok, true, "Can equip owned premium avatar")
-	assert_equal(eq_res.account.avatar, "avatar_gold_reel", "Avatar set correctly")
+	assert_equal(eq_res.account.avatar, "aphrodite", "Avatar set correctly")
 
 
 func test_equip_legacy() -> void:

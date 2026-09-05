@@ -6,7 +6,19 @@ extends RefCounted
 # NOTE: every shop price is 5 on purpose — debug placeholder. Real cosmetics +
 # real prices get added here later by the user; this is a data edit only.
 const CATALOG: Array = [
-	{"id": "avatar_gold_reel", "type": "avatar",     "name": "Gold Reel",     "price": 5, "source": "shop"},
+	# --- avatars (art in res://assets/avatars/<id>.png) ---
+	{"id": "aphrodite", "type": "avatar", "name": "Aphrodite", "price": 5, "source": "shop"},
+	{"id": "athena",    "type": "avatar", "name": "Athena",    "price": 5, "source": "shop"},
+	{"id": "ella",      "type": "avatar", "name": "Ella",      "price": 5, "source": "shop"},
+	{"id": "eric",      "type": "avatar", "name": "Eric",      "price": 5, "source": "shop"},
+	{"id": "hades",     "type": "avatar", "name": "Hades",     "price": 5, "source": "shop"},
+	{"id": "helena",    "type": "avatar", "name": "Helena",    "price": 5, "source": "shop"},
+	{"id": "hercules",  "type": "avatar", "name": "Hercules",  "price": 5, "source": "shop"},
+	{"id": "lea",       "type": "avatar", "name": "Lea",       "price": 5, "source": "shop"},
+	{"id": "lily",      "type": "avatar", "name": "Lily",      "price": 5, "source": "shop"},
+	{"id": "stephanus", "type": "avatar", "name": "Stephanus", "price": 5, "source": "shop"},
+	{"id": "zeus",      "type": "avatar", "name": "Zeus",      "price": 5, "source": "shop"},
+	# --- placeholders (no art yet — replace when real cosmetics land) ---
 	{"id": "frame_neon",       "type": "frame",      "name": "Neon",          "price": 5, "source": "shop"},
 	{"id": "bg_starfield",     "type": "background", "name": "Starfield",     "price": 5, "source": "shop"},
 	{"id": "sleeve_noir",      "type": "sleeve",     "name": "Noir",          "price": 5, "source": "shop"},
