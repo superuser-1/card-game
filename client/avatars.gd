@@ -27,9 +27,14 @@ static func list_ids() -> Array:
 			var name := f
 			if name.ends_with(".import"):
 				name = name.substr(0, name.length() - ".import".length())
-			if not name.ends_with(".png"):
+			var id := ""
+			if name.ends_with(".png"):
+				id = name.substr(0, name.length() - ".png".length())
+			elif name.ends_with(".tres"):
+				# Animated avatar (AnimatedTexture, scripts/gif_to_cosmetic.py).
+				id = name.substr(0, name.length() - ".tres".length())
+			else:
 				continue
-			var id := name.substr(0, name.length() - ".png".length())
 			if _is_reserved(id):
 				continue
 			if not ids.has(id):
@@ -43,7 +48,7 @@ static func list_ids() -> Array:
 
 
 static func has_id(id: String) -> bool:
-	return ResourceLoader.exists(DIR + id + ".png")
+	return ResourceLoader.exists(DIR + id + ".tres") or ResourceLoader.exists(DIR + id + ".png")
 
 
 ## Reserved ids a player may never pick: the generic "default"/"bot"
@@ -100,8 +105,12 @@ static func needs_choice(id: String) -> bool:
 
 
 static func path_for(id: String) -> String:
-	if id != "" and ResourceLoader.exists(DIR + id + ".png"):
-		return DIR + id + ".png"
+	if id != "":
+		# .tres (animated) wins over a still .png of the same id.
+		if ResourceLoader.exists(DIR + id + ".tres"):
+			return DIR + id + ".tres"
+		if ResourceLoader.exists(DIR + id + ".png"):
+			return DIR + id + ".png"
 	return DIR + DEFAULT_ID + ".png"
 
 

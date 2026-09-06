@@ -7,7 +7,9 @@ extends RefCounted
 ## same convention as Frames.
 
 const DIR := "res://assets/avatars/avatar_bg/"
-const EXTENSIONS: Array[String] = ["png", "jpg", "jpeg", "webp"]
+# ".tres" first so an animated AnimatedTexture (scripts/gif_to_cosmetic.py)
+# wins over a still <id>.png of the same id in path_for().
+const EXTENSIONS: Array[String] = ["tres", "png", "jpg", "jpeg", "webp"]
 const NONE_ID := ""
 
 
