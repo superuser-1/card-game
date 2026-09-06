@@ -42,7 +42,7 @@ const BEAT_SHORT := 0.525
 const BEAT_MEDIUM := 0.9
 # Beat where both cards sit face down after the responder commits, before the
 # flip — so both players actually see the card backs.
-const REVEAL_HOLD := 1.0
+const REVEAL_HOLD := 0.5
 
 # Hand fan layout. Cards are scaled down from their native CardView.CARD_SIZE
 # and spread by HAND_MAX_SPACING_SCALE of their (scaled) width by default,
