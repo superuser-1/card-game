@@ -52,7 +52,12 @@ text = "Achievements"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="AchievementsBox" type="GridContainer" parent="MarginContainer/Root/ScrollContainer"]
+[node name="GridMargin" type="MarginContainer" parent="MarginContainer/Root/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_right = 18
+
+[node name="AchievementsBox" type="GridContainer" parent="MarginContainer/Root/ScrollContainer/GridMargin"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
 columns = 3

@@ -81,6 +81,10 @@ func _make_tile(row: Dictionary) -> Control:
 	sb.bg_color = Color(0.09, 0.09, 0.12, 0.95)
 	sb.border_color = BORDER_DONE if maxed else BORDER_IDLE
 	sb.set_border_width_all(2 if maxed else 1)
+	# Inset the content so the rectangular art is clipped *inside* the rounded
+	# border arc — otherwise the image's square corners sit on top of the
+	# border and it reads as "border behind the picture".
+	sb.set_content_margin_all(5)
 	tile.add_theme_stylebox_override("panel", sb)
 
 	var inner := Control.new()
