@@ -287,6 +287,7 @@ func _on_match_ended(summary: Dictionary) -> void:
 	# has finished, so the final round still plays out on screen.
 	var ending_match_id := int(summary.get("match_id", 0))
 	Session.last_match_summary = summary
+	Session.queue_achievement_toasts(summary.get("achievement_unlocks", []))
 	await _wait_for_reveal_to_finish()
 	var tournament_ctx: Dictionary = summary.get("tournament_ctx", {})
 	if not tournament_ctx.is_empty():

@@ -47,6 +47,12 @@ var kicked_message: String = ""
 ## whoever handles Net.match_ended; cleared by the result screen once shown.
 var last_match_summary: Dictionary = {}
 
+## Achievement unlocks not yet shown as a main-menu toast. Filled from match
+## summaries (game_ui) and out-of-band tournament pushes (Net.achievements_
+## unlocked, wired below); drained + cleared by main_menu each time it loads.
+## Each entry: {id, name, tier_name, points, reward}.
+var pending_achievement_toasts: Array = []
+
 ## Same idea for the match_found payload (player names / avatars / elo): the
 ## queue screen stashes it here right before swapping to the game scene, which
 ## then reads it on _ready since the signal already fired.
@@ -94,6 +100,7 @@ func _ready() -> void:
 	Net.tournament_updated.connect(_on_tournament_updated)
 	Net.my_tournament_status.connect(_on_my_tournament_status)
 	Net.match_found.connect(_on_tournament_match_found)
+	Net.achievements_unlocked.connect(queue_achievement_toasts)
 	Net.kicked.connect(_on_kicked)
 
 
@@ -115,6 +122,22 @@ func _on_kicked() -> void:
 
 func set_account(a: Dictionary) -> void:
 	account = a.duplicate(true)
+
+
+## Append achievement-unlock rows to the pending main-menu toast queue,
+## skipping any already queued (same id + tier). Safe to call with [] or junk.
+func queue_achievement_toasts(list: Array) -> void:
+	for e in list:
+		if typeof(e) != TYPE_DICTIONARY:
+			continue
+		var key := "%s@%s" % [str(e.get("id", "")), str(e.get("tier_index", e.get("tier_name", "")))]
+		var seen := false
+		for q in pending_achievement_toasts:
+			if "%s@%s" % [str(q.get("id", "")), str(q.get("tier_index", q.get("tier_name", "")))] == key:
+				seen = true
+				break
+		if not seen:
+			pending_achievement_toasts.append(e)
 
 
 func save_token(t: String) -> void:

@@ -22,6 +22,16 @@ var _avatar_onboard: Control = null
 ## top. "main" | "multiplayer" | "custom".
 var _view := "main"
 
+# Achievement-unlock toast: a card that slides in from the top-right, holds,
+# and slides back out. Queue is filled in Session (match summaries + tournament
+# pushes) and drained here.
+const TOAST_WIDTH := 360.0
+const TOAST_RIGHT_GAP_FRAC := 0.30   # empty space kept to the right of the card
+const TOAST_TOP_MARGIN := 22.0
+const TOAST_HOLD_SECONDS := 5.0
+var _toast_layer: CanvasLayer = null
+var _toast_running := false
+
 
 func _ready() -> void:
 	if not Session.is_logged_in():
@@ -106,6 +116,11 @@ func _ready() -> void:
 	%AvatarImage.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	%AvatarImage.tooltip_text = "Change avatar, frame or background"
 	%AvatarImage.gui_input.connect(_on_avatar_clicked)
+
+	# Achievement toasts: show anything queued while we were away, and keep
+	# reacting to out-of-band tournament unlocks that land while the menu is up.
+	Net.achievements_unlocked.connect(func(_l): call_deferred("_show_pending_achievement_toasts"))
+	call_deferred("_show_pending_achievement_toasts")
 
 
 func _render_account() -> void:
@@ -251,6 +266,131 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") and _view != "main":
 		_on_back_pressed()
 		get_viewport().set_input_as_handled()
+		return
+
+	# Dev: F9 fires a sample achievement toast so the animation can be checked
+	# without earning one. Debug builds / editor only.
+	if OS.is_debug_build() and event is InputEventKey and event.pressed and not event.echo \
+			and event.keycode == KEY_F9:
+		Session.queue_achievement_toasts([{
+			"id": "ranked_win_50", "name": "50 Ranked Wins",
+			"tier_name": "", "points": 150, "reward": "",
+		}])
+		_show_pending_achievement_toasts()
+		get_viewport().set_input_as_handled()
+
+
+# --- achievement unlock toast ----------------------------------------------
+
+func _show_pending_achievement_toasts() -> void:
+	if _toast_running or not is_inside_tree():
+		return
+	if Session.pending_achievement_toasts.is_empty():
+		return
+	_toast_running = true
+	while not Session.pending_achievement_toasts.is_empty():
+		var entry: Dictionary = Session.pending_achievement_toasts.pop_front()
+		await _play_achievement_toast(entry)
+	_toast_running = false
+
+
+func _play_achievement_toast(entry: Dictionary) -> void:
+	if _toast_layer == null or not is_instance_valid(_toast_layer):
+		_toast_layer = CanvasLayer.new()
+		_toast_layer.name = "AchievementToastLayer"
+		_toast_layer.layer = 90
+		add_child(_toast_layer)
+
+	var card := _build_achievement_toast_card(entry)
+	_toast_layer.add_child(card)
+	await get_tree().process_frame        # let the card measure itself
+
+	var vw: float = get_viewport().get_visible_rect().size.x
+	var h: float = maxf(card.size.y, card.get_combined_minimum_size().y)
+	card.position.x = vw * (1.0 - TOAST_RIGHT_GAP_FRAC) - TOAST_WIDTH
+	var y_hidden := -h - 24.0
+	card.position.y = y_hidden
+
+	var tw := create_tween()
+	tw.tween_property(card, "position:y", TOAST_TOP_MARGIN, 0.38).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_interval(TOAST_HOLD_SECONDS)
+	tw.tween_property(card, "position:y", y_hidden, 0.30).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	await tw.finished
+	card.queue_free()
+
+
+func _build_achievement_toast_card(entry: Dictionary) -> Control:
+	var card := PanelContainer.new()
+	card.custom_minimum_size = Vector2(TOAST_WIDTH, 0)
+	card.size.x = TOAST_WIDTH
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sb := StyleBoxFlat.new()
+	sb.set_corner_radius_all(12)
+	sb.bg_color = Color(0.09, 0.09, 0.12, 0.97)
+	sb.border_color = Color(1.0, 0.82, 0.38, 0.95)
+	sb.set_border_width_all(2)
+	sb.set_content_margin_all(12)
+	sb.shadow_color = Color(0, 0, 0, 0.45)
+	sb.shadow_size = 10
+	card.add_theme_stylebox_override("panel", sb)
+
+	var col := VBoxContainer.new()
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_theme_constant_override("separation", 6)
+	card.add_child(col)
+
+	var header := Label.new()
+	header.text = "★  ACHIEVEMENT UNLOCKED"
+	header.add_theme_font_size_override("font_size", 11)
+	header.add_theme_color_override("font_color", Color(1.0, 0.82, 0.38))
+	col.add_child(header)
+
+	var row := HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", 10)
+	col.add_child(row)
+
+	var art_tex := AchievementArt.texture_for(str(entry.get("id", "")))
+	if art_tex != null:
+		var art := TextureRect.new()
+		art.texture = art_tex
+		art.custom_minimum_size = Vector2(60, 60)
+		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		art.clip_contents = true
+		row.add_child(art)
+
+	var texts := VBoxContainer.new()
+	texts.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	texts.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	texts.add_theme_constant_override("separation", 2)
+	row.add_child(texts)
+
+	var name_label := Label.new()
+	name_label.text = str(entry.get("name", "Achievement"))
+	name_label.add_theme_font_size_override("font_size", 16)
+	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	texts.add_child(name_label)
+
+	var bits := []
+	var tier_name := str(entry.get("tier_name", ""))
+	if tier_name != "":
+		bits.append(tier_name)
+	var pts := int(entry.get("points", 0))
+	if pts > 0:
+		bits.append("+%d pts" % pts)
+	var reward_id := str(entry.get("reward", ""))
+	if reward_id != "":
+		var rdef := ShopCatalog.def_for(reward_id)
+		bits.append("reward: %s" % str(rdef.get("name", reward_id)))
+	if not bits.is_empty():
+		var sub := Label.new()
+		sub.text = "  ·  ".join(bits)
+		sub.add_theme_font_size_override("font_size", 11)
+		sub.add_theme_color_override("font_color", Color(0.85, 0.87, 0.95))
+		texts.add_child(sub)
+
+	return card
 
 
 func _on_ranked_play() -> void:
