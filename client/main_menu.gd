@@ -268,16 +268,26 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 
-	# Dev: F9 fires a sample achievement toast so the animation can be checked
-	# without earning one. Debug builds / editor only.
+	# Dev: F9 queues the next sample achievement toast so the animation + the
+	# multi-toast queue can be checked without earning one. Each press uses a
+	# different entry (the queue de-dupes identical id+tier). Debug/editor only.
 	if OS.is_debug_build() and event is InputEventKey and event.pressed and not event.echo \
 			and event.keycode == KEY_F9:
-		Session.queue_achievement_toasts([{
-			"id": "ranked_win_50", "name": "50 Ranked Wins",
-			"tier_name": "", "points": 150, "reward": "",
-		}])
+		Session.queue_achievement_toasts([_F9_SAMPLES[_f9_i % _F9_SAMPLES.size()].duplicate()])
+		_f9_i += 1
 		_show_pending_achievement_toasts()
 		get_viewport().set_input_as_handled()
+
+
+const _F9_SAMPLES := [
+	{"id": "ranked_win_1", "name": "First Ranked Win", "tier_name": "", "points": 10, "reward": ""},
+	{"id": "ranked_win_5", "name": "5 Ranked Wins", "tier_name": "", "points": 25, "reward": ""},
+	{"id": "ranked_loss_30", "name": "30 Ranked Losses", "tier_name": "", "points": 100, "reward": "30_ranked_losses_avatar"},
+	{"id": "tourney_win_1", "name": "1 Tournament Win", "tier_name": "", "points": 100, "reward": ""},
+	{"id": "quests_completed_5", "name": "5 Quests Completed", "tier_name": "", "points": 50, "reward": ""},
+	{"id": "tourney_created_5", "name": "5 Tournaments Created", "tier_name": "", "points": 50, "reward": ""},
+]
+var _f9_i := 0
 
 
 # --- achievement unlock toast ----------------------------------------------
@@ -305,8 +315,13 @@ func _play_achievement_toast(entry: Dictionary) -> void:
 	_toast_layer.add_child(card)
 	await get_tree().process_frame        # let the card measure itself
 
+	# Pin the size explicitly. A raw Control under a CanvasLayer isn't laid out
+	# by a parent, and a late-arriving texture can otherwise leave the panel
+	# stretched — clamp height so it can never render oversized.
+	card.size = Vector2(TOAST_WIDTH, clampf(card.get_combined_minimum_size().y, 76.0, 150.0))
+
 	var vw: float = get_viewport().get_visible_rect().size.x
-	var h: float = maxf(card.size.y, card.get_combined_minimum_size().y)
+	var h: float = card.size.y
 	card.position.x = vw * (1.0 - TOAST_RIGHT_GAP_FRAC) - TOAST_WIDTH
 	var y_hidden := -h - 24.0
 	card.position.y = y_hidden
@@ -352,13 +367,23 @@ func _build_achievement_toast_card(entry: Dictionary) -> Control:
 
 	var art_tex := AchievementArt.texture_for(str(entry.get("id", "")))
 	if art_tex != null:
+		# Hard-capped wrapper: the TextureRect's own min size can briefly track
+		# the full texture on the frame it loads, which would balloon the card.
+		var art_box := PanelContainer.new()
+		art_box.custom_minimum_size = Vector2(60, 60)
+		art_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		art_box.clip_contents = true
+		var abs := StyleBoxFlat.new()
+		abs.set_corner_radius_all(6)
+		abs.bg_color = Color(0, 0, 0, 0.25)
+		art_box.add_theme_stylebox_override("panel", abs)
 		var art := TextureRect.new()
 		art.texture = art_tex
-		art.custom_minimum_size = Vector2(60, 60)
 		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		art.clip_contents = true
-		row.add_child(art)
+		art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		art_box.add_child(art)
+		row.add_child(art_box)
 
 	var texts := VBoxContainer.new()
 	texts.mouse_filter = Control.MOUSE_FILTER_IGNORE

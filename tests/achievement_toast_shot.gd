@@ -15,24 +15,24 @@ func _ready() -> void:
 		"quests": [],
 	}
 	Session.token = "debug"
-	Session.pending_achievement_toasts = [{
-		"id": "ranked_win_50", "name": "50 Ranked Wins",
-		"tier_name": "", "points": 150, "reward": "",
-	}, {
-		"id": "ranked_loss_30", "name": "30 Ranked Losses",
-		"tier_name": "", "points": 100, "reward": "30_ranked_losses_avatar",
-	}]
+	Session.pending_achievement_toasts = [
+		{"id": "ranked_win_50", "name": "50 Ranked Wins", "tier_name": "", "points": 150, "reward": ""},
+		{"id": "ranked_loss_30", "name": "30 Ranked Losses", "tier_name": "", "points": 100, "reward": "30_ranked_losses_avatar"},
+		{"id": "tourney_win_1", "name": "1 Tournament Win", "tier_name": "", "points": 100, "reward": ""},
+		{"id": "quests_completed_5", "name": "5 Quests Completed", "tier_name": "", "points": 50, "reward": ""},
+	]
 
 	var menu: Control = load("res://client/main_menu.tscn").instantiate()
 	add_child(menu)
 
 	await get_tree().create_timer(0.35).timeout
-	_shot("toast_in")
+	_shot("toast_in")            # card 1 sliding in
 	await get_tree().create_timer(1.2).timeout
-	_shot("toast_hold")
-	# first toast holds 5s; jump near its end to catch the slide-out
-	await get_tree().create_timer(4.2).timeout
-	_shot("toast_out")
+	_shot("toast_hold")          # card 1 held
+	await get_tree().create_timer(5.4).timeout
+	_shot("toast_2")             # card 2 (queue advanced)
+	await get_tree().create_timer(5.8).timeout
+	_shot("toast_3")             # card 3 — confirms the whole queue drains
 
 	get_tree().quit()
 
