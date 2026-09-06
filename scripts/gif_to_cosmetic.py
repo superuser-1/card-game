@@ -27,7 +27,13 @@ from pathlib import Path
 try:
     from PIL import Image, ImageSequence
 except ImportError:
-    sys.exit("Pillow is required:  pip install Pillow")
+    _msg = "Pillow is required. Install it with:\n\n    pip install Pillow"
+    try:  # double-clicked (no console) -> show a dialog instead of a dead stderr
+        import tkinter.messagebox as _mb
+        _mb.showerror("gif_to_cosmetic", _msg)
+    except Exception:
+        pass
+    sys.exit(_msg)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
