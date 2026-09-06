@@ -83,9 +83,11 @@ func _ready() -> void:
 	_decorate_image_button(%SingleplayerButton, "solo play")
 	_decorate_image_button(%LadderButton, "ladder")
 	_decorate_image_button(%DeckbuilderButton, "deckbuilder")
-	_decorate_image_button(%OptionsButton, "options")
-	_decorate_image_button(%ShopButton, "shop")
-	_decorate_image_button(%AchievementsButton, "achievements")
+	# The three small leaf buttons get a permanent black outline so they stay
+	# legible over the busy background art; hover gold border is unchanged.
+	_decorate_image_button(%OptionsButton, "options", true)
+	_decorate_image_button(%ShopButton, "shop", true)
+	_decorate_image_button(%AchievementsButton, "achievements", true)
 	_decorate_image_button(%RankedButton, "ranked")
 	_decorate_image_button(%TournamentButton, "tournament")
 	_decorate_image_button(%CustomGameButton, "custom")
@@ -712,10 +714,13 @@ func _on_logout() -> void:
 ## Mask an art button's corners round via ROUND_SHADER (the button keeps
 ## filling its wide grid cell, art cropped not stretched), and lay its name
 ## down the left edge on a grey backplate EDGE_STRIP_FRAC of the button wide.
-func _decorate_image_button(btn: TextureButton, label_text: String) -> void:
+func _decorate_image_button(btn: TextureButton, label_text: String, permanent_outline := false) -> void:
 	var mat := ShaderMaterial.new()
 	mat.shader = ROUND_SHADER
 	mat.set_shader_parameter("border_width", 0.0)
+	if permanent_outline:
+		mat.set_shader_parameter("outline_width", 0.05)    # fraction of button height
+		mat.set_shader_parameter("outline_color", Color(0, 0, 0, 1.0))
 	btn.material = mat
 
 	var strip := Panel.new()
