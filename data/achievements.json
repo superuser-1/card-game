@@ -98,9 +98,9 @@
 		{"id": "ranked_loss_30",   "name": "30 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 30,   "points": 100,  "reward": "30_ranked_losses_avatar"}]},
 		{"id": "ranked_loss_50",   "name": "50 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 50,   "points": 150,  "reward": "50_ranked_losses_avatar"}]},
 		{"id": "ranked_loss_100",  "name": "100 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 100,  "points": 300,  "reward": "100_ranked_losses_avatar"}]},
-		{"id": "ranked_loss_250",  "name": "250 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 250,  "points": 600,  "reward": ""}]},
-		{"id": "ranked_loss_500",  "name": "500 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 500,  "points": 1200, "reward": ""}]},
-		{"id": "ranked_loss_1000", "name": "1000 Ranked Losses", "stat": "losses", "tiers": [{"threshold": 1000, "points": 2500, "reward": ""}]},
+		{"id": "ranked_loss_250",  "name": "250 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 250,  "points": 600,  "reward": "250_ranked_losses_avatar"}]},
+		{"id": "ranked_loss_500",  "name": "500 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 500,  "points": 1200, "reward": "500_ranked_losses_avatar"}]},
+		{"id": "ranked_loss_1000", "name": "1000 Ranked Losses", "stat": "losses", "tiers": [{"threshold": 1000, "points": 2500, "reward": "1000_ranked_losses_avatar"}]},
 
 		{"id": "tourney_win_1",   "name": "1 Tournament Win",    "stat": "tournaments_won", "tiers": [{"threshold": 1,   "points": 100,  "reward": ""}]},
 		{"id": "tourney_win_5",   "name": "5 Tournament Wins",   "stat": "tournaments_won", "tiers": [{"threshold": 5,   "points": 300,  "reward": ""}]},

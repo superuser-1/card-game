@@ -28,9 +28,12 @@ const CATALOG: Array = [
 	{"id": "avatar_champion",  "type": "avatar",     "name": "Grand Champion","price": 0, "source": "achievement"},
 	{"id": "sleeve_flame",     "type": "sleeve",     "name": "Flame",         "price": 0, "source": "achievement"},
 	# Avatar rewards for the ranked-loss ladder (art: res://assets/avatars/<id>.png).
-	{"id": "30_ranked_losses_avatar",  "type": "avatar", "name": "30 Ranked Losses",  "price": 0, "source": "achievement"},
-	{"id": "50_ranked_losses_avatar",  "type": "avatar", "name": "50 Ranked Losses",  "price": 0, "source": "achievement"},
-	{"id": "100_ranked_losses_avatar", "type": "avatar", "name": "100 Ranked Losses", "price": 0, "source": "achievement"},
+	{"id": "30_ranked_losses_avatar",   "type": "avatar", "name": "30 Ranked Losses",   "price": 0, "source": "achievement"},
+	{"id": "50_ranked_losses_avatar",   "type": "avatar", "name": "50 Ranked Losses",   "price": 0, "source": "achievement"},
+	{"id": "100_ranked_losses_avatar",  "type": "avatar", "name": "100 Ranked Losses",  "price": 0, "source": "achievement"},
+	{"id": "250_ranked_losses_avatar",  "type": "avatar", "name": "250 Ranked Losses",  "price": 0, "source": "achievement"},
+	{"id": "500_ranked_losses_avatar",  "type": "avatar", "name": "500 Ranked Losses",  "price": 0, "source": "achievement"},
+	{"id": "1000_ranked_losses_avatar", "type": "avatar", "name": "1000 Ranked Losses", "price": 0, "source": "achievement"},
 ]
 
 const TYPES: Array[String] = ["avatar", "frame", "background", "sleeve"]
