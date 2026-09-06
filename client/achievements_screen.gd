@@ -16,6 +16,20 @@ func _ready() -> void:
 	%AchievementsBox.add_theme_constant_override("v_separation", 14)
 	_render_achievements()
 
+	# Pull a fresh snapshot so progress earned this session (tournaments made,
+	# matches, quests) is reflected even if the menu's own fetch hasn't landed
+	# — then re-render when it arrives.
+	if not Net.is_solo and Session.token != "":
+		Net.profile_received.connect(_on_profile)
+		Net.request_profile()
+
+
+func _on_profile(data: Dictionary) -> void:
+	var acc = data.get("account", {})
+	if acc is Dictionary and not (acc as Dictionary).is_empty():
+		Session.set_account(acc)
+		_render_achievements()
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):

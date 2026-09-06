@@ -1093,10 +1093,13 @@ func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: in
 		int(account.id), name, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
 		is_dev_bot, _dev_tournaments, match_format
 	)
-	# Count real (non dev-bot) tournaments toward the creator's
-	# `tourney_created_*` achievements.
-	if bool(res.get("ok", false)) and not bool(res.get("tournament", {}).get("is_dev_bot_tournament", false)):
+	# Count every created tournament toward the creator's `tourney_created_*`
+	# achievements (dev-bot ones included — the admin still built it), then
+	# hand back a fresh account snapshot so the client's stats/achievement
+	# progress updates without waiting for the next menu reload.
+	if bool(res.get("ok", false)):
 		_apply_tournament_achievement(int(account.id), "tournaments_created")
+		res["account"] = _store.account_snapshot(_store.get_account(int(account.id)))
 	_rpc_tournament_created.rpc_id(peer_id, res)
 
 

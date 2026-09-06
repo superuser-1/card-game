@@ -33,6 +33,11 @@ func _on_create_pressed() -> void:
 func _on_tournament_created(result: Dictionary) -> void:
 	%CreateButton.disabled = false
 	if bool(result.get("ok", false)):
+		# Server sends a fresh snapshot so "Tournaments Created" achievement
+		# progress is up to date the moment the player opens the screen.
+		var acc = result.get("account", {})
+		if acc is Dictionary and not (acc as Dictionary).is_empty():
+			Session.set_account(acc)
 		_toast("Tournament created!")
 		await get_tree().create_timer(0.5).timeout
 		_close()
