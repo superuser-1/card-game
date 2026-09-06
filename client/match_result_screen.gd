@@ -100,11 +100,9 @@ func _show_result(s: Dictionary) -> void:
 		else:
 			var aparts := []
 			for a in ac:
-				aparts.append("%s (%s)  +%d" % [
-					str(a.get("name", "Achievement")),
-					str(a.get("tier_name", "")),
-					int(a.get("points", 0)),
-				])
+				var tn := str(a.get("tier_name", ""))
+				var label := "%s (%s)" % [str(a.get("name", "Achievement")), tn] if tn != "" else str(a.get("name", "Achievement"))
+				aparts.append("%s  +%d" % [label, int(a.get("points", 0))])
 			%AchievementLabel.visible = true
 			%AchievementLabel.text = "Achievements — " + "  ·  ".join(aparts)
 

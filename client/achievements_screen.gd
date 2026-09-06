@@ -50,17 +50,19 @@ func _add_achievement_card(row: Dictionary) -> void:
 
 	# Tier badge
 	var tiers_done := int(row.get("tiers_done", 0))
+	var tier_total := int(row.get("tier_total", 3))
 	var maxed := bool(row.get("maxed", false))
 	var tier_label := Label.new()
+	tier_label.add_theme_font_size_override("font_size", 10)
 	if maxed:
-		tier_label.text = "COMPLETE"
-		tier_label.add_theme_font_size_override("font_size", 10)
+		# Single-tier milestones read better as "UNLOCKED" than "COMPLETE".
+		tier_label.text = "UNLOCKED" if tier_total <= 1 else "COMPLETE"
+	elif tier_total <= 1:
+		tier_label.text = "LOCKED"
 	elif tiers_done > 0:
 		tier_label.text = AchievementSystem.TIER_NAMES[tiers_done - 1]
-		tier_label.add_theme_font_size_override("font_size", 10)
 	else:
 		tier_label.text = "—"
-		tier_label.add_theme_font_size_override("font_size", 10)
 	card.add_child(tier_label)
 
 	# Progress bar

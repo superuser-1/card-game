@@ -7,11 +7,6 @@ const CATALOG: Array = [
 		{"threshold": 100,   "points": 100, "reward": ""},
 		{"threshold": 1000,  "points": 500, "reward": "frame_veteran"},
 	]},
-	{"id": "winner",      "name": "Winner",       "stat": "wins",                "tiers": [
-		{"threshold": 10,    "points": 20,  "reward": ""},
-		{"threshold": 100,   "points": 150, "reward": ""},
-		{"threshold": 1000,  "points": 750, "reward": "avatar_champion"},
-	]},
 	{"id": "on_fire",     "name": "On Fire",      "stat": "win_streak_best",     "tiers": [
 		{"threshold": 3,     "points": 20,  "reward": ""},
 		{"threshold": 5,     "points": 60,  "reward": ""},
@@ -42,19 +37,70 @@ const CATALOG: Array = [
 		{"threshold": 10,    "points": 100, "reward": ""},
 		{"threshold": 50,    "points": 400, "reward": ""},
 	]},
-	{"id": "champion",    "name": "Champion",     "stat": "tournaments_won",     "tiers": [
-		{"threshold": 1,     "points": 100, "reward": ""},
-		{"threshold": 5,     "points": 300, "reward": ""},
-		{"threshold": 25,    "points": 1000, "reward": "frame_champion"},
-	]},
 	{"id": "high_roller", "name": "High Roller",  "stat": "points_earned_total", "tiers": [
 		{"threshold": 1000,  "points": 0,   "reward": ""},
 		{"threshold": 10000, "points": 100, "reward": ""},
 		{"threshold": 100000, "points": 500, "reward": ""},
 	]},
+
+	# --- Single-tier milestone achievements (user set, 2026-09-06) --------------
+	# Each is its own catalog entry / art asset (assets/achievements/<id>.png),
+	# one threshold, points only (no cosmetic reward). The generic evaluate/rows
+	# code handles a 1-element `tiers` array the same as a 3-element one.
+
+	# Ranked wins — stat `wins` (ranked human-vs-human only, see PLAN_achievements §2)
+	{"id": "ranked_win_1",    "name": "First Ranked Win",   "stat": "wins", "tiers": [{"threshold": 1,    "points": 10,   "reward": ""}]},
+	{"id": "ranked_win_5",    "name": "5 Ranked Wins",      "stat": "wins", "tiers": [{"threshold": 5,    "points": 25,   "reward": ""}]},
+	{"id": "ranked_win_10",   "name": "10 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 10,   "points": 50,   "reward": ""}]},
+	{"id": "ranked_win_30",   "name": "30 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 30,   "points": 100,  "reward": ""}]},
+	{"id": "ranked_win_50",   "name": "50 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 50,   "points": 150,  "reward": ""}]},
+	{"id": "ranked_win_100",  "name": "100 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 100,  "points": 300,  "reward": ""}]},
+	{"id": "ranked_win_250",  "name": "250 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 250,  "points": 600,  "reward": ""}]},
+	{"id": "ranked_win_500",  "name": "500 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 500,  "points": 1200, "reward": ""}]},
+	{"id": "ranked_win_1000", "name": "1000 Ranked Wins",   "stat": "wins", "tiers": [{"threshold": 1000, "points": 2500, "reward": ""}]},
+
+	# Ranked losses — stat `losses` (same thresholds/points as wins, user's call)
+	{"id": "ranked_loss_1",    "name": "First Ranked Loss",  "stat": "losses", "tiers": [{"threshold": 1,    "points": 10,   "reward": ""}]},
+	{"id": "ranked_loss_5",    "name": "5 Ranked Losses",    "stat": "losses", "tiers": [{"threshold": 5,    "points": 25,   "reward": ""}]},
+	{"id": "ranked_loss_10",   "name": "10 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 10,   "points": 50,   "reward": ""}]},
+	{"id": "ranked_loss_30",   "name": "30 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 30,   "points": 100,  "reward": ""}]},
+	{"id": "ranked_loss_50",   "name": "50 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 50,   "points": 150,  "reward": ""}]},
+	{"id": "ranked_loss_100",  "name": "100 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 100,  "points": 300,  "reward": ""}]},
+	{"id": "ranked_loss_250",  "name": "250 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 250,  "points": 600,  "reward": ""}]},
+	{"id": "ranked_loss_500",  "name": "500 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 500,  "points": 1200, "reward": ""}]},
+	{"id": "ranked_loss_1000", "name": "1000 Ranked Losses", "stat": "losses", "tiers": [{"threshold": 1000, "points": 2500, "reward": ""}]},
+
+	# Tournament wins — stat `tournaments_won` (bumped by apply_tournament_stat)
+	{"id": "tourney_win_1",   "name": "1 Tournament Win",    "stat": "tournaments_won", "tiers": [{"threshold": 1,   "points": 100,  "reward": ""}]},
+	{"id": "tourney_win_5",   "name": "5 Tournament Wins",   "stat": "tournaments_won", "tiers": [{"threshold": 5,   "points": 300,  "reward": ""}]},
+	{"id": "tourney_win_10",  "name": "10 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 10,  "points": 600,  "reward": ""}]},
+	{"id": "tourney_win_25",  "name": "25 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 25,  "points": 1200, "reward": ""}]},
+	{"id": "tourney_win_50",  "name": "50 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 50,  "points": 2500, "reward": ""}]},
+	{"id": "tourney_win_100", "name": "100 Tournament Wins", "stat": "tournaments_won", "tiers": [{"threshold": 100, "points": 5000, "reward": ""}]},
+
+	# Quests completed — stat `quests_completed` (bumped by apply_quest_progress)
+	{"id": "quests_done_5",   "name": "5 Quests Completed",   "stat": "quests_completed", "tiers": [{"threshold": 5,   "points": 50,  "reward": ""}]},
+	{"id": "quests_done_10",  "name": "10 Quests Completed",  "stat": "quests_completed", "tiers": [{"threshold": 10,  "points": 100, "reward": ""}]},
+	{"id": "quests_done_25",  "name": "25 Quests Completed",  "stat": "quests_completed", "tiers": [{"threshold": 25,  "points": 250, "reward": ""}]},
+	{"id": "quests_done_100", "name": "100 Quests Completed", "stat": "quests_completed", "tiers": [{"threshold": 100, "points": 800, "reward": ""}]},
+
+	# Tournaments created — stat `tournaments_created` (bumped on tournament creation)
+	{"id": "tourneys_made_5",  "name": "5 Tournaments Created",  "stat": "tournaments_created", "tiers": [{"threshold": 5,  "points": 50,  "reward": ""}]},
+	{"id": "tourneys_made_15", "name": "15 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 15, "points": 150, "reward": ""}]},
+	{"id": "tourneys_made_50", "name": "50 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 50, "points": 500, "reward": ""}]},
 ]
 
 const TIER_NAMES := ["Bronze", "Silver", "Gold"]
+
+
+## Display name for a tier. Single-tier (milestone) achievements have no
+## Bronze/Silver/Gold distinction, so they return "".
+static func tier_name_for(tier_idx: int, tier_total: int) -> String:
+	if tier_total <= 1:
+		return ""
+	if tier_idx >= 0 and tier_idx < TIER_NAMES.size():
+		return TIER_NAMES[tier_idx]
+	return "Tier %d" % (tier_idx + 1)
 
 
 static func def_for(id: String) -> Dictionary:
@@ -96,7 +142,7 @@ static func evaluate(stats: Dictionary, unlocked: Dictionary) -> Dictionary:
 					"id": ach_id,
 					"name": str(ach.name),
 					"tier_index": tier_idx,
-					"tier_name": TIER_NAMES[tier_idx] if tier_idx < TIER_NAMES.size() else "Unknown",
+					"tier_name": tier_name_for(tier_idx, tiers.size()),
 					"points": points,
 					"reward": reward,
 				})
@@ -140,6 +186,7 @@ static func rows(stats: Dictionary, unlocked: Dictionary) -> Array:
 			"stat": stat_key,
 			"current_value": current_val,
 			"tiers_done": tiers_done,
+			"tier_total": tiers.size(),
 			"next_threshold": next_threshold,
 			"maxed": maxed,
 			"reward_on_final": reward_on_final,

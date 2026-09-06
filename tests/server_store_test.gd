@@ -444,15 +444,22 @@ func test_quest_progress_and_daily_reset() -> void:
 	assert_equal(quests_norm["day"], day_a, "Persisted day matches day_a")
 	assert_equal(quests_norm["active_ids"].size(), 3, "active_ids has 3 quests")
 	assert_equal(quests_norm["state"]["win_1"]["completed"], true, "win_1 is persisted as completed")
+	# Lifetime quest-completion counter feeds the quests_done_* achievements.
+	assert_equal(int(account.get("stats", {}).get("quests_completed", 0)), 1,
+		"stats.quests_completed bumped to 1 after first completion")
 
 	# Test 2: Second win same day_a
 	var q_res2 = s.apply_quest_progress(id, ctx, day_a)
 	assert_equal(q_res2["points_awarded"], 0, "Second win awards 0 new points (win_1 already done)")
 	assert_equal(q_res2["completed"].size(), 0, "Second win completes no new quests")
+	assert_equal(int(s.get_account(id).get("stats", {}).get("quests_completed", 0)), 1,
+		"quests_completed stays 1 when nothing new completes")
 
 	# Test 3: Apply progress on day_b (different day) - state resets
 	var q_res3 = s.apply_quest_progress(id, ctx, day_b)
 	assert_equal(q_res3["points_awarded"], 10, "After day roll to day_b, win_1 completes again (+10)")
+	assert_equal(int(s.get_account(id).get("stats", {}).get("quests_completed", 0)), 2,
+		"quests_completed bumped to 2 after day-b re-completion")
 	assert_equal(q_res3["points_total"], 20, "Points total is now 20 (10 + 10)")
 	var account_day_b = s.get_account(id)
 	assert_equal(account_day_b.get("quests", {}).get("day", ""), day_b, "Day is updated to day_b")
@@ -885,7 +892,12 @@ func test_apply_match_stats() -> void:
 	assert_equal(stats.win_streak_current, 1, "win_streak_current set to 1")
 	assert_equal(stats.win_streak_best, 1, "win_streak_best set to 1")
 	assert_equal(int(stats.get("perfect_wins", 0)), 0, "perfect_wins still 0 (opp scored 3)")
-	assert_equal(res1.achievement_points, 0, "No achievements unlocked yet")
+	# First ranked win crosses the ranked_win_1 milestone (10 pts).
+	assert_equal(int(res1.achievement_points), 10, "first win unlocks ranked_win_1 (+10)")
+	var first_ids := []
+	for a in res1.achievement_unlocks:
+		first_ids.append(str(a.get("id")))
+	assert_true("ranked_win_1" in first_ids, "ranked_win_1 is among the first-win unlocks")
 
 	# Second match: a true 7-0 perfect win.
 	var perfect_ctx = {
@@ -928,8 +940,19 @@ func test_apply_tournament_stat() -> void:
 	var res_again = s.apply_tournament_stat(account_id, "tournaments_played")
 	assert_equal(res_again.size(), 0, "no re-unlock on the second tournament")
 
-	# tournaments_won=1 -> champion Bronze (threshold 1) unlocks.
+	# tournaments_won=1 -> tourney_win_1 (threshold 1) unlocks.
 	var res2 = s.apply_tournament_stat(account_id, "tournaments_won")
 	account = s.get_account(account_id)
 	assert_equal(account.stats.tournaments_won, 1, "tournaments_won incremented")
-	assert_true(account.achievements.unlocked.has("champion"), "champion achievement unlocked")
+	assert_true(account.achievements.unlocked.has("tourney_win_1"), "tourney_win_1 achievement unlocked")
+	var won_ids := []
+	for a in res2:
+		won_ids.append(str(a.get("id")))
+	assert_true("tourney_win_1" in won_ids, "tourney_win_1 is in the returned unlock list")
+
+	# tournaments_created=5 -> tourneys_made_5 unlocks (single milestone rung).
+	for i in range(5):
+		s.apply_tournament_stat(account_id, "tournaments_created")
+	account = s.get_account(account_id)
+	assert_equal(int(account.stats.tournaments_created), 5, "tournaments_created incremented to 5")
+	assert_true(account.achievements.unlocked.has("tourneys_made_5"), "tourneys_made_5 unlocked at 5")

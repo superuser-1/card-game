@@ -1,5 +1,5 @@
 {
-	"_comment": "Reference mirror of AchievementSystem.CATALOG. Not loaded by code — the catalog lives in server/achievement_system.gd.",
+	"_comment": "Reference mirror of AchievementSystem.CATALOG. Not loaded by code — the catalog lives in server/achievement_system.gd. Entries with a single tier are 'milestone' achievements (their own art asset, points only, no tier badge).",
 	"achievements": [
 		{
 			"id": "veteran",
@@ -9,16 +9,6 @@
 				{"threshold": 10, "points": 20, "reward": ""},
 				{"threshold": 100, "points": 100, "reward": ""},
 				{"threshold": 1000, "points": 500, "reward": "frame_veteran"}
-			]
-		},
-		{
-			"id": "winner",
-			"name": "Winner",
-			"stat": "wins",
-			"tiers": [
-				{"threshold": 10, "points": 20, "reward": ""},
-				{"threshold": 100, "points": 150, "reward": ""},
-				{"threshold": 1000, "points": 750, "reward": "avatar_champion"}
 			]
 		},
 		{
@@ -82,16 +72,6 @@
 			]
 		},
 		{
-			"id": "champion",
-			"name": "Champion",
-			"stat": "tournaments_won",
-			"tiers": [
-				{"threshold": 1, "points": 100, "reward": ""},
-				{"threshold": 5, "points": 300, "reward": ""},
-				{"threshold": 25, "points": 1000, "reward": "frame_champion"}
-			]
-		},
-		{
 			"id": "high_roller",
 			"name": "High Roller",
 			"stat": "points_earned_total",
@@ -100,6 +80,42 @@
 				{"threshold": 10000, "points": 100, "reward": ""},
 				{"threshold": 100000, "points": 500, "reward": ""}
 			]
-		}
+		},
+
+		{"id": "ranked_win_1",    "name": "First Ranked Win",   "stat": "wins", "tiers": [{"threshold": 1,    "points": 10,   "reward": ""}]},
+		{"id": "ranked_win_5",    "name": "5 Ranked Wins",      "stat": "wins", "tiers": [{"threshold": 5,    "points": 25,   "reward": ""}]},
+		{"id": "ranked_win_10",   "name": "10 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 10,   "points": 50,   "reward": ""}]},
+		{"id": "ranked_win_30",   "name": "30 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 30,   "points": 100,  "reward": ""}]},
+		{"id": "ranked_win_50",   "name": "50 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 50,   "points": 150,  "reward": ""}]},
+		{"id": "ranked_win_100",  "name": "100 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 100,  "points": 300,  "reward": ""}]},
+		{"id": "ranked_win_250",  "name": "250 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 250,  "points": 600,  "reward": ""}]},
+		{"id": "ranked_win_500",  "name": "500 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 500,  "points": 1200, "reward": ""}]},
+		{"id": "ranked_win_1000", "name": "1000 Ranked Wins",   "stat": "wins", "tiers": [{"threshold": 1000, "points": 2500, "reward": ""}]},
+
+		{"id": "ranked_loss_1",    "name": "First Ranked Loss",  "stat": "losses", "tiers": [{"threshold": 1,    "points": 10,   "reward": ""}]},
+		{"id": "ranked_loss_5",    "name": "5 Ranked Losses",    "stat": "losses", "tiers": [{"threshold": 5,    "points": 25,   "reward": ""}]},
+		{"id": "ranked_loss_10",   "name": "10 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 10,   "points": 50,   "reward": ""}]},
+		{"id": "ranked_loss_30",   "name": "30 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 30,   "points": 100,  "reward": ""}]},
+		{"id": "ranked_loss_50",   "name": "50 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 50,   "points": 150,  "reward": ""}]},
+		{"id": "ranked_loss_100",  "name": "100 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 100,  "points": 300,  "reward": ""}]},
+		{"id": "ranked_loss_250",  "name": "250 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 250,  "points": 600,  "reward": ""}]},
+		{"id": "ranked_loss_500",  "name": "500 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 500,  "points": 1200, "reward": ""}]},
+		{"id": "ranked_loss_1000", "name": "1000 Ranked Losses", "stat": "losses", "tiers": [{"threshold": 1000, "points": 2500, "reward": ""}]},
+
+		{"id": "tourney_win_1",   "name": "1 Tournament Win",    "stat": "tournaments_won", "tiers": [{"threshold": 1,   "points": 100,  "reward": ""}]},
+		{"id": "tourney_win_5",   "name": "5 Tournament Wins",   "stat": "tournaments_won", "tiers": [{"threshold": 5,   "points": 300,  "reward": ""}]},
+		{"id": "tourney_win_10",  "name": "10 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 10,  "points": 600,  "reward": ""}]},
+		{"id": "tourney_win_25",  "name": "25 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 25,  "points": 1200, "reward": ""}]},
+		{"id": "tourney_win_50",  "name": "50 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 50,  "points": 2500, "reward": ""}]},
+		{"id": "tourney_win_100", "name": "100 Tournament Wins", "stat": "tournaments_won", "tiers": [{"threshold": 100, "points": 5000, "reward": ""}]},
+
+		{"id": "quests_done_5",   "name": "5 Quests Completed",   "stat": "quests_completed", "tiers": [{"threshold": 5,   "points": 50,  "reward": ""}]},
+		{"id": "quests_done_10",  "name": "10 Quests Completed",  "stat": "quests_completed", "tiers": [{"threshold": 10,  "points": 100, "reward": ""}]},
+		{"id": "quests_done_25",  "name": "25 Quests Completed",  "stat": "quests_completed", "tiers": [{"threshold": 25,  "points": 250, "reward": ""}]},
+		{"id": "quests_done_100", "name": "100 Quests Completed", "stat": "quests_completed", "tiers": [{"threshold": 100, "points": 800, "reward": ""}]},
+
+		{"id": "tourneys_made_5",  "name": "5 Tournaments Created",  "stat": "tournaments_created", "tiers": [{"threshold": 5,  "points": 50,  "reward": ""}]},
+		{"id": "tourneys_made_15", "name": "15 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 15, "points": 150, "reward": ""}]},
+		{"id": "tourneys_made_50", "name": "50 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 50, "points": 500, "reward": ""}]}
 	]
 }

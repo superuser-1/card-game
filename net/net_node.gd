@@ -779,6 +779,21 @@ func _tournament_participant_account_ids(t: Dictionary) -> Array:
 	return ids
 
 
+## Bump a tournament-driven achievement stat for one account and, if that peer
+## is connected, push any newly-unlocked achievements out of band (there is no
+## match summary to fold them into). If offline, they are already persisted and
+## show as unlocked next time the player opens the Achievements screen.
+func _apply_tournament_achievement(account_id: int, key: String) -> void:
+	if _store == null:
+		return
+	var newly: Array = _store.apply_tournament_stat(account_id, key)
+	if newly.is_empty():
+		return
+	var peer: int = int(_account_peer.get(account_id, 0))
+	if peer > 0:
+		_rpc_achievements_unlocked.rpc_id(peer, newly)
+
+
 ## Pushes the full bracket snapshot to every currently-connected participant.
 ## Used instead of a client-driven poll so the bracket/wait screen updates the
 ## instant a round resolves or advances.
@@ -822,6 +837,11 @@ func _start_tournament(t: Dictionary) -> void:
 	t.rounds = [TournamentSystem.generate_bracket(t.participants, int(t.bracket_size), int(t.rng_seed))]
 	t.status = "in_progress"
 	t.current_round = 1
+	# Credit "tournament played" to everyone who checked in (a no-show who
+	# checked in but never played still gets it — see PLAN_achievements §7).
+	for p in (t.participants as Array):
+		if bool(p.get("checked_in", false)):
+			_apply_tournament_achievement(int(p.account_id), "tournaments_played")
 	_dispatch_round(t, 0)
 	_store.persist_tournament(t)
 	_broadcast_tournament(t)
@@ -886,6 +906,7 @@ func _complete_tournament(t: Dictionary) -> void:
 	t.winner_account_id = int(final_slot.winner_account_id) if not bool(final_slot.winner_is_bot) else 0
 	if int(t.winner_account_id) != 0:
 		_release_tournament_lock(int(t.winner_account_id))
+		_apply_tournament_achievement(int(t.winner_account_id), "tournaments_won")
 	# Defensive: release anyone still locked to this tournament (should
 	# already be released at elimination — see _record_tournament_result).
 	for acc_id in _tournament_participant_account_ids(t):
@@ -1072,6 +1093,10 @@ func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: in
 		int(account.id), name, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
 		is_dev_bot, _dev_tournaments, match_format
 	)
+	# Count real (non dev-bot) tournaments toward the creator's
+	# `tourneys_made_*` achievements.
+	if bool(res.get("ok", false)) and not bool(res.get("tournament", {}).get("is_dev_bot_tournament", false)):
+		_apply_tournament_achievement(int(account.id), "tournaments_created")
 	_rpc_tournament_created.rpc_id(peer_id, res)
 
 

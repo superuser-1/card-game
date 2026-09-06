@@ -289,6 +289,16 @@ func apply_quest_progress(account_id: int, match_ctx: Dictionary, day_override :
 	account["quests"] = normalised
 	if int(res["points_awarded"]) > 0:
 		account["points"] = int(account.get("points", 0)) + int(res["points_awarded"])
+
+	# Lifetime quest-completion counter, feeds the `quests_done_*` achievements.
+	# Achievement evaluation itself happens in apply_match_stats, which
+	# net_node._finish_match always calls right after this for the same account.
+	var completed_now := int((res["completed"] as Array).size())
+	if completed_now > 0:
+		_ensure_stats(account)
+		var stats: Dictionary = account["stats"]
+		stats["quests_completed"] = int(stats.get("quests_completed", 0)) + completed_now
+
 	_save_accounts()
 
 	return {
@@ -422,9 +432,10 @@ func apply_match_stats(account_id: int, match_ctx: Dictionary) -> Dictionary:
 	}
 
 
-## Apply a tournament stat bump (tournaments_played or tournaments_won).
-## Mutates, evaluates achievements, grants rewards, persists.
-## Returns newly-unlocked achievements list (for out-of-band push to client).
+## Apply a tournament stat bump (tournaments_played, tournaments_won, or
+## tournaments_created). Mutates, evaluates achievements, grants rewards,
+## persists. Returns newly-unlocked achievements list (for out-of-band push
+## to client).
 func apply_tournament_stat(account_id: int, key: String) -> Array:
 	var account := get_account(account_id)
 	if account.is_empty():
@@ -434,7 +445,7 @@ func apply_tournament_stat(account_id: int, key: String) -> Array:
 	_ensure_stats(account)
 	var stats: Dictionary = account["stats"]
 
-	if key in ["tournaments_played", "tournaments_won"]:
+	if key in ["tournaments_played", "tournaments_won", "tournaments_created"]:
 		stats[key] = int(stats.get(key, 0)) + 1
 
 	var ach_res := AchievementSystem.evaluate(stats, account["achievements"]["unlocked"])
