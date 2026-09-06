@@ -24,3 +24,7 @@ scripts/.flickbattle_pids.txt
 scripts/.flickbattle_solo_pid.txt
 scripts/.test_run_solo.log
 .claude/scheduled_tasks.lock
+
+# Art scratch folder — full-res source exports, not shipped (has a .gdignore
+# so Godot skips it too). Downscaled copies live in assets/achievements/.
+assets/Raw Work folder/
