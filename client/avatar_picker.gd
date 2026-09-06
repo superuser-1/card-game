@@ -15,13 +15,22 @@ extends Control
 signal chosen(id: String)
 signal frame_chosen(id: String)
 signal background_chosen(id: String)
+signal sleeve_chosen(id: String)
 
 const TILE := Vector2(92, 92)
 const ACCENT := Color(0.38, 0.68, 1.0)
 const CAT_AVATAR := "avatar"
 const CAT_FRAME := "frame"
 const CAT_BACKGROUND := "background"
+const CAT_SLEEVE := "sleeve"
 const NONE_TILE := "__none__"
+
+const CAT_TITLE := {
+	CAT_AVATAR: "Choose your avatar",
+	CAT_FRAME: "Choose a frame",
+	CAT_BACKGROUND: "Choose a background",
+	CAT_SLEEVE: "Choose a card back",
+}
 
 var _dismissable := true
 var _category := CAT_AVATAR
@@ -30,8 +39,8 @@ var _selected_avatar_id := ""
 # Frame/Background both allow "" (none) as a real choice, so a plain string
 # can't distinguish "nothing picked yet" from "explicitly picked none" —
 # hence the separate _touched flags, keyed by category.
-var _selected := {CAT_FRAME: "", CAT_BACKGROUND: ""}
-var _touched := {CAT_FRAME: false, CAT_BACKGROUND: false}
+var _selected := {CAT_FRAME: "", CAT_BACKGROUND: "", CAT_SLEEVE: ""}
+var _touched := {CAT_FRAME: false, CAT_BACKGROUND: false, CAT_SLEEVE: false}
 
 var _tiles := {}  # id (or NONE_TILE) -> PanelContainer frame, for the active category
 
@@ -41,7 +50,9 @@ var _tiles := {}  # id (or NONE_TILE) -> PanelContainer frame, for the active ca
 @onready var _avatar_tab: Button = %AvatarTabButton
 @onready var _frame_tab: Button = %FrameTabButton
 @onready var _background_tab: Button = %BackgroundTabButton
+@onready var _sleeve_tab: Button = %SleeveTabButton
 @onready var _tabs: Control = %CategoryTabs
+@onready var _title: Label = $Panel/MarginContainer/Box/Title
 
 
 ## Call before adding to the tree. `false` => mandatory onboarding mode.
@@ -56,6 +67,7 @@ func _ready() -> void:
 	_avatar_tab.pressed.connect(_switch_category.bind(CAT_AVATAR))
 	_frame_tab.pressed.connect(_switch_category.bind(CAT_FRAME))
 	_background_tab.pressed.connect(_switch_category.bind(CAT_BACKGROUND))
+	_sleeve_tab.pressed.connect(_switch_category.bind(CAT_SLEEVE))
 
 	_cancel.visible = _dismissable
 	_cancel.pressed.connect(_close)
@@ -79,11 +91,15 @@ func _update_tab_styles() -> void:
 	_avatar_tab.button_pressed = _category == CAT_AVATAR
 	_frame_tab.button_pressed = _category == CAT_FRAME
 	_background_tab.button_pressed = _category == CAT_BACKGROUND
+	_sleeve_tab.button_pressed = _category == CAT_SLEEVE
+	_title.text = str(CAT_TITLE.get(_category, "Choose your avatar"))
 
 
 func _list_ids(cat: String) -> Array:
 	if cat == CAT_FRAME:
 		return Frames.list_ids()
+	if cat == CAT_SLEEVE:
+		return Sleeves.list_ids()
 	return Backgrounds.list_ids()
 
 
@@ -103,6 +119,8 @@ func _available(ids: Array) -> Array:
 func _texture_for(cat: String, id: String) -> Texture2D:
 	if cat == CAT_FRAME:
 		return Frames.texture_for(id)
+	if cat == CAT_SLEEVE:
+		return Sleeves.texture_for(id)
 	return Backgrounds.texture_for(id)
 
 
@@ -188,6 +206,10 @@ func _on_select_pressed() -> void:
 		if not _touched[CAT_FRAME]:
 			return
 		frame_chosen.emit(_selected[CAT_FRAME])
+	elif _category == CAT_SLEEVE:
+		if not _touched[CAT_SLEEVE]:
+			return
+		sleeve_chosen.emit(_selected[CAT_SLEEVE])
 	else:
 		if not _touched[CAT_BACKGROUND]:
 			return

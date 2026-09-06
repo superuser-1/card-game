@@ -1715,13 +1715,14 @@ func _seat_identity(m: Dictionary, seat: int) -> Dictionary:
 		if not m.has("bot_identity"):
 			m["bot_identity"] = Avatars.bot_identity()
 		var bi: Dictionary = m["bot_identity"]
-		return {"name": "Bot", "avatar": str(bi["avatar"]), "frame": str(bi["frame"]), "background": str(bi["background"]), "elo": ServerStore.START_ELO, "is_bot": true}
+		return {"name": "Bot", "avatar": str(bi["avatar"]), "frame": str(bi["frame"]), "background": str(bi["background"]), "sleeve": "", "elo": ServerStore.START_ELO, "is_bot": true}
 	var acc := _store.get_account(acc_id)
 	return {
 		"name": str(acc.get("display_name", "Player")),
 		"avatar": str(acc.get("avatar", "")),
 		"frame": str(acc.get("frame", "")),
 		"background": str(acc.get("background", "")),
+		"sleeve": str(acc.get("sleeve", "")),
 		"elo": int(acc.get("elo", ServerStore.START_ELO)),
 		"is_bot": false,
 	}
@@ -1740,11 +1741,13 @@ func _send_match_found(m: Dictionary, seat: int) -> void:
 		"your_avatar": me.avatar,
 		"your_frame": me.frame,
 		"your_background": me.background,
+		"your_sleeve": me.sleeve,
 		"your_elo": me.elo,
 		"opponent_name": opp.name,
 		"opponent_avatar": opp.avatar,
 		"opponent_frame": opp.frame,
 		"opponent_background": opp.background,
+		"opponent_sleeve": opp.sleeve,
 		"opponent_elo": opp.elo,
 		"is_bot_match": opp.is_bot,
 		"tournament_ctx": m.get("tournament_ctx", {}),

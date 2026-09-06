@@ -55,6 +55,15 @@ func _on_resized() -> void:
 		size = CARD_SIZE
 
 
+## Swap the face-down card art to the given sleeve id (Sleeves.gd). "" / an
+## unknown id falls back to the classic default. Safe to call before or after
+## show_face_down().
+func set_sleeve(sleeve_id: String) -> void:
+	var tex := Sleeves.texture_for(sleeve_id)
+	if tex != null:
+		_back_rect.texture = tex
+
+
 func show_face_down() -> void:
 	_base_position = position
 	modulate = Color(1, 1, 1, 1)

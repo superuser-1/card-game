@@ -200,6 +200,7 @@ func _open_avatar_change() -> void:
 	picker.chosen.connect(func(id: String) -> void: Net.set_avatar(id))
 	picker.frame_chosen.connect(func(id: String) -> void: Net.set_frame(id))
 	picker.background_chosen.connect(func(id: String) -> void: Net.set_background(id))
+	picker.sleeve_chosen.connect(func(id: String) -> void: Net.set_sleeve(id))
 	picker.tree_exited.connect(layer.queue_free)
 	layer.add_child(picker)
 	add_child(layer)

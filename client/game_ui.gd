@@ -146,6 +146,11 @@ var _live_preview_order: Array = []
 var _left_table_card: TableCardView = null
 var _right_table_card: TableCardView = null
 
+# Card-back (sleeve) ids for the face-down table cards. Left is always mine,
+# right is the opponent's — set from the match_found payload / Session account.
+var _my_sleeve := ""
+var _opp_sleeve := ""
+
 # Single shared player for the card-draw sound. One voice on purpose: calling
 # play() again while it's still sounding restarts it from the top, so every
 # draw in a fast burst gets a clean, audible attack — the newest draw always
@@ -224,12 +229,19 @@ func _apply_match_info(info: Dictionary) -> void:
 	var my_bg: String = str(acc.get("background", ""))
 	if my_bg == "" and not acc.has("background"):
 		my_bg = str(info.get("your_background", ""))
+	var my_sleeve: String = str(acc.get("sleeve", ""))
+	if my_sleeve == "" and not acc.has("sleeve"):
+		my_sleeve = str(info.get("your_sleeve", ""))
 
 	_left_name.text = my_name
 	_left_elo.text = "Elo %d" % my_elo if my_elo > 0 else ""
 	_left_avatar.texture = Avatars.texture_for(my_avatar)
 	_left_frame.texture = Frames.texture_for(my_frame)
 	_left_bg.texture = Backgrounds.texture_for(my_bg)
+
+	_my_sleeve = my_sleeve
+	if _left_table_card != null:
+		_left_table_card.set_sleeve(_my_sleeve)
 
 	if info.is_empty():
 		_right_name.text = ""
@@ -238,6 +250,10 @@ func _apply_match_info(info: Dictionary) -> void:
 		_right_frame.texture = null
 		_right_bg.texture = null
 		return
+
+	_opp_sleeve = str(info.get("opponent_sleeve", ""))
+	if _right_table_card != null:
+		_right_table_card.set_sleeve(_opp_sleeve)
 
 	_right_name.text = str(info.get("opponent_name", "Opponent"))
 	var opp_elo: int = int(info.get("opponent_elo", 0))
@@ -666,6 +682,7 @@ func _ensure_left_card_face_down() -> void:
 	_left_table_card = TABLE_CARD_SCENE.instantiate()
 	_left_card_slot.add_child(_left_table_card)
 	_left_table_card.show_face_down()
+	_left_table_card.set_sleeve(_my_sleeve)
 
 
 func _ensure_right_card_face_down() -> void:
@@ -674,6 +691,7 @@ func _ensure_right_card_face_down() -> void:
 	_right_table_card = TABLE_CARD_SCENE.instantiate()
 	_right_card_slot.add_child(_right_table_card)
 	_right_table_card.show_face_down()
+	_right_table_card.set_sleeve(_opp_sleeve)
 
 
 func _clear_table_cards() -> void:

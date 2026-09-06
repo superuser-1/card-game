@@ -1,12 +1,13 @@
 class_name Sleeves
 extends RefCounted
 ## Shared card-back (sleeve) lookup. Sleeve images live in
-## res://assets/cards/sleeves/ (any image extension — drop more in there and they
-## show up in the picker automatically). Sleeves are optional decoration for the
-## face-down card back, so "" (no sleeve / default) is a valid, selectable id —
-## the default resolves to the existing res://assets/cards/card_back1.png.
+## res://assets/avatars/card_backs/ (any image extension — drop more in there and
+## they show up in the picker automatically). Sleeves are optional decoration for
+## the face-down card back, so "" (no sleeve / default) is a valid, selectable id
+## — the default resolves to the existing res://assets/cards/card_back1.png.
+## Everything in the folder is free to use (card backs are not in ShopCatalog).
 
-const DIR := "res://assets/cards/sleeves/"
+const DIR := "res://assets/avatars/card_backs/"
 const EXTENSIONS: Array[String] = ["png", "jpg", "jpeg", "webp"]
 const NONE_ID := "classic"
 
