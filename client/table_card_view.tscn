@@ -33,6 +33,7 @@ theme_override_constants/margin_bottom = 10
 
 [node name="BackRect" type="TextureRect" parent="BackMargin"]
 unique_name_in_owner = true
+texture_filter = 3
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("3_back")
@@ -63,6 +64,7 @@ color = Color(0.09, 0.09, 0.11, 1)
 
 [node name="ArtRect" type="TextureRect" parent="Front/ArtFrame"]
 unique_name_in_owner = true
+texture_filter = 3
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.0569
@@ -74,6 +76,7 @@ expand_mode = 1
 stretch_mode = 6
 
 [node name="BorderRect" type="TextureRect" parent="Front/ArtFrame"]
+texture_filter = 3
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

@@ -75,6 +75,7 @@ func _init(texture: Texture2D, title: String, director: String) -> void:
 
 	_art = TextureRect.new()
 	_art.texture = texture
+	_art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	_art.position = _art_position
 	_art.size = _art_size
 	_art.custom_minimum_size = _art_size
@@ -86,6 +87,7 @@ func _init(texture: Texture2D, title: String, director: String) -> void:
 
 	_border = TextureRect.new()
 	_border.texture = load("res://assets/cards/card_border1.png")
+	_border.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	_border.size = _border_size
 	_border.custom_minimum_size = _border_size
 	_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
