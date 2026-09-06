@@ -9,6 +9,12 @@ const BORDER_IDLE := Color(1, 1, 1, 0.12)
 const BORDER_HOVER := Color(1.0, 0.86, 0.55, 0.95)
 const BORDER_DONE := Color(1.0, 0.80, 0.35, 0.85)
 
+const CORNER_RADIUS := 12.0
+# Matches BackgroundRect in achievements_screen.tscn — the shader paints the
+# corner wedges with this so the rounded card sits cleanly on the page.
+const PAGE_BG := Color(0.1, 0.1, 0.15, 1.0)
+const FRAME_SHADER: Shader = preload("res://client/rounded_frame.gdshader")
+
 
 func _ready() -> void:
 	%BackButton.pressed.connect(func(): Session.goto("res://client/main_menu.tscn"))
@@ -76,15 +82,13 @@ func _make_tile(row: Dictionary) -> Control:
 	tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	tile.clip_contents = true
 
+	# Dark fill behind the art (covers the brief gap before the texture loads).
+	# The visible rounded border is drawn on TOP by the shader overlay below,
+	# not here — a stylebox border sits behind children and the full-bleed art
+	# would hide it.
 	var sb := StyleBoxFlat.new()
-	sb.set_corner_radius_all(12)
+	sb.set_corner_radius_all(int(CORNER_RADIUS))
 	sb.bg_color = Color(0.09, 0.09, 0.12, 0.95)
-	sb.border_color = BORDER_DONE if maxed else BORDER_IDLE
-	sb.set_border_width_all(2 if maxed else 1)
-	# Inset the content so the rectangular art is clipped *inside* the rounded
-	# border arc — otherwise the image's square corners sit on top of the
-	# border and it reads as "border behind the picture".
-	sb.set_content_margin_all(5)
 	tile.add_theme_stylebox_override("panel", sb)
 
 	var inner := Control.new()
@@ -209,11 +213,32 @@ func _make_tile(row: Dictionary) -> Control:
 			]
 			inner.add_child(badge)
 
+	# Rounded-corner + border overlay: full-bleed art stays rectangular, this
+	# masks the square corners with the page colour and strokes the border on
+	# top, so the border is never hidden behind the picture and there's no
+	# inset gap.
+	var mat := ShaderMaterial.new()
+	mat.shader = FRAME_SHADER
+	mat.set_shader_parameter("radius_px", CORNER_RADIUS)
+	mat.set_shader_parameter("border_px", 2.0 if maxed else 1.0)
+	mat.set_shader_parameter("border_color", BORDER_DONE if maxed else BORDER_IDLE)
+
+	var frame := ColorRect.new()
+	frame.color = PAGE_BG
+	frame.material = mat
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	frame.resized.connect(func() -> void: mat.set_shader_parameter("rect_px", frame.size))
+	inner.add_child(frame)
+	mat.set_shader_parameter("rect_px", frame.size)
+
 	# Hover: 5% swell + highlighted border (matches the menu buttons).
 	tile.pivot_offset = tile.size * 0.5
-	tile.resized.connect(func() -> void: tile.pivot_offset = tile.size * 0.5)
-	tile.mouse_entered.connect(_hover_tile.bind(tile, sb, maxed, true))
-	tile.mouse_exited.connect(_hover_tile.bind(tile, sb, maxed, false))
+	tile.resized.connect(func() -> void:
+		tile.pivot_offset = tile.size * 0.5
+		mat.set_shader_parameter("rect_px", frame.size))
+	tile.mouse_entered.connect(_hover_tile.bind(tile, mat, maxed, true))
+	tile.mouse_exited.connect(_hover_tile.bind(tile, mat, maxed, false))
 
 	return tile
 
@@ -237,7 +262,7 @@ func _reward_texture(reward_id: String) -> Texture2D:
 	return null
 
 
-func _hover_tile(tile: Control, sb: StyleBoxFlat, maxed: bool, over: bool) -> void:
+func _hover_tile(tile: Control, mat: ShaderMaterial, maxed: bool, over: bool) -> void:
 	tile.z_index = 1 if over else 0
 	if tile.has_meta("hover_tw"):
 		var old: Tween = tile.get_meta("hover_tw")
@@ -246,5 +271,5 @@ func _hover_tile(tile: Control, sb: StyleBoxFlat, maxed: bool, over: bool) -> vo
 	var tw := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	tw.tween_property(tile, "scale", Vector2.ONE * (HOVER_SCALE if over else 1.0), HOVER_TIME)
 	tile.set_meta("hover_tw", tw)
-	sb.border_color = BORDER_HOVER if over else (BORDER_DONE if maxed else BORDER_IDLE)
-	sb.set_border_width_all(2 if (over or maxed) else 1)
+	mat.set_shader_parameter("border_color", BORDER_HOVER if over else (BORDER_DONE if maxed else BORDER_IDLE))
+	mat.set_shader_parameter("border_px", 2.0 if (over or maxed) else 1.0)
