@@ -21,15 +21,18 @@ theme_override_constants/margin_bottom = 10
 [node name="ArtFrame" type="Control" parent="Margin"]
 layout_mode = 2
 mouse_filter = 2
+clip_contents = true
 
 [node name="ArtRect" type="TextureRect" parent="Margin/ArtFrame"]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.0569
-anchor_top = 0.0404
-anchor_right = 0.9408
-anchor_bottom = 0.9684
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -6.0
+offset_top = -6.0
+offset_right = 6.0
+offset_bottom = 6.0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
