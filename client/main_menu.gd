@@ -2,6 +2,10 @@ extends Control
 
 const AVATAR_PICKER := preload("res://client/avatar_picker.tscn")
 const ROUND_SHADER := preload("res://client/rounded_button.gdshader")
+const FRAME_SHADER := preload("res://client/rounded_frame.gdshader")
+# Wedge fill for the quest-tile corners — roughly the QuestPanel bg colour, so
+# the rounded card reads cleanly. See _render_quests / rounded_frame.gdshader.
+const QUEST_TILE_BG := Color(0.06, 0.06, 0.09, 1.0)
 const TOURNAMENT_CREATION_MODAL := preload("res://client/tournament_creation_modal.tscn")
 const FRIEND_INVITE_MODAL := preload("res://client/friend_invite_modal.tscn")
 const JOIN_CUSTOM_GAME_MODAL := preload("res://client/join_custom_game_modal.tscn")
@@ -862,11 +866,13 @@ func _render_quests() -> void:
 		tile.custom_minimum_size = Vector2(0, 150)
 		tile.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		tile.clip_contents = true
+		# Dark fill behind the art; the visible rounded border is drawn on TOP
+		# by the shader overlay below (a stylebox border sits behind children,
+		# so the full-bleed art would hide it and its square corners would poke
+		# out past the round edge).
 		var sb := StyleBoxFlat.new()
 		sb.set_corner_radius_all(10)
 		sb.bg_color = Color(0.08, 0.08, 0.10, 0.9)
-		sb.border_color = Color(1, 1, 1, 0.1)
-		sb.set_border_width_all(1)
 		tile.add_theme_stylebox_override("panel", sb)
 
 		var inner := Control.new()
@@ -967,16 +973,35 @@ func _render_quests() -> void:
 			bar.modulate = Color(0.65, 0.65, 0.65)
 			bar.value = int(r.get("target", 1))
 
+		# Rounded-corner + border overlay: full-bleed art stays rectangular,
+		# this masks the square corners with the panel colour and strokes the
+		# border on top (same trick as the achievements screen).
+		var mat := ShaderMaterial.new()
+		mat.shader = FRAME_SHADER
+		mat.set_shader_parameter("radius_px", 10.0)
+		mat.set_shader_parameter("border_px", 1.0)
+		mat.set_shader_parameter("border_color", Color(1, 1, 1, 0.1))
+		var frame := ColorRect.new()
+		frame.color = QUEST_TILE_BG
+		frame.material = mat
+		frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		frame.resized.connect(func() -> void: mat.set_shader_parameter("rect_px", frame.size))
+		inner.add_child(frame)
+		mat.set_shader_parameter("rect_px", frame.size)
+
 		# Hover: 5% swell + highlighted border, matching the menu buttons.
 		tile.pivot_offset = tile.size * 0.5
-		tile.resized.connect(func() -> void: tile.pivot_offset = tile.size * 0.5)
-		tile.mouse_entered.connect(_hover_quest_tile.bind(tile, sb, true))
-		tile.mouse_exited.connect(_hover_quest_tile.bind(tile, sb, false))
+		tile.resized.connect(func() -> void:
+			tile.pivot_offset = tile.size * 0.5
+			mat.set_shader_parameter("rect_px", frame.size))
+		tile.mouse_entered.connect(_hover_quest_tile.bind(tile, mat, true))
+		tile.mouse_exited.connect(_hover_quest_tile.bind(tile, mat, false))
 
 		vbox.add_child(tile)
 
 
-func _hover_quest_tile(tile: Control, sb: StyleBoxFlat, over: bool) -> void:
+func _hover_quest_tile(tile: Control, mat: ShaderMaterial, over: bool) -> void:
 	tile.z_index = 1 if over else 0
 	if tile.has_meta("hover_tw"):
 		var old: Tween = tile.get_meta("hover_tw")
@@ -985,5 +1010,5 @@ func _hover_quest_tile(tile: Control, sb: StyleBoxFlat, over: bool) -> void:
 	var tw := create_tween().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	tw.tween_property(tile, "scale", Vector2.ONE * (HOVER_SCALE if over else 1.0), HOVER_TIME)
 	tile.set_meta("hover_tw", tw)
-	sb.border_color = Color(1.0, 0.86, 0.55, 0.9) if over else Color(1, 1, 1, 0.1)
-	sb.set_border_width_all(2 if over else 1)
+	mat.set_shader_parameter("border_color", Color(1.0, 0.86, 0.55, 0.9) if over else Color(1, 1, 1, 0.1))
+	mat.set_shader_parameter("border_px", 2.0 if over else 1.0)
