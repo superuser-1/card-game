@@ -719,7 +719,7 @@ func _decorate_image_button(btn: TextureButton, label_text: String, permanent_ou
 	mat.shader = ROUND_SHADER
 	mat.set_shader_parameter("border_width", 0.0)
 	if permanent_outline:
-		mat.set_shader_parameter("outline_width", 0.05)    # fraction of button height
+		mat.set_shader_parameter("outline_width", EDGE_BORDER_ON)   # same as the gold hover border
 		mat.set_shader_parameter("outline_color", Color(0, 0, 0, 1.0))
 	btn.material = mat
 
