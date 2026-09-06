@@ -164,6 +164,47 @@ func _make_tile(row: Dictionary) -> Control:
 
 	inner.add_child(overlay)
 
+	# Reward preview: cosmetic image in the top-right corner. Full colour once
+	# earned (in owned_rewards), dimmed as a "you'll get this" preview until then.
+	var reward_id := str(row.get("reward_on_final", ""))
+	if reward_id != "":
+		var rtex := _reward_texture(reward_id)
+		if rtex != null:
+			var owned := reward_id in (Session.account.get("owned_rewards", []) as Array)
+			var badge := PanelContainer.new()
+			badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			badge.anchor_left = 1.0
+			badge.anchor_right = 1.0
+			badge.anchor_top = 0.0
+			badge.anchor_bottom = 0.0
+			badge.offset_left = -58.0
+			badge.offset_top = 8.0
+			badge.offset_right = -8.0
+			badge.offset_bottom = 58.0
+			var bs := StyleBoxFlat.new()
+			bs.set_corner_radius_all(8)
+			bs.bg_color = Color(0, 0, 0, 0.7)
+			bs.border_color = Color(1.0, 0.84, 0.4, 0.95) if owned else Color(1, 1, 1, 0.55)
+			bs.set_border_width_all(2)
+			bs.set_content_margin_all(3)
+			badge.add_theme_stylebox_override("panel", bs)
+
+			var rimg := TextureRect.new()
+			rimg.texture = rtex
+			rimg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			rimg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			rimg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			if not owned:
+				rimg.modulate = Color(1, 1, 1, 0.7)
+			badge.add_child(rimg)
+
+			var def := ShopCatalog.def_for(reward_id)
+			badge.tooltip_text = "Reward: %s%s" % [
+				str(def.get("name", reward_id)),
+				"" if owned else "  (locked)",
+			]
+			inner.add_child(badge)
+
 	# Hover: 5% swell + highlighted border (matches the menu buttons).
 	tile.pivot_offset = tile.size * 0.5
 	tile.resized.connect(func() -> void: tile.pivot_offset = tile.size * 0.5)
@@ -171,6 +212,25 @@ func _make_tile(row: Dictionary) -> Control:
 	tile.mouse_exited.connect(_hover_tile.bind(tile, sb, maxed, false))
 
 	return tile
+
+
+## Texture for a ShopCatalog reward id, routed by its cosmetic type. Returns
+## null when the id isn't a catalog item or its art file is missing (so the
+## badge is simply skipped rather than showing a fallback placeholder).
+func _reward_texture(reward_id: String) -> Texture2D:
+	var def := ShopCatalog.def_for(reward_id)
+	if def.is_empty():
+		return null
+	match str(def.get("type", "")):
+		"avatar":
+			return Avatars.texture_for(reward_id) if Avatars.has_id(reward_id) else null
+		"frame":
+			return Frames.texture_for(reward_id) if Frames.has_id(reward_id) else null
+		"background":
+			return Backgrounds.texture_for(reward_id) if Backgrounds.has_id(reward_id) else null
+		"sleeve":
+			return Sleeves.texture_for(reward_id) if Sleeves.has_id(reward_id) else null
+	return null
 
 
 func _hover_tile(tile: Control, sb: StyleBoxFlat, maxed: bool, over: bool) -> void:

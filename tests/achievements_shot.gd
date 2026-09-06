@@ -8,13 +8,14 @@ func _ready() -> void:
 
 	Session.account = {
 		"display_name": "PlayerOne",
+		"owned_rewards": ["sleeve_classic", "30_ranked_losses_avatar"],
 		"stats": {
-			"wins": 7, "losses": 12, "tournaments_won": 1,
+			"wins": 7, "losses": 35, "tournaments_won": 1,
 			"tournaments_created": 3, "quests_completed": 6,
 		},
 		"achievements": {"unlocked": {
 			"ranked_win_1": 0, "ranked_win_5": 0,
-			"ranked_loss_1": 0, "ranked_loss_5": 0, "ranked_loss_10": 0,
+			"ranked_loss_1": 0, "ranked_loss_5": 0, "ranked_loss_10": 0, "ranked_loss_30": 0,
 			"tourney_win_1": 0,
 			"quests_completed_5": 0,
 		}},
@@ -25,7 +26,15 @@ func _ready() -> void:
 	add_child(screen)
 
 	await get_tree().create_timer(0.6).timeout
-	var img := get_viewport().get_texture().get_image()
-	img.save_png("user://achievements_shot.png")
+	get_viewport().get_texture().get_image().save_png("user://achievements_shot.png")
 	print("SHOT: ", ProjectSettings.globalize_path("user://achievements_shot.png"))
+
+	# Scroll down to the ranked-loss ladder so the reward-badge tiles are visible.
+	var sc := screen.find_child("ScrollContainer", true, false)
+	if sc:
+		sc.scroll_vertical = 1080
+		await get_tree().create_timer(0.3).timeout
+		get_viewport().get_texture().get_image().save_png("user://achievements_shot_rewards.png")
+		print("SHOT2: ", ProjectSettings.globalize_path("user://achievements_shot_rewards.png"))
+
 	get_tree().quit()

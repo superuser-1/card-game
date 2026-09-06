@@ -204,6 +204,19 @@ func test_milestone_achievements() -> void:
 	assert_true(mid.has("quests_completed_5"), "quests_completed:5 unlocks quests_completed_5")
 	assert_true(mid.has("tourney_created_5"), "tournaments_created:5 unlocks tourney_created_5")
 
+	# The ranked-loss ladder grants avatar rewards; evaluate must surface the
+	# reward id so grant_reward can drop it into owned_rewards.
+	var rr := AchievementSystem.evaluate({"losses": 30}, {})
+	var loss30: Dictionary = {}
+	for n in rr["newly"]:
+		if str(n.get("id")) == "ranked_loss_30":
+			loss30 = n
+	assert_equal(str(loss30.get("reward", "")), "30_ranked_losses_avatar",
+		"ranked_loss_30 unlock carries its avatar reward id")
+	assert_true("30_ranked_losses_avatar" in rr["reward_ids"], "reward id is in reward_ids")
+	assert_equal(str(ShopCatalog.def_for("30_ranked_losses_avatar").get("type", "")), "avatar",
+		"the reward is an avatar-type cosmetic")
+
 
 ## Non-fatal: every catalog id should have art at
 ## res://assets/achievements/<id>.png. Missing art just renders a blank tile,
