@@ -444,7 +444,7 @@ func test_quest_progress_and_daily_reset() -> void:
 	assert_equal(quests_norm["day"], day_a, "Persisted day matches day_a")
 	assert_equal(quests_norm["active_ids"].size(), 3, "active_ids has 3 quests")
 	assert_equal(quests_norm["state"]["win_1"]["completed"], true, "win_1 is persisted as completed")
-	# Lifetime quest-completion counter feeds the quests_done_* achievements.
+	# Lifetime quest-completion counter feeds the quests_completed_* achievements.
 	assert_equal(int(account.get("stats", {}).get("quests_completed", 0)), 1,
 		"stats.quests_completed bumped to 1 after first completion")
 
@@ -950,9 +950,9 @@ func test_apply_tournament_stat() -> void:
 		won_ids.append(str(a.get("id")))
 	assert_true("tourney_win_1" in won_ids, "tourney_win_1 is in the returned unlock list")
 
-	# tournaments_created=5 -> tourneys_made_5 unlocks (single milestone rung).
+	# tournaments_created=5 -> tourney_created_5 unlocks (single milestone rung).
 	for i in range(5):
 		s.apply_tournament_stat(account_id, "tournaments_created")
 	account = s.get_account(account_id)
 	assert_equal(int(account.stats.tournaments_created), 5, "tournaments_created incremented to 5")
-	assert_true(account.achievements.unlocked.has("tourneys_made_5"), "tourneys_made_5 unlocked at 5")
+	assert_true(account.achievements.unlocked.has("tourney_created_5"), "tourney_created_5 unlocked at 5")

@@ -290,7 +290,7 @@ func apply_quest_progress(account_id: int, match_ctx: Dictionary, day_override :
 	if int(res["points_awarded"]) > 0:
 		account["points"] = int(account.get("points", 0)) + int(res["points_awarded"])
 
-	# Lifetime quest-completion counter, feeds the `quests_done_*` achievements.
+	# Lifetime quest-completion counter, feeds the `quests_completed_*` achievements.
 	# Achievement evaluation itself happens in apply_match_stats, which
 	# net_node._finish_match always calls right after this for the same account.
 	var completed_now := int((res["completed"] as Array).size())

@@ -15,6 +15,7 @@ func _initialize() -> void:
 	test_evaluate_idempotent()
 	test_rows_shape()
 	test_milestone_achievements()
+	test_catalog_art_present()
 
 	# Print final result
 	if _fail_count == 0:
@@ -200,5 +201,22 @@ func test_milestone_achievements() -> void:
 	for n in rt["newly"]:
 		mid[str(n.get("id"))] = true
 	assert_true(mid.has("tourney_win_1"), "tournaments_won:1 unlocks tourney_win_1")
-	assert_true(mid.has("quests_done_5"), "quests_completed:5 unlocks quests_done_5")
-	assert_true(mid.has("tourneys_made_5"), "tournaments_created:5 unlocks tourneys_made_5")
+	assert_true(mid.has("quests_completed_5"), "quests_completed:5 unlocks quests_completed_5")
+	assert_true(mid.has("tourney_created_5"), "tournaments_created:5 unlocks tourney_created_5")
+
+
+## Non-fatal: every catalog id should have art at
+## res://assets/achievements/<id>.png. Missing art just renders a blank tile,
+## so this reports gaps without failing the build.
+func test_catalog_art_present() -> void:
+	print("\n=== Catalog Art Coverage ===")
+	var missing := []
+	for ach in AchievementSystem.CATALOG:
+		var p := "res://assets/achievements/%s.png" % str(ach.id)
+		if not ResourceLoader.exists(p):
+			missing.append(str(ach.id))
+	if missing.is_empty():
+		pass_test("every catalog id has an art file")
+	else:
+		print("WARNING: %d achievement(s) missing art: %s" % [missing.size(), ", ".join(missing)])
+		pass_test("art coverage checked (%d missing, non-fatal)" % missing.size())

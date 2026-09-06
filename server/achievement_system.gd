@@ -78,16 +78,23 @@ const CATALOG: Array = [
 	{"id": "tourney_win_50",  "name": "50 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 50,  "points": 2500, "reward": ""}]},
 	{"id": "tourney_win_100", "name": "100 Tournament Wins", "stat": "tournaments_won", "tiers": [{"threshold": 100, "points": 5000, "reward": ""}]},
 
-	# Quests completed — stat `quests_completed` (bumped by apply_quest_progress)
-	{"id": "quests_done_5",   "name": "5 Quests Completed",   "stat": "quests_completed", "tiers": [{"threshold": 5,   "points": 50,  "reward": ""}]},
-	{"id": "quests_done_10",  "name": "10 Quests Completed",  "stat": "quests_completed", "tiers": [{"threshold": 10,  "points": 100, "reward": ""}]},
-	{"id": "quests_done_25",  "name": "25 Quests Completed",  "stat": "quests_completed", "tiers": [{"threshold": 25,  "points": 250, "reward": ""}]},
-	{"id": "quests_done_100", "name": "100 Quests Completed", "stat": "quests_completed", "tiers": [{"threshold": 100, "points": 800, "reward": ""}]},
+	# Quests completed — stat `quests_completed` (bumped by apply_quest_progress).
+	# Ids match the art files in assets/achievements/ (quests_completed_*.png).
+	{"id": "quests_completed_5",    "name": "5 Quests Completed",    "stat": "quests_completed", "tiers": [{"threshold": 5,    "points": 50,   "reward": ""}]},
+	{"id": "quests_completed_10",   "name": "10 Quests Completed",   "stat": "quests_completed", "tiers": [{"threshold": 10,   "points": 100,  "reward": ""}]},
+	{"id": "quests_completed_25",   "name": "25 Quests Completed",   "stat": "quests_completed", "tiers": [{"threshold": 25,   "points": 250,  "reward": ""}]},
+	{"id": "quests_completed_100",  "name": "100 Quests Completed",  "stat": "quests_completed", "tiers": [{"threshold": 100,  "points": 800,  "reward": ""}]},
+	{"id": "quests_completed_250",  "name": "250 Quests Completed",  "stat": "quests_completed", "tiers": [{"threshold": 250,  "points": 1800, "reward": ""}]},
+	{"id": "quests_completed_1000", "name": "1000 Quests Completed", "stat": "quests_completed", "tiers": [{"threshold": 1000, "points": 6000, "reward": ""}]},
 
-	# Tournaments created — stat `tournaments_created` (bumped on tournament creation)
-	{"id": "tourneys_made_5",  "name": "5 Tournaments Created",  "stat": "tournaments_created", "tiers": [{"threshold": 5,  "points": 50,  "reward": ""}]},
-	{"id": "tourneys_made_15", "name": "15 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 15, "points": 150, "reward": ""}]},
-	{"id": "tourneys_made_50", "name": "50 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 50, "points": 500, "reward": ""}]},
+	# Tournaments created — stat `tournaments_created` (bumped on tournament
+	# creation). Ids match assets/achievements/tourney_created_*.png.
+	{"id": "tourney_created_5",   "name": "5 Tournaments Created",   "stat": "tournaments_created", "tiers": [{"threshold": 5,   "points": 50,   "reward": ""}]},
+	{"id": "tourney_created_15",  "name": "15 Tournaments Created",  "stat": "tournaments_created", "tiers": [{"threshold": 15,  "points": 150,  "reward": ""}]},
+	{"id": "tourney_created_50",  "name": "50 Tournaments Created",  "stat": "tournaments_created", "tiers": [{"threshold": 50,  "points": 500,  "reward": ""}]},
+	{"id": "tourney_created_100", "name": "100 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 100, "points": 1000, "reward": ""}]},
+	{"id": "tourney_created_250", "name": "250 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 250, "points": 2500, "reward": ""}]},
+	{"id": "tourney_created_500", "name": "500 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 500, "points": 5000, "reward": ""}]},
 ]
 
 const TIER_NAMES := ["Bronze", "Silver", "Gold"]
