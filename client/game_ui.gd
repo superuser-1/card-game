@@ -40,6 +40,9 @@ const TABLE_CARD_SCENE := preload("res://client/table_card_view.tscn")
 # award, beat, then the table clears for the next round.
 const BEAT_SHORT := 0.525
 const BEAT_MEDIUM := 0.9
+# Beat where both cards sit face down after the responder commits, before the
+# flip — so both players actually see the card backs.
+const REVEAL_HOLD := 1.0
 
 # Hand fan layout. Cards are scaled down from their native CardView.CARD_SIZE
 # and spread by HAND_MAX_SPACING_SCALE of their (scaled) width by default,
@@ -567,6 +570,11 @@ func _play_resolution_sequence(result: Dictionary) -> void:
 
 	var left_view := _left_table_card
 	var right_view := _right_table_card
+
+	# Hold on both face-down cards for a beat so both players see the backs
+	# before the reveal starts (the server resolves the instant the responder
+	# commits, so without this the flip begins immediately).
+	await get_tree().create_timer(REVEAL_HOLD).timeout
 
 	# A card-handling click as each card turns over, same sound as drawing.
 	_play_draw_sfx()
