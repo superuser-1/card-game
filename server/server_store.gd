@@ -667,18 +667,34 @@ func ladder(limit: int, offset: int, viewer_id: int) -> Dictionary:
 		var is_you := int(account.get("id", -1)) == viewer_id
 		if is_you:
 			your_row_included = true
-		rows.append({
-			"rank": i + 1,
-			"display_name": account.get("display_name"),
-			"elo": account.get("elo"),
-			"wins": int(account.get("wins", 0)),
-			"losses": int(account.get("losses", 0)),
-			"is_you": is_you,
-		})
+		rows.append(_ladder_row(account, i + 1, is_you))
+	# Pin the viewer's own row on the end if they placed outside this window.
+	if not your_row_included and viewer_id > 0:
+		for i in range(sorted.size()):
+			if int(sorted[i].get("id", -1)) == viewer_id:
+				rows.append(_ladder_row(sorted[i], i + 1, true))
+				break
 	return {
 		"rows": rows,
 		"your_rank": rank_of(viewer_id),
 		"your_row_included": your_row_included,
+	}
+
+
+func _ladder_row(account: Dictionary, rank: int, is_you: bool) -> Dictionary:
+	var w := int(account.get("wins", 0))
+	var l := int(account.get("losses", 0))
+	var d := int(account.get("draws", 0))
+	return {
+		"rank": rank,
+		"display_name": account.get("display_name"),
+		"elo": int(account.get("elo", 0)),
+		"wins": w, "losses": l, "draws": d, "games": w + l + d,
+		"avatar": str(account.get("avatar", "")),
+		"frame": str(account.get("frame", "")),
+		"background": str(account.get("background", "")),
+		"is_provisional": bool(account.get("is_provisional", false)),
+		"is_you": is_you,
 	}
 
 
