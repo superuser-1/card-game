@@ -58,14 +58,20 @@ func _init(texture: Texture2D, title: String, director: String) -> void:
 	_visual.clip_contents = true  # belt-and-suspenders: nothing draws outside our small box, period
 	add_child(_visual)
 
-	# Art bleeds a few px past the border on every side (then clipped to
-	# _visual) so the frame — drawn on top — never leaves a gap where the
-	# background shows through the ornate border's inner edge.
-	_art_position = Vector2(-4, -4)
-	_art_size = preview_size + Vector2(8, 8)
+	_art_position = Vector2(preview_size.x * BORDER_LEFT, preview_size.y * BORDER_TOP)
+	_art_size = Vector2(preview_size.x * (BORDER_RIGHT - BORDER_LEFT), preview_size.y * (BORDER_BOTTOM - BORDER_TOP))
 	_border_size = preview_size
 	_overlay_position = Vector2(preview_size.x * BORDER_LEFT, preview_size.y * OVERLAY_TOP)
 	_overlay_size = Vector2(preview_size.x * (BORDER_RIGHT - BORDER_LEFT), preview_size.y * (BORDER_BOTTOM - OVERLAY_TOP))
+
+	# Opaque card stock behind the art, a hair larger than the art window, so
+	# the anti-aliased art/frame seam shows dark card rather than see-through.
+	var backing := ColorRect.new()
+	backing.position = _art_position - Vector2(3, 3)
+	backing.size = _art_size + Vector2(6, 6)
+	backing.color = Color(0.09, 0.09, 0.11, 0.9)
+	backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_visual.add_child(backing)
 
 	_art = TextureRect.new()
 	_art.texture = texture
