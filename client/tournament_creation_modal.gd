@@ -1,10 +1,14 @@
 extends Control
 
 
+var _cubes: Array = []
+
+
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
 	Net.tournament_created.connect(_on_tournament_created)
+	_cubes = CubePicker.populate(%CubeOptionButton)
 	%CreateButton.pressed.connect(_on_create_pressed)
 	%CancelButton.pressed.connect(_close)
 
@@ -20,6 +24,7 @@ func _on_create_pressed() -> void:
 	var minutes_until_start := int(%MinutesUntilStartSpinBox.value)
 	var is_dev_bot: bool = %DevBotCheckBox.button_pressed
 	var match_format: int = [1, 3, 5][int(%MatchFormatOptionButton.selected)]
+	var cube_ids := CubePicker.selected_ids(%CubeOptionButton, _cubes)
 
 	var now := int(Time.get_unix_time_from_system())
 	var signup_close_ts := now + minutes_until_close * 60
@@ -27,7 +32,7 @@ func _on_create_pressed() -> void:
 	var start_ts := now + minutes_until_start * 60
 
 	%CreateButton.disabled = true
-	Net.create_tournament(name_text, bracket_size, signup_close_ts, check_in_open_ts, start_ts, is_dev_bot, match_format)
+	Net.create_tournament(name_text, bracket_size, signup_close_ts, check_in_open_ts, start_ts, is_dev_bot, match_format, cube_ids)
 
 
 func _on_tournament_created(result: Dictionary) -> void:
@@ -43,7 +48,13 @@ func _on_tournament_created(result: Dictionary) -> void:
 		_close()
 	else:
 		var error := str(result.get("error", "Unknown error"))
-		_toast("Error: %s" % error)
+		var friendly := {
+			"cube_too_small": "That cube has fewer than %d cards — add more in the Deckbuilder." % CubeRules.MIN_SIZE,
+			"not_admin": "You don't have permission to create tournaments.",
+			"bad_name": "Tournament name must be 1–60 characters.",
+			"bad_schedule": "Sign-up close must be before start.",
+		}
+		_toast(friendly.get(error, "Error: %s" % error))
 
 
 func _toast(msg: String) -> void:

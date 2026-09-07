@@ -744,7 +744,8 @@ func is_admin_account(account: Dictionary) -> bool:
 ## per the locked design — sign-ups close exactly when check-in opens).
 func create_tournament(created_by: int, name: String, requested_bracket_size: int,
 		signup_close_ts: int, check_in_open_ts: int, start_ts: int,
-		is_dev_bot: bool, allow_small := false, requested_match_format := 1) -> Dictionary:
+		is_dev_bot: bool, allow_small := false, requested_match_format := 1,
+		cube_card_ids: Array = []) -> Dictionary:
 	var clean_name := name.strip_edges()
 	if clean_name.length() < 1 or clean_name.length() > 60:
 		return {"ok": false, "error": "bad_name", "tournament": {}}
@@ -762,6 +763,11 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		"is_dev_bot_tournament": is_dev_bot,
 		"bracket_size": bracket_size,
 		"match_format": match_format,
+		# Player-curated card pool for every match in this tournament, as a list
+		# of card ids the net layer already sanitized. [] == full collection.
+		# Persisted with the tournament so later rounds still use it even if the
+		# creator is offline by then.
+		"cube_ids": cube_card_ids,
 		"status": "signup",
 		"signup_close_ts": signup_close_ts,
 		"check_in_open_ts": check_in_open_ts,

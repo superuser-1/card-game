@@ -1033,6 +1033,7 @@ func _dispatch_round(t: Dictionary, round_idx: int) -> bool:
 	var ctx := {
 		"tournament_id": int(t.id), "round": round_idx + 1, "bracket_size": int(t.bracket_size),
 		"match_format": int(t.get("match_format", 1)),
+		"cube_ids": t.get("cube_ids", []),
 	}
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(t.rng_seed) + round_idx + 1
@@ -1092,8 +1093,26 @@ func _complete_tournament(t: Dictionary) -> void:
 ## Account-id-based match creation for tournament rounds (mirrors
 ## _create_pvp_match/_create_bot_match, which take queue-entry dicts instead —
 ## kept separate so ranked-queue call sites are untouched).
+# --- cube pools --------------------------------------------------------------
+# A "cube" is a player-curated subset of the card set (see CubeRules). The
+# server always builds the GameEngine pool from a sanitized id list it trusts;
+# an empty list means "the full collection". The id set is cached because
+# CardLoader re-reads and re-parses cards.json on every call.
+var _known_card_ids_cache: Dictionary = {}
+
+
+func _known_card_ids() -> Dictionary:
+	if _known_card_ids_cache.is_empty():
+		_known_card_ids_cache = CubeRules.id_set(CardLoader.load_cards())
+	return _known_card_ids_cache
+
+
+func _pool_for_cube(cube_ids) -> Array:
+	return CubeRules.filter_pool(CardLoader.load_cards(), cube_ids)
+
+
 func _create_pvp_match_for_accounts(account_a: int, account_b: int, ctx: Dictionary) -> Dictionary:
-	var engine := GameEngine.new(CardLoader.load_cards())
+	var engine := GameEngine.new(_pool_for_cube(ctx.get("cube_ids", [])))
 	engine.deal_hands()
 	var peer_a: int = int(_account_peer.get(account_a, 0))
 	var peer_b: int = int(_account_peer.get(account_b, 0))
@@ -1115,7 +1134,7 @@ func _create_pvp_match_for_accounts(account_a: int, account_b: int, ctx: Diction
 
 
 func _create_bot_match_for_account(account_human: int, ctx: Dictionary) -> Dictionary:
-	var engine := GameEngine.new(CardLoader.load_cards())
+	var engine := GameEngine.new(_pool_for_cube(ctx.get("cube_ids", [])))
 	engine.deal_hands()
 	var peer: int = int(_account_peer.get(account_human, 0))
 	var name := str(_store.get_account(account_human).get("display_name", "Player"))
@@ -1211,8 +1230,9 @@ func _record_tournament_result(m: Dictionary, winner: int, ctx: Dictionary) -> v
 # =========================================================================
 
 func create_tournament(name: String, bracket_size: int, signup_close_ts: int,
-		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1) -> void:
-	_rpc_create_tournament.rpc_id(1, name, bracket_size, signup_close_ts, check_in_open_ts, start_ts, is_dev_bot, match_format)
+		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1,
+		cube_ids: PackedStringArray = PackedStringArray()) -> void:
+	_rpc_create_tournament.rpc_id(1, name, bracket_size, signup_close_ts, check_in_open_ts, start_ts, is_dev_bot, match_format, cube_ids)
 
 
 func list_tournaments() -> void:
@@ -1250,7 +1270,8 @@ func request_my_tournament() -> void:
 
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: int,
-		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1) -> void:
+		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1,
+		cube_ids: PackedStringArray = PackedStringArray()) -> void:
 	if not is_server or is_solo:
 		return
 	var peer_id := multiplayer.get_remote_sender_id()
@@ -1263,9 +1284,15 @@ func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: in
 	if not _is_tournament_admin(account):
 		_rpc_tournament_created.rpc_id(peer_id, {"ok": false, "error": "not_admin", "tournament": {}})
 		return
+	# The client's cube is never trusted: re-derive a clean, legal id list here
+	# (unknown ids dropped, deduped, MIN_SIZE enforced) or bail with the reason.
+	var cube := CubeRules.sanitize(cube_ids, _known_card_ids())
+	if not bool(cube.ok):
+		_rpc_tournament_created.rpc_id(peer_id, {"ok": false, "error": cube.error, "tournament": {}})
+		return
 	var res := _store.create_tournament(
 		int(account.id), name, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
-		is_dev_bot, _dev_tournaments, match_format
+		is_dev_bot, _dev_tournaments, match_format, cube.ids
 	)
 	# Count every created tournament toward the creator's `tourney_created_*`
 	# achievements (dev-bot ones included — the admin still built it), then
@@ -1728,8 +1755,9 @@ func _push_queue_status() -> void:
 # Custom games (friend invite)
 # =========================================================================
 
-func create_custom_game(name: String, match_format: int) -> void:
-	_rpc_create_custom_game.rpc_id(1, name, match_format)
+func create_custom_game(name: String, match_format: int,
+		cube_ids: PackedStringArray = PackedStringArray()) -> void:
+	_rpc_create_custom_game.rpc_id(1, name, match_format, cube_ids)
 
 
 func join_custom_game(name: String) -> void:
@@ -1745,7 +1773,8 @@ func cancel_custom_game() -> void:
 
 
 @rpc("any_peer", "call_remote", "reliable")
-func _rpc_create_custom_game(name: String, match_format: int) -> void:
+func _rpc_create_custom_game(name: String, match_format: int,
+		cube_ids: PackedStringArray = PackedStringArray()) -> void:
 	if not is_server or is_solo:
 		return
 	var peer_id := multiplayer.get_remote_sender_id()
@@ -1771,6 +1800,12 @@ func _rpc_create_custom_game(name: String, match_format: int) -> void:
 	if _custom_games.has(key):
 		_rpc_custom_game_created.rpc_id(peer_id, {"ok": false, "error": "name_taken", "name": ""})
 		return
+	# Client-picked cube is re-validated here (unknown ids dropped, deduped,
+	# MIN_SIZE enforced). An empty list means "use the full collection".
+	var cube := CubeRules.sanitize(cube_ids, _known_card_ids())
+	if not bool(cube.ok):
+		_rpc_custom_game_created.rpc_id(peer_id, {"ok": false, "error": cube.error, "name": ""})
+		return
 	var format := match_format if match_format in [1, 3, 5] else 1
 
 	_custom_games[key] = {
@@ -1778,6 +1813,7 @@ func _rpc_create_custom_game(name: String, match_format: int) -> void:
 		"creator_account_id": int(_peer_account[peer_id]),
 		"creator_peer_id": peer_id,
 		"match_format": format,
+		"cube_ids": cube.ids,
 		"created_ms": Time.get_ticks_msec(),
 	}
 	_rpc_custom_game_created.rpc_id(peer_id, {"ok": true, "error": "", "name": clean_name})
@@ -1841,7 +1877,7 @@ func _rpc_cancel_custom_game() -> void:
 func _create_custom_match(lobby: Dictionary, joiner_peer: int, joiner_account: int) -> void:
 	var creator_peer: int = int(lobby.creator_peer_id)
 	var creator_account: int = int(lobby.creator_account_id)
-	var engine := GameEngine.new(CardLoader.load_cards())
+	var engine := GameEngine.new(_pool_for_cube(lobby.get("cube_ids", [])))
 	engine.deal_hands()
 	var name_a := str(_store.get_account(creator_account).get("display_name", "Player"))
 	var name_b := str(_store.get_account(joiner_account).get("display_name", "Player"))

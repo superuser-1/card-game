@@ -6,6 +6,7 @@ extends Control
 ## open lobby server-side so it doesn't linger forever.
 
 var _created := false
+var _cubes: Array = []
 
 
 func _ready() -> void:
@@ -13,6 +14,8 @@ func _ready() -> void:
 
 	Net.custom_game_created.connect(_on_custom_game_created)
 	Net.match_found.connect(_on_match_found)
+
+	_cubes = CubePicker.populate(%CubeOptionButton)
 
 	%CreateButton.pressed.connect(_on_create_pressed)
 	%CancelButton.pressed.connect(_close)
@@ -26,10 +29,11 @@ func _on_create_pressed() -> void:
 		return
 
 	var match_format: int = [1, 3, 5][int(%MatchFormatOptionButton.selected)]
+	var cube_ids := CubePicker.selected_ids(%CubeOptionButton, _cubes)
 
 	%CreateButton.disabled = true
 	%ErrorLabel.text = ""
-	Net.create_custom_game(name_text, match_format)
+	Net.create_custom_game(name_text, match_format, cube_ids)
 
 
 func _on_custom_game_created(result: Dictionary) -> void:
@@ -64,6 +68,7 @@ func _friendly(err: String) -> String:
 		"already_hosting": "You're already hosting an open game.",
 		"already_in_match": "Finish your current match first.",
 		"tournament_lock": "Checked in to a tournament — finish it first.",
+		"cube_too_small": "That cube has fewer than %d cards — add more in the Deckbuilder." % CubeRules.MIN_SIZE,
 	}
 	return error_map.get(err, "Could not create the game (%s)." % err)
 

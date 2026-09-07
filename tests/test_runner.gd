@@ -40,6 +40,7 @@ func _initialize() -> void:
 	test_resolve_timeout_awaiting_category()
 	test_resolve_timeout_awaiting_response()
 	test_round_history()
+	test_cube_rules()
 
 	# Print final result
 	if _fail_count == 0:
@@ -634,3 +635,54 @@ func _force_card_into_hand(engine: GameEngine, player_id: int, card_id: String) 
 		return {}
 	engine.hands[player_id].append(card)
 	return card
+
+
+func test_cube_rules() -> void:
+	print("\n=== CubeRules Tests ===")
+	var known := {}
+	for i in range(1, 121):
+		known["card_%03d" % i] = true
+
+	# empty input -> legal "use everything"
+	var empty := CubeRules.sanitize([], known)
+	assert_true(bool(empty.ok) and (empty.ids as Array).is_empty(), "empty cube is ok, no ids")
+
+	# below MIN_SIZE -> rejected
+	var small_ids: Array = []
+	for i in range(1, 50):
+		small_ids.append("card_%03d" % i)
+	var small := CubeRules.sanitize(small_ids, known)
+	assert_true(not bool(small.ok) and str(small.error) == "cube_too_small", "sub-100 cube rejected")
+
+	# exactly MIN_SIZE distinct valid -> ok
+	var ok_ids: Array = []
+	for i in range(1, CubeRules.MIN_SIZE + 1):
+		ok_ids.append("card_%03d" % i)
+	var okc := CubeRules.sanitize(ok_ids, known)
+	assert_true(bool(okc.ok), "exactly MIN_SIZE cube accepted")
+	assert_equal((okc.ids as Array).size(), CubeRules.MIN_SIZE, "sanitized id count == MIN_SIZE")
+
+	# dedupe + drop unknowns, still counts distinct-valid against MIN_SIZE
+	var messy: Array = ["card_001", "card_001", "not_a_card", ""]
+	for i in range(2, CubeRules.MIN_SIZE + 1):
+		messy.append("card_%03d" % i)
+	messy.append("card_050")  # duplicate of one already added
+	var cleaned := CubeRules.sanitize(messy, known)
+	assert_true(bool(cleaned.ok), "messy cube with 100 distinct valid ids accepted")
+	assert_equal((cleaned.ids as Array).size(), CubeRules.MIN_SIZE, "duplicates and unknowns removed")
+	assert_true("not_a_card" not in (cleaned.ids as Array), "unknown id dropped")
+
+	# dupes/unknowns that pull the distinct count under 100 -> rejected
+	var thin: Array = ["not_a_card"]
+	for i in range(1, CubeRules.MIN_SIZE):  # 99 distinct
+		thin.append("card_%03d" % i)
+		thin.append("card_%03d" % i)  # each twice
+	var thinc := CubeRules.sanitize(thin, known)
+	assert_true(not bool(thinc.ok), "99 distinct valid (with dupes/unknowns) still rejected")
+
+	# filter_pool: [] -> everything; a list -> that subset in source order
+	var all_cards := CardLoader.load_cards("res://data/cards.json")
+	assert_equal(CubeRules.filter_pool(all_cards, []).size(), all_cards.size(), "filter_pool([]) is the full set")
+	var subset := CubeRules.filter_pool(all_cards, ["card_003", "card_001", "nope"])
+	assert_equal(subset.size(), 2, "filter_pool keeps only known ids")
+	assert_equal(str(subset[0]["id"]), "card_001", "filter_pool preserves source order, not arg order")

@@ -18,6 +18,7 @@ const OPTIONS_MODAL_SCENE := "res://client/options_modal.tscn"
 var _profile := ""
 var SESSION_PATH := "user://flickbattle/session.cfg"
 var SETTINGS_PATH := "user://flickbattle/settings.cfg"
+var CUBES_PATH := "user://flickbattle/cubes.json"
 
 ## Last account snapshot pushed from the server. Shape (safe subset, never has
 ## password material):
@@ -108,6 +109,7 @@ func _ready() -> void:
 	if _profile != "":
 		SESSION_PATH = "user://flickbattle/session_%s.cfg" % _profile
 		SETTINGS_PATH = "user://flickbattle/settings_%s.cfg" % _profile
+		CUBES_PATH = "user://flickbattle/cubes_%s.json" % _profile
 		print("Session: using profile '%s'" % _profile)
 	load_settings()
 	apply_settings()
@@ -406,6 +408,50 @@ func _notification(what: int) -> void:
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
 		_app_focused = true
 		_refresh_master_mute()
+
+
+# --- cubes (player-curated card catalogues, local only) -----------------
+#
+# A cube is { "id": String, "name": String, "card_ids": Array[String] }.
+# Stored as a plain JSON list at CUBES_PATH so it's easy to inspect / hand-edit
+# and survives across scene swaps like settings do. The server never sees this
+# file — when a cube is picked for a custom game / tournament the client sends
+# the card_ids and the server re-validates from scratch (see CubeRules).
+
+func load_cubes() -> Array:
+	var f := FileAccess.open(CUBES_PATH, FileAccess.READ)
+	if f == null:
+		return []
+	var parsed = JSON.parse_string(f.get_as_text())
+	if not (parsed is Dictionary) or not (parsed.get("cubes") is Array):
+		return []
+	var out: Array = []
+	for c in parsed["cubes"]:
+		if not (c is Dictionary):
+			continue
+		var ids: Array = []
+		for cid in (c.get("card_ids", []) as Array):
+			ids.append(str(cid))
+		out.append({
+			"id": str(c.get("id", "")),
+			"name": str(c.get("name", "Untitled cube")),
+			"card_ids": ids,
+		})
+	return out
+
+
+func save_cubes(cubes: Array) -> void:
+	DirAccess.make_dir_recursive_absolute("user://flickbattle")
+	var f := FileAccess.open(CUBES_PATH, FileAccess.WRITE)
+	if f == null:
+		push_error("Session: could not write cubes to %s" % CUBES_PATH)
+		return
+	f.store_string(JSON.stringify({"cubes": cubes}, "\t"))
+
+
+## RFC-4122-ish enough for a local file key — just needs to not collide.
+func new_cube_id() -> String:
+	return "cube_%d_%d" % [Time.get_unix_time_from_system(), randi() % 100000]
 
 
 # --- navigation ----------------------------------------------------------

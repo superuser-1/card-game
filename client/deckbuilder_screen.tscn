@@ -1,4 +1,4 @@
-[gd_scene load_steps=1 format=3]
+[gd_scene load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://client/deckbuilder_screen.gd" id="1_script"]
 
@@ -33,7 +33,6 @@ theme_override_constants/separation = 12
 
 [node name="TopBar" type="HBoxContainer" parent="MarginContainer/Root"]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
 [node name="BackButton" type="Button" parent="MarginContainer/Root/TopBar"]
@@ -42,12 +41,19 @@ layout_mode = 2
 text = "← Back"
 
 [node name="HeaderLabel" type="Label" parent="MarginContainer/Root/TopBar"]
-unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Cube Builder"
+
+[node name="Spacer" type="Control" parent="MarginContainer/Root/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 20
-text = "Deckbuilder"
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/Root/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "No cube selected"
 
 [node name="Body" type="HBoxContainer" parent="MarginContainer/Root"]
 layout_mode = 2
@@ -55,35 +61,107 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 
-[node name="DeckList" type="PanelContainer" parent="MarginContainer/Root/Body"]
+[node name="LeftPanel" type="PanelContainer" parent="MarginContainer/Root/Body"]
 layout_mode = 2
-custom_minimum_size = Vector2(220, 0)
+custom_minimum_size = Vector2(240, 0)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Root/Body/DeckList"]
+[node name="LeftVBox" type="VBoxContainer" parent="MarginContainer/Root/Body/LeftPanel"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
-[node name="Label" type="Label" parent="MarginContainer/Root/Body/DeckList/VBoxContainer"]
+[node name="CubesHeader" type="Label" parent="MarginContainer/Root/Body/LeftPanel/LeftVBox"]
 layout_mode = 2
-text = "Decks"
+text = "My Cubes"
 theme_override_font_sizes/font_size = 14
 
-[node name="FullCollectionButton" type="Button" parent="MarginContainer/Root/Body/DeckList/VBoxContainer"]
+[node name="CubeList" type="ItemList" parent="MarginContainer/Root/Body/LeftPanel/LeftVBox"]
 unique_name_in_owner = true
 layout_mode = 2
-toggle_mode = true
-button_pressed = true
-disabled = true
-text = "Full Collection (auto)"
+size_flags_vertical = 3
+allow_reselect = true
 
-[node name="GridScroll" type="ScrollContainer" parent="MarginContainer/Root/Body"]
+[node name="CubeButtons" type="HBoxContainer" parent="MarginContainer/Root/Body/LeftPanel/LeftVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="NewButton" type="Button" parent="MarginContainer/Root/Body/LeftPanel/LeftVBox/CubeButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "＋ New"
+
+[node name="RenameButton" type="Button" parent="MarginContainer/Root/Body/LeftPanel/LeftVBox/CubeButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Rename"
+
+[node name="DeleteButton" type="Button" parent="MarginContainer/Root/Body/LeftPanel/LeftVBox/CubeButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Delete"
+
+[node name="CenterVBox" type="VBoxContainer" parent="MarginContainer/Root/Body"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 10
 
-[node name="CardGrid" type="GridContainer" parent="MarginContainer/Root/Body/GridScroll"]
+[node name="FilterBar" type="HBoxContainer" parent="MarginContainer/Root/Body/CenterVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SearchEdit" type="LineEdit" parent="MarginContainer/Root/Body/CenterVBox/FilterBar"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search title…"
+clear_button_enabled = true
+
+[node name="GenreOption" type="OptionButton" parent="MarginContainer/Root/Body/CenterVBox/FilterBar"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ClearButton" type="Button" parent="MarginContainer/Root/Body/CenterVBox/FilterBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Clear"
+
+[node name="ResultCount" type="Label" parent="MarginContainer/Root/Body/CenterVBox/FilterBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = ""
+
+[node name="GridScroll" type="ScrollContainer" parent="MarginContainer/Root/Body/CenterVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CardGrid" type="GridContainer" parent="MarginContainer/Root/Body/CenterVBox/GridScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 columns = 5
 theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 12
+
+[node name="RenameDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "Rename cube"
+ok_button_text = "Save"
+dialog_hide_on_ok = false
+
+[node name="RenameEdit" type="LineEdit" parent="RenameDialog"]
+unique_name_in_owner = true
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 292.0
+offset_bottom = 39.0
+placeholder_text = "Cube name"
+
+[node name="DeleteDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Delete cube"
+dialog_text = "Delete this cube?"
