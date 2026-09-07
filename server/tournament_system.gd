@@ -16,6 +16,12 @@ extends RefCounted
 
 const MIN_BRACKET_SIZE := 32  # UI-suggested default; admin can override smaller for dev/testing
 
+## Hard floor of REAL checked-in players for a non-dev tournament to fire. Below
+## this at start time the tournament is cancelled instead of run — tournament
+## matches count toward quests/achievements, so a thinly-attended tournament
+## must not become a farm. Not admin-configurable. Dev-bot tournaments bypass it.
+const MIN_TOURNAMENT_PLAYERS := 32
+
 
 static func next_power_of_2(n: int) -> int:
 	var p := 1
@@ -63,16 +69,61 @@ static func generate_bracket(participants: Array, bracket_size: int, rng_seed: i
 	return round0
 
 
-## Builds the next round from a fully-resolved round's winners. Returns []
-## when `round` is already the final (a single slot).
-static func advance_round(round: Array) -> Array:
-	if round.size() <= 1:
+## Round 0 for a REAL (bot-free) tournament: the checked-in account ids,
+## shuffled, paired two at a time. An odd count leaves one player unpaired —
+## they get an `is_bye` slot (see _make_bye_slot), resolved from creation, i.e.
+## a free pass into the next round. Deterministic for a given
+## (checked_in_ids, rng_seed). Unlike generate_bracket() there are no bot slots
+## and the result is NOT padded to a power of two.
+static func generate_bracket_shrink(checked_in_ids: Array, rng_seed: int) -> Array:
+	var ids := checked_in_ids.duplicate()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = rng_seed
+	_fisher_yates(ids, rng)
+
+	var round0 := []
+	var i := 0
+	while i + 1 < ids.size():
+		round0.append(_make_slot(round0.size(), int(ids[i]), false, int(ids[i + 1]), false))
+		i += 2
+	if i < ids.size():
+		round0.append(_make_bye_slot(round0.size(), int(ids[i])))
+	return round0
+
+
+## Builds the next round from a fully-resolved round's winners (taken in slot
+## order; a bye slot already carries its winner). Returns [] once a single
+## winner remains.
+##
+## When `rng_seed` is non-zero the winners are re-shuffled before pairing, with
+## the seed offset by `next_round_index` so each round's bye lands on a fresh
+## random player. `rng_seed == 0` (the default, used by callers/tests that pass
+## nothing) keeps the legacy positional pairing — winner of slot 0 meets winner
+## of slot 1, etc.
+static func advance_round(round: Array, rng_seed := 0, next_round_index := 0) -> Array:
+	var winners := []
+	for s in round:
+		winners.append({"acc": int(s.winner_account_id), "is_bot": bool(s.winner_is_bot)})
+	if winners.size() <= 1:
 		return []
+	if rng_seed != 0:
+		var rng := RandomNumberGenerator.new()
+		rng.seed = rng_seed + next_round_index
+		_fisher_yates(winners, rng)
+
 	var next := []
-	for i in range(0, round.size(), 2):
-		var s1: Dictionary = round[i]
-		var s2: Dictionary = round[i + 1]
-		next.append(_make_slot(i / 2, s1.winner_account_id, s1.winner_is_bot, s2.winner_account_id, s2.winner_is_bot))
+	var i := 0
+	while i + 1 < winners.size():
+		next.append(_make_slot(next.size(), winners[i].acc, winners[i].is_bot, winners[i + 1].acc, winners[i + 1].is_bot))
+		i += 2
+	if i < winners.size():
+		var w = winners[i]
+		if bool(w.is_bot):
+			# Only reachable on the dev-bot power-of-two path, which never has
+			# an odd winner count — kept defensive, not a real "bye".
+			next.append(_make_slot(next.size(), 0, true, 0, true))
+		else:
+			next.append(_make_bye_slot(next.size(), int(w.acc)))
 	return next
 
 
@@ -104,11 +155,28 @@ static func is_tournament_complete(rounds: Array) -> bool:
 static func _make_slot(slot_index: int, account_id_a: int, is_bot_a: bool, account_id_b: int, is_bot_b: bool) -> Dictionary:
 	return {
 		"slot_index": slot_index,
+		"is_bye": false,
 		"account_id_a": account_id_a, "is_bot_a": is_bot_a,
 		"account_id_b": account_id_b, "is_bot_b": is_bot_b,
 		"match_id": 0,
 		"winner_account_id": 0, "winner_is_bot": false,
 		"resolved": false,
+		"score_a": 0, "score_b": 0,
+	}
+
+
+## A one-player slot: this player sits the round out and advances for free.
+## `resolved` + `winner_account_id` are set at creation so the tick loop skips
+## it and round_fully_resolved()/is_tournament_complete() already count it.
+static func _make_bye_slot(slot_index: int, account_id: int) -> Dictionary:
+	return {
+		"slot_index": slot_index,
+		"is_bye": true,
+		"account_id_a": account_id, "is_bot_a": false,
+		"account_id_b": 0, "is_bot_b": false,
+		"match_id": 0,
+		"winner_account_id": account_id, "winner_is_bot": false,
+		"resolved": true,
 		"score_a": 0, "score_b": 0,
 	}
 

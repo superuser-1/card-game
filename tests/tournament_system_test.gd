@@ -13,6 +13,11 @@ func _initialize() -> void:
 	test_generate_bracket_all_bots()
 	test_advance_round_from_4_slots()
 	test_advance_round_from_1_slot()
+	test_generate_bracket_shrink_even()
+	test_generate_bracket_shrink_odd_bye()
+	test_generate_bracket_shrink_determinism()
+	test_advance_round_with_bye()
+	test_full_odd_bracket_multi_round()
 	test_is_bot_vs_bot()
 	test_resolve_bot_vs_bot()
 	test_round_fully_resolved()
@@ -361,3 +366,113 @@ func test_is_tournament_complete() -> void:
 		[{"resolved": true}],
 	]
 	assert_equal(TournamentSystem.is_tournament_complete(rounds_multi), true, "Multiple rounds with 1-slot resolved final returns true")
+
+
+# --- shrink-to-fit bracket (real, bot-free) --------------------------------
+
+func test_generate_bracket_shrink_even() -> void:
+	print("\n=== generate_bracket_shrink Even Tests ===")
+	var ids := []
+	for i in 32:
+		ids.append(1000 + i)
+	var r0 = TournamentSystem.generate_bracket_shrink(ids, 12345)
+	assert_equal(r0.size(), 16, "32 players -> 16 round-0 slots")
+	var byes := 0
+	var seen := {}
+	for slot in r0:
+		if bool(slot.get("is_bye", false)):
+			byes += 1
+		assert_equal(bool(slot.is_bot_a) or bool(slot.is_bot_b), false, "no bot sides in a shrink bracket")
+		seen[int(slot.account_id_a)] = true
+		if not bool(slot.get("is_bye", false)):
+			seen[int(slot.account_id_b)] = true
+	assert_equal(byes, 0, "even player count -> zero byes")
+	assert_equal(seen.size(), 32, "every id placed exactly once")
+
+
+func test_generate_bracket_shrink_odd_bye() -> void:
+	print("\n=== generate_bracket_shrink Odd Bye Tests ===")
+	var ids := []
+	for i in 33:
+		ids.append(2000 + i)
+	var r0 = TournamentSystem.generate_bracket_shrink(ids, 999)
+	assert_equal(r0.size(), 17, "33 players -> 17 round-0 slots (16 matches + 1 bye)")
+	var byes := 0
+	var seen := {}
+	for slot in r0:
+		if bool(slot.get("is_bye", false)):
+			byes += 1
+			assert_equal(bool(slot.resolved), true, "bye slot is resolved from creation")
+			assert_equal(int(slot.winner_account_id), int(slot.account_id_a), "bye winner is its lone player")
+			assert_equal(int(slot.account_id_b), 0, "bye slot has no side B")
+			seen[int(slot.account_id_a)] = true
+		else:
+			seen[int(slot.account_id_a)] = true
+			seen[int(slot.account_id_b)] = true
+	assert_equal(byes, 1, "odd player count -> exactly one bye")
+	assert_equal(seen.size(), 33, "every id placed exactly once")
+
+
+func test_generate_bracket_shrink_determinism() -> void:
+	print("\n=== generate_bracket_shrink Determinism Tests ===")
+	var ids := []
+	for i in 20:
+		ids.append(3000 + i)
+	var a = TournamentSystem.generate_bracket_shrink(ids, 777)
+	var b = TournamentSystem.generate_bracket_shrink(ids, 777)
+	var c = TournamentSystem.generate_bracket_shrink(ids, 778)
+	assert_equal(JSON.stringify(a), JSON.stringify(b), "same (ids, seed) -> identical bracket")
+	assert_true(JSON.stringify(a) != JSON.stringify(c), "different seed -> different bracket")
+
+
+func test_advance_round_with_bye() -> void:
+	print("\n=== advance_round With Bye Tests ===")
+	# 3 winners coming out of a round: two from matches, one from a bye.
+	var round := [
+		{"is_bye": false, "resolved": true, "winner_account_id": 11, "winner_is_bot": false},
+		{"is_bye": false, "resolved": true, "winner_account_id": 22, "winner_is_bot": false},
+		{"is_bye": true,  "resolved": true, "winner_account_id": 33, "winner_is_bot": false},
+	]
+	var next = TournamentSystem.advance_round(round, 42, 1)
+	assert_equal(next.size(), 2, "3 winners -> 2 next-round slots (1 match + 1 bye)")
+	var carried := {}
+	var byes := 0
+	for slot in next:
+		carried[int(slot.account_id_a)] = true
+		if bool(slot.get("is_bye", false)):
+			byes += 1
+		else:
+			carried[int(slot.account_id_b)] = true
+	assert_equal(byes, 1, "odd winner count -> one fresh bye")
+	assert_true(carried.has(11) and carried.has(22) and carried.has(33), "all three winners carried forward")
+
+	# legacy no-seed call still returns [] on a single-slot round
+	assert_equal(TournamentSystem.advance_round([{"resolved": true, "winner_account_id": 5, "winner_is_bot": false}]).size(), 0,
+		"legacy advance_round on 1-slot round returns []")
+
+
+func test_full_odd_bracket_multi_round() -> void:
+	print("\n=== Full Odd Bracket Multi-Round Tests ===")
+	for n in [5, 7, 33]:
+		var ids := []
+		for i in n:
+			ids.append(4000 + i)
+		var sd: int = 314 + int(n)
+		var round = TournamentSystem.generate_bracket_shrink(ids, sd)
+		var rounds := [round]
+		var guard := 0
+		while not TournamentSystem.is_tournament_complete(rounds) and guard < 20:
+			guard += 1
+			# resolve every non-bye slot: side A wins
+			for slot in rounds[-1]:
+				if not bool(slot.get("is_bye", false)):
+					slot.resolved = true
+					slot.winner_account_id = int(slot.account_id_a)
+					slot.winner_is_bot = false
+			assert_equal(TournamentSystem.round_fully_resolved(rounds[-1]), true, "n=%d round fully resolved" % n)
+			var nxt = TournamentSystem.advance_round(rounds[-1], sd, rounds.size())
+			if nxt.is_empty():
+				break
+			rounds.append(nxt)
+		assert_equal(TournamentSystem.is_tournament_complete(rounds), true, "n=%d tournament resolves to a single winner" % n)
+		assert_equal(rounds[-1].size(), 1, "n=%d final round has 1 slot" % n)
