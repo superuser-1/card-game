@@ -13,7 +13,11 @@
       "director_oscars_won": 3,
       "director_birth_year": 1961,
       "director_age_at_release": 42,
-      "profit_cost_ratio_pct": 1119
+      "profit_cost_ratio_pct": 1119,
+      "genres": [
+        "Adventure",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_002",
@@ -28,7 +32,12 @@
       "director_oscars_won": 3,
       "director_birth_year": 1961,
       "director_age_at_release": 41,
-      "profit_cost_ratio_pct": 908
+      "profit_cost_ratio_pct": 908,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_003",
@@ -43,7 +52,12 @@
       "director_oscars_won": 3,
       "director_birth_year": 1961,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": 837
+      "profit_cost_ratio_pct": 837,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_004",
@@ -58,7 +72,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1959,
       "director_age_at_release": 35,
-      "profit_cost_ratio_pct": 133
+      "profit_cost_ratio_pct": 133,
+      "genres": [
+        "Crime",
+        "Drama"
+      ]
     },
     {
       "id": "card_005",
@@ -73,7 +91,10 @@
       "director_oscars_won": 0,
       "director_birth_year": 1924,
       "director_age_at_release": 33,
-      "profit_cost_ratio_pct": 471
+      "profit_cost_ratio_pct": 471,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_006",
@@ -88,7 +109,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1960,
       "director_age_at_release": 37,
-      "profit_cost_ratio_pct": -25
+      "profit_cost_ratio_pct": -25,
+      "genres": [
+        "Action",
+        "Animation",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_007",
@@ -103,7 +129,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1923,
       "director_age_at_release": 57,
-      "profit_cost_ratio_pct": 2891
+      "profit_cost_ratio_pct": 2891,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_008",
@@ -118,7 +150,14 @@
       "director_oscars_won": 0,
       "director_birth_year": 1929,
       "director_age_at_release": 38,
-      "profit_cost_ratio_pct": 1983
+      "profit_cost_ratio_pct": 1983,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "War",
+        "Western"
+      ]
     },
     {
       "id": "card_009",
@@ -133,7 +172,13 @@
       "director_oscars_won": 5,
       "director_birth_year": 1939,
       "director_age_at_release": 33,
-      "profit_cost_ratio_pct": 3746
+      "profit_cost_ratio_pct": 3746,
+      "genres": [
+        "Crime",
+        "Drama",
+        "History",
+        "Thriller"
+      ]
     },
     {
       "id": "card_010",
@@ -148,7 +193,14 @@
       "director_oscars_won": 2,
       "director_birth_year": 1970,
       "director_age_at_release": 38,
-      "profit_cost_ratio_pct": 443
+      "profit_cost_ratio_pct": 443,
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Thriller"
+      ]
     },
     {
       "id": "card_011",
@@ -163,7 +215,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1956,
       "director_age_at_release": 68,
-      "profit_cost_ratio_pct": 344
+      "profit_cost_ratio_pct": 344,
+      "genres": [
+        "Biography",
+        "Drama"
+      ]
     },
     {
       "id": "card_012",
@@ -178,7 +234,15 @@
       "director_oscars_won": 3,
       "director_birth_year": 1954,
       "director_age_at_release": 37,
-      "profit_cost_ratio_pct": 410
+      "profit_cost_ratio_pct": 410,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Drama",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_013",
@@ -193,7 +257,15 @@
       "director_oscars_won": 5,
       "director_birth_year": 1939,
       "director_age_at_release": 35,
-      "profit_cost_ratio_pct": 269
+      "profit_cost_ratio_pct": 269,
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "History",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_014",
@@ -208,7 +280,13 @@
       "director_oscars_won": 3,
       "director_birth_year": 1946,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 1360
+      "profit_cost_ratio_pct": 1360,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "War"
+      ]
     },
     {
       "id": "card_015",
@@ -223,7 +301,15 @@
       "director_oscars_won": 2,
       "director_birth_year": 1963,
       "director_age_at_release": 31,
-      "profit_cost_ratio_pct": 2574
+      "profit_cost_ratio_pct": 2574,
+      "genres": [
+        "Action",
+        "Comedy",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Thriller"
+      ]
     },
     {
       "id": "card_016",
@@ -238,7 +324,14 @@
       "director_oscars_won": 1,
       "director_birth_year": 1942,
       "director_age_at_release": 48,
-      "profit_cost_ratio_pct": 88
+      "profit_cost_ratio_pct": 88,
+      "genres": [
+        "Biography",
+        "Crime",
+        "Drama",
+        "History",
+        "Thriller"
+      ]
     },
     {
       "id": "card_017",
@@ -253,7 +346,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1955,
       "director_age_at_release": 48,
-      "profit_cost_ratio_pct": 827
+      "profit_cost_ratio_pct": 827,
+      "genres": [
+        "Crime",
+        "Drama"
+      ]
     },
     {
       "id": "card_018",
@@ -268,7 +365,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1910,
       "director_age_at_release": 46,
-      "profit_cost_ratio_pct": 1100
+      "profit_cost_ratio_pct": 1100,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "History"
+      ]
     },
     {
       "id": "card_019",
@@ -283,7 +386,12 @@
       "director_oscars_won": 1,
       "director_birth_year": 1951,
       "director_age_at_release": 34,
-      "profit_cost_ratio_pct": 1942
+      "profit_cost_ratio_pct": 1942,
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_020",
@@ -298,7 +406,10 @@
       "director_oscars_won": 0,
       "director_birth_year": 1951,
       "director_age_at_release": 66,
-      "profit_cost_ratio_pct": -96
+      "profit_cost_ratio_pct": -96,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_021",
@@ -313,7 +424,10 @@
       "director_oscars_won": 0,
       "director_birth_year": 1964,
       "director_age_at_release": 51,
-      "profit_cost_ratio_pct": 150
+      "profit_cost_ratio_pct": 150,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_022",
@@ -328,7 +442,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1970,
       "director_age_at_release": 49,
-      "profit_cost_ratio_pct": 1853
+      "profit_cost_ratio_pct": 1853,
+      "genres": [
+        "Crime",
+        "Drama",
+        "Thriller"
+      ]
     },
     {
       "id": "card_023",
@@ -343,7 +462,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1944,
       "director_age_at_release": 33,
-      "profit_cost_ratio_pct": 6949
+      "profit_cost_ratio_pct": 6949,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_024",
@@ -358,7 +482,13 @@
       "director_oscars_won": 3,
       "director_birth_year": 1946,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 1562
+      "profit_cost_ratio_pct": 1562,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_025",
@@ -373,7 +503,12 @@
       "director_oscars_won": 3,
       "director_birth_year": 1946,
       "director_age_at_release": 52,
-      "profit_cost_ratio_pct": 589
+      "profit_cost_ratio_pct": 589,
+      "genres": [
+        "Action",
+        "Drama",
+        "War"
+      ]
     },
     {
       "id": "card_026",
@@ -388,7 +523,14 @@
       "director_oscars_won": 0,
       "director_birth_year": 1949,
       "director_age_at_release": 45,
-      "profit_cost_ratio_pct": 2052
+      "profit_cost_ratio_pct": 2052,
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Drama",
+        "Family",
+        "Musical"
+      ]
     },
     {
       "id": "card_027",
@@ -403,7 +545,10 @@
       "director_oscars_won": 1,
       "director_birth_year": 1956,
       "director_age_at_release": 32,
-      "profit_cost_ratio_pct": 140
+      "profit_cost_ratio_pct": 140,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_028",
@@ -418,7 +563,10 @@
       "director_oscars_won": 2,
       "director_birth_year": 1972,
       "director_age_at_release": 39,
-      "profit_cost_ratio_pct": 4500
+      "profit_cost_ratio_pct": 4500,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_029",
@@ -433,7 +581,15 @@
       "director_oscars_won": 2,
       "director_birth_year": 1965,
       "director_age_at_release": 43,
-      "profit_cost_ratio_pct": 190
+      "profit_cost_ratio_pct": 190,
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Family",
+        "Romance",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_030",
@@ -448,7 +604,12 @@
       "director_oscars_won": 1,
       "director_birth_year": 1951,
       "director_age_at_release": 43,
-      "profit_cost_ratio_pct": 1133
+      "profit_cost_ratio_pct": 1133,
+      "genres": [
+        "Drama",
+        "Romance",
+        "Comedy"
+      ]
     },
     {
       "id": "card_031",
@@ -463,7 +624,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1937,
       "director_age_at_release": 42,
-      "profit_cost_ratio_pct": 1751
+      "profit_cost_ratio_pct": 1751,
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Horror",
+        "Mystery",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_032",
@@ -478,7 +647,14 @@
       "director_oscars_won": 2,
       "director_birth_year": 1941,
       "director_age_at_release": 56,
-      "profit_cost_ratio_pct": 622
+      "profit_cost_ratio_pct": 622,
+      "genres": [
+        "Action",
+        "Animation",
+        "Drama",
+        "Fantasy",
+        "War"
+      ]
     },
     {
       "id": "card_033",
@@ -493,7 +669,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1957,
       "director_age_at_release": 38,
-      "profit_cost_ratio_pct": 1145
+      "profit_cost_ratio_pct": 1145,
+      "genres": [
+        "Animation",
+        "Family"
+      ]
     },
     {
       "id": "card_034",
@@ -508,7 +688,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1965,
       "director_age_at_release": 34,
-      "profit_cost_ratio_pct": 639
+      "profit_cost_ratio_pct": 639,
+      "genres": [
+        "Action",
+        "Film-Noir",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_035",
@@ -523,7 +709,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1962,
       "director_age_at_release": 37,
-      "profit_cost_ratio_pct": 61
+      "profit_cost_ratio_pct": 61,
+      "genres": [
+        "Drama",
+        "Thriller"
+      ]
     },
     {
       "id": "card_036",
@@ -538,7 +728,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1988,
       "director_age_at_release": 37,
-      "profit_cost_ratio_pct": 767
+      "profit_cost_ratio_pct": 767,
+      "genres": [
+        "Action",
+        "Animation",
+        "Fantasy",
+        "Romance"
+      ]
     },
     {
       "id": "card_037",
@@ -553,7 +749,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1973,
       "director_age_at_release": 43,
-      "profit_cost_ratio_pct": 4650
+      "profit_cost_ratio_pct": 4650,
+      "genres": [
+        "Animation",
+        "Fantasy",
+        "Romance",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_038",
@@ -568,7 +770,15 @@
       "director_oscars_won": 3,
       "director_birth_year": 1954,
       "director_age_at_release": 32,
-      "profit_cost_ratio_pct": 918
+      "profit_cost_ratio_pct": 918,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Horror",
+        "Sci-Fi",
+        "Thriller",
+        "War"
+      ]
     },
     {
       "id": "card_039",
@@ -583,7 +793,10 @@
       "director_oscars_won": 0,
       "director_birth_year": 1993,
       "director_age_at_release": 26,
-      "profit_cost_ratio_pct": 1900
+      "profit_cost_ratio_pct": 1900,
+      "genres": [
+        "Documentary"
+      ]
     },
     {
       "id": "card_040",
@@ -598,7 +811,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1948,
       "director_age_at_release": 34,
-      "profit_cost_ratio_pct": 31
+      "profit_cost_ratio_pct": 31,
+      "genres": [
+        "Action",
+        "Drama",
+        "Horror",
+        "Mystery",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_041",
@@ -613,7 +834,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1984,
       "director_age_at_release": 32,
-      "profit_cost_ratio_pct": 580
+      "profit_cost_ratio_pct": 580,
+      "genres": [
+        "Animation",
+        "Drama"
+      ]
     },
     {
       "id": "card_042",
@@ -628,7 +853,11 @@
       "director_oscars_won": 2,
       "director_birth_year": 1967,
       "director_age_at_release": 43,
-      "profit_cost_ratio_pct": 433
+      "profit_cost_ratio_pct": 433,
+      "genres": [
+        "Animation",
+        "Comedy"
+      ]
     },
     {
       "id": "card_043",
@@ -643,7 +872,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1961,
       "director_age_at_release": 52,
-      "profit_cost_ratio_pct": 567
+      "profit_cost_ratio_pct": 567,
+      "genres": [
+        "Animation",
+        "Fantasy",
+        "Drama",
+        "Thriller"
+      ]
     },
     {
       "id": "card_044",
@@ -658,7 +893,11 @@
       "director_oscars_won": 3,
       "director_birth_year": 1969,
       "director_age_at_release": 50,
-      "profit_cost_ratio_pct": 2216
+      "profit_cost_ratio_pct": 2216,
+      "genres": [
+        "Comedy",
+        "Thriller"
+      ]
     },
     {
       "id": "card_045",
@@ -673,7 +912,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1899,
       "director_age_at_release": 61,
-      "profit_cost_ratio_pct": 6096
+      "profit_cost_ratio_pct": 6096,
+      "genres": [
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_046",
@@ -688,7 +935,15 @@
       "director_oscars_won": 2,
       "director_birth_year": 1970,
       "director_age_at_release": 31,
-      "profit_cost_ratio_pct": 341
+      "profit_cost_ratio_pct": 341,
+      "genres": [
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_047",
@@ -703,7 +958,11 @@
       "director_oscars_won": 1,
       "director_birth_year": 1928,
       "director_age_at_release": 36,
-      "profit_cost_ratio_pct": 409
+      "profit_cost_ratio_pct": 409,
+      "genres": [
+        "Comedy",
+        "War"
+      ]
     },
     {
       "id": "card_048",
@@ -718,7 +977,10 @@
       "director_oscars_won": 2,
       "director_birth_year": 1932,
       "director_age_at_release": 43,
-      "profit_cost_ratio_pct": 2377
+      "profit_cost_ratio_pct": 2377,
+      "genres": [
+        "Comedy"
+      ]
     },
     {
       "id": "card_049",
@@ -733,7 +995,13 @@
       "director_oscars_won": 1,
       "director_birth_year": 1963,
       "director_age_at_release": 41,
-      "profit_cost_ratio_pct": 270
+      "profit_cost_ratio_pct": 270,
+      "genres": [
+        "Comedy",
+        "Fantasy",
+        "Romance",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_050",
@@ -748,7 +1016,11 @@
       "director_oscars_won": 1,
       "director_birth_year": 1985,
       "director_age_at_release": 29,
-      "profit_cost_ratio_pct": 1385
+      "profit_cost_ratio_pct": 1385,
+      "genres": [
+        "Drama",
+        "Musical"
+      ]
     },
     {
       "id": "card_051",
@@ -763,7 +1035,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1975,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 441
+      "profit_cost_ratio_pct": 441,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Fantasy",
+        "Musical",
+        "Thriller"
+      ]
     },
     {
       "id": "card_052",
@@ -778,7 +1058,10 @@
       "director_oscars_won": 0,
       "director_birth_year": 1910,
       "director_age_at_release": 42,
-      "profit_cost_ratio_pct": 1076
+      "profit_cost_ratio_pct": 1076,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_053",
@@ -793,7 +1076,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1970,
       "director_age_at_release": 37,
-      "profit_cost_ratio_pct": 205
+      "profit_cost_ratio_pct": 205,
+      "genres": [
+        "Drama",
+        "History",
+        "Thriller",
+        "Western"
+      ]
     },
     {
       "id": "card_054",
@@ -808,7 +1097,11 @@
       "director_oscars_won": 3,
       "director_birth_year": 1946,
       "director_age_at_release": 35,
-      "profit_cost_ratio_pct": 2066
+      "profit_cost_ratio_pct": 2066,
+      "genres": [
+        "Action",
+        "Adventure"
+      ]
     },
     {
       "id": "card_055",
@@ -823,7 +1116,10 @@
       "director_oscars_won": 0,
       "director_birth_year": 1956,
       "director_age_at_release": 42,
-      "profit_cost_ratio_pct": 462
+      "profit_cost_ratio_pct": 462,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_056",
@@ -838,7 +1134,13 @@
       "director_oscars_won": 1,
       "director_birth_year": 1944,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 1335
+      "profit_cost_ratio_pct": 1335,
+      "genres": [
+        "Crime",
+        "Drama",
+        "Horror",
+        "Thriller"
+      ]
     },
     {
       "id": "card_057",
@@ -853,7 +1155,11 @@
       "director_oscars_won": 6,
       "director_birth_year": 1906,
       "director_age_at_release": 54,
-      "profit_cost_ratio_pct": 720
+      "profit_cost_ratio_pct": 720,
+      "genres": [
+        "Comedy",
+        "Drama"
+      ]
     },
     {
       "id": "card_058",
@@ -868,7 +1174,13 @@
       "director_oscars_won": 2,
       "director_birth_year": 1970,
       "director_age_at_release": 36,
-      "profit_cost_ratio_pct": 174
+      "profit_cost_ratio_pct": 174,
+      "genres": [
+        "Drama",
+        "Fantasy",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_059",
@@ -883,7 +1195,11 @@
       "director_oscars_won": 1,
       "director_birth_year": 1965,
       "director_age_at_release": 34,
-      "profit_cost_ratio_pct": 2275
+      "profit_cost_ratio_pct": 2275,
+      "genres": [
+        "Comedy",
+        "Drama"
+      ]
     },
     {
       "id": "card_060",
@@ -898,7 +1214,15 @@
       "director_oscars_won": 2,
       "director_birth_year": 1957,
       "director_age_at_release": 42,
-      "profit_cost_ratio_pct": -55
+      "profit_cost_ratio_pct": -55,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Fantasy",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_061",
@@ -913,7 +1237,13 @@
       "director_oscars_won": 2,
       "director_birth_year": 1957,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 588
+      "profit_cost_ratio_pct": 588,
+      "genres": [
+        "Action",
+        "Animation",
+        "Comedy",
+        "Family"
+      ]
     },
     {
       "id": "card_062",
@@ -928,7 +1258,11 @@
       "director_oscars_won": 1,
       "director_birth_year": 1944,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": 317
+      "profit_cost_ratio_pct": 317,
+      "genres": [
+        "Documentary",
+        "Music"
+      ]
     },
     {
       "id": "card_063",
@@ -943,7 +1277,14 @@
       "director_oscars_won": 0,
       "director_birth_year": 1940,
       "director_age_at_release": 43,
-      "profit_cost_ratio_pct": 164
+      "profit_cost_ratio_pct": 164,
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Thriller"
+      ]
     },
     {
       "id": "card_064",
@@ -958,7 +1299,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1970,
       "director_age_at_release": 48,
-      "profit_cost_ratio_pct": 583
+      "profit_cost_ratio_pct": 583,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_065",
@@ -973,7 +1319,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1918,
       "director_age_at_release": 34,
-      "profit_cost_ratio_pct": 216
+      "profit_cost_ratio_pct": 216,
+      "genres": [
+        "Comedy",
+        "Musical"
+      ]
     },
     {
       "id": "card_066",
@@ -988,7 +1338,13 @@
       "director_oscars_won": 2,
       "director_birth_year": 1970,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": 325
+      "profit_cost_ratio_pct": 325,
+      "genres": [
+        "Adventure",
+        "Drama",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_067",
@@ -1003,7 +1359,13 @@
       "director_oscars_won": 1,
       "director_birth_year": 1886,
       "director_age_at_release": 57,
-      "profit_cost_ratio_pct": 256
+      "profit_cost_ratio_pct": 256,
+      "genres": [
+        "Drama",
+        "Film-Noir",
+        "Romance",
+        "War"
+      ]
     },
     {
       "id": "card_068",
@@ -1018,7 +1380,14 @@
       "director_oscars_won": 0,
       "director_birth_year": 1937,
       "director_age_at_release": 63,
-      "profit_cost_ratio_pct": 347
+      "profit_cost_ratio_pct": 347,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "History",
+        "Romance"
+      ]
     },
     {
       "id": "card_069",
@@ -1033,7 +1402,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1959,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": 378
+      "profit_cost_ratio_pct": 378,
+      "genres": [
+        "Drama",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_070",
@@ -1048,7 +1421,10 @@
       "director_oscars_won": 1,
       "director_birth_year": 1889,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 467
+      "profit_cost_ratio_pct": 467,
+      "genres": [
+        "Comedy"
+      ]
     },
     {
       "id": "card_071",
@@ -1063,7 +1439,12 @@
       "director_oscars_won": 1,
       "director_birth_year": 1928,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": 1314
+      "profit_cost_ratio_pct": 1314,
+      "genres": [
+        "Adventure",
+        "Mystery",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_072",
@@ -1078,7 +1459,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1959,
       "director_age_at_release": 45,
-      "profit_cost_ratio_pct": 292
+      "profit_cost_ratio_pct": 292,
+      "genres": [
+        "Action",
+        "Drama",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_073",
@@ -1093,7 +1480,13 @@
       "director_oscars_won": 1,
       "director_birth_year": 1933,
       "director_age_at_release": 41,
-      "profit_cost_ratio_pct": 387
+      "profit_cost_ratio_pct": 387,
+      "genres": [
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Mystery"
+      ]
     },
     {
       "id": "card_074",
@@ -1108,7 +1501,12 @@
       "director_oscars_won": 1,
       "director_birth_year": 1935,
       "director_age_at_release": 41,
-      "profit_cost_ratio_pct": 22400
+      "profit_cost_ratio_pct": 22400,
+      "genres": [
+        "Action",
+        "Drama",
+        "Sport"
+      ]
     },
     {
       "id": "card_075",
@@ -1123,7 +1521,13 @@
       "director_oscars_won": 2,
       "director_birth_year": 1932,
       "director_age_at_release": 52,
-      "profit_cost_ratio_pct": 400
+      "profit_cost_ratio_pct": 400,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "Musical"
+      ]
     },
     {
       "id": "card_076",
@@ -1138,7 +1542,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1929,
       "director_age_at_release": 39,
-      "profit_cost_ratio_pct": 500
+      "profit_cost_ratio_pct": 500,
+      "genres": [
+        "Action",
+        "Drama",
+        "Romance",
+        "Western"
+      ]
     },
     {
       "id": "card_077",
@@ -1153,7 +1563,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1960,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": 489
+      "profit_cost_ratio_pct": 489,
+      "genres": [
+        "Drama",
+        "Romance"
+      ]
     },
     {
       "id": "card_078",
@@ -1168,7 +1582,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1944,
       "director_age_at_release": 54,
-      "profit_cost_ratio_pct": 340
+      "profit_cost_ratio_pct": 340,
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_079",
@@ -1183,7 +1602,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1960,
       "director_age_at_release": 35,
-      "profit_cost_ratio_pct": 120
+      "profit_cost_ratio_pct": 120,
+      "genres": [
+        "Drama",
+        "Romance"
+      ]
     },
     {
       "id": "card_080",
@@ -1198,7 +1621,15 @@
       "director_oscars_won": 5,
       "director_birth_year": 1939,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": 376
+      "profit_cost_ratio_pct": 376,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Horror",
+        "Thriller",
+        "War"
+      ]
     },
     {
       "id": "card_081",
@@ -1213,7 +1644,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1962,
       "director_age_at_release": 33,
-      "profit_cost_ratio_pct": 892
+      "profit_cost_ratio_pct": 892,
+      "genres": [
+        "Action",
+        "Crime",
+        "Film-Noir",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_082",
@@ -1228,7 +1667,10 @@
       "director_oscars_won": 0,
       "director_birth_year": 1968,
       "director_age_at_release": 48,
-      "profit_cost_ratio_pct": -50
+      "profit_cost_ratio_pct": -50,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_083",
@@ -1243,7 +1685,10 @@
       "director_oscars_won": 0,
       "director_birth_year": 1980,
       "director_age_at_release": 39,
-      "profit_cost_ratio_pct": 12
+      "profit_cost_ratio_pct": 12,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_084",
@@ -1258,7 +1703,12 @@
       "director_oscars_won": 3,
       "director_birth_year": 1961,
       "director_age_at_release": 57,
-      "profit_cost_ratio_pct": 170
+      "profit_cost_ratio_pct": 170,
+      "genres": [
+        "Documentary",
+        "History",
+        "War"
+      ]
     },
     {
       "id": "card_085",
@@ -1273,7 +1723,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1941,
       "director_age_at_release": 34,
-      "profit_cost_ratio_pct": 1400
+      "profit_cost_ratio_pct": 1400,
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Fantasy",
+        "History"
+      ]
     },
     {
       "id": "card_086",
@@ -1288,7 +1744,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1957,
       "director_age_at_release": 42,
-      "profit_cost_ratio_pct": 453
+      "profit_cost_ratio_pct": 453,
+      "genres": [
+        "Animation",
+        "Comedy",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_087",
@@ -1303,7 +1764,11 @@
       "director_oscars_won": 2,
       "director_birth_year": 1957,
       "director_age_at_release": 50,
-      "profit_cost_ratio_pct": 316
+      "profit_cost_ratio_pct": 316,
+      "genres": [
+        "Animation",
+        "Comedy"
+      ]
     },
     {
       "id": "card_088",
@@ -1318,7 +1783,10 @@
       "director_oscars_won": 1,
       "director_birth_year": 1972,
       "director_age_at_release": 39,
-      "profit_cost_ratio_pct": 196
+      "profit_cost_ratio_pct": 196,
+      "genres": [
+        "Documentary"
+      ]
     },
     {
       "id": "card_089",
@@ -1333,7 +1801,10 @@
       "director_oscars_won": 1,
       "director_birth_year": 1889,
       "director_age_at_release": 42,
-      "profit_cost_ratio_pct": 183
+      "profit_cost_ratio_pct": 183,
+      "genres": [
+        "Comedy"
+      ]
     },
     {
       "id": "card_090",
@@ -1348,7 +1819,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1899,
       "director_age_at_release": 59,
-      "profit_cost_ratio_pct": 192
+      "profit_cost_ratio_pct": 192,
+      "genres": [
+        "Drama",
+        "Mystery",
+        "Romance",
+        "Thriller"
+      ]
     },
     {
       "id": "card_091",
@@ -1363,7 +1840,15 @@
       "director_oscars_won": 3,
       "director_birth_year": 1968,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 391
+      "profit_cost_ratio_pct": 391,
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Drama",
+        "Family",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_092",
@@ -1378,7 +1863,14 @@
       "director_oscars_won": 2,
       "director_birth_year": 1966,
       "director_age_at_release": 50,
-      "profit_cost_ratio_pct": 583
+      "profit_cost_ratio_pct": 583,
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Crime",
+        "Family"
+      ]
     },
     {
       "id": "card_093",
@@ -1393,7 +1885,13 @@
       "director_oscars_won": 1,
       "director_birth_year": 1928,
       "director_age_at_release": 52,
-      "profit_cost_ratio_pct": 163
+      "profit_cost_ratio_pct": 163,
+      "genres": [
+        "Drama",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_094",
@@ -1408,7 +1906,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1967,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": 775
+      "profit_cost_ratio_pct": 775,
+      "genres": [
+        "Crime",
+        "Drama"
+      ]
     },
     {
       "id": "card_095",
@@ -1423,7 +1925,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1941,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": 554
+      "profit_cost_ratio_pct": 554,
+      "genres": [
+        "Drama",
+        "History",
+        "War"
+      ]
     },
     {
       "id": "card_096",
@@ -1438,7 +1945,14 @@
       "director_oscars_won": 3,
       "director_birth_year": 1968,
       "director_age_at_release": 33,
-      "profit_cost_ratio_pct": 404
+      "profit_cost_ratio_pct": 404,
+      "genres": [
+        "Animation",
+        "Comedy",
+        "Family",
+        "Fantasy",
+        "Horror"
+      ]
     },
     {
       "id": "card_097",
@@ -1453,7 +1967,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1956,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": 256
+      "profit_cost_ratio_pct": 256,
+      "genres": [
+        "Drama",
+        "Musical"
+      ]
     },
     {
       "id": "card_098",
@@ -1468,7 +1986,13 @@
       "director_oscars_won": 4,
       "director_birth_year": 1969,
       "director_age_at_release": 34,
-      "profit_cost_ratio_pct": 867
+      "profit_cost_ratio_pct": 867,
+      "genres": [
+        "Comedy",
+        "Crime",
+        "Drama",
+        "Mystery"
+      ]
     },
     {
       "id": "card_099",
@@ -1483,7 +2007,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1910,
       "director_age_at_release": 75,
-      "profit_cost_ratio_pct": 65
+      "profit_cost_ratio_pct": 65,
+      "genres": [
+        "Drama",
+        "War"
+      ]
     },
     {
       "id": "card_100",
@@ -1498,7 +2026,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1952,
       "director_age_at_release": 45,
-      "profit_cost_ratio_pct": 1638
+      "profit_cost_ratio_pct": 1638,
+      "genres": [
+        "Drama",
+        "Romance"
+      ]
     },
     {
       "id": "card_101",
@@ -1513,7 +2045,11 @@
       "director_oscars_won": 3,
       "director_birth_year": 1946,
       "director_age_at_release": 43,
-      "profit_cost_ratio_pct": 888
+      "profit_cost_ratio_pct": 888,
+      "genres": [
+        "Adventure",
+        "Comedy"
+      ]
     },
     {
       "id": "card_102",
@@ -1528,7 +2064,15 @@
       "director_oscars_won": 3,
       "director_birth_year": 1946,
       "director_age_at_release": 29,
-      "profit_cost_ratio_pct": 5400
+      "profit_cost_ratio_pct": 5400,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Horror",
+        "Mystery",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_103",
@@ -1543,7 +2087,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1957,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 504
+      "profit_cost_ratio_pct": 504,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "War"
+      ]
     },
     {
       "id": "card_104",
@@ -1558,7 +2108,13 @@
       "director_oscars_won": 1,
       "director_birth_year": 1966,
       "director_age_at_release": 35,
-      "profit_cost_ratio_pct": 707
+      "profit_cost_ratio_pct": 707,
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_105",
@@ -1573,7 +2129,11 @@
       "director_oscars_won": 6,
       "director_birth_year": 1906,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": 185
+      "profit_cost_ratio_pct": 185,
+      "genres": [
+        "Drama",
+        "Film-Noir"
+      ]
     },
     {
       "id": "card_106",
@@ -1588,7 +2148,15 @@
       "director_oscars_won": 1,
       "director_birth_year": 1964,
       "director_age_at_release": 59,
-      "profit_cost_ratio_pct": 673
+      "profit_cost_ratio_pct": 673,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Horror",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_107",
@@ -1603,7 +2171,12 @@
       "director_oscars_won": 3,
       "director_birth_year": 1964,
       "director_age_at_release": 42,
-      "profit_cost_ratio_pct": 342
+      "profit_cost_ratio_pct": 342,
+      "genres": [
+        "Drama",
+        "Fantasy",
+        "War"
+      ]
     },
     {
       "id": "card_108",
@@ -1618,7 +2191,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1890,
       "director_age_at_release": 37,
-      "profit_cost_ratio_pct": -23
+      "profit_cost_ratio_pct": -23,
+      "genres": [
+        "Drama",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_109",
@@ -1633,7 +2210,15 @@
       "director_oscars_won": 3,
       "director_birth_year": 1954,
       "director_age_at_release": 30,
-      "profit_cost_ratio_pct": 1123
+      "profit_cost_ratio_pct": 1123,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Horror",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_110",
@@ -1648,7 +2233,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1975,
       "director_age_at_release": 26,
-      "profit_cost_ratio_pct": 28
+      "profit_cost_ratio_pct": 28,
+      "genres": [
+        "Comedy",
+        "Fantasy",
+        "Horror",
+        "Mystery",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_111",
@@ -1663,7 +2256,15 @@
       "director_oscars_won": 2,
       "director_birth_year": 1941,
       "director_age_at_release": 63,
-      "profit_cost_ratio_pct": 883
+      "profit_cost_ratio_pct": 883,
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Drama",
+        "Fantasy",
+        "Sci-Fi",
+        "War"
+      ]
     },
     {
       "id": "card_112",
@@ -1678,7 +2279,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1963,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": 400
+      "profit_cost_ratio_pct": 400,
+      "genres": [
+        "Action",
+        "Drama",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_113",
@@ -1693,7 +2300,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1973,
       "director_age_at_release": 38,
-      "profit_cost_ratio_pct": 833
+      "profit_cost_ratio_pct": 833,
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Romance"
+      ]
     },
     {
       "id": "card_114",
@@ -1708,7 +2320,14 @@
       "director_oscars_won": 0,
       "director_birth_year": 1953,
       "director_age_at_release": 39,
-      "profit_cost_ratio_pct": 1700
+      "profit_cost_ratio_pct": 1700,
+      "genres": [
+        "Animation",
+        "Comedy",
+        "Family",
+        "Fantasy",
+        "Musical"
+      ]
     },
     {
       "id": "card_115",
@@ -1723,7 +2342,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1977,
       "director_age_at_release": 46,
-      "profit_cost_ratio_pct": 591
+      "profit_cost_ratio_pct": 591,
+      "genres": [
+        "Action",
+        "Animation",
+        "Comedy"
+      ]
     },
     {
       "id": "card_116",
@@ -1738,7 +2362,12 @@
       "director_oscars_won": 6,
       "director_birth_year": 1906,
       "director_age_at_release": 38,
-      "profit_cost_ratio_pct": 410
+      "profit_cost_ratio_pct": 410,
+      "genres": [
+        "Crime",
+        "Drama",
+        "Film-Noir"
+      ]
     },
     {
       "id": "card_117",
@@ -1753,7 +2382,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1944,
       "director_age_at_release": 38,
-      "profit_cost_ratio_pct": 85
+      "profit_cost_ratio_pct": 85,
+      "genres": [
+        "Drama",
+        "Musical"
+      ]
     },
     {
       "id": "card_118",
@@ -1768,7 +2401,13 @@
       "director_oscars_won": 4,
       "director_birth_year": 1914,
       "director_age_at_release": 51,
-      "profit_cost_ratio_pct": 3390
+      "profit_cost_ratio_pct": 3390,
+      "genres": [
+        "Biography",
+        "Drama",
+        "Musical",
+        "Romance"
+      ]
     },
     {
       "id": "card_119",
@@ -1783,7 +2422,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1943,
       "director_age_at_release": 52,
-      "profit_cost_ratio_pct": 212
+      "profit_cost_ratio_pct": 212,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Crime",
+        "Film-Noir",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_120",
@@ -1798,7 +2445,15 @@
       "director_oscars_won": 2,
       "director_birth_year": 1963,
       "director_age_at_release": 29,
-      "profit_cost_ratio_pct": 136
+      "profit_cost_ratio_pct": 136,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Crime",
+        "Film-Noir",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_121",
@@ -1813,7 +2468,15 @@
       "director_oscars_won": 4,
       "director_birth_year": 1956,
       "director_age_at_release": 51,
-      "profit_cost_ratio_pct": 587
+      "profit_cost_ratio_pct": 587,
+      "genres": [
+        "Action",
+        "Crime",
+        "Film-Noir",
+        "Mystery",
+        "Thriller",
+        "Western"
+      ]
     },
     {
       "id": "card_122",
@@ -1828,7 +2491,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1972,
       "director_age_at_release": 38,
-      "profit_cost_ratio_pct": 468
+      "profit_cost_ratio_pct": 468,
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "Mystery",
+        "Romance",
+        "Thriller"
+      ]
     },
     {
       "id": "card_123",
@@ -1843,7 +2514,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1956,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": -84
+      "profit_cost_ratio_pct": -84,
+      "genres": [
+        "Crime",
+        "Drama",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_124",
@@ -1858,7 +2535,15 @@
       "director_oscars_won": 1,
       "director_birth_year": 1942,
       "director_age_at_release": 38,
-      "profit_cost_ratio_pct": 30
+      "profit_cost_ratio_pct": 30,
+      "genres": [
+        "Action",
+        "Biography",
+        "Drama",
+        "Film-Noir",
+        "History",
+        "Sport"
+      ]
     },
     {
       "id": "card_125",
@@ -1873,7 +2558,14 @@
       "director_oscars_won": 0,
       "director_birth_year": 1951,
       "director_age_at_release": 36,
-      "profit_cost_ratio_pct": 446
+      "profit_cost_ratio_pct": 446,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Horror",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_126",
@@ -1888,7 +2580,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1974,
       "director_age_at_release": 33,
-      "profit_cost_ratio_pct": 574
+      "profit_cost_ratio_pct": 574,
+      "genres": [
+        "Action",
+        "Comedy",
+        "Crime"
+      ]
     },
     {
       "id": "card_127",
@@ -1903,7 +2600,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1945,
       "director_age_at_release": 37,
-      "profit_cost_ratio_pct": 766
+      "profit_cost_ratio_pct": 766,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi",
+        "Thriller"
+      ]
     },
     {
       "id": "card_128",
@@ -1918,7 +2621,12 @@
       "director_oscars_won": 1,
       "director_birth_year": 1945,
       "director_age_at_release": 70,
-      "profit_cost_ratio_pct": 154
+      "profit_cost_ratio_pct": 154,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_129",
@@ -1933,7 +2641,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1951,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": 203
+      "profit_cost_ratio_pct": 203,
+      "genres": [
+        "Action",
+        "Animation",
+        "Fantasy",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_130",
@@ -1948,7 +2662,15 @@
       "director_oscars_won": 2,
       "director_birth_year": 1967,
       "director_age_at_release": 50,
-      "profit_cost_ratio_pct": 366
+      "profit_cost_ratio_pct": 366,
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Crime",
+        "Fantasy",
+        "Horror",
+        "Musical"
+      ]
     },
     {
       "id": "card_131",
@@ -1963,7 +2685,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1924,
       "director_age_at_release": 51,
-      "profit_cost_ratio_pct": 2678
+      "profit_cost_ratio_pct": 2678,
+      "genres": [
+        "Action",
+        "Biography",
+        "Crime",
+        "History",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_132",
@@ -1978,7 +2708,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1978,
       "director_age_at_release": 41,
-      "profit_cost_ratio_pct": 20
+      "profit_cost_ratio_pct": 20,
+      "genres": [
+        "Drama",
+        "History",
+        "Romance"
+      ]
     },
     {
       "id": "card_133",
@@ -1993,7 +2728,10 @@
       "director_oscars_won": 1,
       "director_birth_year": 1979,
       "director_age_at_release": 41,
-      "profit_cost_ratio_pct": 233
+      "profit_cost_ratio_pct": 233,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_134",
@@ -2008,7 +2746,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1967,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": 25
+      "profit_cost_ratio_pct": 25,
+      "genres": [
+        "Crime",
+        "Drama"
+      ]
     },
     {
       "id": "card_135",
@@ -2023,7 +2765,10 @@
       "director_oscars_won": 0,
       "director_birth_year": 1943,
       "director_age_at_release": 53,
-      "profit_cost_ratio_pct": 240
+      "profit_cost_ratio_pct": 240,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_136",
@@ -2038,7 +2783,15 @@
       "director_oscars_won": 1,
       "director_birth_year": 1966,
       "director_age_at_release": 38,
-      "profit_cost_ratio_pct": 519
+      "profit_cost_ratio_pct": 519,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Family",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_137",
@@ -2053,7 +2806,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1975,
       "director_age_at_release": 39,
-      "profit_cost_ratio_pct": 773
+      "profit_cost_ratio_pct": 773,
+      "genres": [
+        "Comedy",
+        "Thriller"
+      ]
     },
     {
       "id": "card_138",
@@ -2068,7 +2825,14 @@
       "director_oscars_won": 1,
       "director_birth_year": 1928,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 82
+      "profit_cost_ratio_pct": 82,
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Drama",
+        "History",
+        "War"
+      ]
     },
     {
       "id": "card_139",
@@ -2083,7 +2847,10 @@
       "director_oscars_won": 1,
       "director_birth_year": 1967,
       "director_age_at_release": 51,
-      "profit_cost_ratio_pct": 1040
+      "profit_cost_ratio_pct": 1040,
+      "genres": [
+        "Documentary"
+      ]
     },
     {
       "id": "card_140",
@@ -2098,7 +2865,15 @@
       "director_oscars_won": 1,
       "director_birth_year": 1945,
       "director_age_at_release": 52,
-      "profit_cost_ratio_pct": 260
+      "profit_cost_ratio_pct": 260,
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_141",
@@ -2113,7 +2888,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1972,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": -9
+      "profit_cost_ratio_pct": -9,
+      "genres": [
+        "Crime",
+        "Drama"
+      ]
     },
     {
       "id": "card_142",
@@ -2128,7 +2907,11 @@
       "director_oscars_won": 4,
       "director_birth_year": 1894,
       "director_age_at_release": 68,
-      "profit_cost_ratio_pct": 150
+      "profit_cost_ratio_pct": 150,
+      "genres": [
+        "Drama",
+        "Western"
+      ]
     },
     {
       "id": "card_143",
@@ -2143,7 +2926,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1963,
       "director_age_at_release": 53,
-      "profit_cost_ratio_pct": 295
+      "profit_cost_ratio_pct": 295,
+      "genres": [
+        "Drama",
+        "Romance",
+        "Thriller"
+      ]
     },
     {
       "id": "card_144",
@@ -2158,7 +2946,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1979,
       "director_age_at_release": 45,
-      "profit_cost_ratio_pct": 404
+      "profit_cost_ratio_pct": 404,
+      "genres": [
+        "Fantasy",
+        "Musical"
+      ]
     },
     {
       "id": "card_145",
@@ -2173,7 +2965,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1962,
       "director_age_at_release": 62,
-      "profit_cost_ratio_pct": 317
+      "profit_cost_ratio_pct": 317,
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Drama",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_146",
@@ -2188,7 +2986,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1966,
       "director_age_at_release": 48,
-      "profit_cost_ratio_pct": 355
+      "profit_cost_ratio_pct": 355,
+      "genres": [
+        "Comedy",
+        "Crime",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_147",
@@ -2203,7 +3006,12 @@
       "director_oscars_won": 1,
       "director_birth_year": 1969,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": 109
+      "profit_cost_ratio_pct": 109,
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_148",
@@ -2218,7 +3026,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1935,
       "director_age_at_release": 78,
-      "profit_cost_ratio_pct": -49
+      "profit_cost_ratio_pct": -49,
+      "genres": [
+        "Animation",
+        "Drama",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_149",
@@ -2233,7 +3046,10 @@
       "director_oscars_won": 1,
       "director_birth_year": 1928,
       "director_age_at_release": 29,
-      "profit_cost_ratio_pct": 221
+      "profit_cost_ratio_pct": 221,
+      "genres": [
+        "War"
+      ]
     },
     {
       "id": "card_150",
@@ -2248,7 +3064,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1972,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": 195
+      "profit_cost_ratio_pct": 195,
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Musical"
+      ]
     },
     {
       "id": "card_151",
@@ -2263,7 +3084,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1968,
       "director_age_at_release": 51,
-      "profit_cost_ratio_pct": 138
+      "profit_cost_ratio_pct": 138,
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_152",
@@ -2278,7 +3103,12 @@
       "director_oscars_won": 2,
       "director_birth_year": 1941,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 948
+      "profit_cost_ratio_pct": 948,
+      "genres": [
+        "Animation",
+        "Family",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_153",
@@ -2293,7 +3123,11 @@
       "director_oscars_won": 4,
       "director_birth_year": 1920,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": 233
+      "profit_cost_ratio_pct": 233,
+      "genres": [
+        "Comedy",
+        "Drama"
+      ]
     },
     {
       "id": "card_154",
@@ -2308,7 +3142,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1962,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 725
+      "profit_cost_ratio_pct": 725,
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Musical",
+        "Romance"
+      ]
     },
     {
       "id": "card_155",
@@ -2323,7 +3163,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1972,
       "director_age_at_release": 39,
-      "profit_cost_ratio_pct": 3259
+      "profit_cost_ratio_pct": 3259,
+      "genres": [
+        "Biography",
+        "Comedy",
+        "Drama"
+      ]
     },
     {
       "id": "card_156",
@@ -2338,7 +3183,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1925,
       "director_age_at_release": 37,
-      "profit_cost_ratio_pct": 900
+      "profit_cost_ratio_pct": 900,
+      "genres": [
+        "Crime",
+        "Drama"
+      ]
     },
     {
       "id": "card_157",
@@ -2353,7 +3202,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1973,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": 628
+      "profit_cost_ratio_pct": 628,
+      "genres": [
+        "Action",
+        "Drama",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_158",
@@ -2368,7 +3222,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1924,
       "director_age_at_release": 52,
-      "profit_cost_ratio_pct": 524
+      "profit_cost_ratio_pct": 524,
+      "genres": [
+        "Comedy",
+        "Drama"
+      ]
     },
     {
       "id": "card_159",
@@ -2383,7 +3241,14 @@
       "director_oscars_won": 0,
       "director_birth_year": 1963,
       "director_age_at_release": 29,
-      "profit_cost_ratio_pct": 127
+      "profit_cost_ratio_pct": 127,
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Family",
+        "Fantasy",
+        "Musical"
+      ]
     },
     {
       "id": "card_160",
@@ -2398,7 +3263,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1981,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": 861
+      "profit_cost_ratio_pct": 861,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_161",
@@ -2413,7 +3283,10 @@
       "director_oscars_won": 0,
       "director_birth_year": 1927,
       "director_age_at_release": 40,
-      "profit_cost_ratio_pct": 407
+      "profit_cost_ratio_pct": 407,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_162",
@@ -2428,7 +3301,15 @@
       "director_oscars_won": 2,
       "director_birth_year": 1941,
       "director_age_at_release": 45,
-      "profit_cost_ratio_pct": 130
+      "profit_cost_ratio_pct": 130,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Fantasy",
+        "Sci-Fi",
+        "War"
+      ]
     },
     {
       "id": "card_163",
@@ -2443,7 +3324,14 @@
       "director_oscars_won": 1,
       "director_birth_year": 1969,
       "director_age_at_release": 45,
-      "profit_cost_ratio_pct": 599
+      "profit_cost_ratio_pct": 599,
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Crime",
+        "Drama",
+        "Romance"
+      ]
     },
     {
       "id": "card_164",
@@ -2458,7 +3346,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1963,
       "director_age_at_release": 34,
-      "profit_cost_ratio_pct": 261
+      "profit_cost_ratio_pct": 261,
+      "genres": [
+        "Animation",
+        "Crime",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_165",
@@ -2473,7 +3367,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1899,
       "director_age_at_release": 60,
-      "profit_cost_ratio_pct": 209
+      "profit_cost_ratio_pct": 209,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Crime",
+        "Drama",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_166",
@@ -2488,7 +3390,15 @@
       "director_oscars_won": 2,
       "director_birth_year": 1941,
       "director_age_at_release": 43,
-      "profit_cost_ratio_pct": 523
+      "profit_cost_ratio_pct": 523,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Fantasy",
+        "Sci-Fi",
+        "War"
+      ]
     },
     {
       "id": "card_167",
@@ -2503,7 +3413,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1973,
       "director_age_at_release": 46,
-      "profit_cost_ratio_pct": 959
+      "profit_cost_ratio_pct": 959,
+      "genres": [
+        "Animation",
+        "Fantasy"
+      ]
     },
     {
       "id": "card_168",
@@ -2518,7 +3432,11 @@
       "director_oscars_won": 4,
       "director_birth_year": 1930,
       "director_age_at_release": 74,
-      "profit_cost_ratio_pct": 623
+      "profit_cost_ratio_pct": 623,
+      "genres": [
+        "Drama",
+        "Sport"
+      ]
     },
     {
       "id": "card_169",
@@ -2533,7 +3451,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1944,
       "director_age_at_release": 49,
-      "profit_cost_ratio_pct": 386
+      "profit_cost_ratio_pct": 386,
+      "genres": [
+        "Comedy",
+        "Fantasy",
+        "Romance",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_170",
@@ -2548,7 +3472,15 @@
       "director_oscars_won": 4,
       "director_birth_year": 1954,
       "director_age_at_release": 42,
-      "profit_cost_ratio_pct": 766
+      "profit_cost_ratio_pct": 766,
+      "genres": [
+        "Action",
+        "Comedy",
+        "Crime",
+        "Film-Noir",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_171",
@@ -2563,7 +3495,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1965,
       "director_age_at_release": 30,
-      "profit_cost_ratio_pct": 288
+      "profit_cost_ratio_pct": 288,
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_172",
@@ -2578,7 +3518,14 @@
       "director_oscars_won": 0,
       "director_birth_year": 1948,
       "director_age_at_release": 30,
-      "profit_cost_ratio_pct": 23233
+      "profit_cost_ratio_pct": 23233,
+      "genres": [
+        "Crime",
+        "Drama",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ]
     },
     {
       "id": "card_173",
@@ -2593,7 +3540,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1946,
       "director_age_at_release": 53,
-      "profit_cost_ratio_pct": -9
+      "profit_cost_ratio_pct": -9,
+      "genres": [
+        "Adventure",
+        "Biography",
+        "Drama"
+      ]
     },
     {
       "id": "card_174",
@@ -2608,7 +3560,10 @@
       "director_oscars_won": 0,
       "director_birth_year": 1970,
       "director_age_at_release": 29,
-      "profit_cost_ratio_pct": -19
+      "profit_cost_ratio_pct": -19,
+      "genres": [
+        "Drama"
+      ]
     },
     {
       "id": "card_175",
@@ -2623,7 +3578,14 @@
       "director_oscars_won": 4,
       "director_birth_year": 1961,
       "director_age_at_release": 43,
-      "profit_cost_ratio_pct": 513
+      "profit_cost_ratio_pct": 513,
+      "genres": [
+        "Adventure",
+        "Family",
+        "Fantasy",
+        "Horror",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_176",
@@ -2638,7 +3600,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1954,
       "director_age_at_release": 34,
-      "profit_cost_ratio_pct": 760
+      "profit_cost_ratio_pct": 760,
+      "genres": [
+        "Action",
+        "Animation",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_177",
@@ -2653,7 +3620,13 @@
       "director_oscars_won": 0,
       "director_birth_year": 1937,
       "director_age_at_release": 46,
-      "profit_cost_ratio_pct": 1362
+      "profit_cost_ratio_pct": 1362,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Sci-Fi"
+      ]
     },
     {
       "id": "card_178",
@@ -2668,7 +3641,12 @@
       "director_oscars_won": 0,
       "director_birth_year": 1919,
       "director_age_at_release": 47,
-      "profit_cost_ratio_pct": 24
+      "profit_cost_ratio_pct": 24,
+      "genres": [
+        "Drama",
+        "History",
+        "War"
+      ]
     },
     {
       "id": "card_179",
@@ -2683,7 +3661,12 @@
       "director_oscars_won": 2,
       "director_birth_year": 1909,
       "director_age_at_release": 45,
-      "profit_cost_ratio_pct": 955
+      "profit_cost_ratio_pct": 955,
+      "genres": [
+        "Crime",
+        "Drama",
+        "Thriller"
+      ]
     },
     {
       "id": "card_180",
@@ -2698,7 +3681,11 @@
       "director_oscars_won": 0,
       "director_birth_year": 1958,
       "director_age_at_release": 42,
-      "profit_cost_ratio_pct": 760
+      "profit_cost_ratio_pct": 760,
+      "genres": [
+        "Drama",
+        "Romance"
+      ]
     },
     {
       "id": "card_181",
@@ -2713,7 +3700,13 @@
       "director_oscars_won": 2,
       "director_birth_year": 1908,
       "director_age_at_release": 54,
-      "profit_cost_ratio_pct": 367
+      "profit_cost_ratio_pct": 367,
+      "genres": [
+        "Adventure",
+        "Biography",
+        "Drama",
+        "War"
+      ]
     }
   ]
 }

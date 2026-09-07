@@ -1,0 +1,3112 @@
+{
+  "_comment": "Movie genres for each card. genres = normalized set used by the game; genres_raw = original Wikidata P136 labels (CC0). Regenerate with scripts/scrape_genres notes. Joined onto data/cards.json by build_cards.py.",
+  "genres": {
+    "card_001": {
+      "title": "The Lord of the Rings: The Return of the King",
+      "genres": [
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_002": {
+      "title": "The Lord of the Rings: The Two Towers",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_003": {
+      "title": "The Lord of the Rings: The Fellowship of the Ring",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_004": {
+      "title": "The Shawshank Redemption",
+      "genres": [
+        "Crime",
+        "Drama"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "crime film",
+        "drama film",
+        "prison film"
+      ],
+      "source": "wikidata"
+    },
+    "card_005": {
+      "title": "12 Angry Men",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film",
+        "huis-clos film",
+        "trial film"
+      ],
+      "source": "wikidata"
+    },
+    "card_006": {
+      "title": "The End of Evangelion",
+      "genres": [
+        "Action",
+        "Animation",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action anime",
+        "apocalyptic film",
+        "coming-of-age film",
+        "mecha",
+        "post-apocalyptic film",
+        "science fiction anime",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_007": {
+      "title": "Star Wars: Episode V - The Empire Strikes Back",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "epic film",
+        "fantasy film",
+        "science fiction film",
+        "space opera"
+      ],
+      "source": "wikidata"
+    },
+    "card_008": {
+      "title": "The Good, the Bad and the Ugly",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "War",
+        "Western"
+      ],
+      "genres_raw": [
+        "Spaghetti Western",
+        "Western film",
+        "action film",
+        "drama film",
+        "epic film",
+        "treasure hunt film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_009": {
+      "title": "The Godfather",
+      "genres": [
+        "Crime",
+        "Drama",
+        "History",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "epic film",
+        "gangster film",
+        "historical drama film",
+        "historical film",
+        "police procedural film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_010": {
+      "title": "The Dark Knight",
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "neo-noir",
+        "superhero film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_011": {
+      "title": "I'm Still Here",
+      "genres": [
+        "Biography",
+        "Drama"
+      ],
+      "genres_raw": [
+        "biographical film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_012": {
+      "title": "Terminator 2: Judgment Day",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Drama",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "black comedy film",
+        "chase film",
+        "comedy film",
+        "cyberpunk",
+        "drama film",
+        "dystopian film",
+        "girls with guns",
+        "post-apocalyptic film",
+        "science fiction action film",
+        "science fiction film",
+        "suspense film",
+        "techno-thriller",
+        "thriller film",
+        "time-travel film"
+      ],
+      "source": "wikidata"
+    },
+    "card_013": {
+      "title": "The Godfather: Part II",
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "History",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "epic film",
+        "flashback film",
+        "gangster film",
+        "historical drama film",
+        "historical film",
+        "mystery film",
+        "police procedural film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_014": {
+      "title": "Schindler's List",
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "genres_raw": [
+        "anti-war film",
+        "biographical film",
+        "drama film",
+        "epic film",
+        "historical drama film",
+        "historical film",
+        "psychological drama film",
+        "war drama",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_015": {
+      "title": "Pulp Fiction",
+      "genres": [
+        "Action",
+        "Comedy",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "action thriller",
+        "black comedy film",
+        "comedy drama",
+        "comedy film",
+        "crime comedy film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "gangster film",
+        "independent film",
+        "neo-noir",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_016": {
+      "title": "Goodfellas",
+      "genres": [
+        "Biography",
+        "Crime",
+        "Drama",
+        "History",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "biographical film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "gangster film",
+        "historical drama film",
+        "historical film",
+        "period drama film",
+        "police procedural film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_017": {
+      "title": "City of God",
+      "genres": [
+        "Crime",
+        "Drama"
+      ],
+      "genres_raw": [
+        "coming-of-age film",
+        "crime film",
+        "drama film",
+        "hood film"
+      ],
+      "source": "wikidata"
+    },
+    "card_018": {
+      "title": "Seven Samurai",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "History"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "drama film",
+        "epic film",
+        "historical drama",
+        "samurai cinema"
+      ],
+      "source": "wikidata"
+    },
+    "card_019": {
+      "title": "Back to the Future",
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "comedy film",
+        "science fiction comedy",
+        "science fiction film",
+        "teen film",
+        "time-travel film"
+      ],
+      "source": "wikidata"
+    },
+    "card_020": {
+      "title": "The Ottoman Lieutenant",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_021": {
+      "title": "The Second Mother",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_022": {
+      "title": "Joker",
+      "genres": [
+        "Crime",
+        "Drama",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "crime film",
+        "drama film",
+        "psychological thriller film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_023": {
+      "title": "Star Wars: Episode IV - A New Hope",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "coming-of-age film",
+        "science fiction film",
+        "space opera"
+      ],
+      "source": "wikidata"
+    },
+    "card_024": {
+      "title": "Jurassic Park",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_025": {
+      "title": "Saving Private Ryan",
+      "genres": [
+        "Action",
+        "Drama",
+        "War"
+      ],
+      "genres_raw": [
+        "action film",
+        "drama film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_026": {
+      "title": "The Lion King",
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Drama",
+        "Family",
+        "Musical"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "drama film",
+        "family film",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_027": {
+      "title": "Cinema Paradiso",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "coming-of-age film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_028": {
+      "title": "A Separation",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_029": {
+      "title": "WALL-E",
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Family",
+        "Romance",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "adventure science fiction",
+        "children's film",
+        "comedy film",
+        "dystopian film",
+        "flashback film",
+        "post-apocalyptic film",
+        "romance film",
+        "romantic comedy film",
+        "science fiction comedy",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_030": {
+      "title": "Forrest Gump",
+      "genres": [
+        "Drama",
+        "Romance",
+        "Comedy"
+      ],
+      "genres_raw": [],
+      "source": "manual"
+    },
+    "card_031": {
+      "title": "Alien",
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Horror",
+        "Mystery",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "black comedy film",
+        "body horror film",
+        "fantasy film",
+        "girls with guns",
+        "horror film",
+        "military science fiction",
+        "monster film",
+        "mystery film",
+        "religious horror",
+        "science fiction action film",
+        "science fiction film",
+        "science fiction horror film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_032": {
+      "title": "Princess Mononoke",
+      "genres": [
+        "Action",
+        "Animation",
+        "Drama",
+        "Fantasy",
+        "War"
+      ],
+      "genres_raw": [
+        "action film",
+        "anime film",
+        "anti-war film",
+        "coming-of-age film",
+        "drama film",
+        "fantasy anime",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_033": {
+      "title": "Toy Story",
+      "genres": [
+        "Animation",
+        "Family"
+      ],
+      "genres_raw": [
+        "children's film"
+      ],
+      "source": "wikidata"
+    },
+    "card_034": {
+      "title": "The Matrix",
+      "genres": [
+        "Action",
+        "Film-Noir",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "action thriller",
+        "cyberpunk",
+        "dystopian film",
+        "film noir",
+        "martial arts film",
+        "post-apocalyptic film",
+        "science fiction film",
+        "superhero film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_035": {
+      "title": "Fight Club",
+      "genres": [
+        "Drama",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "drama film",
+        "flashback film",
+        "psychological thriller",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_036": {
+      "title": "Chainsaw Man - The Movie: Reze Arc",
+      "genres": [
+        "Action",
+        "Animation",
+        "Fantasy",
+        "Romance"
+      ],
+      "genres_raw": [
+        "action film",
+        "dark fantasy",
+        "romantic drama film",
+        "supernatural film"
+      ],
+      "source": "wikidata"
+    },
+    "card_037": {
+      "title": "Your Name.",
+      "genres": [
+        "Animation",
+        "Fantasy",
+        "Romance",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "coming-of-age film",
+        "fantasy film",
+        "romance film",
+        "time-travel film"
+      ],
+      "source": "wikidata"
+    },
+    "card_038": {
+      "title": "Aliens",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Horror",
+        "Sci-Fi",
+        "Thriller",
+        "War"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "horror film",
+        "monster film",
+        "science fiction action film",
+        "science fiction film",
+        "science fiction horror film",
+        "suspense film",
+        "thriller film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_039": {
+      "title": "Honeyland",
+      "genres": [
+        "Documentary"
+      ],
+      "genres_raw": [
+        "documentary film"
+      ],
+      "source": "wikidata"
+    },
+    "card_040": {
+      "title": "The Thing",
+      "genres": [
+        "Action",
+        "Drama",
+        "Horror",
+        "Mystery",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "body horror film",
+        "drama film",
+        "horror film",
+        "monster film",
+        "mystery film",
+        "science fiction film",
+        "science fiction horror film",
+        "splatter film",
+        "survival film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_041": {
+      "title": "A Silent Voice",
+      "genres": [
+        "Animation",
+        "Drama"
+      ],
+      "genres_raw": [
+        "coming-of-age film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_042": {
+      "title": "Toy Story 3",
+      "genres": [
+        "Animation",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "comedy drama",
+        "comedy film",
+        "flashback film"
+      ],
+      "source": "wikidata"
+    },
+    "card_043": {
+      "title": "Puella Magi Madoka Magica the Movie Part III: Rebellion",
+      "genres": [
+        "Animation",
+        "Fantasy",
+        "Drama",
+        "Thriller"
+      ],
+      "genres_raw": [],
+      "source": "manual"
+    },
+    "card_044": {
+      "title": "Parasite",
+      "genres": [
+        "Comedy",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "black comedy",
+        "comedy drama",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_045": {
+      "title": "Psycho",
+      "genres": [
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "LGBTQ-related film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "film noir",
+        "horror film",
+        "independent film",
+        "mystery film",
+        "psychological drama film",
+        "psychological horror film",
+        "psychological thriller film",
+        "slasher film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_046": {
+      "title": "Memento",
+      "genres": [
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "crime film",
+        "drama film",
+        "film based on a literary work",
+        "film noir",
+        "flashback film",
+        "horror film",
+        "mystery film",
+        "neo-noir",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_047": {
+      "title": "Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb",
+      "genres": [
+        "Comedy",
+        "War"
+      ],
+      "genres_raw": [
+        "black comedy film",
+        "comedy film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_048": {
+      "title": "One Flew Over the Cuckoo's Nest",
+      "genres": [
+        "Comedy"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "medical drama",
+        "prison film"
+      ],
+      "source": "wikidata"
+    },
+    "card_049": {
+      "title": "Eternal Sunshine of the Spotless Mind",
+      "genres": [
+        "Comedy",
+        "Fantasy",
+        "Romance",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "comedy drama",
+        "fantasy film",
+        "melodrama",
+        "romantic comedy",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_050": {
+      "title": "Whiplash",
+      "genres": [
+        "Drama",
+        "Musical"
+      ],
+      "genres_raw": [
+        "drama film",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_051": {
+      "title": "Puss in Boots: The Last Wish",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Fantasy",
+        "Musical",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "cinematic fairy tale",
+        "comedy film",
+        "family film",
+        "fantasy film",
+        "musical film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_052": {
+      "title": "Ikiru",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_053": {
+      "title": "There Will Be Blood",
+      "genres": [
+        "Drama",
+        "History",
+        "Thriller",
+        "Western"
+      ],
+      "genres_raw": [
+        "Western film",
+        "drama film",
+        "epic film",
+        "historical drama film",
+        "historical film",
+        "independent film",
+        "period drama film",
+        "revisionist Western",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_054": {
+      "title": "Raiders of the Lost Ark",
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "treasure hunt film"
+      ],
+      "source": "wikidata"
+    },
+    "card_055": {
+      "title": "Central Station",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_056": {
+      "title": "The Silence of the Lambs",
+      "genres": [
+        "Crime",
+        "Drama",
+        "Horror",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "LGBTQ-related film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "horror film",
+        "police procedural film",
+        "psychological drama film",
+        "psychological horror film",
+        "psychological thriller film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_057": {
+      "title": "The Apartment",
+      "genres": [
+        "Comedy",
+        "Drama"
+      ],
+      "genres_raw": [
+        "Christmas film",
+        "drama film",
+        "romantic comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_058": {
+      "title": "The Prestige",
+      "genres": [
+        "Drama",
+        "Fantasy",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "drama film",
+        "fantasy film",
+        "magic realist film",
+        "mystery film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_059": {
+      "title": "American Beauty",
+      "genres": [
+        "Comedy",
+        "Drama"
+      ],
+      "genres_raw": [
+        "LGBTQ-related film",
+        "black comedy film",
+        "comedy drama",
+        "drama film",
+        "flashback film"
+      ],
+      "source": "wikidata"
+    },
+    "card_060": {
+      "title": "The Iron Giant",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "children's film",
+        "comedy drama",
+        "drama film",
+        "fantasy film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_061": {
+      "title": "The Incredibles",
+      "genres": [
+        "Action",
+        "Animation",
+        "Comedy",
+        "Family"
+      ],
+      "genres_raw": [
+        "action film",
+        "comedy film",
+        "family film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_062": {
+      "title": "Stop Making Sense",
+      "genres": [
+        "Documentary",
+        "Music"
+      ],
+      "genres_raw": [
+        "concert film",
+        "music documentary film"
+      ],
+      "source": "wikidata"
+    },
+    "card_063": {
+      "title": "Scarface",
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "epic film",
+        "gangster film",
+        "neo-noir",
+        "police procedural film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_064": {
+      "title": "Avengers: Infinity War",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_065": {
+      "title": "Singin' in the Rain",
+      "genres": [
+        "Comedy",
+        "Musical"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "musical film",
+        "romantic comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_066": {
+      "title": "Interstellar",
+      "genres": [
+        "Adventure",
+        "Drama",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "drama film",
+        "dystopian film",
+        "hard science fiction",
+        "science fiction film",
+        "thriller film",
+        "time-travel film"
+      ],
+      "source": "wikidata"
+    },
+    "card_067": {
+      "title": "Casablanca",
+      "genres": [
+        "Drama",
+        "Film-Noir",
+        "Romance",
+        "War"
+      ],
+      "genres_raw": [
+        "drama film",
+        "film noir",
+        "flashback film",
+        "romance film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_068": {
+      "title": "Gladiator",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "History",
+        "Romance"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "drama film",
+        "epic film",
+        "historical drama film",
+        "historical film",
+        "melodrama",
+        "sword-and-sandal film"
+      ],
+      "source": "wikidata"
+    },
+    "card_069": {
+      "title": "The Green Mile",
+      "genres": [
+        "Drama",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "drama film",
+        "fantasy film",
+        "flashback film",
+        "magic realist film",
+        "prison film"
+      ],
+      "source": "wikidata"
+    },
+    "card_070": {
+      "title": "Modern Times",
+      "genres": [
+        "Comedy"
+      ],
+      "genres_raw": [
+        "comedy drama",
+        "romantic comedy film",
+        "silent film",
+        "tragicomedy"
+      ],
+      "source": "wikidata"
+    },
+    "card_071": {
+      "title": "2001: A Space Odyssey",
+      "genres": [
+        "Adventure",
+        "Mystery",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "arthouse science fiction film",
+        "epic film",
+        "mystery film",
+        "space adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_072": {
+      "title": "Spider-Man 2",
+      "genres": [
+        "Action",
+        "Drama",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "drama film",
+        "science fiction film",
+        "superhero film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_073": {
+      "title": "Chinatown",
+      "genres": [
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Mystery"
+      ],
+      "genres_raw": [
+        "crime thriller film",
+        "drama film",
+        "film noir",
+        "mystery film",
+        "neo-noir"
+      ],
+      "source": "wikidata"
+    },
+    "card_074": {
+      "title": "Rocky",
+      "genres": [
+        "Action",
+        "Drama",
+        "Sport"
+      ],
+      "genres_raw": [
+        "action film",
+        "boxing film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_075": {
+      "title": "Amadeus",
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "Musical"
+      ],
+      "genres_raw": [
+        "biographical film",
+        "drama film",
+        "flashback film",
+        "musical film",
+        "period drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_076": {
+      "title": "Once Upon a Time in the West",
+      "genres": [
+        "Action",
+        "Drama",
+        "Romance",
+        "Western"
+      ],
+      "genres_raw": [
+        "Spaghetti Western",
+        "Western film",
+        "action film",
+        "drama film",
+        "epic film",
+        "flashback film",
+        "melodrama"
+      ],
+      "source": "wikidata"
+    },
+    "card_077": {
+      "title": "Before Sunset",
+      "genres": [
+        "Drama",
+        "Romance"
+      ],
+      "genres_raw": [
+        "drama film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_078": {
+      "title": "The Truman Show",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "drama film",
+        "dystopian fiction",
+        "dystopian film",
+        "science fiction film",
+        "tragicomedy"
+      ],
+      "source": "wikidata"
+    },
+    "card_079": {
+      "title": "Before Sunrise",
+      "genres": [
+        "Drama",
+        "Romance"
+      ],
+      "genres_raw": [
+        "drama film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_080": {
+      "title": "Apocalypse Now",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Horror",
+        "Thriller",
+        "War"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "drama film",
+        "epic film",
+        "horror film",
+        "psychological drama film",
+        "psychological horror film",
+        "psychological thriller film",
+        "satirical film",
+        "thriller film",
+        "war drama",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_081": {
+      "title": "Seven",
+      "genres": [
+        "Action",
+        "Crime",
+        "Film-Noir",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "buddy cop film",
+        "chase film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "detective film",
+        "drama film",
+        "horror film",
+        "independent film",
+        "mystery film",
+        "neo-noir",
+        "police procedural film",
+        "psychological drama film",
+        "psychological horror film",
+        "psychological thriller film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_082": {
+      "title": "Aquarius",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_083": {
+      "title": "Wild Rose",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_084": {
+      "title": "They Shall Not Grow Old",
+      "genres": [
+        "Documentary",
+        "History",
+        "War"
+      ],
+      "genres_raw": [
+        "anti-war film",
+        "documentary film",
+        "historical film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_085": {
+      "title": "Monty Python and the Holy Grail",
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Fantasy",
+        "History"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "comedy film",
+        "fantasy film",
+        "knight film",
+        "parody film",
+        "period drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_086": {
+      "title": "Toy Story 2",
+      "genres": [
+        "Animation",
+        "Comedy",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "comedy film",
+        "fantasy film",
+        "flashback film"
+      ],
+      "source": "wikidata"
+    },
+    "card_087": {
+      "title": "Ratatouille",
+      "genres": [
+        "Animation",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "comedy drama",
+        "coming-of-age film",
+        "flashback film"
+      ],
+      "source": "wikidata"
+    },
+    "card_088": {
+      "title": "Senna",
+      "genres": [
+        "Documentary"
+      ],
+      "genres_raw": [
+        "documentary film"
+      ],
+      "source": "wikidata"
+    },
+    "card_089": {
+      "title": "City Lights",
+      "genres": [
+        "Comedy"
+      ],
+      "genres_raw": [
+        "comedy drama",
+        "romantic comedy film",
+        "tragicomedy"
+      ],
+      "source": "wikidata"
+    },
+    "card_090": {
+      "title": "Vertigo",
+      "genres": [
+        "Drama",
+        "Mystery",
+        "Romance",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "drama film",
+        "melodrama",
+        "mystery film",
+        "psychological drama film",
+        "psychological thriller film",
+        "romance film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_091": {
+      "title": "Inside Out",
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Drama",
+        "Family",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "children's film",
+        "comedy drama",
+        "comedy film",
+        "drama film",
+        "family film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_092": {
+      "title": "Zootopia",
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Crime",
+        "Family"
+      ],
+      "genres_raw": [
+        "action comedy film",
+        "adventure film",
+        "buddy cop film",
+        "comedy film",
+        "detective film",
+        "family film"
+      ],
+      "source": "wikidata"
+    },
+    "card_093": {
+      "title": "The Shining",
+      "genres": [
+        "Drama",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "drama film",
+        "ghost film",
+        "horror film",
+        "mystery film",
+        "psychological drama film",
+        "psychological horror film",
+        "psychological thriller film",
+        "supernatural horror film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_094": {
+      "title": "Elite Squad: The Enemy Within",
+      "genres": [
+        "Crime",
+        "Drama"
+      ],
+      "genres_raw": [
+        "crime film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_095": {
+      "title": "Das Boot",
+      "genres": [
+        "Drama",
+        "History",
+        "War"
+      ],
+      "genres_raw": [
+        "drama film",
+        "historical film",
+        "submarine film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_096": {
+      "title": "Monsters, Inc.",
+      "genres": [
+        "Animation",
+        "Comedy",
+        "Family",
+        "Fantasy",
+        "Horror"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "children's film",
+        "comedy film",
+        "fantasy film",
+        "monster film"
+      ],
+      "source": "wikidata"
+    },
+    "card_097": {
+      "title": "Dancer in the Dark",
+      "genres": [
+        "Drama",
+        "Musical"
+      ],
+      "genres_raw": [
+        "drama film",
+        "musical film",
+        "trial film"
+      ],
+      "source": "wikidata"
+    },
+    "card_098": {
+      "title": "Memories of Murder",
+      "genres": [
+        "Comedy",
+        "Crime",
+        "Drama",
+        "Mystery"
+      ],
+      "genres_raw": [
+        "black comedy",
+        "crime thriller film",
+        "detective fiction",
+        "drama fiction",
+        "drama film",
+        "mystery film",
+        "police procedural film",
+        "satire"
+      ],
+      "source": "wikidata"
+    },
+    "card_099": {
+      "title": "Ran",
+      "genres": [
+        "Drama",
+        "War"
+      ],
+      "genres_raw": [
+        "drama film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_100": {
+      "title": "Good Will Hunting",
+      "genres": [
+        "Drama",
+        "Romance"
+      ],
+      "genres_raw": [
+        "coming-of-age film",
+        "drama film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_101": {
+      "title": "Indiana Jones and the Last Crusade",
+      "genres": [
+        "Adventure",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "action comedy film",
+        "adventure film",
+        "treasure hunt film"
+      ],
+      "source": "wikidata"
+    },
+    "card_102": {
+      "title": "Jaws",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Horror",
+        "Mystery",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "disaster film",
+        "drama film",
+        "horror film",
+        "mystery film",
+        "natural horror film",
+        "science fiction film",
+        "science fiction horror film",
+        "survival film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_103": {
+      "title": "Downfall",
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "genres_raw": [
+        "biographical film",
+        "drama film",
+        "historical film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_104": {
+      "title": "Shrek",
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "buddy film",
+        "cinematic fairy tale",
+        "comedy film",
+        "fantasy comedy",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_105": {
+      "title": "Sunset Boulevard",
+      "genres": [
+        "Drama",
+        "Film-Noir"
+      ],
+      "genres_raw": [
+        "drama film",
+        "film noir",
+        "flashback film"
+      ],
+      "source": "wikidata"
+    },
+    "card_106": {
+      "title": "Godzilla Minus One",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Horror",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "Japanese mythology",
+        "action film",
+        "adventure film",
+        "disaster film",
+        "drama film",
+        "horror film",
+        "kaiju",
+        "monster film",
+        "science fiction film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_107": {
+      "title": "Pan's Labyrinth",
+      "genres": [
+        "Drama",
+        "Fantasy",
+        "War"
+      ],
+      "genres_raw": [
+        "drama film",
+        "fantasy film",
+        "teen film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_108": {
+      "title": "Metropolis",
+      "genres": [
+        "Drama",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "arthouse science fiction film",
+        "drama film",
+        "dystopian film",
+        "science fiction film",
+        "silent film"
+      ],
+      "source": "wikidata"
+    },
+    "card_109": {
+      "title": "The Terminator",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Horror",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "chase film",
+        "cyberpunk",
+        "drama film",
+        "dystopian film",
+        "fantasy film",
+        "horror film",
+        "independent film",
+        "post-apocalyptic film",
+        "science fiction action film",
+        "science fiction film",
+        "science fiction horror film",
+        "suspense film",
+        "tech-noir film",
+        "techno-thriller",
+        "thriller film",
+        "time-travel film"
+      ],
+      "source": "wikidata"
+    },
+    "card_110": {
+      "title": "Donnie Darko",
+      "genres": [
+        "Comedy",
+        "Fantasy",
+        "Horror",
+        "Mystery",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "comedy drama",
+        "comedy film",
+        "comedy horror film",
+        "drama film",
+        "fantasy film",
+        "horror film",
+        "magic realist film",
+        "mystery film",
+        "psychological drama film",
+        "psychological horror film",
+        "psychological thriller film",
+        "science fiction film",
+        "science fiction horror film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_111": {
+      "title": "Howl's Moving Castle",
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Drama",
+        "Fantasy",
+        "Sci-Fi",
+        "War"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "anti-war film",
+        "drama film",
+        "fantasy anime and manga",
+        "fantasy film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_112": {
+      "title": "Oldboy",
+      "genres": [
+        "Action",
+        "Drama",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "drama film",
+        "mystery film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_113": {
+      "title": "Weekend",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Romance"
+      ],
+      "genres_raw": [
+        "LGBTQ-related film",
+        "crime comedy film",
+        "drama film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_114": {
+      "title": "Aladdin",
+      "genres": [
+        "Animation",
+        "Comedy",
+        "Family",
+        "Fantasy",
+        "Musical"
+      ],
+      "genres_raw": [
+        "children's film",
+        "cinematic fairy tale",
+        "fairy tale",
+        "fantasy comedy",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_115": {
+      "title": "Spider-Man: Across the Spider-Verse",
+      "genres": [
+        "Action",
+        "Animation",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "action comedy film",
+        "action film",
+        "comedy film",
+        "drama fiction",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_116": {
+      "title": "Double Indemnity",
+      "genres": [
+        "Crime",
+        "Drama",
+        "Film-Noir"
+      ],
+      "genres_raw": [
+        "crime film",
+        "drama film",
+        "film noir",
+        "flashback film"
+      ],
+      "source": "wikidata"
+    },
+    "card_117": {
+      "title": "Pink Floyd: The Wall",
+      "genres": [
+        "Drama",
+        "Musical"
+      ],
+      "genres_raw": [
+        "art film",
+        "drama film",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_118": {
+      "title": "The Sound of Music",
+      "genres": [
+        "Biography",
+        "Drama",
+        "Musical",
+        "Romance"
+      ],
+      "genres_raw": [
+        "biographical film",
+        "drama film",
+        "musical film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_119": {
+      "title": "Heat",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Crime",
+        "Film-Noir",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "epic film",
+        "gangster film",
+        "heist film",
+        "mystery film",
+        "neo-noir",
+        "psychological drama film",
+        "psychological thriller film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_120": {
+      "title": "Reservoir Dogs",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Crime",
+        "Film-Noir",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "black comedy film",
+        "comedy drama",
+        "crime comedy film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "flashback film",
+        "gangster film",
+        "heist film",
+        "independent film",
+        "mystery film",
+        "neo-noir",
+        "psychological drama film",
+        "psychological thriller film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_121": {
+      "title": "No Country for Old Men",
+      "genres": [
+        "Action",
+        "Crime",
+        "Film-Noir",
+        "Mystery",
+        "Thriller",
+        "Western"
+      ],
+      "genres_raw": [
+        "Western film",
+        "action film",
+        "adventure film",
+        "contemporary Western film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "gangster film",
+        "mystery film",
+        "neo-noir",
+        "psychological drama film",
+        "psychological thriller film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_122": {
+      "title": "My Name Is Khan",
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "Mystery",
+        "Romance",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "epic film",
+        "mystery film",
+        "romance film",
+        "social film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_123": {
+      "title": "Dogville",
+      "genres": [
+        "Crime",
+        "Drama",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "art film",
+        "crime film",
+        "drama film",
+        "mystery film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_124": {
+      "title": "Raging Bull",
+      "genres": [
+        "Action",
+        "Biography",
+        "Drama",
+        "Film-Noir",
+        "History",
+        "Sport"
+      ],
+      "genres_raw": [
+        "action film",
+        "biographical film",
+        "boxing film",
+        "drama film",
+        "historical drama film",
+        "historical film",
+        "neo-noir",
+        "period drama film",
+        "sport film"
+      ],
+      "source": "wikidata"
+    },
+    "card_125": {
+      "title": "Predator",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Horror",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "horror film",
+        "monster film",
+        "science fiction action film",
+        "science fiction film",
+        "science fiction horror film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_126": {
+      "title": "Hot Fuzz",
+      "genres": [
+        "Action",
+        "Comedy",
+        "Crime"
+      ],
+      "genres_raw": [
+        "action film",
+        "buddy film",
+        "comedy film",
+        "crime film",
+        "parody film"
+      ],
+      "source": "wikidata"
+    },
+    "card_127": {
+      "title": "Star Trek II: The Wrath of Khan",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_128": {
+      "title": "Mad Max: Fury Road",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "dystopian film",
+        "post-apocalyptic film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_129": {
+      "title": "Ghost in the Shell",
+      "genres": [
+        "Action",
+        "Animation",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action anime",
+        "action film",
+        "cyberpunk",
+        "fantasy film",
+        "science fiction anime",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_130": {
+      "title": "Coco",
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Crime",
+        "Fantasy",
+        "Horror",
+        "Musical"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "comedy film",
+        "detective film",
+        "drama film",
+        "family film",
+        "fantasy film",
+        "ghost film",
+        "melodrama",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_131": {
+      "title": "Dog Day Afternoon",
+      "genres": [
+        "Action",
+        "Biography",
+        "Crime",
+        "History",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "LGBTQ-related film",
+        "action film",
+        "biographical film",
+        "black comedy film",
+        "comedy drama",
+        "comedy film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "docudrama",
+        "drama film",
+        "gangster film",
+        "heist film",
+        "mystery film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_132": {
+      "title": "Portrait of a Lady on Fire",
+      "genres": [
+        "Drama",
+        "History",
+        "Romance"
+      ],
+      "genres_raw": [
+        "LGBTQ-related film",
+        "drama film",
+        "historical film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_133": {
+      "title": "The Father",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film",
+        "psychological film"
+      ],
+      "source": "wikidata"
+    },
+    "card_134": {
+      "title": "Elite Squad",
+      "genres": [
+        "Crime",
+        "Drama"
+      ],
+      "genres_raw": [
+        "crime film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_135": {
+      "title": "Secrets & Lies",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_136": {
+      "title": "Shrek 2",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Family",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "cinematic fairy tale",
+        "comedy film",
+        "family film",
+        "fantasy comedy",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_137": {
+      "title": "Wild Tales",
+      "genres": [
+        "Comedy",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "anthology film",
+        "black comedy film",
+        "comedy drama",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_138": {
+      "title": "Barry Lyndon",
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "comedy drama",
+        "drama film",
+        "historical drama film",
+        "historical film",
+        "period drama film",
+        "war drama",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_139": {
+      "title": "Won't You Be My Neighbor?",
+      "genres": [
+        "Documentary"
+      ],
+      "genres_raw": [
+        "documentary film"
+      ],
+      "source": "wikidata"
+    },
+    "card_140": {
+      "title": "L.A. Confidential",
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "mystery film",
+        "neo-noir",
+        "police procedural film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_141": {
+      "title": "Gangs of Wasseypur",
+      "genres": [
+        "Crime",
+        "Drama"
+      ],
+      "genres_raw": [
+        "crime thriller film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_142": {
+      "title": "The Man Who Shot Liberty Valance",
+      "genres": [
+        "Drama",
+        "Western"
+      ],
+      "genres_raw": [
+        "Western film",
+        "drama film",
+        "flashback film",
+        "revisionist Western"
+      ],
+      "source": "wikidata"
+    },
+    "card_143": {
+      "title": "The Handmaiden",
+      "genres": [
+        "Drama",
+        "Romance",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "LGBTQ-related film",
+        "drama film",
+        "erotic thriller",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_144": {
+      "title": "Wicked",
+      "genres": [
+        "Fantasy",
+        "Musical"
+      ],
+      "genres_raw": [
+        "cinematic fairy tale",
+        "fantasy film",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_145": {
+      "title": "The Wild Robot",
+      "genres": [
+        "Adventure",
+        "Animation",
+        "Drama",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "drama film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_146": {
+      "title": "Guardians of the Galaxy",
+      "genres": [
+        "Comedy",
+        "Crime",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "crime film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_147": {
+      "title": "Her",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "arthouse science fiction film",
+        "comedy film",
+        "drama film",
+        "romantic comedy film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_148": {
+      "title": "The Tale of the Princess Kaguya",
+      "genres": [
+        "Animation",
+        "Drama",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "drama film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_149": {
+      "title": "Paths of Glory",
+      "genres": [
+        "War"
+      ],
+      "genres_raw": [
+        "anti-war film",
+        "trial film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_150": {
+      "title": "Sing Street",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Musical"
+      ],
+      "genres_raw": [
+        "comedy drama",
+        "coming-of-age film",
+        "drama film",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_151": {
+      "title": "Alita: Battle Angel",
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "cyberpunk",
+        "dystopian film",
+        "post-apocalyptic fiction",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_152": {
+      "title": "My Neighbor Totoro",
+      "genres": [
+        "Animation",
+        "Family",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "children's film",
+        "drama anime and manga",
+        "fantasy anime and manga",
+        "fantasy film",
+        "supernatural anime"
+      ],
+      "source": "wikidata"
+    },
+    "card_153": {
+      "title": "La Dolce Vita",
+      "genres": [
+        "Comedy",
+        "Drama"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_154": {
+      "title": "3 Idiots",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Musical",
+        "Romance"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "comedy drama",
+        "comedy film",
+        "drama film",
+        "musical film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_155": {
+      "title": "The Intouchables",
+      "genres": [
+        "Biography",
+        "Comedy",
+        "Drama"
+      ],
+      "genres_raw": [
+        "biographical film",
+        "comedy film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_156": {
+      "title": "To Kill a Mockingbird",
+      "genres": [
+        "Crime",
+        "Drama"
+      ],
+      "genres_raw": [
+        "crime film",
+        "drama film",
+        "trial film"
+      ],
+      "source": "wikidata"
+    },
+    "card_157": {
+      "title": "Baahubali 2: The Conclusion",
+      "genres": [
+        "Action",
+        "Drama",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "drama film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_158": {
+      "title": "Network",
+      "genres": [
+        "Comedy",
+        "Drama"
+      ],
+      "genres_raw": [
+        "black comedy film",
+        "comedy drama",
+        "comedy film",
+        "drama film",
+        "romantic comedy film",
+        "satirical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_159": {
+      "title": "The Muppet Christmas Carol",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Family",
+        "Fantasy",
+        "Musical"
+      ],
+      "genres_raw": [
+        "Christmas film",
+        "children's film",
+        "comedy film",
+        "drama film",
+        "fantasy film",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_160": {
+      "title": "Spider-Man: No Way Home",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film",
+        "technofantasy"
+      ],
+      "source": "wikidata"
+    },
+    "card_161": {
+      "title": "Cool Hand Luke",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film",
+        "prison film"
+      ],
+      "source": "wikidata"
+    },
+    "card_162": {
+      "title": "Castle in the Sky",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Fantasy",
+        "Sci-Fi",
+        "War"
+      ],
+      "genres_raw": [
+        "action anime",
+        "adventure anime",
+        "adventure anime and manga",
+        "adventure film",
+        "anti-war film",
+        "children's film",
+        "coming-of-age film",
+        "fantasy anime",
+        "fantasy anime and manga",
+        "fantasy film",
+        "mecha",
+        "romance anime and manga",
+        "science fiction anime"
+      ],
+      "source": "wikidata"
+    },
+    "card_163": {
+      "title": "The Grand Budapest Hotel",
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Crime",
+        "Drama",
+        "Romance"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "comedy film",
+        "crime film",
+        "drama film",
+        "romance film",
+        "tragicomedy"
+      ],
+      "source": "wikidata"
+    },
+    "card_164": {
+      "title": "Perfect Blue",
+      "genres": [
+        "Animation",
+        "Crime",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "mystery anime",
+        "police procedural film",
+        "thriller anime"
+      ],
+      "source": "wikidata"
+    },
+    "card_165": {
+      "title": "North by Northwest",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Crime",
+        "Drama",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "mystery film",
+        "spy film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_166": {
+      "title": "Nausicaä of the Valley of the Wind",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Fantasy",
+        "Sci-Fi",
+        "War"
+      ],
+      "genres_raw": [
+        "action anime",
+        "adventure anime",
+        "adventure anime and manga",
+        "adventure film",
+        "anti-war film",
+        "fantasy anime",
+        "fantasy anime and manga",
+        "fantasy film",
+        "post-apocalyptic anime",
+        "post-apocalyptic film",
+        "science fiction anime"
+      ],
+      "source": "wikidata"
+    },
+    "card_167": {
+      "title": "Weathering with You",
+      "genres": [
+        "Animation",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "supernatural anime"
+      ],
+      "source": "wikidata"
+    },
+    "card_168": {
+      "title": "Million Dollar Baby",
+      "genres": [
+        "Drama",
+        "Sport"
+      ],
+      "genres_raw": [
+        "boxing film",
+        "buddy film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_169": {
+      "title": "Groundhog Day",
+      "genres": [
+        "Comedy",
+        "Fantasy",
+        "Romance",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "comedy drama",
+        "comedy film",
+        "fantasy film",
+        "magic realist film",
+        "melodrama",
+        "romance film",
+        "romantic comedy",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_170": {
+      "title": "Fargo",
+      "genres": [
+        "Action",
+        "Comedy",
+        "Crime",
+        "Film-Noir",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "black comedy film",
+        "comedy drama",
+        "comedy film",
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "film noir",
+        "mystery film",
+        "neo-noir",
+        "police procedural film",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_171": {
+      "title": "The Usual Suspects",
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "crime drama film",
+        "crime thriller film",
+        "detective film",
+        "drama film",
+        "flashback film",
+        "gangster film",
+        "heist film",
+        "mystery film",
+        "neo-noir",
+        "suspense film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_172": {
+      "title": "Halloween",
+      "genres": [
+        "Crime",
+        "Drama",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "crime drama film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "horror film",
+        "independent film",
+        "mystery film",
+        "slasher film",
+        "teen film",
+        "teen horror film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_173": {
+      "title": "The Straight Story",
+      "genres": [
+        "Adventure",
+        "Biography",
+        "Drama"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "biographical film",
+        "drama film",
+        "road movie"
+      ],
+      "source": "wikidata"
+    },
+    "card_174": {
+      "title": "Magnolia",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_175": {
+      "title": "Harry Potter and the Prisoner of Azkaban",
+      "genres": [
+        "Adventure",
+        "Family",
+        "Fantasy",
+        "Horror",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "children's film",
+        "fantasy film",
+        "time-travel film",
+        "werewolf film"
+      ],
+      "source": "wikidata"
+    },
+    "card_176": {
+      "title": "Akira",
+      "genres": [
+        "Action",
+        "Animation",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "cyberpunk",
+        "dystopian film",
+        "post-apocalyptic film",
+        "science fiction anime",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_177": {
+      "title": "Star Wars: Episode VI - Return of the Jedi",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_178": {
+      "title": "The Battle of Algiers",
+      "genres": [
+        "Drama",
+        "History",
+        "War"
+      ],
+      "genres_raw": [
+        "drama film",
+        "historical film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_179": {
+      "title": "On the Waterfront",
+      "genres": [
+        "Crime",
+        "Drama",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "crime film",
+        "drama film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_180": {
+      "title": "In the Mood for Love",
+      "genres": [
+        "Drama",
+        "Romance"
+      ],
+      "genres_raw": [
+        "drama film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_181": {
+      "title": "Lawrence of Arabia",
+      "genres": [
+        "Adventure",
+        "Biography",
+        "Drama",
+        "War"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "biographical film",
+        "drama film",
+        "epic film",
+        "flashback film",
+        "war film"
+      ],
+      "source": "wikidata"
+    }
+  }
+}

@@ -15,6 +15,11 @@ Sources:
                                    mean of the co-directors, rounded; null if
                                    ANY co-director's year is unknown)
                                  director_age_at_release  = release_year - birth
+  - data/movie_genres.json     card id -> genres, for:
+                                 genres  (normalized genre list, from Wikidata
+                                 P136 (CC0) mapped to a canonical set; see that
+                                 file's genres_raw for the original labels and
+                                 _comment for how it was built)
 
 Also derives profit_cost_ratio_pct = round((box_office_usd - budget_usd) /
 budget_usd * 100) from the existing box_office_usd/budget_usd fields already on
@@ -35,6 +40,7 @@ CARDS = ROOT / "data" / "cards.json"
 XLSX = ROOT / "source_data" / "Movie_DB.xlsx"
 BIRTHS = ROOT / "data" / "director_birth_years.json"
 OSCAR_OVERRIDES = ROOT / "data" / "director_oscars_overrides.json"
+GENRES = ROOT / "data" / "movie_genres.json"
 
 SPLIT_RE = re.compile(r"\s+and\s+|,\s*|;\s*")
 
@@ -64,11 +70,18 @@ def main() -> int:
 
     births = json.loads(BIRTHS.read_text(encoding="utf-8"))["years"]
     oscar_overrides = json.loads(OSCAR_OVERRIDES.read_text(encoding="utf-8"))["overrides"]
+    genres = json.loads(GENRES.read_text(encoding="utf-8"))["genres"]
 
     missing_people = set()
+    missing_genres = []
     n_birth_ok = 0
     n_oscar_overridden = 0
     for c in cards:
+        g = genres.get(c["id"])
+        c["genres"] = list(g["genres"]) if g and g.get("genres") else []
+        if not c["genres"]:
+            missing_genres.append(c["id"])
+
         row = xl.get(c["id"])
         if row is None:
             print(f"WARN: no xlsx row for {c['id']} ({c['title']})", file=sys.stderr)
@@ -125,6 +138,9 @@ def main() -> int:
     print(f"wrote {len(cards)} cards to {CARDS.relative_to(ROOT)}")
     print(f"  director_age_at_release resolved: {n_birth_ok}/{len(cards)}")
     print(f"  director_oscars_won overridden: {n_oscar_overridden} card(s)")
+    print(f"  genres resolved: {len(cards) - len(missing_genres)}/{len(cards)}")
+    if missing_genres:
+        print(f"    cards with no genres: {', '.join(missing_genres)}")
     if missing_people:
         print(f"  {len(missing_people)} directors still missing a birth year:")
         for p in sorted(missing_people):
