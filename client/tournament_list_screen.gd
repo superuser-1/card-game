@@ -87,6 +87,8 @@ func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_f
 	var participant_count := int(tournament.get("participant_count", 0))
 	var start_ts := int(tournament.get("start_ts", 0))
 	var match_format := int(tournament.get("match_format", 1))
+	var creator_name := str(tournament.get("creator_name", "—"))
+	var has_cube := bool(tournament.get("has_cube", false))
 
 	var info_vbox := VBoxContainer.new()
 	info_vbox.custom_minimum_size = Vector2(300, 0)
@@ -96,6 +98,12 @@ func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_f
 	name_label.text = name
 	name_label.add_theme_font_size_override("font_size", 14)
 	info_vbox.add_child(name_label)
+
+	var creator_label := Label.new()
+	creator_label.text = "by %s" % creator_name
+	creator_label.add_theme_font_size_override("font_size", 12)
+	creator_label.modulate = Color(1, 1, 1, 0.7)
+	info_vbox.add_child(creator_label)
 
 	var status_label := Label.new()
 	status_label.text = "Status: %s" % status
@@ -108,6 +116,12 @@ func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_f
 	participants_label.add_theme_font_size_override("font_size", 12)
 	participants_label.modulate = Color(1, 1, 1, 0.7)
 	info_vbox.add_child(participants_label)
+
+	var pool_label := Label.new()
+	pool_label.text = "Custom cube" if has_cube else "Original catalogue"
+	pool_label.add_theme_font_size_override("font_size", 12)
+	pool_label.modulate = Color(0.55, 0.8, 1.0, 1.0) if has_cube else Color(1, 1, 1, 0.7)
+	info_vbox.add_child(pool_label)
 
 	var start_label := Label.new()
 	start_label.text = "Start: %s" % Time.get_datetime_string_from_unix_time(start_ts)
