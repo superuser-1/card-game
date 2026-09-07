@@ -30,12 +30,21 @@ var account: Dictionary = {}
 var token: String = ""
 
 ## Loaded settings, with defaults applied. Keys:
-##   master_volume : float 0..1   (default 0.8)
-##   fullscreen    : bool         (default false)
-##   sp_reveal_mode: bool         (default false) — Singleplayer only; if true,
-##                                the solo match starts with the opponent card
-##                                visible. Multiplayer is always hidden.
+##   master_volume  : float 0..1  (default 0.8)  — Master bus gain
+##   sfx_volume     : float 0..1  (default 0.8)  — SFX bus gain
+##   muted          : bool        (default false) — hard mute, independent of sliders
+##   mute_unfocused : bool        (default false) — silence audio while the window
+##                                 is not the active app
+##   fullscreen     : bool        (default false)
+##   borderless     : bool        (default false) — borderless windowed; ignored
+##                                 while fullscreen is on
+##   vsync          : bool        (default true)
+##   fps_cap        : int         (default 0)     — 0 means uncapped
 var settings: Dictionary = {}
+
+## Whether the OS window currently has focus — tracked so mute_unfocused can
+## drop/restore audio without fighting the user's explicit mute/volume choices.
+var _app_focused: bool = true
 
 ## Set right before a forced-logout goto(login_screen) so login_screen.gd can
 ## show *why* the player landed back there instead of silently reloading a
@@ -81,8 +90,13 @@ var my_tournaments: Dictionary = {}
 
 const _DEFAULT_SETTINGS := {
 	"master_volume": 0.8,
+	"sfx_volume": 0.8,
+	"muted": false,
+	"mute_unfocused": false,
 	"fullscreen": false,
-	"sp_reveal_mode": false,
+	"borderless": false,
+	"vsync": true,
+	"fps_cap": 0,
 }
 
 
@@ -344,19 +358,54 @@ func save_settings() -> void:
 
 
 func apply_settings() -> void:
-	var vol: float = clampf(float(settings.get("master_volume", 0.8)), 0.0, 1.0)
+	var master_vol: float = clampf(float(settings.get("master_volume", 0.8)), 0.0, 1.0)
+	var sfx_vol: float = clampf(float(settings.get("sfx_volume", 0.8)), 0.0, 1.0)
 	var master_bus := AudioServer.get_bus_index("Master")
 	if master_bus != -1:
-		AudioServer.set_bus_volume_db(master_bus, linear_to_db(vol) if vol > 0.0 else -80.0)
-		AudioServer.set_bus_mute(master_bus, vol <= 0.0)
+		AudioServer.set_bus_volume_db(master_bus, linear_to_db(master_vol) if master_vol > 0.0 else -80.0)
+	var sfx_bus := AudioServer.get_bus_index("SFX")
+	if sfx_bus != -1:
+		AudioServer.set_bus_volume_db(sfx_bus, linear_to_db(sfx_vol) if sfx_vol > 0.0 else -80.0)
+	_refresh_master_mute()
 
+	# Window mode: fullscreen wins; otherwise windowed, with the borderless flag
+	# tracking the setting.
 	var want_fullscreen: bool = bool(settings.get("fullscreen", false))
+	var want_borderless: bool = bool(settings.get("borderless", false))
 	var mode := DisplayServer.window_get_mode()
 	var is_fullscreen := mode == DisplayServer.WINDOW_MODE_FULLSCREEN or mode == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN
 	if want_fullscreen and not is_fullscreen:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	elif not want_fullscreen and is_fullscreen:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	if not want_fullscreen:
+		DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, want_borderless)
+
+	DisplayServer.window_set_vsync_mode(
+		DisplayServer.VSYNC_ENABLED if bool(settings.get("vsync", true)) else DisplayServer.VSYNC_DISABLED
+	)
+	Engine.max_fps = maxi(0, int(settings.get("fps_cap", 0)))
+
+
+## Master bus mute is the OR of the explicit "muted" setting, a zeroed master
+## slider, and (when mute_unfocused is on) the window not being focused.
+func _refresh_master_mute() -> void:
+	var master_bus := AudioServer.get_bus_index("Master")
+	if master_bus == -1:
+		return
+	var muted: bool = bool(settings.get("muted", false))
+	var zeroed: bool = float(settings.get("master_volume", 0.8)) <= 0.0
+	var focus_muted: bool = bool(settings.get("mute_unfocused", false)) and not _app_focused
+	AudioServer.set_bus_mute(master_bus, muted or zeroed or focus_muted)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		_app_focused = false
+		_refresh_master_mute()
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		_app_focused = true
+		_refresh_master_mute()
 
 
 # --- navigation ----------------------------------------------------------

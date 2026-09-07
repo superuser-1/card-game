@@ -1,6 +1,18 @@
-[gd_scene format=3 uid="uid://c6r5m2k1jeap4"]
+[gd_scene load_steps=3 format=3 uid="uid://c6r5m2k1jeap4"]
 
 [ext_resource type="Script" path="res://client/options_modal.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.09, 0.09, 0.11, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.12)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="OptionsModal" type="Control"]
 layout_mode = 3
@@ -14,7 +26,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0, 0, 0, 0.55)
+color = Color(0, 0, 0, 0.82)
 mouse_filter = 0
 
 [node name="Panel" type="PanelContainer" parent="."]
@@ -24,7 +36,8 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-custom_minimum_size = Vector2(420, 360)
+custom_minimum_size = Vector2(460, 480)
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
 layout_mode = 2
@@ -35,17 +48,18 @@ theme_override_constants/margin_bottom = 20
 
 [node name="Content" type="VBoxContainer" parent="Panel/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 12
 
 [node name="Title" type="Label" parent="Panel/MarginContainer/Content"]
 layout_mode = 2
 text = "Options"
 theme_override_font_sizes/font_size = 22
 
-[node name="AccountLine" type="Label" parent="Panel/MarginContainer/Content"]
-unique_name_in_owner = true
+[node name="AudioHeader" type="Label" parent="Panel/MarginContainer/Content"]
 layout_mode = 2
-text = ""
+text = "Audio"
+theme_override_font_sizes/font_size = 13
+modulate = Color(1, 1, 1, 0.6)
 
 [node name="VolumeRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
 layout_mode = 2
@@ -63,33 +77,131 @@ max_value = 1.0
 step = 0.01
 value = 0.8
 
+[node name="SfxRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/Content/SfxRow"]
+layout_mode = 2
+text = "SFX Volume"
+
+[node name="SfxSlider" type="HSlider" parent="Panel/MarginContainer/Content/SfxRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 0.8
+
+[node name="MuteRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/Content/MuteRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Mute"
+
+[node name="MuteToggle" type="CheckButton" parent="Panel/MarginContainer/Content/MuteRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MuteUnfocusedRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/Content/MuteUnfocusedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Mute when window unfocused"
+
+[node name="MuteUnfocusedToggle" type="CheckButton" parent="Panel/MarginContainer/Content/MuteUnfocusedRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DisplayHeader" type="Label" parent="Panel/MarginContainer/Content"]
+layout_mode = 2
+text = "Display"
+theme_override_font_sizes/font_size = 13
+modulate = Color(1, 1, 1, 0.6)
+
 [node name="FullscreenRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="Panel/MarginContainer/Content/FullscreenRow"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Fullscreen"
 
 [node name="FullscreenToggle" type="CheckButton" parent="Panel/MarginContainer/Content/FullscreenRow"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="RevealRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
+[node name="BorderlessRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Panel/MarginContainer/Content/RevealRow"]
+[node name="Label" type="Label" parent="Panel/MarginContainer/Content/BorderlessRow"]
 layout_mode = 2
-text = "Reveal opponent card (Singleplayer)"
+size_flags_horizontal = 3
+text = "Borderless windowed"
 
-[node name="RevealToggle" type="CheckButton" parent="Panel/MarginContainer/Content/RevealRow"]
+[node name="BorderlessToggle" type="CheckButton" parent="Panel/MarginContainer/Content/BorderlessRow"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="SoonNote" type="Label" parent="Panel/MarginContainer/Content"]
+[node name="VsyncRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
 layout_mode = 2
-text = "More options coming soon."
-theme_override_font_sizes/font_size = 12
-modulate = Color(1, 1, 1, 0.6)
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/Content/VsyncRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "V-Sync"
+
+[node name="VsyncToggle" type="CheckButton" parent="Panel/MarginContainer/Content/VsyncRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FpsCapRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/Content/FpsCapRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "FPS cap"
+
+[node name="FpsCapOption" type="OptionButton" parent="Panel/MarginContainer/Content/FpsCapRow"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 6
+popup/item_0/text = "Uncapped"
+popup/item_0/id = 0
+popup/item_1/text = "30"
+popup/item_1/id = 30
+popup/item_2/text = "60"
+popup/item_2/id = 60
+popup/item_3/text = "120"
+popup/item_3/id = 120
+popup/item_4/text = "144"
+popup/item_4/id = 144
+popup/item_5/text = "240"
+popup/item_5/id = 240
+
+[node name="Sep" type="HSeparator" parent="Panel/MarginContainer/Content"]
+layout_mode = 2
+
+[node name="SessionRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LogoutButton" type="Button" parent="Panel/MarginContainer/Content/SessionRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Log Out"
+
+[node name="QuitButton" type="Button" parent="Panel/MarginContainer/Content/SessionRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Quit Game"
 
 [node name="CloseButton" type="Button" parent="Panel/MarginContainer/Content"]
 unique_name_in_owner = true

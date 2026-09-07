@@ -174,6 +174,7 @@ func _ready() -> void:
 	_draw_sfx = AudioStreamPlayer.new()
 	_draw_sfx.stream = DRAW_SOUND
 	_draw_sfx.volume_db = DRAW_DB
+	_draw_sfx.bus = &"SFX"
 	add_child(_draw_sfx)
 
 	_exit_button.pressed.connect(func(): _forfeit_dialog.popup_centered())
@@ -991,7 +992,7 @@ func _play_draw_sfx() -> void:
 
 
 ## One-shot playback of a spaced-out effect (the round-resolution stingers).
-## Throwaway player per call, frees itself when done; Master bus so the options
+## Throwaway player per call, frees itself when done; SFX bus so the options
 ## volume/mute still applies. Unlike the draw sound these never machine-gun, so
 ## a fresh voice each time is fine and lets the lunge + outcome overlap.
 func _play_sfx(stream: AudioStream, volume_db := 0.0) -> void:
@@ -1000,6 +1001,7 @@ func _play_sfx(stream: AudioStream, volume_db := 0.0) -> void:
 	var player := AudioStreamPlayer.new()
 	player.stream = stream
 	player.volume_db = volume_db
+	player.bus = &"SFX"
 	add_child(player)
 	player.finished.connect(player.queue_free)
 	player.play()

@@ -31,7 +31,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _on_again() -> void:
 	if _was_solo:
 		# Straight into a fresh bot game — no queue, we're already local.
-		Net.start_singleplayer(bool(Session.settings.get("sp_reveal_mode", false)))
+		Net.start_singleplayer()
 		Session.goto("res://client/game_ui.tscn")
 	else:
 		Session.goto("res://client/queue_screen.tscn")

@@ -225,8 +225,7 @@ func _on_singleplayer() -> void:
 	if Session.active_tournament_id != 0:
 		_toast("Checked in to a tournament — finish it first.")
 		return
-	var reveal: bool = bool(Session.settings.get("sp_reveal_mode", false))
-	Net.start_singleplayer(reveal)
+	Net.start_singleplayer()
 	Session.goto("res://client/game_ui.tscn")
 
 
