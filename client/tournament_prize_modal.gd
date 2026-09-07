@@ -21,11 +21,23 @@ func setup(bucket: String, spec: Dictionary) -> void:
 		if str(def.get("source", "")) != "shop":
 			continue
 		var id := str(def.id)
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 8)
+
 		var cb := CheckBox.new()
-		cb.text = "%s  ·  ◈%d  (%s)" % [str(def.name), int(def.price), str(def.type)]
 		cb.button_pressed = id in have
 		cb.toggled.connect(func(_p): _update_cost())
-		%ItemsBox.add_child(cb)
+		row.add_child(cb)
+
+		row.add_child(PrizeView.make_icon(id, 36.0))
+
+		var lbl := Label.new()
+		lbl.text = "%s   ◈%d   (%s)" % [str(def.name), int(def.price), str(def.type)]
+		lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		lbl.mouse_filter = Control.MOUSE_FILTER_PASS
+		row.add_child(lbl)
+
+		%ItemsBox.add_child(row)
 		_checks[id] = cb
 	_update_cost()
 

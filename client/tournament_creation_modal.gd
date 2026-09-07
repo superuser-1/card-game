@@ -6,7 +6,7 @@ const PRIZE_MODAL := preload("res://client/tournament_prize_modal.tscn")
 var _cubes: Array = []
 var _start_dates: Array = []   # date dicts {year,month,day}, index-aligned with StartDateOption
 var _prizes: Dictionary = {}   # bucket -> {points, items}; server shape
-var _prize_buttons: Dictionary = {}  # bucket -> Button
+var _prize_rows: Dictionary = {}  # bucket -> {row: PanelContainer, body: HBoxContainer}
 
 
 const _AVAILABILITY := ["open", "semi_private", "private"]
@@ -34,25 +34,29 @@ func _price_of(id: String) -> int:
 
 func _build_prize_rows() -> void:
 	for bucket in TournamentPrizes.BUCKETS:
-		var btn := Button.new()
-		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.pressed.connect(_open_prize_editor.bind(bucket))
-		%PrizesBox.add_child(btn)
-		_prize_buttons[bucket] = btn
+		var row := PanelContainer.new()
+		row.mouse_filter = Control.MOUSE_FILTER_STOP
+		row.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(1, 1, 1, 0.05)
+		sb.set_corner_radius_all(6)
+		sb.set_content_margin_all(6)
+		row.add_theme_stylebox_override("panel", sb)
+		row.gui_input.connect(_on_prize_row_input.bind(bucket))
+
+		var body := HBoxContainer.new()
+		body.add_theme_constant_override("separation", 8)
+		row.add_child(body)
+
+		var name_lbl := Label.new()
+		name_lbl.custom_minimum_size = Vector2(64, 0)
+		name_lbl.text = str(TournamentPrizes.LABELS.get(bucket, bucket))
+		name_lbl.add_theme_font_size_override("font_size", 13)
+		body.add_child(name_lbl)
+
+		%PrizesBox.add_child(row)
+		_prize_rows[bucket] = {"row": row, "body": body, "name": name_lbl}
 	_refresh_prizes()
-
-
-func _prize_summary(bucket: String) -> String:
-	var label := str(TournamentPrizes.LABELS.get(bucket, bucket))
-	if not _prizes.has(bucket):
-		return "%s — none" % label
-	var p: Dictionary = _prizes[bucket]
-	var parts := []
-	if int(p.points) > 0:
-		parts.append("◈%d" % int(p.points))
-	if (p.items as Array).size() > 0:
-		parts.append("%d item%s" % [(p.items as Array).size(), "" if (p.items as Array).size() == 1 else "s"])
-	return "%s — %s" % [label, "  +  ".join(parts) if not parts.is_empty() else "none"]
 
 
 ## A bucket is editable once every earlier bucket is "set" (or it already is).
@@ -65,11 +69,32 @@ func _bucket_unlocked(bucket: String) -> bool:
 	return false
 
 
+func _on_prize_row_input(event: InputEvent, bucket: String) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if _prizes.has(bucket) or _bucket_unlocked(bucket):
+			_open_prize_editor(bucket)
+
+
 func _refresh_prizes() -> void:
 	for bucket in TournamentPrizes.BUCKETS:
-		var btn: Button = _prize_buttons[bucket]
-		btn.text = _prize_summary(bucket)
-		btn.disabled = not (_prizes.has(bucket) or _bucket_unlocked(bucket))
+		var e: Dictionary = _prize_rows[bucket]
+		var body: HBoxContainer = e.body
+		# rebuild everything after the fixed name label (child 0)
+		for i in range(body.get_child_count() - 1, 0, -1):
+			var old := body.get_child(i)
+			body.remove_child(old)
+			old.queue_free()
+		var unlocked := _prizes.has(bucket) or _bucket_unlocked(bucket)
+		e.row.modulate = Color(1, 1, 1, 1.0 if unlocked else 0.4)
+		if _prizes.has(bucket):
+			body.add_child(PrizeView.bucket_contents(_prizes[bucket], 24.0))
+		else:
+			var hint := Label.new()
+			hint.text = "tap to set" if unlocked else "set earlier prizes first"
+			hint.add_theme_color_override("font_color", Color(1, 1, 1, 0.4))
+			hint.add_theme_font_size_override("font_size", 12)
+			body.add_child(hint)
+
 	var cost := TournamentPrizes.cost_of(_prizes, _price_of)
 	%TotalCostLabel.text = "Total prize cost: ◈%d" % cost
 	var short := cost > int(Session.account.get("points", 0))
