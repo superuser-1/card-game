@@ -7,6 +7,9 @@ extends Control
 var _last_rows: Array = []
 var _has_finished := false
 var _on_private_tab := false
+var _countdowns: Array = []   # {label, target_ts, prefix}
+var _tick_accum := 0.0
+var _refresh_accum := 0.0
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -27,6 +30,52 @@ func _ready() -> void:
 	Net.my_tournament_status.connect(func(_t): _on_tournament_list_stale_check())
 	Net.request_my_tournament()
 	Net.list_tournaments()
+
+
+func _process(delta: float) -> void:
+	_tick_accum += delta
+	if _tick_accum >= 0.5:
+		_tick_accum = 0.0
+		var now := int(Time.get_unix_time_from_system())
+		for c in _countdowns:
+			if is_instance_valid(c.label):
+				c.label.text = "%s%s" % [c.prefix, _fmt_delta(int(c.target_ts) - now)]
+	# A phase flip is server-driven and only broadcast to participants, so a
+	# browser needs to re-poll to see it.
+	_refresh_accum += delta
+	if _refresh_accum >= 12.0:
+		_refresh_accum = 0.0
+		Net.list_tournaments()
+
+
+func _fmt_delta(secs: int) -> String:
+	if secs <= 0:
+		return "any moment"
+	var h := secs / 3600
+	var m := (secs % 3600) / 60
+	var s := secs % 60
+	if h > 0:
+		return "%dh %dm" % [h, m]
+	if m > 0:
+		return "%dm %ds" % [m, s]
+	return "%ds" % s
+
+
+## {prefix, target_ts} for the countdown to a tournament's next phase, or {} if
+## there's nothing to count down to (in progress / finished).
+func _next_phase(row: Dictionary) -> Dictionary:
+	match str(row.get("status", "")):
+		"signup_private":
+			if str(row.get("availability", "")) == "semi_private":
+				return {"prefix": "Opens to all in ", "target": int(row.get("private_signup_close_ts", 0))}
+			return {"prefix": "Check-in in ", "target": int(row.get("check_in_open_ts", 0))}
+		"signup":
+			return {"prefix": "Sign-up closes in ", "target": int(row.get("signup_close_ts", 0))}
+		"pre_check_in":
+			return {"prefix": "Check-in opens in ", "target": int(row.get("check_in_open_ts", 0))}
+		"check_in":
+			return {"prefix": "Starts in ", "target": int(row.get("start_ts", 0))}
+	return {}
 
 
 func _on_finished_toggled(pressed: bool) -> void:
@@ -62,6 +111,7 @@ func _on_tournament_list_stale_check() -> void:
 
 func _render_rows(rows: Array) -> void:
 	%StatusLabel.visible = false
+	_countdowns.clear()
 
 	for c in %RowsBox.get_children():
 		c.queue_free()
@@ -103,12 +153,25 @@ func _render_rows(rows: Array) -> void:
 			_add_tournament_row(row, %FinishedRowsBox, true, false)
 
 
-func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_finished: bool, is_private: bool) -> void:
-	var row_hbox := HBoxContainer.new()
-	row_hbox.add_theme_constant_override("separation", 12)
-	if is_finished:
-		row_hbox.modulate = Color(1, 1, 1, 0.6)
+func _card_style() -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.10, 0.11, 0.15, 0.85)
+	sb.border_color = Color(1, 1, 1, 0.10)
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(10)
+	sb.set_content_margin_all(12)
+	return sb
 
+
+func _info_label(text: String, col: Color, sz := 12) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", sz)
+	l.add_theme_color_override("font_color", col)
+	return l
+
+
+func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_finished: bool, is_private: bool) -> void:
 	var tid := int(tournament.get("id", 0))
 	var name := str(tournament.get("name", ""))
 	var status := str(tournament.get("status", ""))
@@ -116,99 +179,102 @@ func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_f
 	var participant_count := int(tournament.get("participant_count", 0))
 	var start_ts := int(tournament.get("start_ts", 0))
 	var match_format := int(tournament.get("match_format", 1))
-	var creator_name := str(tournament.get("creator_name", "—"))
 	var has_cube := bool(tournament.get("has_cube", false))
+	var prizes: Dictionary = tournament.get("prizes", {})
 
-	var info_vbox := VBoxContainer.new()
-	info_vbox.custom_minimum_size = Vector2(300, 0)
-	info_vbox.add_theme_constant_override("separation", 2)
+	var card := PanelContainer.new()
+	card.add_theme_stylebox_override("panel", _card_style())
+	if is_finished:
+		card.modulate = Color(1, 1, 1, 0.6)
 
-	var name_label := Label.new()
-	name_label.text = name
-	name_label.add_theme_font_size_override("font_size", 14)
-	info_vbox.add_child(name_label)
+	var outer := HBoxContainer.new()
+	outer.add_theme_constant_override("separation", 12)
+	card.add_child(outer)
 
-	var creator_label := Label.new()
-	creator_label.text = "by %s" % creator_name
-	creator_label.add_theme_font_size_override("font_size", 12)
-	creator_label.modulate = Color(1, 1, 1, 0.7)
-	info_vbox.add_child(creator_label)
+	# --- creator portrait ---
+	outer.add_child(AvatarStack.make(
+		str(tournament.get("creator_avatar", "")), str(tournament.get("creator_frame", "")),
+		str(tournament.get("creator_background", "")), 52.0))
+
+	# --- info column ---
+	var info := VBoxContainer.new()
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info.add_theme_constant_override("separation", 2)
+
+	info.add_child(_info_label(name, Color(1, 1, 1, 1), 15))
+	info.add_child(_info_label("by %s" % str(tournament.get("creator_name", "—")), Color(1, 1, 1, 0.6)))
 
 	var status_text: String = {
-		"signup_private": "Status: private sign-up (password)",
-		"signup": "Status: sign-up open",
-		"pre_check_in": "Status: sign-up closed — check-in soon",
-		"check_in": "Status: check-in",
-		"in_progress": "Status: in progress",
-	}.get(status, "Status: %s" % status)
+		"signup_private": "Private sign-up (password)",
+		"signup": "Sign-up open",
+		"pre_check_in": "Sign-up closed — check-in soon",
+		"check_in": "Check-in",
+		"in_progress": "In progress",
+		"completed": "Completed",
+		"cancelled": "Cancelled",
+	}.get(status, status)
 	if status == "signup" and str(tournament.get("availability", "")) == "semi_private":
-		status_text = "Status: open sign-up (was private)"
-	var status_label := Label.new()
-	status_label.text = status_text
-	status_label.add_theme_font_size_override("font_size", 12)
-	status_label.modulate = Color(1, 1, 1, 0.7)
-	info_vbox.add_child(status_label)
+		status_text = "Open sign-up (was private)"
+	info.add_child(_info_label(status_text, Color(1, 1, 1, 0.7)))
 
-	var participants_label := Label.new()
-	participants_label.text = "%d / %d signed up  ·  Best of %d" % [participant_count, bracket_size, match_format]
-	participants_label.add_theme_font_size_override("font_size", 12)
-	participants_label.modulate = Color(1, 1, 1, 0.7)
-	info_vbox.add_child(participants_label)
+	info.add_child(_info_label("%d / %d signed up  ·  Best of %d" % [participant_count, bracket_size, match_format], Color(1, 1, 1, 0.7)))
+	info.add_child(_info_label("Custom cube" if has_cube else "Original catalogue",
+		Color(0.55, 0.8, 1.0) if has_cube else Color(1, 1, 1, 0.6)))
 
-	var pool_label := Label.new()
-	pool_label.text = "Custom cube" if has_cube else "Original catalogue"
-	pool_label.add_theme_font_size_override("font_size", 12)
-	pool_label.modulate = Color(0.55, 0.8, 1.0, 1.0) if has_cube else Color(1, 1, 1, 0.7)
-	info_vbox.add_child(pool_label)
+	var phase := _next_phase(tournament)
+	if not phase.is_empty() and int(phase.target) > 0:
+		var cd := _info_label("", Color(1.0, 0.86, 0.5), 13)
+		info.add_child(cd)
+		_countdowns.append({"label": cd, "target_ts": int(phase.target), "prefix": str(phase.prefix)})
+		cd.text = "%s%s" % [phase.prefix, _fmt_delta(int(phase.target) - int(Time.get_unix_time_from_system()))]
+	info.add_child(_info_label("Starts %s" % Time.get_datetime_string_from_unix_time(start_ts, true).replace("T", " "), Color(1, 1, 1, 0.45), 11))
 
-	var prizes: Dictionary = tournament.get("prizes", {})
-	if not prizes.is_empty():
-		info_vbox.add_child(PrizeView.summary_row(prizes, 20.0))
+	outer.add_child(info)
 
-	var start_label := Label.new()
-	start_label.text = "Start: %s" % Time.get_datetime_string_from_unix_time(start_ts)
-	start_label.add_theme_font_size_override("font_size", 12)
-	start_label.modulate = Color(1, 1, 1, 0.7)
-	info_vbox.add_child(start_label)
+	# --- right column: prizes + action ---
+	var right := VBoxContainer.new()
+	right.custom_minimum_size = Vector2(172, 0)
+	right.add_theme_constant_override("separation", 8)
+	right.add_child(PrizeView.column(prizes, 22.0))
+	var spacer := Control.new()
+	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right.add_child(spacer)
+	var action := _action_button(tournament, tid, name, status, is_finished, is_private)
+	if action != null:
+		action.size_flags_horizontal = Control.SIZE_SHRINK_END
+		right.add_child(action)
+	outer.add_child(right)
 
-	row_hbox.add_child(info_vbox)
+	target_box.add_child(card)
 
-	var buttons_hbox := HBoxContainer.new()
-	buttons_hbox.add_theme_constant_override("separation", 8)
 
+func _action_button(tournament: Dictionary, tid: int, name: String, status: String, is_finished: bool, is_private: bool) -> Button:
 	if not is_finished:
 		var in_signup := status in ["signup", "signup_private"]
-		# Cancel only ever shows up (and only ever works) pre-check-in — once
-		# check-in opens, backing out is no longer a plain "never mind",
-		# there's the no-show/bot-fill machinery to consider instead.
 		if in_signup and (Session.my_tournaments as Dictionary).has(tid):
-			var cancel_btn := Button.new()
-			cancel_btn.text = "Cancel"
-			cancel_btn.pressed.connect(_on_cancel_pressed.bind(tid))
-			buttons_hbox.add_child(cancel_btn)
+			var b := Button.new()
+			b.text = "Cancel"
+			b.pressed.connect(_on_cancel_pressed.bind(tid))
+			return b
 		elif in_signup:
-			var join_btn := Button.new()
-			join_btn.text = "Join"
+			var b := Button.new()
+			b.text = "Join"
 			if is_private or status == "signup_private":
-				join_btn.pressed.connect(_on_private_join_pressed.bind(tid, name))
+				b.pressed.connect(_on_private_join_pressed.bind(tid, name))
 			else:
-				join_btn.pressed.connect(_on_join_pressed.bind(tid))
-			buttons_hbox.add_child(join_btn)
-
-		if status == "check_in":
-			var checkin_btn := Button.new()
-			checkin_btn.text = "Check In"
-			checkin_btn.pressed.connect(_on_checkin_pressed.bind(tid))
-			buttons_hbox.add_child(checkin_btn)
-
+				b.pressed.connect(_on_join_pressed.bind(tid))
+			return b
+		elif status == "check_in":
+			var b := Button.new()
+			b.text = "Check In"
+			b.pressed.connect(_on_checkin_pressed.bind(tid))
+			return b
 	if status in ["in_progress", "completed"]:
-		var view_btn := Button.new()
-		view_btn.text = "View Bracket"
-		view_btn.pressed.connect(_on_view_bracket_pressed.bind(tid))
-		buttons_hbox.add_child(view_btn)
-
-	row_hbox.add_child(buttons_hbox)
-	target_box.add_child(row_hbox)
+		var b := Button.new()
+		b.text = "View Bracket"
+		b.pressed.connect(_on_view_bracket_pressed.bind(tid))
+		return b
+	return null
 
 
 func _on_join_pressed(tournament_id: int) -> void:

@@ -74,6 +74,36 @@ static func bucket_contents(prize: Dictionary, icon_px: float) -> HBoxContainer:
 	return row
 
 
+## Vertical prize list for a card's right column: a "Prizes" header + one
+## "<label>  <contents>" line per set bucket. Returns an empty (invisible)
+## VBox when there are no prizes.
+static func column(prizes: Dictionary, icon_px := 24.0) -> VBoxContainer:
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 3)
+	if prizes.is_empty():
+		col.visible = false
+		return col
+	var head := Label.new()
+	head.text = "Prizes"
+	head.add_theme_color_override("font_color", GOLD)
+	head.add_theme_font_size_override("font_size", 12)
+	col.add_child(head)
+	for b in TournamentPrizes.BUCKETS:
+		if not prizes.has(b):
+			continue
+		var line := HBoxContainer.new()
+		line.add_theme_constant_override("separation", 5)
+		var lbl := Label.new()
+		lbl.text = TournamentPrizes.LABELS.get(b, b)
+		lbl.custom_minimum_size = Vector2(56, 0)
+		lbl.add_theme_color_override("font_color", Color(1, 1, 1, 0.65))
+		lbl.add_theme_font_size_override("font_size", 12)
+		line.add_child(lbl)
+		line.add_child(bucket_contents(prizes[b], icon_px))
+		col.add_child(line)
+	return col
+
+
 ## Full read-only prize summary for the list / bracket screens: one wrapping
 ## row of "<label>: <contents>" groups.
 static func summary_row(prizes: Dictionary, icon_px := 22.0) -> Control:

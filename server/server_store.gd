@@ -918,6 +918,7 @@ func list_tournaments(status_filter := "") -> Array:
 	for t in _tournaments:
 		if status_filter != "" and str(t.get("status", "")) != status_filter:
 			continue
+		var creator := get_account(int(t.get("created_by_account_id", 0)))
 		rows.append({
 			"id": t.id,
 			"name": t.name,
@@ -926,7 +927,10 @@ func list_tournaments(status_filter := "") -> Array:
 			"bracket_size": t.bracket_size,
 			"match_format": t.get("match_format", 1),
 			"participant_count": (t.participants as Array).size(),
-			"creator_name": str(get_account(int(t.get("created_by_account_id", 0))).get("display_name", "—")),
+			"creator_name": str(creator.get("display_name", "—")),
+			"creator_avatar": str(creator.get("avatar", "")),
+			"creator_frame": str(creator.get("frame", "")),
+			"creator_background": str(creator.get("background", "")),
 			# True when this tournament runs on a player-curated cube rather than
 			# the full card set (see net_node cube handling).
 			"has_cube": (t.get("cube_ids", []) as Array).size() > 0,
