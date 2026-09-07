@@ -42,6 +42,13 @@ var disabled: bool = false:
 ## been chosen — there's nothing to drop it onto).
 var draggable: bool = false
 
+## The hover-enlarge/lift animation only makes sense for a card sitting in the
+## hand fan (where set_hand_transform() has seeded _base_position/_hand_scale).
+## Static grids like the deckbuilder scale the card down directly and never call
+## set_hand_transform(), so hovering would tween it to _hand_scale (1.0) and
+## leave it stuck enlarged. Those callers set this false.
+var hover_enabled: bool = true
+
 var _card: Dictionary = {}
 
 # The fan-layout "rest" transform this card should return to after a hover.
@@ -67,12 +74,21 @@ func _ready() -> void:
 	mouse_exited.connect(_on_mouse_exited)
 
 
-func set_card(card: Dictionary) -> void:
+func set_card(card: Dictionary, load_art := true) -> void:
 	_card = card
 	name_label.text = str(card.get("title", ""))
 	director_label.text = str(card.get("director", ""))
+	if load_art:
+		apply_art()
 
-	art_rect.texture = load(CardArt.path_for(card))
+
+## Load + assign this card's art. Split out from set_card() so grids with many
+## cards can set every card's text up front (cheap) and then stream the art in
+## over several frames instead of blocking on ~200 synchronous texture loads.
+func apply_art() -> void:
+	if _card.is_empty():
+		return
+	art_rect.texture = load(CardArt.path_for(_card))
 
 
 ## Places this card at its resting spot in the hand fan, instantly. Called
@@ -116,7 +132,7 @@ func _on_mouse_entered() -> void:
 	# whichever happens to run last wins, which is exactly the inconsistent
 	# behavior this was producing. Hover-enlarge only makes sense with a
 	# free cursor, not mid-reorder.
-	if disabled or get_viewport().gui_is_dragging():
+	if disabled or not hover_enabled or get_viewport().gui_is_dragging():
 		return
 	_animate_hover(true)
 
@@ -126,6 +142,8 @@ func _on_mouse_exited() -> void:
 	# hover-enlarged right as a drag started elsewhere, we still want it to
 	# settle back to its base transform once the cursor actually leaves —
 	# otherwise it'd stay stuck visually enlarged for the rest of the drag.
+	if not hover_enabled:
+		return
 	_animate_hover(false)
 
 

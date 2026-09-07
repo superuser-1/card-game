@@ -63,6 +63,10 @@ func _ready() -> void:
 		_update_status()
 	_apply_filter()
 
+	# The grid (text + layout) is up immediately; stream the ~180 card textures
+	# in over the following frames so entering the screen doesn't freeze.
+	_hydrate_art()
+
 
 # --- catalogue ---------------------------------------------------------------
 
@@ -86,13 +90,14 @@ func _build_grid() -> void:
 		wrapper.custom_minimum_size = CardView.CARD_SIZE * CARD_DISPLAY_SCALE
 
 		var view: CardView = CARD_VIEW_SCENE.instantiate()
+		view.hover_enabled = false   # no hand-fan hover in a static grid
 		wrapper.add_child(view)
 		# Wrapper must be in the tree before set_card() so the CardView's
 		# _ready() has resolved its @onready label refs (same ordering the old
 		# full-collection view relied on).
 		_grid.add_child(wrapper)
 		view.scale = Vector2(CARD_DISPLAY_SCALE, CARD_DISPLAY_SCALE)
-		view.set_card(c)
+		view.set_card(c, false)   # text now; art streamed in by _hydrate_art()
 		view.pressed.connect(_on_card_pressed.bind(id))
 
 		# Selection outline drawn on top; ignores the mouse so the card still
@@ -118,7 +123,19 @@ func _build_grid() -> void:
 		tick.visible = false
 		wrapper.add_child(tick)
 
-		_wrappers[id] = {"wrapper": wrapper, "sel": sel, "tick": tick}
+		_wrappers[id] = {"wrapper": wrapper, "view": view, "sel": sel, "tick": tick}
+
+
+func _hydrate_art() -> void:
+	const PER_FRAME := 12
+	var n := 0
+	for id in _wrappers:
+		_wrappers[id]["view"].apply_art()
+		n += 1
+		if n % PER_FRAME == 0:
+			await get_tree().process_frame
+			if not is_inside_tree():
+				return
 
 
 func _apply_filter() -> void:
