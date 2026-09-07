@@ -582,6 +582,10 @@ func _make_tournament_card(t: Dictionary, my_id: int) -> PanelContainer:
 			status_label.text = "Signed up"
 			status_label.add_theme_color_override("font_color", GREEN)
 			_register_countdown(time_label, int(t.get("check_in_open_ts", 0)), "Check-in opens ")
+		"pre_check_in":
+			status_label.text = "Signed up — sign-up closed"
+			status_label.add_theme_color_override("font_color", GREEN)
+			_register_countdown(time_label, int(t.get("check_in_open_ts", 0)), "Check-in opens ")
 		"check_in":
 			if checked_in:
 				status_label.text = "Checked-In"

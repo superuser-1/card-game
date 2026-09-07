@@ -996,18 +996,25 @@ func _tick_tournaments() -> void:
 	for t in _store.all_tournaments():
 		match str(t.status):
 			"signup_private":
-				# semi_private: private phase → open sign-up. private: → check-in.
+				# semi_private: private phase → open sign-up. private: sign-up
+				# closes → the sign-up-closed / check-in-not-open gap (or straight
+				# to check-in when they coincide).
 				var avail := str(t.get("availability", "open"))
 				if avail == "semi_private" and now >= int(t.get("private_signup_close_ts", 0)):
 					t.status = "signup"
 					_store.persist_tournament(t)
 					_broadcast_tournament(t)
 				elif avail == "private" and now >= int(t.signup_close_ts):
-					t.status = "check_in"
+					t.status = "check_in" if now >= int(t.check_in_open_ts) else "pre_check_in"
 					_store.persist_tournament(t)
 					_broadcast_tournament(t)
 			"signup":
 				if now >= int(t.signup_close_ts):
+					t.status = "check_in" if now >= int(t.check_in_open_ts) else "pre_check_in"
+					_store.persist_tournament(t)
+					_broadcast_tournament(t)
+			"pre_check_in":
+				if now >= int(t.check_in_open_ts):
 					t.status = "check_in"
 					_store.persist_tournament(t)
 					_broadcast_tournament(t)
@@ -1291,9 +1298,11 @@ func _record_tournament_result(m: Dictionary, winner: int, ctx: Dictionary) -> v
 func create_tournament(name: String, bracket_size: int, signup_close_ts: int,
 		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1,
 		cube_ids: PackedStringArray = PackedStringArray(), availability := "open",
-		password := "", private_signup_close_ts := 0, late_check_in := false) -> void:
+		password := "", private_signup_close_ts := 0, late_check_in := false,
+		late_check_in_open_ts := 0) -> void:
 	_rpc_create_tournament.rpc_id(1, name, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
-		is_dev_bot, match_format, cube_ids, availability, password, private_signup_close_ts, late_check_in)
+		is_dev_bot, match_format, cube_ids, availability, password, private_signup_close_ts,
+		late_check_in, late_check_in_open_ts)
 
 
 func list_tournaments() -> void:
@@ -1333,7 +1342,8 @@ func request_my_tournament() -> void:
 func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: int,
 		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1,
 		cube_ids: PackedStringArray = PackedStringArray(), availability := "open",
-		password := "", private_signup_close_ts := 0, late_check_in := false) -> void:
+		password := "", private_signup_close_ts := 0, late_check_in := false,
+		late_check_in_open_ts := 0) -> void:
 	if not is_server or is_solo:
 		return
 	var peer_id := multiplayer.get_remote_sender_id()
@@ -1355,7 +1365,7 @@ func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: in
 	var res := _store.create_tournament(
 		int(account.id), name, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
 		is_dev_bot, _dev_tournaments, match_format, cube.ids,
-		availability, password, private_signup_close_ts, late_check_in
+		availability, password, private_signup_close_ts, late_check_in, late_check_in_open_ts
 	)
 	# Count every created tournament toward the creator's `tourney_created_*`
 	# achievements (dev-bot ones included — the admin still built it), then

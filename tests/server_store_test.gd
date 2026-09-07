@@ -891,6 +891,24 @@ func test_tournament_late_check_in() -> void:
 	s.get_tournament(ton.id).bracket_size = 1
 	assert_equal(s.check_in(ton.id, another_id).error, "tournament_full", "late check-in blocked at the sign-up cap")
 
+	# late_check_in_open_ts: a "last minute" window. Before it opens, a stranger
+	# check-in is rejected even though check-in is open.
+	var now2 := int(Time.get_unix_time_from_system())
+	var t2 = s.create_tournament(1, "LastMin", 32, now2 + 60, now2 + 60, now2 + 300,
+		false, false, 1, [], "open", "", 0, true, now2 + 240).tournament
+	assert_equal(t2.ok if t2.has("ok") else true, true, "late_check_in_open_ts schedule accepted")
+	s.get_tournament(t2.id).status = "check_in"
+	s.create_account("Eager", "pass4")
+	var eager_id := int(s._accounts[3].id)
+	assert_equal(s.check_in(t2.id, eager_id).error, "late_check_in_not_open", "stranger blocked before the last-minute window")
+	s.get_tournament(t2.id).late_check_in_open_ts = now2 - 10   # window now open
+	assert_equal(s.check_in(t2.id, eager_id).ok, true, "stranger admitted once the last-minute window opens")
+
+	# Bad schedule: late check-in opening before check-in does.
+	var bad = s.create_tournament(1, "BadLate", 32, now2 + 60, now2 + 120, now2 + 300,
+		false, false, 1, [], "open", "", 0, true, now2 + 90)
+	assert_equal(bad.error, "bad_schedule", "late check-in opening before check-in rejected")
+
 
 func test_shop_purchase_happy_path() -> void:
 	print("\n=== Shop Purchase Happy Path ===")

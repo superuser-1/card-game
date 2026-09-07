@@ -2,6 +2,7 @@ extends Control
 
 
 var _cubes: Array = []
+var _start_dates: Array = []   # date dicts {year,month,day}, index-aligned with StartDateOption
 
 
 const _AVAILABILITY := ["open", "semi_private", "private"]
@@ -12,21 +13,59 @@ func _ready() -> void:
 
 	Net.tournament_created.connect(_on_tournament_created)
 	_cubes = CubePicker.populate(%CubeOptionButton)
-	%AvailabilityOptionButton.item_selected.connect(func(_i): _refresh_availability_rows())
-	_refresh_availability_rows()
+	_populate_start_dates()
+	%AvailabilityOptionButton.item_selected.connect(func(_i): _refresh_rows())
+	%LateCheckInCheckBox.toggled.connect(func(_p): _refresh_rows())
+	_refresh_rows()
 	%CreateButton.pressed.connect(_on_create_pressed)
 	%CancelButton.pressed.connect(_close)
 
 
-## Password rows show for anything but Open; the private-close row is
-## Semi-Private only (Open has no private phase, Private reuses sign-up close).
-func _refresh_availability_rows() -> void:
+## Next 14 local days for the start-date dropdown. Uses noon to stay clear of
+## DST edges when converting back and forth.
+func _populate_start_dates() -> void:
+	%StartDateOption.clear()
+	_start_dates.clear()
+	var noon_today := _local_dict_to_unix(_with_time(Time.get_datetime_dict_from_system(), 12, 0))
+	for i in 14:
+		var d := Time.get_datetime_dict_from_unix_time(noon_today + i * 86400)
+		var date := {"year": d.year, "month": d.month, "day": d.day}
+		_start_dates.append(date)
+		var suffix := ""
+		if i == 0:
+			suffix = "  ·  Today"
+		elif i == 1:
+			suffix = "  ·  Tomorrow"
+		%StartDateOption.add_item("%04d-%02d-%02d%s" % [d.year, d.month, d.day, suffix])
+	%StartDateOption.select(0)
+
+
+## Password rows: anything but Open. Private-close row: Semi-Private only.
+## Late-check-in-open row: only when the late check-in box is ticked.
+func _refresh_rows() -> void:
 	var mode: String = _AVAILABILITY[int(%AvailabilityOptionButton.selected)]
 	var gated := mode != "open"
 	%PasswordLabel.visible = gated
 	%PasswordLineEdit.visible = gated
 	%PrivateCloseLabel.visible = mode == "semi_private"
 	%MinutesUntilPrivateCloseSpinBox.visible = mode == "semi_private"
+	var late: bool = %LateCheckInCheckBox.button_pressed
+	%LateCheckInOpenLabel.visible = late
+	%MinutesLateCheckInSpinBox.visible = late
+
+
+## Time.get_unix_time_from_datetime_dict() reads its argument as UTC; correct for
+## the machine's local offset (measured against "now") so a dict built from the
+## local-time pickers maps to the right epoch.
+func _local_dict_to_unix(d: Dictionary) -> int:
+	var now_unix := int(Time.get_unix_time_from_system())
+	var bias := now_unix - int(Time.get_unix_time_from_datetime_dict(Time.get_datetime_dict_from_system()))
+	return int(Time.get_unix_time_from_datetime_dict(d)) + bias
+
+
+func _with_time(date: Dictionary, hour: int, minute: int) -> Dictionary:
+	return {"year": date.year, "month": date.month, "day": date.day,
+		"hour": hour, "minute": minute, "second": 0}
 
 
 func _on_create_pressed() -> void:
@@ -42,28 +81,43 @@ func _on_create_pressed() -> void:
 		return
 
 	var bracket_size := int(%BracketSizeSpinBox.value)
-	var minutes_until_close := int(%MinutesUntilCloseSpinBox.value)
-	var minutes_until_start := int(%MinutesUntilStartSpinBox.value)
 	var is_dev_bot: bool = %DevBotCheckBox.button_pressed
 	var late_check_in: bool = %LateCheckInCheckBox.button_pressed
 	var match_format: int = [1, 3, 5][int(%MatchFormatOptionButton.selected)]
 	var cube_ids := CubePicker.selected_ids(%CubeOptionButton, _cubes)
 
-	var now := int(Time.get_unix_time_from_system())
-	var signup_close_ts := now + minutes_until_close * 60
-	var check_in_open_ts := signup_close_ts
-	var start_ts := now + minutes_until_start * 60
+	# Absolute start time from the local-time pickers.
+	var date: Dictionary = _start_dates[int(%StartDateOption.selected)]
+	var start_ts := _local_dict_to_unix(_with_time(date, int(%StartHourSpin.value), int(%StartMinOption.get_selected_id())))
+	if start_ts <= int(Time.get_unix_time_from_system()) + 120:
+		_toast("Pick a start time at least a couple of minutes out")
+		return
+
+	# The rest are offsets (minutes) BEFORE start.
+	var signup_close_ts := start_ts - int(%MinutesUntilCloseSpinBox.value) * 60
+	var check_in_open_ts := start_ts - int(%MinutesCheckInOpenSpinBox.value) * 60
+	if not (signup_close_ts <= check_in_open_ts and check_in_open_ts < start_ts):
+		_toast("Order must be: sign-up close ≤ check-in ≤ start")
+		return
 
 	var private_signup_close_ts := 0
 	if availability == "semi_private":
-		private_signup_close_ts = now + int(%MinutesUntilPrivateCloseSpinBox.value) * 60
+		private_signup_close_ts = start_ts - int(%MinutesUntilPrivateCloseSpinBox.value) * 60
 		if private_signup_close_ts >= signup_close_ts:
 			_toast("Private sign-up must close before open sign-up does")
 			return
 
+	var late_check_in_open_ts := 0
+	if late_check_in:
+		late_check_in_open_ts = start_ts - int(%MinutesLateCheckInSpinBox.value) * 60
+		if late_check_in_open_ts < check_in_open_ts or late_check_in_open_ts >= start_ts:
+			_toast("Late check-in must open between check-in and start")
+			return
+
 	%CreateButton.disabled = true
 	Net.create_tournament(name_text, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
-		is_dev_bot, match_format, cube_ids, availability, password, private_signup_close_ts, late_check_in)
+		is_dev_bot, match_format, cube_ids, availability, password, private_signup_close_ts,
+		late_check_in, late_check_in_open_ts)
 
 
 func _on_tournament_created(result: Dictionary) -> void:
@@ -85,7 +139,7 @@ func _on_tournament_created(result: Dictionary) -> void:
 			"bad_name": "Tournament name must be 1–60 characters.",
 			"bad_availability": "Pick a valid availability mode.",
 			"bad_password": "Private tournaments need a password of 1–72 characters.",
-			"bad_schedule": "Phase times must be in order: private close < sign-up close ≤ check-in < start.",
+			"bad_schedule": "Phase order must be: private close < sign-up close ≤ check-in ≤ late check-in < start.",
 		}
 		_toast(friendly.get(error, "Error: %s" % error))
 

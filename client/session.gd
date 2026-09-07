@@ -334,7 +334,7 @@ func _tournament_is_my_live_run(tournament: Dictionary) -> bool:
 		if int(p.get("account_id", -1)) == my_id:
 			if int(p.get("eliminated_round", 0)) != 0:
 				return false
-			if status not in ["signup_private", "signup", "check_in"] and not bool(p.get("checked_in", false)):
+			if status not in ["signup_private", "signup", "pre_check_in", "check_in"] and not bool(p.get("checked_in", false)):
 				return false
 			return true
 	return false

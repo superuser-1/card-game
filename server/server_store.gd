@@ -82,6 +82,7 @@ func open(dir := "user://flickbattle/") -> void:
 				var defaults := {
 					"availability": "open", "pw_salt": "", "pw_hash": "",
 					"pw_iterations": 0, "private_signup_close_ts": 0, "late_check_in": false,
+					"late_check_in_open_ts": 0,
 				}
 				for t in _tournaments:
 					if int(t.get("id", 0)) >= _next_tournament_id:
@@ -761,7 +762,8 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		signup_close_ts: int, check_in_open_ts: int, start_ts: int,
 		is_dev_bot: bool, allow_small := false, requested_match_format := 1,
 		cube_card_ids: Array = [], availability := "open", password := "",
-		private_signup_close_ts := 0, late_check_in := false) -> Dictionary:
+		private_signup_close_ts := 0, late_check_in := false,
+		late_check_in_open_ts := 0) -> Dictionary:
 	var clean_name := name.strip_edges()
 	if clean_name.length() < 1 or clean_name.length() > 60:
 		return {"ok": false, "error": "bad_name", "tournament": {}}
@@ -774,12 +776,15 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 	if gated and (clean_pw.length() < 1 or clean_pw.length() > 72):
 		return {"ok": false, "error": "bad_password", "tournament": {}}
 
-	# Schedule ordering. semi_private has one extra boundary — the private phase
-	# must close strictly before open sign-up does (no zero-length open window;
-	# use Private mode for that).
+	# Schedule ordering (unix seconds). All phase boundaries sit before start.
+	# semi_private adds the private→open boundary, which must come strictly
+	# before open sign-up closes (no zero-length open window — use Private for
+	# that). When late check-in is enabled it opens between check-in and start.
 	var ok_schedule := signup_close_ts <= check_in_open_ts and check_in_open_ts < start_ts
 	if availability == "semi_private":
 		ok_schedule = ok_schedule and private_signup_close_ts < signup_close_ts
+	if late_check_in and late_check_in_open_ts > 0:
+		ok_schedule = ok_schedule and check_in_open_ts <= late_check_in_open_ts and late_check_in_open_ts < start_ts
 	if not ok_schedule:
 		return {"ok": false, "error": "bad_schedule", "tournament": {}}
 
@@ -811,6 +816,9 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		"pw_hash": pw.hash,
 		"pw_iterations": pw.iterations,
 		"late_check_in": late_check_in,
+		# When > 0, strangers may only late-check-in from this time onward (the
+		# "last minute" window); 0 = the whole check-in phase.
+		"late_check_in_open_ts": late_check_in_open_ts if late_check_in else 0,
 		# Player-curated card pool for every match in this tournament, as a list
 		# of card ids the net layer already sanitized. [] == full collection.
 		# Persisted with the tournament so later rounds still use it even if the
@@ -853,6 +861,7 @@ func list_tournaments(status_filter := "") -> Array:
 			"has_cube": (t.get("cube_ids", []) as Array).size() > 0,
 			"availability": str(t.get("availability", "open")),
 			"late_check_in": bool(t.get("late_check_in", false)),
+			"late_check_in_open_ts": int(t.get("late_check_in_open_ts", 0)),
 			# Derived: true while the tournament is in its password-gated phase,
 			# so the client can bucket it into the "Private Tournaments" tab.
 			"is_private_now": str(t.get("status", "")) == "signup_private",
@@ -950,6 +959,9 @@ func check_in(tournament_id: int, account_id: int) -> Dictionary:
 	# sign-up cap still applies. Otherwise it's just "you never signed up".
 	if not bool(t.get("late_check_in", false)):
 		return {"ok": false, "error": "not_signed_up", "tournament": {}}
+	var lci_open := int(t.get("late_check_in_open_ts", 0))
+	if lci_open > 0 and int(Time.get_unix_time_from_system()) < lci_open:
+		return {"ok": false, "error": "late_check_in_not_open", "tournament": {}}
 	if participants.size() >= int(t.bracket_size):
 		return {"ok": false, "error": "tournament_full", "tournament": {}}
 	var account := get_account(account_id)

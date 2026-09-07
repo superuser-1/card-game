@@ -137,6 +137,7 @@ func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_f
 	var status_text: String = {
 		"signup_private": "Status: private sign-up (password)",
 		"signup": "Status: sign-up open",
+		"pre_check_in": "Status: sign-up closed — check-in soon",
 		"check_in": "Status: check-in",
 		"in_progress": "Status: in progress",
 	}.get(status, "Status: %s" % status)
@@ -274,8 +275,15 @@ func _on_tournament_checked_in(result: Dictionary) -> void:
 	if bool(result.get("ok", false)):
 		_toast("Checked in!")
 	else:
+		var friendly := {
+			"check_in_not_open": "Check-in isn't open yet.",
+			"not_signed_up": "You didn't sign up for that tournament.",
+			"late_check_in_not_open": "Last-minute check-in hasn't opened yet.",
+			"tournament_full": "That tournament is full.",
+			"already_checked_in": "You're already checked in.",
+		}
 		var error := str(result.get("error", "Unknown error"))
-		_toast("Error: %s" % error)
+		_toast(friendly.get(error, "Error: %s" % error))
 	Net.list_tournaments()
 
 
