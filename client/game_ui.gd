@@ -163,6 +163,7 @@ var _draw_sfx: AudioStreamPlayer = null
 
 const MATCH_RESULT_SCENE := "res://client/match_result_screen.tscn"
 const TOURNAMENT_BRACKET_SCENE := "res://client/tournament_bracket_screen.tscn"
+const MATCH_SUMMARY_PANEL := preload("res://client/match_summary_panel.tscn")
 
 func _ready() -> void:
 	Net.player_assigned.connect(_on_player_assigned)
@@ -323,10 +324,49 @@ func _on_match_ended(summary: Dictionary) -> void:
 			Session.last_match_info = {}
 			Session.goto(TOURNAMENT_BRACKET_SCENE)
 			return
-	if ResourceLoader.exists(MATCH_RESULT_SCENE):
-		Session.goto(MATCH_RESULT_SCENE)
-	else:
-		_status_label.text = "Match over — %s" % str(summary.get("outcome", ""))
+	_show_result_overlay(summary)
+
+
+## End-of-match summary as an overlay on the finished board, so the final card
+## layout stays visible behind it. The full-screen match_result_screen is only
+## a fallback now (no board to overlay).
+func _show_result_overlay(summary: Dictionary) -> void:
+	if get_node_or_null("ResultOverlay") != null:
+		return
+	var was_solo := Net.is_solo
+
+	_exit_button.disabled = true
+
+	var layer := CanvasLayer.new()
+	layer.name = "ResultOverlay"
+	layer.layer = 80
+	add_child(layer)
+
+	var dim := ColorRect.new()
+	dim.color = Color(0.03, 0.03, 0.05, 0.72)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	layer.add_child(dim)
+
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(center)
+
+	var panel: MatchSummaryPanel = MATCH_SUMMARY_PANEL.instantiate()
+	center.add_child(panel)
+	panel.set_again_label("Play Again" if was_solo else "Find Another")
+	panel.render(summary)
+	panel.again_pressed.connect(func() -> void:
+		if was_solo:
+			Net.start_singleplayer()
+			Session.goto("res://client/game_ui.tscn")
+		else:
+			Session.goto("res://client/queue_screen.tscn"))
+	panel.menu_pressed.connect(func() -> void:
+		if was_solo:
+			Net.end_singleplayer()
+		Session.goto("res://client/main_menu.tscn"))
 
 
 func _wait_for_reveal_to_finish() -> void:
