@@ -49,7 +49,7 @@ func _build_prize_rows() -> void:
 		row.add_child(body)
 
 		var name_lbl := Label.new()
-		name_lbl.custom_minimum_size = Vector2(64, 0)
+		name_lbl.custom_minimum_size = Vector2(78, 0)
 		name_lbl.text = str(TournamentPrizes.LABELS.get(bucket, bucket))
 		name_lbl.add_theme_font_size_override("font_size", 13)
 		body.add_child(name_lbl)

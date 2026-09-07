@@ -95,7 +95,7 @@ static func column(prizes: Dictionary, icon_px := 24.0) -> VBoxContainer:
 		line.add_theme_constant_override("separation", 5)
 		var lbl := Label.new()
 		lbl.text = TournamentPrizes.LABELS.get(b, b)
-		lbl.custom_minimum_size = Vector2(56, 0)
+		lbl.custom_minimum_size = Vector2(74, 0)
 		lbl.add_theme_color_override("font_color", Color(1, 1, 1, 0.65))
 		lbl.add_theme_font_size_override("font_size", 12)
 		line.add_child(lbl)

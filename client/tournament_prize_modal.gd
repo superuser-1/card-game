@@ -13,7 +13,7 @@ var _checks: Dictionary = {}   # shop_id -> CheckBox
 ## Call right after instancing, before the modal is shown.
 func setup(bucket: String, spec: Dictionary) -> void:
 	_bucket = bucket
-	%Title.text = "Prize — %s place" % TournamentPrizes.LABELS.get(bucket, bucket)
+	%Title.text = "%s place prize" % TournamentPrizes.LABELS.get(bucket, bucket)
 	%PointsSpin.value = float(int(spec.get("points", 0)))
 
 	var have: Array = spec.get("items", [])

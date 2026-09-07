@@ -17,8 +17,10 @@ const BUCKETS := ["1", "2", "3", "4_8", "9_16"]
 ## total payout.
 const SLOTS := {"1": 1, "2": 1, "3": 2, "4_8": 4, "9_16": 8}
 
-## Human labels for UI.
-const LABELS := {"1": "1st", "2": "2nd", "3": "3rd", "4_8": "4th–8th", "9_16": "9th–16th"}
+## Human labels for UI. The bracket has no bronze match, so the two semifinal
+## losers share 3rd/4th; keys stay short ("3", "4_8") but the LABELS reflect the
+## real placement ranges (2 / 4 / 8 players).
+const LABELS := {"1": "1st", "2": "2nd", "3": "3rd–4th", "4_8": "5th–8th", "9_16": "9th–16th"}
 
 
 ## Clean an untrusted prize spec and price it.
