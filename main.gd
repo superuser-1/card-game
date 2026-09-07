@@ -27,6 +27,7 @@ func _ready() -> void:
 	var is_drag_test := false
 	var is_custom_game_test := false
 	var is_reconnect_test := false
+	var is_tournament_test := false
 
 	for arg: String in args:
 		if arg == "--server":
@@ -37,6 +38,8 @@ func _ready() -> void:
 			is_custom_game_test = true
 		elif arg == "--reconnect-test":
 			is_reconnect_test = true
+		elif arg == "--tournament-test":
+			is_tournament_test = true
 		elif arg == "--solo":
 			is_solo = true
 		elif arg == "--solo-test":
@@ -61,6 +64,9 @@ func _ready() -> void:
 	elif is_reconnect_test:
 		Net.start_client(address, port)
 		add_child(preload("res://tests/reconnect_bot_client.gd").new())
+	elif is_tournament_test:
+		Net.start_client(address, port)
+		add_child(preload("res://tests/tournament_bot_client.gd").new())
 	elif is_solo:
 		# UI (or the headless test driver) must be in the tree — so its
 		# _ready() connects Net's signals — BEFORE start_solo() fires the

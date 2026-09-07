@@ -1036,9 +1036,12 @@ func _start_tournament(t: Dictionary) -> void:
 
 	# Real tournaments need a real crowd — below the floor they cancel rather
 	# than run (tournament matches feed quests/achievements). Dev-bot
-	# tournaments skip the check and still bot-fill, so testing stays cheap.
+	# tournaments skip the check and still bot-fill, so testing stays cheap;
+	# --dev-tournaments also lowers the floor to 2 so a small real bracket
+	# (bye path included) can be exercised without 32 live clients.
 	var dev_bot := bool(t.get("is_dev_bot_tournament", false))
-	if not dev_bot and checked_in_ids.size() < TournamentSystem.MIN_TOURNAMENT_PLAYERS:
+	var min_players := 2 if _dev_tournaments else TournamentSystem.MIN_TOURNAMENT_PLAYERS
+	if not dev_bot and checked_in_ids.size() < min_players:
 		_cancel_tournament_insufficient(t)
 		return
 
