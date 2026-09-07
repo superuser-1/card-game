@@ -1,14 +1,31 @@
 class_name QuestSystem
 extends RefCounted
 
+## `desc` is a one-line summary; `how` spells out exactly what triggers progress
+## (shown in the quest detail modal). Group quests also get a live category list
+## appended by the client from GameEngine.CATEGORY_GROUP.
 const CATALOG: Array = [
-	{"id": "win_1",        "type": "wins",         "target": 1,  "points": 10,  "name": "Win a Game"},
-	{"id": "win_3",        "type": "wins",         "target": 3,  "points": 40,  "name": "Win 3 Games"},
-	{"id": "win_10",       "type": "wins",         "target": 10, "points": 150, "name": "Win 10 Games"},
-	{"id": "perfect_win",  "type": "perfect_win",  "target": 1,  "points": 50,  "name": "Win a Perfect Game (7–0)"},
-	{"id": "perfect_loss", "type": "perfect_loss", "target": 1,  "points": 60,  "name": "Lose a Game 0–7"},
-	{"id": "money_game",   "type": "group_win", "group": "money", "min_picks": 2, "target": 1, "points": 40, "name": "Win a Money Game"},
-	{"id": "time_game",    "type": "group_win", "group": "time",  "min_picks": 2, "target": 1, "points": 40, "name": "Win a Time Game"},
+	{"id": "win_1", "type": "wins", "target": 1, "points": 10, "name": "Win a Game",
+		"desc": "Win a single match in any mode.",
+		"how": "Finish any completed game — ranked, custom, solo, or tournament — with the win."},
+	{"id": "win_3", "type": "wins", "target": 3, "points": 40, "name": "Win 3 Games",
+		"desc": "Win three matches today.",
+		"how": "Wins count across every mode and don't need to be consecutive. Progress carries through the day."},
+	{"id": "win_10", "type": "wins", "target": 10, "points": 150, "name": "Win 10 Games",
+		"desc": "Win ten matches today.",
+		"how": "A full-session grind: every completed win in any mode adds one, until you hit ten."},
+	{"id": "perfect_win", "type": "perfect_win", "target": 1, "points": 50, "name": "Win a Perfect Game (7–0)",
+		"desc": "Take all seven categories in one match.",
+		"how": "Win the game 7–0. Losing or tying even one category breaks the perfect run."},
+	{"id": "perfect_loss", "type": "perfect_loss", "target": 1, "points": 60, "name": "Lose a Game 0–7",
+		"desc": "Lose every category in one match.",
+		"how": "Finish a game 0–7 — a consolation reward for a total wipeout. The result still counts as a loss."},
+	{"id": "money_game", "type": "group_win", "group": "money", "min_picks": 2, "target": 1, "points": 40, "name": "Win a Money Game",
+		"desc": "Win a match picking only money categories.",
+		"how": "As the picker, choose at least 2 categories and make EVERY one of your picks a money stat, then win the game. Categories your opponent picks don't count."},
+	{"id": "time_game", "type": "group_win", "group": "time", "min_picks": 2, "target": 1, "points": 40, "name": "Win a Time Game",
+		"desc": "Win a match picking only time categories.",
+		"how": "As the picker, choose at least 2 categories and make EVERY one of your picks a time stat, then win the game. Categories your opponent picks don't count."},
 ]
 
 const DAILY_COUNT := 3

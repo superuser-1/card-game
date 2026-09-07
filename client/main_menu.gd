@@ -9,6 +9,7 @@ const QUEST_TILE_BG := Color(0.06, 0.06, 0.09, 1.0)
 const TOURNAMENT_CREATION_MODAL := preload("res://client/tournament_creation_modal.tscn")
 const FRIEND_INVITE_MODAL := preload("res://client/friend_invite_modal.tscn")
 const JOIN_CUSTOM_GAME_MODAL := preload("res://client/join_custom_game_modal.tscn")
+const QUEST_DETAIL_MODAL := preload("res://client/quest_detail_modal.tscn")
 
 # Menu button feel: rounded art via ROUND_SHADER, and on hover the border
 # lights up while the button swells 5%.
@@ -1054,7 +1055,28 @@ func _render_quests() -> void:
 		tile.mouse_entered.connect(_hover_quest_tile.bind(tile, mat, true))
 		tile.mouse_exited.connect(_hover_quest_tile.bind(tile, mat, false))
 
+		# Click opens the detail popup (some quest names need explaining).
+		tile.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		tile.gui_input.connect(_on_quest_tile_input.bind(r.duplicate()))
+
 		vbox.add_child(tile)
+
+
+func _on_quest_tile_input(event: InputEvent, row: Dictionary) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_open_quest_detail(row)
+
+
+func _open_quest_detail(row: Dictionary) -> void:
+	if get_node_or_null("QuestDetailLayer") != null:
+		return
+	var layer := CanvasLayer.new()
+	layer.name = "QuestDetailLayer"
+	layer.layer = 100
+	var modal: Control = QUEST_DETAIL_MODAL.instantiate()
+	layer.add_child(modal)
+	add_child(layer)
+	modal.setup(row)
 
 
 func _hover_quest_tile(tile: Control, mat: ShaderMaterial, over: bool) -> void:
