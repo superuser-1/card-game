@@ -14,6 +14,7 @@ var _refresh_accum := 0.0
 ## Fixed card width so rows read consistently and several can sit side by side
 ## on wide screens (the rows box is an HFlowContainer).
 const CARD_W := 500
+const CARD_BG := "res://assets/tournament.png"
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -163,7 +164,7 @@ func _card_style() -> StyleBoxFlat:
 	sb.border_color = Color(1, 1, 1, 0.10)
 	sb.set_border_width_all(1)
 	sb.set_corner_radius_all(10)
-	sb.set_content_margin_all(12)
+	sb.set_content_margin_all(0)
 	return sb
 
 
@@ -190,17 +191,34 @@ func _add_tournament_row(tournament: Dictionary, target_box: Container, is_finis
 	card.custom_minimum_size = Vector2(CARD_W, 0)
 	card.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	card.add_theme_stylebox_override("panel", _card_style())
+	card.clip_contents = true
 	if is_finished:
 		card.modulate = Color(1, 1, 1, 0.6)
 
+	# --- background image (behind everything, dimmed) ---
+	var bg := TextureRect.new()
+	bg.texture = load(CARD_BG)
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	bg.modulate = Color(1, 1, 1, 0.18)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(bg)
+
+	var pad := MarginContainer.new()
+	for m in ["margin_left", "margin_right", "margin_top", "margin_bottom"]:
+		pad.add_theme_constant_override(m, 12)
+	card.add_child(pad)
+
 	var outer := HBoxContainer.new()
 	outer.add_theme_constant_override("separation", 12)
-	card.add_child(outer)
+	pad.add_child(outer)
 
-	# --- creator portrait ---
-	outer.add_child(AvatarStack.make(
+	# --- creator portrait (top-aligned) ---
+	var portrait := AvatarStack.make(
 		str(tournament.get("creator_avatar", "")), str(tournament.get("creator_frame", "")),
-		str(tournament.get("creator_background", "")), 52.0))
+		str(tournament.get("creator_background", "")), 52.0)
+	portrait.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	outer.add_child(portrait)
 
 	# --- info column ---
 	var info := VBoxContainer.new()
@@ -221,7 +239,11 @@ func _add_tournament_row(tournament: Dictionary, target_box: Container, is_finis
 	}.get(status, status)
 	if status == "signup" and str(tournament.get("availability", "")) == "semi_private":
 		status_text = "Open sign-up (was private)"
-	info.add_child(_info_label(status_text, Color(1, 1, 1, 0.7)))
+	elif status == "signup":
+		# The "Sign-up closes in …" countdown below already says this.
+		status_text = ""
+	if status_text != "":
+		info.add_child(_info_label(status_text, Color(1, 1, 1, 0.7)))
 
 	info.add_child(_info_label("%d / %d signed up  ·  Best of %d" % [participant_count, bracket_size, match_format], Color(1, 1, 1, 0.7)))
 	info.add_child(_info_label("Custom cube" if has_cube else "Original catalogue",
