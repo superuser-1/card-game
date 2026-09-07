@@ -82,7 +82,8 @@ func open(dir := "user://flickbattle/") -> void:
 				var defaults := {
 					"availability": "open", "pw_salt": "", "pw_hash": "",
 					"pw_iterations": 0, "private_signup_close_ts": 0, "late_check_in": false,
-					"late_check_in_open_ts": 0,
+					"late_check_in_open_ts": 0, "prizes": {}, "prize_escrow": 0,
+					"escrow_refunded": false, "prizes_paid": false,
 				}
 				for t in _tournaments:
 					if int(t.get("id", 0)) >= _next_tournament_id:
@@ -763,7 +764,7 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		is_dev_bot: bool, allow_small := false, requested_match_format := 1,
 		cube_card_ids: Array = [], availability := "open", password := "",
 		private_signup_close_ts := 0, late_check_in := false,
-		late_check_in_open_ts := 0) -> Dictionary:
+		late_check_in_open_ts := 0, prize_spec := {}) -> Dictionary:
 	var clean_name := name.strip_edges()
 	if clean_name.length() < 1 or clean_name.length() > 60:
 		return {"ok": false, "error": "bad_name", "tournament": {}}
@@ -798,6 +799,20 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 	if gated:
 		pw = hash_password(clean_pw)
 
+	# Prize pool: clean + price the spec, then escrow the full cost out of the
+	# creator's wallet (refunded in full if the tournament never fires).
+	var pr := TournamentPrizes.sanitize(prize_spec,
+		func(id): return ShopCatalog.price_for(id) if ShopCatalog.is_buyable(id) else -1)
+	if not bool(pr.ok):
+		return {"ok": false, "error": pr.error, "tournament": {}}
+	var creator := {}
+	if int(pr.cost) > 0:
+		creator = get_account(created_by)
+		if creator.is_empty():
+			return {"ok": false, "error": "no_such_user", "tournament": {}}
+		if int(creator.get("points", 0)) < int(pr.cost):
+			return {"ok": false, "error": "insufficient_points", "tournament": {}}
+
 	var bracket_size := TournamentSystem.resolve_bracket_size(requested_bracket_size, allow_small)
 	# Only Bo1/Bo3/Bo5 are valid match formats; anything else silently falls
 	# back to Bo1 rather than rejecting the whole creation call.
@@ -824,6 +839,13 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		# Persisted with the tournament so later rounds still use it even if the
 		# creator is offline by then.
 		"cube_ids": cube_card_ids,
+		# Prize pool (see rules/tournament_prizes.gd). prize_escrow was debited
+		# from the creator now; escrow_refunded / prizes_paid guard against
+		# double refund / double payout.
+		"prizes": pr.prizes,
+		"prize_escrow": int(pr.cost),
+		"escrow_refunded": false,
+		"prizes_paid": false,
 		"status": "signup_private" if gated else "signup",
 		"private_signup_close_ts": stored_private_close,
 		"signup_close_ts": signup_close_ts,
@@ -835,10 +857,59 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		"current_round": 0,
 		"winner_account_id": 0,
 	}
+	if int(pr.cost) > 0:
+		creator["points"] = int(creator.get("points", 0)) - int(pr.cost)
+		_save_accounts()
 	_tournaments.append(tournament)
 	_next_tournament_id += 1
 	_save_tournaments()
 	return {"ok": true, "error": "", "tournament": tournament}
+
+
+## Refund a cancelled tournament's prize escrow to its creator (nothing was
+## ever paid out). Idempotent. Returns the amount refunded (0 if none / already
+## done).
+func refund_tournament_escrow(t: Dictionary) -> int:
+	var amt := int(t.get("prize_escrow", 0))
+	if amt <= 0 or bool(t.get("escrow_refunded", false)):
+		return 0
+	var creator := get_account(int(t.get("created_by_account_id", 0)))
+	if not creator.is_empty():
+		creator["points"] = int(creator.get("points", 0)) + amt
+		_save_accounts()
+	t["escrow_refunded"] = true
+	_save_tournaments()
+	return amt
+
+
+## Pay a completed tournament's prizes: every participant whose finish maps to a
+## "set" bucket gets that bucket's points + items (grant_reward skips items they
+## already own). Idempotent. Returns [{account_id, bucket, points, granted}].
+func pay_tournament_prizes(t: Dictionary) -> Array:
+	if bool(t.get("prizes_paid", false)):
+		return []
+	var prizes: Dictionary = t.get("prizes", {})
+	var payouts := []
+	if not prizes.is_empty():
+		var total_rounds := (t.get("rounds", []) as Array).size()
+		for p in (t.get("participants", []) as Array):
+			var bucket := TournamentPrizes.bucket_for_placement(int(p.get("eliminated_round", 0)), total_rounds)
+			if bucket == "" or not prizes.has(bucket):
+				continue
+			var account := get_account(int(p.get("account_id", 0)))
+			if account.is_empty():
+				continue
+			var prize: Dictionary = prizes[bucket]
+			var res := grant_reward(account, int(prize.get("points", 0)), prize.get("items", []))
+			payouts.append({
+				"account_id": int(p.account_id),
+				"bucket": bucket,
+				"points": int(prize.get("points", 0)),
+				"granted": res.get("granted", []),
+			})
+	t["prizes_paid"] = true
+	_save_tournaments()
+	return payouts
 
 
 ## Trimmed rows for the browse screen — no bracket payload.

@@ -68,6 +68,11 @@ var last_match_summary: Dictionary = {}
 ## Each entry: {id, name, tier_name, points, reward}.
 var pending_achievement_toasts: Array = []
 
+## Tournament-prize wins not yet shown as a main-menu toast. Filled from
+## Net.tournament_prize_awarded; drained by main_menu each time it loads.
+## Each entry: {tournament_id, name, bucket, points, items}.
+var pending_prize_toasts: Array = []
+
 ## Same idea for the match_found payload (player names / avatars / elo): the
 ## queue screen stashes it here right before swapping to the game scene, which
 ## then reads it on _ready since the signal already fired.
@@ -127,6 +132,8 @@ func _ready() -> void:
 	Net.my_tournament_status.connect(_on_my_tournament_status)
 	Net.match_found.connect(_on_tournament_match_found)
 	Net.achievements_unlocked.connect(queue_achievement_toasts)
+	Net.account_updated.connect(set_account)
+	Net.tournament_prize_awarded.connect(_on_prize_awarded)
 	Net.kicked.connect(_on_kicked)
 	Net.force_logout.connect(_on_force_logout)
 
@@ -165,7 +172,18 @@ func _on_force_logout(reason: String) -> void:
 # --- account / token ---------------------------------------------------------
 
 func set_account(a: Dictionary) -> void:
-	account = a.duplicate(true)
+	if a is Dictionary and not (a as Dictionary).is_empty():
+		account = a.duplicate(true)
+
+
+func _on_prize_awarded(info: Dictionary) -> void:
+	pending_prize_toasts.append({
+		"tournament_id": int(info.get("tournament_id", 0)),
+		"name": str(info.get("name", "")),
+		"bucket": str(info.get("bucket", "")),
+		"points": int(info.get("points", 0)),
+		"items": (info.get("items", []) as Array).duplicate(),
+	})
 
 
 ## Append achievement-unlock rows to the pending main-menu toast queue,

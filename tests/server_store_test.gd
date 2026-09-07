@@ -39,6 +39,8 @@ func _initialize() -> void:
 	test_tournament_public_view()
 	test_tournament_withdraw_private()
 	test_tournament_late_check_in()
+	test_tournament_prizes_escrow()
+	test_tournament_prizes_payout()
 	test_shop_purchase_happy_path()
 	test_shop_purchase_insufficient()
 	test_shop_purchase_already_owned()
@@ -909,6 +911,91 @@ func test_tournament_late_check_in() -> void:
 	var bad = s.create_tournament(1, "BadLate", 32, now2 + 60, now2 + 120, now2 + 300,
 		false, false, 1, [], "open", "", 0, true, now2 + 90)
 	assert_equal(bad.error, "bad_schedule", "late check-in opening before check-in rejected")
+
+
+func test_tournament_prizes_escrow() -> void:
+	print("\n=== Tournament Prizes — escrow + refund ===")
+	var s = fresh()
+	s.create_account("Creator", "pass1")
+	var cid := int(s._accounts[0].id)
+	s.get_account(cid)["points"] = 2000
+	var now := int(Time.get_unix_time_from_system())
+
+	# 1: 500 pts, 2: 200 pts  ->  cost = 500*1 + 200*1 = 700
+	var spec := {"1": {"points": 500, "items": []}, "2": {"points": 200, "items": []}}
+	var r = s.create_tournament(cid, "Prized", 32, now + 60, now + 60, now + 120,
+		false, false, 1, [], "open", "", 0, false, 0, spec)
+	assert_equal(r.ok, true, "prized tournament created")
+	assert_equal(int(r.tournament.prize_escrow), 700, "escrow == per-slot cost")
+	assert_equal(int(s.get_account(cid).points), 2000 - 700, "creator wallet debited")
+
+	# insufficient funds -> rejected, wallet untouched
+	s.get_account(cid)["points"] = 100
+	var r2 = s.create_tournament(cid, "TooPricey", 32, now + 60, now + 60, now + 120,
+		false, false, 1, [], "open", "", 0, false, 0, {"1": {"points": 500, "items": []}})
+	assert_equal(r2.error, "insufficient_points", "over-budget prize pool rejected")
+	assert_equal(int(s.get_account(cid).points), 100, "wallet untouched on rejected create")
+
+	# prize_gap propagates from TournamentPrizes.sanitize
+	s.get_account(cid)["points"] = 5000
+	var r3 = s.create_tournament(cid, "Gappy", 32, now + 60, now + 60, now + 120,
+		false, false, 1, [], "open", "", 0, false, 0, {"2": {"points": 50, "items": []}})
+	assert_equal(r3.error, "prize_gap", "prize on 2nd with 1st unset -> prize_gap")
+
+	# refund
+	var t := s.get_tournament(int(r.tournament.id))
+	var refunded := s.refund_tournament_escrow(t)
+	assert_equal(refunded, 700, "refund returns the escrow amount")
+	assert_equal(int(s.get_account(cid).points), 5000 + 700, "creator wallet credited back")
+	assert_equal(s.refund_tournament_escrow(t), 0, "second refund is a no-op")
+
+
+func test_tournament_prizes_payout() -> void:
+	print("\n=== Tournament Prizes — payout ===")
+	var s = fresh()
+	s.create_account("Creator", "pass1")
+	s.create_account("Champ", "pass2")
+	s.create_account("Runner", "pass3")
+	s.create_account("Semi", "pass4")
+	var cid := int(s._accounts[0].id)
+	var champ := int(s._accounts[1].id)
+	var runner := int(s._accounts[2].id)
+	var semi := int(s._accounts[3].id)
+	s.get_account(cid)["points"] = 100000
+	# Semi already owns the item that's in the 3rd-place prize.
+	(s.get_account(semi)["owned_rewards"] as Array).append("athena")
+	var now := int(Time.get_unix_time_from_system())
+
+	var spec := {
+		"1": {"points": 1000, "items": ["athena"]},
+		"2": {"points": 400, "items": []},
+		"3": {"points": 150, "items": ["athena"]},
+	}
+	var r = s.create_tournament(cid, "Payout", 32, now + 60, now + 60, now + 120,
+		false, false, 1, [], "open", "", 0, false, 0, spec)
+	var t := s.get_tournament(int(r.tournament.id))
+	# 3-round bracket: champ (elim 0), runner (elim 3), two semis (elim 2).
+	t.rounds = [[], [], []]   # size 3 is all pay_tournament_prizes reads
+	t.participants = [
+		{"account_id": champ, "eliminated_round": 0},
+		{"account_id": runner, "eliminated_round": 3},
+		{"account_id": semi, "eliminated_round": 2},
+	]
+
+	var before_champ := int(s.get_account(champ).points)
+	var payouts := s.pay_tournament_prizes(t)
+	assert_equal(payouts.size(), 3, "one payout per placed participant")
+	assert_equal(int(s.get_account(champ).points) - before_champ, 1000, "champion got 1st points")
+	assert_true("athena" in (s.get_account(champ).owned_rewards as Array), "champion got 1st item")
+	assert_equal(int(s.get_account(runner).points), 400, "runner-up got 2nd points")
+	assert_equal(int(s.get_account(semi).points), 150, "semi got 3rd points")
+	# semi already owned athena -> not re-granted, no compensation
+	var semi_pay: Dictionary = payouts.filter(func(p): return int(p.account_id) == semi)[0]
+	assert_equal((semi_pay.granted as Array).size(), 0, "already-owned item not re-granted")
+
+	# idempotent
+	assert_equal(s.pay_tournament_prizes(t).size(), 0, "second payout call is a no-op")
+	assert_equal(int(s.get_account(champ).points) - before_champ, 1000, "no double payout")
 
 
 func test_shop_purchase_happy_path() -> void:

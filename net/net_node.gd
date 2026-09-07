@@ -64,6 +64,8 @@ signal tournament_withdrawn(result: Dictionary)         # {ok, error, tournament
 signal tournament_checked_in(result: Dictionary)        # {ok, error, tournament}
 signal tournament_updated(tournament: Dictionary)       # full bracket snapshot
 signal my_tournament_status(tournaments: Array)         # every live tournament this account has a stake in
+signal tournament_prize_awarded(info: Dictionary)       # {tournament_id, name, bucket, points, items, account}
+signal account_updated(account: Dictionary)             # generic "your wallet/inventory changed" snapshot push
 
 const BOT_THINK_SECONDS := 0.7
 const BOT_FILL_SECONDS := 15.0
@@ -1076,6 +1078,14 @@ func _cancel_tournament_insufficient(t: Dictionary) -> void:
 	_store.cancel_tournament(int(t.id))
 	for acc_id in _tournament_participant_account_ids(t):
 		_release_tournament_lock(acc_id)
+	# Nothing was ever paid out — refund the creator's prize escrow in full and
+	# push them a fresh wallet snapshot if they're online.
+	var refunded := _store.refund_tournament_escrow(t)
+	if refunded > 0:
+		var creator_id := int(t.get("created_by_account_id", 0))
+		var peer: int = int(_account_peer.get(creator_id, 0))
+		if peer > 0:
+			_rpc_account_snapshot.rpc_id(peer, _store.account_snapshot(_store.get_account(creator_id)))
 	_store.persist_tournament(t)
 	_broadcast_tournament(t)
 
@@ -1152,6 +1162,24 @@ func _complete_tournament(t: Dictionary) -> void:
 	# already be released at elimination — see _record_tournament_result).
 	for acc_id in _tournament_participant_account_ids(t):
 		_release_tournament_lock(acc_id)
+
+	# Pay out the prize pool (idempotent). Push each recipient a fresh account
+	# snapshot + a "you won" notification if they're connected.
+	var payouts := _store.pay_tournament_prizes(t)
+	for pay in payouts:
+		var acc_id: int = int(pay.account_id)
+		var peer: int = int(_account_peer.get(acc_id, 0))
+		if peer <= 0:
+			continue
+		_rpc_tournament_prize.rpc_id(peer, {
+			"tournament_id": int(t.id),
+			"name": str(t.name),
+			"bucket": str(pay.bucket),
+			"points": int(pay.points),
+			"items": pay.get("granted", []),
+			"account": _store.account_snapshot(_store.get_account(acc_id)),
+		})
+
 	_store.persist_tournament(t)
 	_broadcast_tournament(t)
 
@@ -1299,10 +1327,10 @@ func create_tournament(name: String, bracket_size: int, signup_close_ts: int,
 		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1,
 		cube_ids: PackedStringArray = PackedStringArray(), availability := "open",
 		password := "", private_signup_close_ts := 0, late_check_in := false,
-		late_check_in_open_ts := 0) -> void:
+		late_check_in_open_ts := 0, prize_spec := {}) -> void:
 	_rpc_create_tournament.rpc_id(1, name, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
 		is_dev_bot, match_format, cube_ids, availability, password, private_signup_close_ts,
-		late_check_in, late_check_in_open_ts)
+		late_check_in, late_check_in_open_ts, prize_spec)
 
 
 func list_tournaments() -> void:
@@ -1343,7 +1371,7 @@ func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: in
 		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1,
 		cube_ids: PackedStringArray = PackedStringArray(), availability := "open",
 		password := "", private_signup_close_ts := 0, late_check_in := false,
-		late_check_in_open_ts := 0) -> void:
+		late_check_in_open_ts := 0, prize_spec := {}) -> void:
 	if not is_server or is_solo:
 		return
 	var peer_id := multiplayer.get_remote_sender_id()
@@ -1365,7 +1393,8 @@ func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: in
 	var res := _store.create_tournament(
 		int(account.id), name, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
 		is_dev_bot, _dev_tournaments, match_format, cube.ids,
-		availability, password, private_signup_close_ts, late_check_in, late_check_in_open_ts
+		availability, password, private_signup_close_ts, late_check_in, late_check_in_open_ts,
+		prize_spec
 	)
 	# Count every created tournament toward the creator's `tourney_created_*`
 	# achievements (dev-bot ones included — the admin still built it), then
@@ -1511,6 +1540,22 @@ func _rpc_tournament_snapshot(tournament: Dictionary) -> void:
 	if is_server:
 		return
 	tournament_updated.emit(tournament)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_account_snapshot(account: Dictionary) -> void:
+	if is_server:
+		return
+	account_updated.emit(account)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_tournament_prize(info: Dictionary) -> void:
+	if is_server:
+		return
+	if info.has("account"):
+		account_updated.emit(info.account)
+	tournament_prize_awarded.emit(info)
 
 
 # =========================================================================
