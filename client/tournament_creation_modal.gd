@@ -1,8 +1,12 @@
 extends Control
 
 
+const PRIZE_MODAL := preload("res://client/tournament_prize_modal.tscn")
+
 var _cubes: Array = []
 var _start_dates: Array = []   # date dicts {year,month,day}, index-aligned with StartDateOption
+var _prizes: Dictionary = {}   # bucket -> {points, items}; server shape
+var _prize_buttons: Dictionary = {}  # bucket -> Button
 
 
 const _AVAILABILITY := ["open", "semi_private", "private"]
@@ -14,11 +18,85 @@ func _ready() -> void:
 	Net.tournament_created.connect(_on_tournament_created)
 	_cubes = CubePicker.populate(%CubeOptionButton)
 	_populate_start_dates()
+	_build_prize_rows()
 	%AvailabilityOptionButton.item_selected.connect(func(_i): _refresh_rows())
 	%LateCheckInCheckBox.toggled.connect(func(_p): _refresh_rows())
 	_refresh_rows()
 	%CreateButton.pressed.connect(_on_create_pressed)
 	%CancelButton.pressed.connect(_close)
+
+
+# --- prizes ---------------------------------------------------------------
+
+func _price_of(id: String) -> int:
+	return ShopCatalog.price_for(id) if ShopCatalog.is_buyable(id) else -1
+
+
+func _build_prize_rows() -> void:
+	for bucket in TournamentPrizes.BUCKETS:
+		var btn := Button.new()
+		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		btn.pressed.connect(_open_prize_editor.bind(bucket))
+		%PrizesBox.add_child(btn)
+		_prize_buttons[bucket] = btn
+	_refresh_prizes()
+
+
+func _prize_summary(bucket: String) -> String:
+	var label := str(TournamentPrizes.LABELS.get(bucket, bucket))
+	if not _prizes.has(bucket):
+		return "%s — none" % label
+	var p: Dictionary = _prizes[bucket]
+	var parts := []
+	if int(p.points) > 0:
+		parts.append("◈%d" % int(p.points))
+	if (p.items as Array).size() > 0:
+		parts.append("%d item%s" % [(p.items as Array).size(), "" if (p.items as Array).size() == 1 else "s"])
+	return "%s — %s" % [label, "  +  ".join(parts) if not parts.is_empty() else "none"]
+
+
+## A bucket is editable once every earlier bucket is "set" (or it already is).
+func _bucket_unlocked(bucket: String) -> bool:
+	for b in TournamentPrizes.BUCKETS:
+		if b == bucket:
+			return true
+		if not _prizes.has(b):
+			return false
+	return false
+
+
+func _refresh_prizes() -> void:
+	for bucket in TournamentPrizes.BUCKETS:
+		var btn: Button = _prize_buttons[bucket]
+		btn.text = _prize_summary(bucket)
+		btn.disabled = not (_prizes.has(bucket) or _bucket_unlocked(bucket))
+	var cost := TournamentPrizes.cost_of(_prizes, _price_of)
+	%TotalCostLabel.text = "Total prize cost: ◈%d" % cost
+	var short := cost > int(Session.account.get("points", 0))
+	%TotalCostLabel.add_theme_color_override("font_color",
+		Color(0.95, 0.4, 0.4) if short else Color(1, 1, 1, 0.8))
+
+
+func _open_prize_editor(bucket: String) -> void:
+	var modal := PRIZE_MODAL.instantiate()
+	modal.saved.connect(_on_prize_saved)
+	add_child(modal)
+	modal.setup(bucket, _prizes.get(bucket, {"points": 0, "items": []}))
+
+
+func _on_prize_saved(bucket: String, spec: Dictionary) -> void:
+	var empty: bool = int(spec.get("points", 0)) <= 0 and (spec.get("items", []) as Array).is_empty()
+	if empty:
+		# Can't clear a bucket while a later one still has a prize.
+		var idx := TournamentPrizes.BUCKETS.find(bucket)
+		for b in TournamentPrizes.BUCKETS.slice(idx + 1):
+			if _prizes.has(b):
+				_toast("Clear the %s prize first" % TournamentPrizes.LABELS.get(b, b))
+				return
+		_prizes.erase(bucket)
+	else:
+		_prizes[bucket] = {"points": int(spec.points), "items": (spec.items as Array).duplicate()}
+	_refresh_prizes()
 
 
 ## Next 14 local days for the start-date dropdown. Uses noon to stay clear of
@@ -114,10 +192,15 @@ func _on_create_pressed() -> void:
 			_toast("Late check-in must open between check-in and start")
 			return
 
+	var prize_cost := TournamentPrizes.cost_of(_prizes, _price_of)
+	if prize_cost > int(Session.account.get("points", 0)):
+		_toast("Prize pool costs ◈%d — more than your ◈%d" % [prize_cost, int(Session.account.get("points", 0))])
+		return
+
 	%CreateButton.disabled = true
 	Net.create_tournament(name_text, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
 		is_dev_bot, match_format, cube_ids, availability, password, private_signup_close_ts,
-		late_check_in, late_check_in_open_ts)
+		late_check_in, late_check_in_open_ts, _prizes)
 
 
 func _on_tournament_created(result: Dictionary) -> void:
@@ -140,6 +223,10 @@ func _on_tournament_created(result: Dictionary) -> void:
 			"bad_availability": "Pick a valid availability mode.",
 			"bad_password": "Private tournaments need a password of 1–72 characters.",
 			"bad_schedule": "Phase order must be: private close < sign-up close ≤ check-in ≤ late check-in < start.",
+			"insufficient_points": "You don't have enough points for that prize pool.",
+			"prize_gap": "Set a prize for every earlier placement first.",
+			"prize_bad_item": "One of the prize items isn't a buyable shop item.",
+			"prize_bad_bucket": "Unknown prize placement.",
 		}
 		_toast(friendly.get(error, "Error: %s" % error))
 

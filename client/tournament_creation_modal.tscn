@@ -248,6 +248,22 @@ max_value = 10080.0
 step = 1.0
 value = 5.0
 
+[node name="PrizesLabel" type="Label" parent="Panel/MarginContainer/Outer/Scroll/Box"]
+layout_mode = 2
+text = "Prizes (paid from your points wallet)"
+theme_override_font_sizes/font_size = 14
+
+[node name="PrizesBox" type="VBoxContainer" parent="Panel/MarginContainer/Outer/Scroll/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TotalCostLabel" type="Label" parent="Panel/MarginContainer/Outer/Scroll/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Total prize cost: ◈0"
+
 [node name="DevBotRow" type="HBoxContainer" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 layout_mode = 2
 theme_override_constants/separation = 8
