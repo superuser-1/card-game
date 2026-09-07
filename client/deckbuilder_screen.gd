@@ -90,13 +90,12 @@ func _build_grid() -> void:
 		wrapper.custom_minimum_size = CardView.CARD_SIZE * CARD_DISPLAY_SCALE
 
 		var view: CardView = CARD_VIEW_SCENE.instantiate()
-		view.hover_enabled = false   # no hand-fan hover in a static grid
 		wrapper.add_child(view)
-		# Wrapper must be in the tree before set_card() so the CardView's
-		# _ready() has resolved its @onready label refs (same ordering the old
-		# full-collection view relied on).
+		# Wrapper must be in the tree before set_card()/use_as_static_thumbnail()
+		# so the CardView's _ready() has run (resolved @onready refs, set its
+		# default pivot — which use_as_static_thumbnail then overrides).
 		_grid.add_child(wrapper)
-		view.scale = Vector2(CARD_DISPLAY_SCALE, CARD_DISPLAY_SCALE)
+		view.use_as_static_thumbnail(CARD_DISPLAY_SCALE)
 		view.set_card(c, false)   # text now; art streamed in by _hydrate_art()
 		view.pressed.connect(_on_card_pressed.bind(id))
 

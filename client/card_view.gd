@@ -42,13 +42,6 @@ var disabled: bool = false:
 ## been chosen — there's nothing to drop it onto).
 var draggable: bool = false
 
-## The hover-enlarge/lift animation only makes sense for a card sitting in the
-## hand fan (where set_hand_transform() has seeded _base_position/_hand_scale).
-## Static grids like the deckbuilder scale the card down directly and never call
-## set_hand_transform(), so hovering would tween it to _hand_scale (1.0) and
-## leave it stuck enlarged. Those callers set this false.
-var hover_enabled: bool = true
-
 var _card: Dictionary = {}
 
 # The fan-layout "rest" transform this card should return to after a hover.
@@ -89,6 +82,22 @@ func apply_art() -> void:
 	if _card.is_empty():
 		return
 	art_rect.texture = load(CardArt.path_for(_card))
+
+
+## Configure this card as a fixed-size thumbnail in a static grid (the
+## deckbuilder), rather than a hand-fan card. Scales down from the TOP-LEFT so
+## the visible card exactly fills a `CARD_SIZE * rest_scale` cell — the default
+## bottom-centre pivot from _ready() would leave the render offset from its
+## layout rect (~`pivot * (1 - scale)` px), which is what threw the selection
+## overlay off. Also re-bases the hover animation on `rest_scale` so a
+## hover-in / hover-out cleanly returns here instead of snapping to 1.0.
+func use_as_static_thumbnail(rest_scale: float) -> void:
+	_hand_scale = rest_scale
+	_base_position = Vector2.ZERO
+	_base_rotation_deg = 0.0
+	_base_z_index = 0
+	pivot_offset = Vector2.ZERO
+	scale = Vector2(rest_scale, rest_scale)
 
 
 ## Places this card at its resting spot in the hand fan, instantly. Called
@@ -132,7 +141,7 @@ func _on_mouse_entered() -> void:
 	# whichever happens to run last wins, which is exactly the inconsistent
 	# behavior this was producing. Hover-enlarge only makes sense with a
 	# free cursor, not mid-reorder.
-	if disabled or not hover_enabled or get_viewport().gui_is_dragging():
+	if disabled or get_viewport().gui_is_dragging():
 		return
 	_animate_hover(true)
 
@@ -142,8 +151,6 @@ func _on_mouse_exited() -> void:
 	# hover-enlarged right as a drag started elsewhere, we still want it to
 	# settle back to its base transform once the cursor actually leaves —
 	# otherwise it'd stay stuck visually enlarged for the rest of the drag.
-	if not hover_enabled:
-		return
 	_animate_hover(false)
 
 
