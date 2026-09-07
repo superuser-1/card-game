@@ -50,6 +50,11 @@ static func is_premium(id: String) -> bool:
 	return not def_for(id).is_empty()
 
 
+## Points price of an item, or 0 if the id is unknown.
+static func price_for(id: String) -> int:
+	return int(def_for(id).get("price", 0))
+
+
 static func is_buyable(id: String) -> bool:
 	var d := def_for(id)
 	return not d.is_empty() and str(d.source) == "shop"
