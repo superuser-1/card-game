@@ -572,6 +572,12 @@ func _make_tournament_card(t: Dictionary, my_id: int) -> PanelContainer:
 	var show_time_label := true
 
 	match status:
+		"signup_private":
+			status_label.text = "Signed up (private)"
+			status_label.add_theme_color_override("font_color", GREEN)
+			# semi_private counts down to the open phase; private to check-in.
+			var next_ts := int(t.get("private_signup_close_ts", 0)) if str(t.get("availability", "")) == "semi_private" else int(t.get("check_in_open_ts", 0))
+			_register_countdown(time_label, next_ts, "Sign-up phase ends ")
 		"signup":
 			status_label.text = "Signed up"
 			status_label.add_theme_color_override("font_color", GREEN)
@@ -611,7 +617,7 @@ func _make_tournament_card(t: Dictionary, my_id: int) -> PanelContainer:
 
 	# Cancel only ever shows up (and only ever works) pre-check-in — same
 	# reasoning as the tournament list screen's Cancel button.
-	if status == "signup":
+	if status in ["signup", "signup_private"]:
 		var cancel_btn := Button.new()
 		cancel_btn.text = "Cancel"
 		cancel_btn.add_theme_font_size_override("font_size", 12)

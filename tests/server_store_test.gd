@@ -34,6 +34,10 @@ func _initialize() -> void:
 	test_tournament_check_in()
 	test_tournament_persistence()
 	test_tournament_cancel()
+	test_tournament_availability_validation()
+	test_tournament_sign_up_password()
+	test_tournament_public_view()
+	test_tournament_withdraw_private()
 	test_shop_purchase_happy_path()
 	test_shop_purchase_insufficient()
 	test_shop_purchase_already_owned()
@@ -759,6 +763,100 @@ func test_tournament_cancel() -> void:
 	assert_equal(s2.get_tournament(tid).status, "cancelled", "cancelled status persisted")
 
 	assert_equal(s1.cancel_tournament(9999).ok, false, "cancel of unknown tournament fails")
+
+
+func test_tournament_availability_validation() -> void:
+	print("\n=== Tournament Availability Validation ===")
+	var s = fresh()
+	s.create_account("Admin", "pass1")
+	var now := int(Time.get_unix_time_from_system())
+
+	# open: no password, status "signup"
+	var op = s.create_tournament(1, "Open T", 32, now + 60, now + 60, now + 120, false, false, 1, [], "open")
+	assert_equal(op.ok, true, "open tournament created")
+	assert_equal(op.tournament.status, "signup", "open starts in 'signup'")
+	assert_equal(op.tournament.availability, "open", "availability stored")
+	assert_equal(str(op.tournament.pw_hash), "", "open has no password hash")
+
+	# bad availability
+	var bad = s.create_tournament(1, "Bad", 32, now + 60, now + 60, now + 120, false, false, 1, [], "public")
+	assert_equal(bad.error, "bad_availability", "unknown availability rejected")
+
+	# private with empty password
+	var nopw = s.create_tournament(1, "P", 32, now + 60, now + 60, now + 120, false, false, 1, [], "private", "")
+	assert_equal(nopw.error, "bad_password", "private without password rejected")
+
+	# private ok: status signup_private, private_signup_close_ts == signup_close_ts
+	var pv = s.create_tournament(1, "Priv", 32, now + 60, now + 60, now + 120, false, false, 1, [], "private", "hunter2")
+	assert_equal(pv.ok, true, "private tournament created")
+	assert_equal(pv.tournament.status, "signup_private", "private starts in 'signup_private'")
+	assert_equal(int(pv.tournament.private_signup_close_ts), now + 60, "private_signup_close_ts == signup_close_ts")
+	assert_true(str(pv.tournament.pw_hash) != "", "private stores a password hash")
+
+	# semi_private needs private_signup_close_ts strictly before signup_close_ts
+	var spbad = s.create_tournament(1, "SP", 32, now + 60, now + 60, now + 120, false, false, 1, [], "semi_private", "pw", now + 60)
+	assert_equal(spbad.error, "bad_schedule", "semi_private with private-close == signup-close rejected")
+
+	var spok = s.create_tournament(1, "SP2", 32, now + 60, now + 60, now + 120, false, false, 1, [], "semi_private", "pw", now + 30, true)
+	assert_equal(spok.ok, true, "semi_private with ordered phases created")
+	assert_equal(spok.tournament.status, "signup_private", "semi_private starts 'signup_private'")
+	assert_equal(int(spok.tournament.private_signup_close_ts), now + 30, "semi_private stores its private-close ts")
+	assert_equal(bool(spok.tournament.late_check_in), true, "late_check_in flag stored")
+
+
+func test_tournament_sign_up_password() -> void:
+	print("\n=== Tournament Sign-Up Password ===")
+	var s = fresh()
+	s.create_account("Admin", "pass1")
+	s.create_account("Player", "pass2")
+	var pid := int(s._accounts[1].id)
+	var now := int(Time.get_unix_time_from_system())
+	var t = s.create_tournament(1, "Priv", 32, now + 60, now + 60, now + 120, false, false, 1, [], "private", "s3cret").tournament
+
+	assert_equal(s.sign_up(t.id, pid, "wrong").error, "bad_password", "wrong password rejected in signup_private")
+	assert_equal(s.sign_up(t.id, pid, "s3cret").ok, true, "correct password accepted")
+	assert_equal(int(s.get_tournament(t.id).participants.size()), 1, "participant recorded")
+
+	# Once it flips to the open phase the password is ignored.
+	s.create_account("Player2", "pass3")
+	var p2 := int(s._accounts[2].id)
+	s.get_tournament(t.id).status = "signup"
+	assert_equal(s.sign_up(t.id, p2, "anything").ok, true, "open phase ignores password")
+
+
+func test_tournament_public_view() -> void:
+	print("\n=== Tournament Public View ===")
+	var s = fresh()
+	s.create_account("Admin", "pass1")
+	var now := int(Time.get_unix_time_from_system())
+	var t = s.create_tournament(1, "Priv", 32, now + 60, now + 60, now + 120, false, false, 1, [], "private", "topsecret").tournament
+	var v := s.tournament_public_view(t)
+	assert_equal(v.has("pw_salt"), false, "public view drops pw_salt")
+	assert_equal(v.has("pw_hash"), false, "public view drops pw_hash")
+	assert_equal(v.has("pw_iterations"), false, "public view drops pw_iterations")
+	assert_equal(bool(v.has_password), true, "public view flags has_password for a gated tournament")
+	# original untouched
+	assert_true(str(t.pw_hash) != "", "original record still has its hash")
+
+	var op = s.create_tournament(1, "Open", 32, now + 60, now + 60, now + 120, false).tournament
+	assert_equal(bool(s.tournament_public_view(op).has_password), false, "open tournament has_password == false")
+
+
+func test_tournament_withdraw_private() -> void:
+	print("\n=== Tournament Withdraw (private phase) ===")
+	var s = fresh()
+	s.create_account("Admin", "pass1")
+	s.create_account("Player", "pass2")
+	var pid := int(s._accounts[1].id)
+	var now := int(Time.get_unix_time_from_system())
+	var t = s.create_tournament(1, "Priv", 32, now + 60, now + 60, now + 120, false, false, 1, [], "private", "pw").tournament
+	s.sign_up(t.id, pid, "pw")
+	assert_equal(s.withdraw(t.id, pid).ok, true, "withdraw allowed during signup_private")
+	assert_equal(int(s.get_tournament(t.id).participants.size()), 0, "participant removed")
+
+	s.sign_up(t.id, pid, "pw")
+	s.get_tournament(t.id).status = "check_in"
+	assert_equal(s.withdraw(t.id, pid).error, "too_late", "withdraw blocked once check-in opens")
 
 
 func test_shop_purchase_happy_path() -> void:

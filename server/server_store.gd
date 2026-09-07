@@ -76,9 +76,22 @@ func open(dir := "user://flickbattle/") -> void:
 			var parsed = JSON.parse_string(file.get_as_text())
 			if parsed is Dictionary and parsed.has("tournaments"):
 				_tournaments = parsed["tournaments"]
+				var migrated := false
+				# Back-fill fields added by the availability / late-check-in
+				# rework onto tournaments persisted before it.
+				var defaults := {
+					"availability": "open", "pw_salt": "", "pw_hash": "",
+					"pw_iterations": 0, "private_signup_close_ts": 0, "late_check_in": false,
+				}
 				for t in _tournaments:
 					if int(t.get("id", 0)) >= _next_tournament_id:
 						_next_tournament_id = int(t["id"]) + 1
+					for k in defaults:
+						if not t.has(k):
+							t[k] = defaults[k]
+							migrated = true
+				if migrated:
+					_save_tournaments()
 	else:
 		_save_tournaments()
 
@@ -742,15 +755,43 @@ func is_admin_account(account: Dictionary) -> bool:
 ## admin testing with a tiny bracket). Timestamps are unix seconds and must be
 ## strictly increasing (signup_close_ts == check_in_open_ts is allowed/typical
 ## per the locked design — sign-ups close exactly when check-in opens).
+const _AVAILABILITY := ["open", "semi_private", "private"]
+
 func create_tournament(created_by: int, name: String, requested_bracket_size: int,
 		signup_close_ts: int, check_in_open_ts: int, start_ts: int,
 		is_dev_bot: bool, allow_small := false, requested_match_format := 1,
-		cube_card_ids: Array = []) -> Dictionary:
+		cube_card_ids: Array = [], availability := "open", password := "",
+		private_signup_close_ts := 0, late_check_in := false) -> Dictionary:
 	var clean_name := name.strip_edges()
 	if clean_name.length() < 1 or clean_name.length() > 60:
 		return {"ok": false, "error": "bad_name", "tournament": {}}
-	if not (signup_close_ts <= check_in_open_ts and check_in_open_ts < start_ts):
+	if availability not in _AVAILABILITY:
+		return {"ok": false, "error": "bad_availability", "tournament": {}}
+
+	# Password required for the private / semi-private sign-up phase.
+	var gated := availability in ["semi_private", "private"]
+	var clean_pw := password.strip_edges()
+	if gated and (clean_pw.length() < 1 or clean_pw.length() > 72):
+		return {"ok": false, "error": "bad_password", "tournament": {}}
+
+	# Schedule ordering. semi_private has one extra boundary — the private phase
+	# must close strictly before open sign-up does (no zero-length open window;
+	# use Private mode for that).
+	var ok_schedule := signup_close_ts <= check_in_open_ts and check_in_open_ts < start_ts
+	if availability == "semi_private":
+		ok_schedule = ok_schedule and private_signup_close_ts < signup_close_ts
+	if not ok_schedule:
 		return {"ok": false, "error": "bad_schedule", "tournament": {}}
+
+	var stored_private_close := 0
+	if availability == "semi_private":
+		stored_private_close = private_signup_close_ts
+	elif availability == "private":
+		stored_private_close = signup_close_ts
+
+	var pw := {"salt": "", "hash": "", "iterations": 0}
+	if gated:
+		pw = hash_password(clean_pw)
 
 	var bracket_size := TournamentSystem.resolve_bracket_size(requested_bracket_size, allow_small)
 	# Only Bo1/Bo3/Bo5 are valid match formats; anything else silently falls
@@ -763,12 +804,20 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		"is_dev_bot_tournament": is_dev_bot,
 		"bracket_size": bracket_size,
 		"match_format": match_format,
+		"availability": availability,
+		# Salted-hash material for the gated sign-up phase. Never sent to
+		# clients — see tournament_public_view().
+		"pw_salt": pw.salt,
+		"pw_hash": pw.hash,
+		"pw_iterations": pw.iterations,
+		"late_check_in": late_check_in,
 		# Player-curated card pool for every match in this tournament, as a list
 		# of card ids the net layer already sanitized. [] == full collection.
 		# Persisted with the tournament so later rounds still use it even if the
 		# creator is offline by then.
 		"cube_ids": cube_card_ids,
-		"status": "signup",
+		"status": "signup_private" if gated else "signup",
+		"private_signup_close_ts": stored_private_close,
 		"signup_close_ts": signup_close_ts,
 		"check_in_open_ts": check_in_open_ts,
 		"start_ts": start_ts,
@@ -802,12 +851,31 @@ func list_tournaments(status_filter := "") -> Array:
 			# True when this tournament runs on a player-curated cube rather than
 			# the full card set (see net_node cube handling).
 			"has_cube": (t.get("cube_ids", []) as Array).size() > 0,
+			"availability": str(t.get("availability", "open")),
+			"late_check_in": bool(t.get("late_check_in", false)),
+			# Derived: true while the tournament is in its password-gated phase,
+			# so the client can bucket it into the "Private Tournaments" tab.
+			"is_private_now": str(t.get("status", "")) == "signup_private",
+			"private_signup_close_ts": int(t.get("private_signup_close_ts", 0)),
 			"signup_close_ts": t.signup_close_ts,
 			"check_in_open_ts": t.check_in_open_ts,
 			"start_ts": t.start_ts,
 		})
 	rows.sort_custom(func(a, b): return int(a.start_ts) < int(b.start_ts))
 	return rows
+
+
+## The version of a tournament record that is safe to send to clients: a deep
+## copy with the password-hash material stripped and a plain `has_password`
+## flag in its place. EVERY path that ships a full tournament dict to a peer
+## must route through this.
+func tournament_public_view(t: Dictionary) -> Dictionary:
+	var v := t.duplicate(true)
+	v.erase("pw_salt")
+	v.erase("pw_hash")
+	v.erase("pw_iterations")
+	v["has_password"] = str(t.get("pw_hash", "")) != ""
+	return v
 
 
 func get_tournament(id: int) -> Dictionary:
@@ -821,12 +889,17 @@ func all_tournaments() -> Array:
 	return _tournaments
 
 
-func sign_up(tournament_id: int, account_id: int) -> Dictionary:
+func sign_up(tournament_id: int, account_id: int, password := "") -> Dictionary:
 	var t := get_tournament(tournament_id)
 	if t.is_empty():
 		return {"ok": false, "error": "no_such_tournament", "tournament": {}}
-	if str(t.status) != "signup":
+	if str(t.status) not in ["signup", "signup_private"]:
 		return {"ok": false, "error": "signup_closed", "tournament": {}}
+	# The password gate applies only during the private phase; the semi-private
+	# open phase (and open mode) ignore whatever password is passed.
+	if str(t.status) == "signup_private":
+		if not verify_password(password, str(t.get("pw_salt", "")), str(t.get("pw_hash", "")), int(t.get("pw_iterations", 0))):
+			return {"ok": false, "error": "bad_password", "tournament": {}}
 	var participants: Array = t.participants
 	for p in participants:
 		if int(p.account_id) == account_id:
@@ -880,7 +953,7 @@ func withdraw(tournament_id: int, account_id: int) -> Dictionary:
 	var t := get_tournament(tournament_id)
 	if t.is_empty():
 		return {"ok": false, "error": "no_such_tournament", "tournament": {}}
-	if str(t.status) != "signup":
+	if str(t.status) not in ["signup", "signup_private"]:
 		return {"ok": false, "error": "too_late", "tournament": {}}
 	var participants: Array = t.participants
 	for i in range(participants.size()):

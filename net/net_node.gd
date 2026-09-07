@@ -972,10 +972,21 @@ func _apply_tournament_achievement(account_id: int, key: String) -> void:
 ## Used instead of a client-driven poll so the bracket/wait screen updates the
 ## instant a round resolves or advances.
 func _broadcast_tournament(t: Dictionary) -> void:
+	var public := _store.tournament_public_view(t)
 	for acc_id in _tournament_participant_account_ids(t):
 		var peer: int = int(_account_peer.get(acc_id, 0))
 		if peer > 0:
-			_rpc_tournament_snapshot.rpc_id(peer, t)
+			_rpc_tournament_snapshot.rpc_id(peer, public)
+
+
+## Replaces `result.tournament` (if present and non-empty) with its
+## client-safe view, so an RPC reply never leaks the password hash.
+func _public_result(result: Dictionary) -> Dictionary:
+	var tt = result.get("tournament", {})
+	if tt is Dictionary and not (tt as Dictionary).is_empty():
+		result = result.duplicate()
+		result["tournament"] = _store.tournament_public_view(tt)
+	return result
 
 
 func _tick_tournaments() -> void:
@@ -984,6 +995,17 @@ func _tick_tournaments() -> void:
 	var now := int(Time.get_unix_time_from_system())
 	for t in _store.all_tournaments():
 		match str(t.status):
+			"signup_private":
+				# semi_private: private phase → open sign-up. private: → check-in.
+				var avail := str(t.get("availability", "open"))
+				if avail == "semi_private" and now >= int(t.get("private_signup_close_ts", 0)):
+					t.status = "signup"
+					_store.persist_tournament(t)
+					_broadcast_tournament(t)
+				elif avail == "private" and now >= int(t.signup_close_ts):
+					t.status = "check_in"
+					_store.persist_tournament(t)
+					_broadcast_tournament(t)
 			"signup":
 				if now >= int(t.signup_close_ts):
 					t.status = "check_in"
@@ -1263,16 +1285,18 @@ func _record_tournament_result(m: Dictionary, winner: int, ctx: Dictionary) -> v
 
 func create_tournament(name: String, bracket_size: int, signup_close_ts: int,
 		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1,
-		cube_ids: PackedStringArray = PackedStringArray()) -> void:
-	_rpc_create_tournament.rpc_id(1, name, bracket_size, signup_close_ts, check_in_open_ts, start_ts, is_dev_bot, match_format, cube_ids)
+		cube_ids: PackedStringArray = PackedStringArray(), availability := "open",
+		password := "", private_signup_close_ts := 0, late_check_in := false) -> void:
+	_rpc_create_tournament.rpc_id(1, name, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
+		is_dev_bot, match_format, cube_ids, availability, password, private_signup_close_ts, late_check_in)
 
 
 func list_tournaments() -> void:
 	_rpc_list_tournaments.rpc_id(1)
 
 
-func join_tournament(tournament_id: int) -> void:
-	_rpc_join_tournament.rpc_id(1, tournament_id)
+func join_tournament(tournament_id: int, password := "") -> void:
+	_rpc_join_tournament.rpc_id(1, tournament_id, password)
 
 
 ## Withdraw from a tournament's sign-up list — only works while it's still in
@@ -1303,7 +1327,8 @@ func request_my_tournament() -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: int,
 		check_in_open_ts: int, start_ts: int, is_dev_bot: bool, match_format: int = 1,
-		cube_ids: PackedStringArray = PackedStringArray()) -> void:
+		cube_ids: PackedStringArray = PackedStringArray(), availability := "open",
+		password := "", private_signup_close_ts := 0, late_check_in := false) -> void:
 	if not is_server or is_solo:
 		return
 	var peer_id := multiplayer.get_remote_sender_id()
@@ -1324,7 +1349,8 @@ func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: in
 		return
 	var res := _store.create_tournament(
 		int(account.id), name, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
-		is_dev_bot, _dev_tournaments, match_format, cube.ids
+		is_dev_bot, _dev_tournaments, match_format, cube.ids,
+		availability, password, private_signup_close_ts, late_check_in
 	)
 	# Count every created tournament toward the creator's `tourney_created_*`
 	# achievements (dev-bot ones included — the admin still built it), then
@@ -1333,7 +1359,7 @@ func _rpc_create_tournament(name: String, bracket_size: int, signup_close_ts: in
 	if bool(res.get("ok", false)):
 		_apply_tournament_achievement(int(account.id), "tournaments_created")
 		res["account"] = _store.account_snapshot(_store.get_account(int(account.id)))
-	_rpc_tournament_created.rpc_id(peer_id, res)
+	_rpc_tournament_created.rpc_id(peer_id, _public_result(res))
 
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -1347,14 +1373,15 @@ func _rpc_list_tournaments() -> void:
 
 
 @rpc("any_peer", "call_remote", "reliable")
-func _rpc_join_tournament(tournament_id: int) -> void:
+func _rpc_join_tournament(tournament_id: int, password := "") -> void:
 	if not is_server or is_solo:
 		return
 	var peer_id := multiplayer.get_remote_sender_id()
 	if not _require_auth(peer_id):
 		_rpc_receive_error.rpc_id(peer_id, "Not authenticated.")
 		return
-	_rpc_tournament_join_result.rpc_id(peer_id, _store.sign_up(tournament_id, int(_peer_account[peer_id])))
+	var res := _store.sign_up(tournament_id, int(_peer_account[peer_id]), password)
+	_rpc_tournament_join_result.rpc_id(peer_id, _public_result(res))
 
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -1366,7 +1393,7 @@ func _rpc_withdraw_tournament(tournament_id: int) -> void:
 		_rpc_receive_error.rpc_id(peer_id, "Not authenticated.")
 		return
 	var res := _store.withdraw(tournament_id, int(_peer_account[peer_id]))
-	_rpc_tournament_withdraw_result.rpc_id(peer_id, res)
+	_rpc_tournament_withdraw_result.rpc_id(peer_id, _public_result(res))
 	if bool(res.get("ok", false)):
 		_broadcast_tournament(res.tournament)
 
@@ -1382,7 +1409,7 @@ func _rpc_tournament_check_in(tournament_id: int) -> void:
 	var res := _store.check_in(tournament_id, int(_peer_account[peer_id]))
 	if res.ok:
 		_peer_tournament_lock[peer_id] = tournament_id
-	_rpc_tournament_check_in_result.rpc_id(peer_id, res)
+	_rpc_tournament_check_in_result.rpc_id(peer_id, _public_result(res))
 
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -1394,7 +1421,7 @@ func _rpc_request_tournament(tournament_id: int) -> void:
 		return
 	var t := _store.get_tournament(tournament_id)
 	if not t.is_empty():
-		_rpc_tournament_snapshot.rpc_id(peer_id, t)
+		_rpc_tournament_snapshot.rpc_id(peer_id, _store.tournament_public_view(t))
 
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -1411,7 +1438,7 @@ func _rpc_request_my_tournament() -> void:
 			continue
 		for p in (t.participants as Array):
 			if int(p.account_id) == acc_id:
-				found.append(t)
+				found.append(_store.tournament_public_view(t))
 				break
 	_rpc_my_tournament_status.rpc_id(peer_id, found)
 
