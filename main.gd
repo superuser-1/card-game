@@ -11,6 +11,10 @@ extends Node
 ## Custom-game test: godot --headless -- --custom-game-test --role=host|guest|guest2 --game-name=X
 ##   (headless auto-playing client that drives the friend-invite custom-game
 ##   flow — create/join/full-lobby-rejection — see tests/custom_game_bot_client.gd.)
+## Reconnect test: godot --headless -- --reconnect-test [--address=..] [--port=..]
+##   (headless client that plays, drops its connection mid-match, then resumes
+##   its token to verify the server's reconnect grace / rejoin — see
+##   tests/reconnect_bot_client.gd and scripts/reconnect_test.sh.)
 
 func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
@@ -22,6 +26,7 @@ func _ready() -> void:
 	var is_solo_test := false
 	var is_drag_test := false
 	var is_custom_game_test := false
+	var is_reconnect_test := false
 
 	for arg: String in args:
 		if arg == "--server":
@@ -30,6 +35,8 @@ func _ready() -> void:
 			is_bot = true
 		elif arg == "--custom-game-test":
 			is_custom_game_test = true
+		elif arg == "--reconnect-test":
+			is_reconnect_test = true
 		elif arg == "--solo":
 			is_solo = true
 		elif arg == "--solo-test":
@@ -51,6 +58,9 @@ func _ready() -> void:
 	elif is_custom_game_test:
 		Net.start_client(address, port)
 		add_child(preload("res://tests/custom_game_bot_client.gd").new())
+	elif is_reconnect_test:
+		Net.start_client(address, port)
+		add_child(preload("res://tests/reconnect_bot_client.gd").new())
 	elif is_solo:
 		# UI (or the headless test driver) must be in the tree — so its
 		# _ready() connects Net's signals — BEFORE start_solo() fires the

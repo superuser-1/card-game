@@ -652,8 +652,9 @@ func _apply_timeout(m: Dictionary, seat: int) -> void:
 # =========================================================================
 
 ## 1s tick (shares _mm_timer). Any match holding for a dropped player whose
-## grace deadline has passed is decided now — a default win for the player who
-## stayed if it's a ranked human-vs-human match, otherwise a quiet abort.
+## grace deadline has passed is decided now — a default win for whoever stayed
+## (ranked Elo/points, a tournament advance, or an unranked custom-game win),
+## or a quiet abort if the only one left is a bot.
 func _check_disconnect_grace() -> void:
 	if not is_server:
 		return
@@ -681,23 +682,18 @@ func _resolve_abandoned_match(m: Dictionary, dc: Dictionary) -> void:
 		return
 	var gone_seat := int(dc.keys()[0])
 	var stay_seat := 3 - gone_seat
-	if _is_rewardable_pvp(m):
-		print("GameServer: match %d — seat %d abandoned, seat %d wins by default" % [int(m.id), gone_seat, stay_seat])
-		_finish_match(m, stay_seat)   # normal path: Elo/points/quests/summary to the seat that stayed
-	else:
-		# Bot-fill / tournament / custom: keep prior behaviour — a tournament
-		# slot self-heals via _dispatch_round, and a bot has no rating to give.
+	# The only seat left is a bot (bot-fill match) — nothing to award, and a
+	# bot "win" would try to record a match against account 0.
+	if int(m.account_ids.get(stay_seat, 0)) == 0:
 		_abort_match_silently(m)
-
-
-func _is_rewardable_pvp(m: Dictionary) -> bool:
-	if bool(m.get("is_bot_match", false)):
-		return false
-	if bool(m.get("is_custom_match", false)):
-		return false
-	if not (m.get("tournament_ctx", {}) as Dictionary).is_empty():
-		return false
-	return int(m.account_ids.get(1, 0)) > 0 and int(m.account_ids.get(2, 0)) > 0
+		return
+	# A real player is still here. _finish_match dispatches by match kind and
+	# handles cleanup: ranked -> Elo/points/quest/achievement + summary;
+	# tournament -> _finish_tournament_match advances the bracket and eliminates
+	# the absentee; custom -> _finish_custom_match, an unranked win on the
+	# result screen.
+	print("GameServer: match %d — seat %d abandoned, seat %d wins by default" % [int(m.id), gone_seat, stay_seat])
+	_finish_match(m, stay_seat)
 
 
 func _abort_match_silently(m: Dictionary) -> void:
