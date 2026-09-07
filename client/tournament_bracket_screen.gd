@@ -71,6 +71,12 @@ func _render_bracket() -> void:
 
 	%HeaderLabel.text = header_text
 
+	var prizes: Dictionary = _tournament.get("prizes", {})
+	%PrizeLabel.visible = not prizes.is_empty()
+	if not prizes.is_empty():
+		%PrizeLabel.text = TournamentPrizes.summary_line(prizes,
+			func(id): return str(ShopCatalog.def_for(id).get("name", id)))
+
 	var rounds = _tournament.get("rounds", [])
 	var participants = _tournament.get("participants", [])
 

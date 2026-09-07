@@ -127,6 +127,8 @@ func _ready() -> void:
 	# reacting to out-of-band tournament unlocks that land while the menu is up.
 	Net.achievements_unlocked.connect(func(_l): call_deferred("_show_pending_achievement_toasts"))
 	call_deferred("_show_pending_achievement_toasts")
+	Net.tournament_prize_awarded.connect(func(_i): call_deferred("_show_pending_prize_toasts"))
+	call_deferred("_show_pending_prize_toasts")
 
 
 func _render_account() -> void:
@@ -297,6 +299,21 @@ var _f9_i := 0
 
 
 # --- achievement unlock toast ----------------------------------------------
+
+func _show_pending_prize_toasts() -> void:
+	if not is_inside_tree():
+		return
+	while not Session.pending_prize_toasts.is_empty():
+		var e: Dictionary = Session.pending_prize_toasts.pop_front()
+		var bits := []
+		if int(e.get("points", 0)) > 0:
+			bits.append("◈%d" % int(e.points))
+		for id in e.get("items", []):
+			bits.append(str(ShopCatalog.def_for(id).get("name", id)))
+		var label := str(TournamentPrizes.LABELS.get(str(e.get("bucket", "")), "a"))
+		_toast("%s prize in %s: %s" % [label, str(e.get("name", "a tournament")),
+			" + ".join(bits) if not bits.is_empty() else "awarded"])
+
 
 func _show_pending_achievement_toasts() -> void:
 	if _toast_running or not is_inside_tree():

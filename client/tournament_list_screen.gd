@@ -161,6 +161,16 @@ func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_f
 	pool_label.modulate = Color(0.55, 0.8, 1.0, 1.0) if has_cube else Color(1, 1, 1, 0.7)
 	info_vbox.add_child(pool_label)
 
+	var prizes: Dictionary = tournament.get("prizes", {})
+	if not prizes.is_empty():
+		var prize_label := Label.new()
+		prize_label.text = TournamentPrizes.summary_line(prizes,
+			func(id): return str(ShopCatalog.def_for(id).get("name", id)))
+		prize_label.add_theme_font_size_override("font_size", 12)
+		prize_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.4))
+		prize_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		info_vbox.add_child(prize_label)
+
 	var start_label := Label.new()
 	start_label.text = "Start: %s" % Time.get_datetime_string_from_unix_time(start_ts)
 	start_label.add_theme_font_size_override("font_size", 12)

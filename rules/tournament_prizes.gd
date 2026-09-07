@@ -90,6 +90,26 @@ static func cost_of(prizes: Dictionary, price_of: Callable) -> int:
 	return cost
 
 
+## One-line human summary of a prize spec, e.g.
+##   "Prizes — 1st: ◈500 + Athena · 2nd: ◈200 · 3rd: ◈100"
+## `name_of.call(shop_id)` -> the item's display name.
+static func summary_line(prizes: Dictionary, name_of: Callable) -> String:
+	if prizes.is_empty():
+		return ""
+	var parts := []
+	for b in BUCKETS:
+		if not prizes.has(b):
+			continue
+		var p: Dictionary = prizes[b]
+		var bits := []
+		if int(p.get("points", 0)) > 0:
+			bits.append("◈%d" % int(p.points))
+		for id in p.get("items", []):
+			bits.append(str(name_of.call(id)))
+		parts.append("%s: %s" % [LABELS.get(b, b), " + ".join(bits)])
+	return "Prizes — " + "  ·  ".join(parts)
+
+
 ## Which prize bucket a participant's finish falls in, or "" for none.
 ##   eliminated_round : 0 for the champion, else the round they lost in
 ##   total_rounds     : t.rounds.size()
