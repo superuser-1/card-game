@@ -42,6 +42,11 @@ var settings: Dictionary = {}
 ## blank form. Read-and-clear by login_screen._ready().
 var kicked_message: String = ""
 
+## True between a Net.force_logout signal and the server_disconnected that
+## follows it — tells _on_kicked the drop is a deliberate server sign-out (wipe
+## the token) rather than a network blip (keep it and auto-resume).
+var _deliberate_kick: bool = false
+
 ## Stash for the match-end summary so match_result_screen can read it after the
 ## scene swap (signals aren't queued for scenes that load later). Set by
 ## whoever handles Net.match_ended; cleared by the result screen once shown.
@@ -102,6 +107,7 @@ func _ready() -> void:
 	Net.match_found.connect(_on_tournament_match_found)
 	Net.achievements_unlocked.connect(queue_achievement_toasts)
 	Net.kicked.connect(_on_kicked)
+	Net.force_logout.connect(_on_force_logout)
 
 
 ## The server connection just dropped — most commonly because this account
@@ -113,9 +119,26 @@ func _ready() -> void:
 func _on_kicked() -> void:
 	if not is_logged_in():
 		return
-	clear()
-	kicked_message = "Disconnected — this account may have signed in elsewhere. Please log in again."
+	if _deliberate_kick:
+		_deliberate_kick = false
+		clear()
+		if kicked_message == "":
+			kicked_message = "Disconnected — this account may have signed in elsewhere. Please log in again."
+		goto("res://client/login_screen.tscn")
+		return
+	# Unexpected drop — keep the saved token so login_screen auto-resumes and
+	# the server can drop us straight back into the held match (see
+	# net_node RECONNECT_GRACE_SECONDS / _try_rejoin_match).
+	kicked_message = "Connection lost — reconnecting…"
 	goto("res://client/login_screen.tscn")
+
+
+## The server is deliberately ending this session (account signed in elsewhere).
+## Flag it so the imminent _on_kicked wipes the token instead of reconnecting.
+func _on_force_logout(reason: String) -> void:
+	_deliberate_kick = true
+	if reason != "":
+		kicked_message = reason
 
 
 # --- account / token ---------------------------------------------------------
@@ -194,7 +217,19 @@ var current_match_id: int = 0
 func _on_tournament_match_found(info: Dictionary) -> void:
 	current_match_id = int(info.get("match_id", 0))
 	last_match_info = info
-	if (info.get("tournament_ctx", {}) as Dictionary).is_empty():
+	# Tournament matches always need Session to navigate (a round can fire from
+	# any screen). A ranked/custom match_found normally arrives on the queue
+	# screen, which does its own transition — but on a RECONNECT it arrives on
+	# the login or menu screen instead, and Session is the only listener alive
+	# to catch it. So navigate from here too, but ONLY from a real client
+	# screen: the --solo / --bot roles run under res://main.tscn with no scene
+	# navigation at all (game_ui is added as a child there), and swapping the
+	# scene out from under them would kill the match / test driver.
+	var cur := get_tree().current_scene
+	var path := cur.scene_file_path if cur else ""
+	if not path.begins_with("res://client/"):
+		return
+	if path == "res://client/queue_screen.tscn" or path == "res://client/game_ui.tscn":
 		return
 	goto("res://client/game_ui.tscn")
 

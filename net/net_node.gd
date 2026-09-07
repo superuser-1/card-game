@@ -46,6 +46,11 @@ signal background_updated(account: Dictionary)  # fresh account snapshot after s
 signal sleeve_updated(account: Dictionary)      # fresh account snapshot after set_sleeve
 signal shop_purchase_result(account: Dictionary) # fresh account snapshot after shop_purchase
 signal achievements_unlocked(list: Array)       # from out-of-band tournament stat apply
+## The server is deliberately ending this session (e.g. the same account just
+## signed in elsewhere). Distinct from a bare `kicked`/server_disconnected,
+## which can also mean the connection merely dropped — Session uses this to
+## decide whether to wipe the saved token or try to reconnect.
+signal force_logout(reason: String)
 
 # --- custom (friend-invite) game signals ---
 signal custom_game_created(result: Dictionary)      # {ok, error, name}
@@ -76,12 +81,36 @@ const ADMIN_USERNAME_FALLBACK := ["admin", "flickbattle_admin"]
 ## card. Bots are never put on this clock.
 const TURN_SECONDS := 30.0
 
+## After a round resolves, the clients play a fixed round-resolution animation
+## (see game_ui.gd _play_resolution_sequence / _play_timeout_sequence) during
+## which the next player physically cannot act. The server holds the next
+## player's turn clock frozen for this long so that span isn't counted against
+## them. Biased slightly longer than the real animation so the server never
+## times a player out mid-reveal; the client mirror (game_ui _process) freezes
+## for the same window.
+const REVEAL_PAUSE_SECONDS := 7.0
+const TIMEOUT_PAUSE_SECONDS := 2.5
+
+## A player who drops out of a live match has this long to reconnect (via
+## auth_resume / auth_login from a fresh peer) before the match is decided
+## against them. Only applies while they are actually in a match — a
+## disconnect from the menu/queue is cleaned up immediately.
+const RECONNECT_GRACE_SECONDS := 60.0
+## Brief clock breather given to a player the instant they rejoin, so they
+## aren't dumped straight onto a nearly-expired turn clock.
+const REJOIN_PAUSE_SECONDS := 3.0
+
 # Sentinels for Match.seats — a seat is either a real peer_id (>0) or one of:
 const BOT_SEAT := -1
 const LOCAL_SEAT := -2
 
 var is_server := false
 var is_solo := false
+
+## Remembered so a client can rebuild a dropped ENet peer (reconnect()) — the
+## original peer object is unusable once server_disconnected has fired.
+var _srv_address := ""
+var _srv_port := 0
 
 ## True once start_client() has run — i.e. this process is fundamentally a
 ## networked client that connected to a real server. The menu's Singleplayer
@@ -201,6 +230,7 @@ func start_server(port: int = NetConfig.DEFAULT_PORT) -> void:
 	_mm_timer.autostart = true
 	add_child(_mm_timer)
 	_mm_timer.timeout.connect(_tick_matchmaking)
+	_mm_timer.timeout.connect(_check_disconnect_grace)
 
 	_tournament_timer = Timer.new()
 	_tournament_timer.wait_time = TOURNAMENT_TICK_SECONDS
@@ -215,6 +245,8 @@ func start_client(address: String = NetConfig.DEFAULT_ADDRESS, port: int = NetCo
 	is_server = false
 	is_solo = false
 	_is_networked_client = true
+	_srv_address = address
+	_srv_port = port
 	var peer := ENetMultiplayerPeer.new()
 	var err := peer.create_client(address, port)
 	if err != OK:
@@ -227,6 +259,23 @@ func start_client(address: String = NetConfig.DEFAULT_ADDRESS, port: int = NetCo
 		error_received.emit("Disconnected from server.")
 		kicked.emit()
 	)
+
+
+## Rebuild the ENet client peer after the previous one dropped. The old peer is
+## dead once server_disconnected has fired — it can't be reused — so a
+## reconnect needs a fresh create_client. The `multiplayer` signal wiring above
+## lives on the API object, not the peer, so it survives the swap untouched.
+## Re-authentication is the caller's job (login_screen resumes the saved token).
+func reconnect() -> bool:
+	if _srv_address == "":
+		return false
+	var peer := ENetMultiplayerPeer.new()
+	var err := peer.create_client(_srv_address, _srv_port)
+	if err != OK:
+		push_error("Client: reconnect to %s:%d failed (error %d)" % [_srv_address, _srv_port, err])
+		return false
+	multiplayer.multiplayer_peer = peer
+	return true
 
 
 ## --- Client -> Server auth wrappers (the UI calls these) ---
@@ -355,6 +404,15 @@ func _new_match(engine: GameEngine, seats: Dictionary, account_ids: Dictionary,
 		"ended": false,
 		"turn_started_ms": Time.get_ticks_msec(),
 		"on_clock_seat": 0,          # 1|2 while the match is live, 0 otherwise
+		# While > now, the turn clock is frozen (round-resolution animation is
+		# playing on the clients, or a player just rejoined). _broadcast_match
+		# rolls turn_started_ms forward to this value so the countdown only
+		# begins once the clients can actually act again.
+		"clock_pause_until_ms": 0,
+		# seat (1|2) -> unix-ms deadline. Non-empty => a player dropped and the
+		# match is holding for their reconnect; the turn clock is frozen and
+		# _check_disconnect_grace decides the match if the deadline passes.
+		"disconnected": {},
 		# {tournament_id, round, bracket_size} when this match is a tournament
 		# round; empty for ranked/solo/bot-fill matches.
 		"tournament_ctx": tournament_ctx,
@@ -407,9 +465,19 @@ func _broadcast_match(m: Dictionary) -> void:
 		elif engine.phase == "awaiting_response":
 			on_clock = 3 - engine.active_player
 	m.on_clock_seat = on_clock
-	m.turn_started_ms = Time.get_ticks_msec()
 
 	var now := Time.get_ticks_msec()
+	# Freeze the countdown while the clients are mid round-resolution animation
+	# (or a rejoin breather): the clock only really starts once it can be acted
+	# on. If the pause window has already elapsed, drop it.
+	var pause_until := int(m.get("clock_pause_until_ms", 0))
+	var paused := on_clock != 0 and pause_until > now
+	if paused:
+		m.turn_started_ms = pause_until
+	else:
+		m.turn_started_ms = now
+		m.clock_pause_until_ms = 0
+
 	for seat in [1, 2]:
 		var target = m.seats[seat]
 		if typeof(target) != TYPE_INT:
@@ -417,10 +485,12 @@ func _broadcast_match(m: Dictionary) -> void:
 		var st := engine.get_state_for_player(seat)
 		if on_clock != 0:
 			st["on_clock_player"] = on_clock
-			st["turn_seconds_left"] = maxf(0.0, _turn_seconds - (now - m.turn_started_ms) / 1000.0)
+			st["turn_seconds_left"] = clampf(_turn_seconds - (now - int(m.turn_started_ms)) / 1000.0, 0.0, _turn_seconds)
+			st["turn_paused"] = paused
 		else:
 			st["on_clock_player"] = 0
 			st["turn_seconds_left"] = -1.0
+			st["turn_paused"] = false
 		st["match_format"] = int(m.get("match_format", 1))
 		st["games_to_win"] = int(m.get("games_to_win", 1))
 		st["series_wins"] = (m.get("series_wins", {1: 0, 2: 0}) as Dictionary).duplicate()
@@ -484,6 +554,9 @@ func _apply_response(m: Dictionary, player_id: int, card_id: String) -> void:
 	if not result.ok:
 		_report_error_seat(m, player_id, result.error)
 		return
+	# The round just resolved — clients now play the reveal animation. Freeze
+	# the next player's clock until it finishes.
+	m.clock_pause_until_ms = Time.get_ticks_msec() + int(REVEAL_PAUSE_SECONDS * 1000.0)
 	_after_move(m)
 
 
@@ -551,6 +624,10 @@ func _tick_turn_timers() -> void:
 		var engine: GameEngine = m.get("engine")
 		if engine == null or engine.is_game_over():
 			continue
+		# A player is mid-reconnect grace — the whole match is on hold, nobody
+		# gets timed out until they return or the grace lapses.
+		if not (m.get("disconnected", {}) as Dictionary).is_empty():
+			continue
 		var seat: int = m.on_clock_seat
 		if seat != 1 and seat != 2:
 			continue
@@ -565,7 +642,108 @@ func _apply_timeout(m: Dictionary, seat: int) -> void:
 	if engine == null or engine.is_game_over() or m.ended:
 		return
 	engine.resolve_timeout(seat)
+	# Shorter reveal (no card lunge on a timeout) but still a beat to watch.
+	m.clock_pause_until_ms = Time.get_ticks_msec() + int(TIMEOUT_PAUSE_SECONDS * 1000.0)
 	_after_move(m)
+
+
+# =========================================================================
+# Reconnect grace (networked server)
+# =========================================================================
+
+## 1s tick (shares _mm_timer). Any match holding for a dropped player whose
+## grace deadline has passed is decided now — a default win for the player who
+## stayed if it's a ranked human-vs-human match, otherwise a quiet abort.
+func _check_disconnect_grace() -> void:
+	if not is_server:
+		return
+	var now := Time.get_ticks_msec()
+	for mid in _matches.keys().duplicate():
+		var m: Dictionary = _matches.get(mid, {})
+		if m.is_empty() or m.ended:
+			continue
+		var dc: Dictionary = m.get("disconnected", {})
+		if dc.is_empty():
+			continue
+		var lapsed := false
+		for seat in dc.keys():
+			if now >= int(dc[seat]):
+				lapsed = true
+				break
+		if lapsed:
+			_resolve_abandoned_match(m, dc)
+
+
+func _resolve_abandoned_match(m: Dictionary, dc: Dictionary) -> void:
+	# Both sides gone — no one to award, just drop it.
+	if dc.size() >= 2:
+		_abort_match_silently(m)
+		return
+	var gone_seat := int(dc.keys()[0])
+	var stay_seat := 3 - gone_seat
+	if _is_rewardable_pvp(m):
+		print("GameServer: match %d — seat %d abandoned, seat %d wins by default" % [int(m.id), gone_seat, stay_seat])
+		_finish_match(m, stay_seat)   # normal path: Elo/points/quests/summary to the seat that stayed
+	else:
+		# Bot-fill / tournament / custom: keep prior behaviour — a tournament
+		# slot self-heals via _dispatch_round, and a bot has no rating to give.
+		_abort_match_silently(m)
+
+
+func _is_rewardable_pvp(m: Dictionary) -> bool:
+	if bool(m.get("is_bot_match", false)):
+		return false
+	if bool(m.get("is_custom_match", false)):
+		return false
+	if not (m.get("tournament_ctx", {}) as Dictionary).is_empty():
+		return false
+	return int(m.account_ids.get(1, 0)) > 0 and int(m.account_ids.get(2, 0)) > 0
+
+
+func _abort_match_silently(m: Dictionary) -> void:
+	if m.ended:
+		return
+	m.ended = true
+	for seat in [1, 2]:
+		var target = m.seats[seat]
+		if typeof(target) == TYPE_INT and target > 0:
+			_peer_match.erase(target)
+			_rpc_receive_error.rpc_id(target, "Match ended — opponent did not reconnect.")
+	_matches.erase(m.id)
+	if m.id == _solo_match_id:
+		_solo_match_id = 0
+
+
+## After a (re)auth, if this account holds a seat in a live match it isn't
+## currently connected to (dropped and inside its grace window, or a fast
+## reconnect the server hasn't noticed the drop for yet), rebind the fresh peer
+## to that seat and resume. Returns true if a rejoin happened.
+func _try_rejoin_match(peer_id: int, account_id: int) -> bool:
+	for mid in _matches.keys():
+		var m: Dictionary = _matches.get(mid, {})
+		if m.is_empty() or m.ended:
+			continue
+		for seat in [1, 2]:
+			if int(m.account_ids.get(seat, 0)) != account_id:
+				continue
+			var cur = m.seats.get(seat)
+			if cur == peer_id:
+				return true  # already bound (nothing to do, but it IS our match)
+			if typeof(cur) == TYPE_INT and cur > 0 and _peer_account.has(cur):
+				continue     # a live peer already holds this seat
+			m.seats[seat] = peer_id
+			_peer_match[peer_id] = int(m.id)
+			(m.get("disconnected", {}) as Dictionary).erase(seat)
+			# A breather before the turn clock resumes.
+			m.clock_pause_until_ms = Time.get_ticks_msec() + int(REJOIN_PAUSE_SECONDS * 1000.0)
+			var other = m.seats[3 - seat]
+			if typeof(other) == TYPE_INT and other > 0:
+				_rpc_receive_error.rpc_id(other, "Opponent reconnected.")
+			_send_match_found(m, seat)
+			_broadcast_match(m)
+			print("GameServer: account %d rejoined match %d seat %d" % [account_id, int(m.id), seat])
+			return true
+	return false
 
 
 # =========================================================================
@@ -1264,19 +1442,22 @@ func _on_peer_disconnected(peer_id: int) -> void:
 			_account_peer.erase(acc)
 		_peer_account.erase(peer_id)
 
-	# Abort any match this peer was in. MVP: no forfeit rating penalty.
-	# TODO: award the remaining player a ranked win on opponent abandon.
+	# A peer in a live match gets a reconnect grace window rather than an
+	# instant abort — the match is frozen, and _check_disconnect_grace decides
+	# it against them only if they fail to return in time. A peer NOT in a
+	# match (menu/queue) needs nothing more than the cleanup above.
 	if _peer_match.has(peer_id):
 		var m: Dictionary = _matches.get(_peer_match[peer_id], {})
 		_peer_match.erase(peer_id)
 		if not m.is_empty() and not m.ended:
-			m.ended = true
-			for seat in [1, 2]:
-				var other = m.seats[seat]
-				if other != peer_id and typeof(other) == TYPE_INT and other > 0:
-					_peer_match.erase(other)
-					_rpc_receive_error.rpc_id(other, "Opponent disconnected. Match ended.")
-			_matches.erase(m.id)
+			var seat := _seat_of_peer(m, peer_id)
+			if seat == 1 or seat == 2:
+				m.seats[seat] = 0  # vacant; rebound by account id on reconnect
+				(m.disconnected as Dictionary)[seat] = Time.get_ticks_msec() + int(RECONNECT_GRACE_SECONDS * 1000.0)
+				var other = m.seats[3 - seat]
+				if typeof(other) == TYPE_INT and other > 0:
+					_rpc_receive_error.rpc_id(other, "Opponent disconnected — up to %d s to reconnect…" % int(RECONNECT_GRACE_SECONDS))
+				print("GameServer: match %d seat %d dropped — holding %ds for reconnect" % [int(m.id), seat, int(RECONNECT_GRACE_SECONDS)])
 
 
 func _require_auth(peer_id: int) -> bool:
@@ -1292,6 +1473,10 @@ func _bind_session(peer_id: int, account_id: int) -> String:
 		if _peer_token.has(old_peer):
 			_token_peer.erase(_peer_token[old_peer])
 			_peer_token.erase(old_peer)
+		# Tell the old client this is a deliberate sign-out (not a network drop)
+		# so it clears its saved token instead of trying to reconnect. Sent
+		# before disconnect_peer, which flushes queued reliable packets first.
+		_rpc_force_logout.rpc_id(old_peer, "This account signed in from another device.")
 		multiplayer.multiplayer_peer.disconnect_peer(old_peer)
 
 	var token := Crypto.new().generate_random_bytes(24).hex_encode()
@@ -1339,6 +1524,9 @@ func _rpc_auth_login(username: String, password: String) -> void:
 		"ok": true, "error": "", "token": token,
 		"account": _store.account_snapshot(res.account),
 	})
+	# Token lost but the account reconnected inside its grace window — put them
+	# back in the match they dropped from.
+	_try_rejoin_match(peer_id, int(res.account.id))
 
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -1359,6 +1547,8 @@ func _rpc_auth_resume(token: String) -> void:
 		"ok": true, "error": "", "token": new_token,
 		"account": _store.account_snapshot(account),
 	})
+	# Reconnect after a dropped connection — rebind to the held match, if any.
+	_try_rejoin_match(peer_id, account_id)
 
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -1962,6 +2152,13 @@ func _rpc_receive_error(message: String) -> void:
 	if is_server:
 		return
 	error_received.emit(message)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_force_logout(reason: String) -> void:
+	if is_server:
+		return
+	force_logout.emit(reason)
 
 
 ## Re-emit the cached assignment + last state. The game UI is loaded via a

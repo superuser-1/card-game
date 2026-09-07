@@ -84,7 +84,9 @@ func _show_tab(tab_index: int) -> void:
 		c.queue_free()
 
 	var type_name := types[tab_index]
-	var item_ids := ShopCatalog.ids_of_type(type_name)
+	# Only items actually for sale — achievement-reward cosmetics are equipped
+	# from the avatar picker once earned, not shown here.
+	var item_ids := ShopCatalog.buyable_ids_of_type(type_name)
 	if item_ids.is_empty():
 		var empty := Label.new()
 		empty.text = "Nothing here yet."

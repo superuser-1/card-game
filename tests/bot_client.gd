@@ -13,6 +13,7 @@ extends Node
 var _username := ""
 var _idle := false        # --idle: auth + queue, then never act (for timeout tests)
 var _forfeit := false     # --forfeit: give up after a couple of moves
+var _disconnect := false  # --disconnect: drop the socket after 3 moves (abandon-grace test)
 var _moves := 0
 
 
@@ -26,6 +27,7 @@ func _ready() -> void:
 	var uargs := OS.get_cmdline_user_args()
 	_idle = "--idle" in uargs
 	_forfeit = "--forfeit" in uargs
+	_disconnect = "--disconnect" in uargs
 	_authenticate.call_deferred()
 
 
@@ -81,6 +83,12 @@ func _on_state_updated(state: Dictionary) -> void:
 		print("[bot %s] -> forfeit_match() after %d moves" % [_username, _moves])
 		_forfeit = false
 		Net.forfeit_match()
+		return
+
+	if _disconnect and _moves >= 3:
+		print("[bot %s] -> dropping connection after %d moves (abandon test)" % [_username, _moves])
+		_disconnect = false
+		multiplayer.multiplayer_peer.close()
 		return
 
 	if state.phase == "awaiting_category" and state.active_player == Net.my_player_id:

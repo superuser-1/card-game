@@ -283,15 +283,16 @@ func _process(_delta: float) -> void:
 	if _latest_state.is_empty():
 		return
 	var on_clock: int = int(_latest_state.get("on_clock_player", 0))
-	if on_clock == 0:
+	# The round-resolution choreography locks the board so the next player
+	# can't act yet; the server freezes its own turn clock for the same window
+	# (net_node REVEAL_PAUSE_SECONDS / TIMEOUT_PAUSE_SECONDS). Hold the local
+	# mirror too — otherwise the displayed number runs ahead of the server and
+	# the next player looks like they lost their first several seconds to the
+	# animation. _on_state_updated re-syncs _client_turn_left from the server
+	# on the next broadcast, which re-aligns the two once play resumes.
+	if on_clock == 0 or _revealing:
 		_turn_timer_label.text = ""
 		return
-	# Keep ticking even while the round-reveal animation plays. The server's
-	# turn clock started at the broadcast that also carried this state, and it
-	# does NOT pause for the reveal — so if the client paused here too, its
-	# displayed number would drift behind the server by however long the
-	# animation ran and the server would "resolve early" from the player's
-	# point of view. Counting continuously keeps the two within ~1 tick.
 	if _client_turn_left > 0.0:
 		_client_turn_left = maxf(0.0, _client_turn_left - _delta)
 	var who: String = "Your" if on_clock == _my_player_id else "Opponent's"

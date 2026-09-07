@@ -36,11 +36,16 @@ func _ready() -> void:
 		await _ensure_connected()
 
 
-## Returns true once connected, false if the connection attempt failed.
+## Returns true once connected, false if the connection attempt failed. If the
+## peer is gone or dropped (e.g. we landed here from a mid-match connection
+## loss), rebuild it once via Net.reconnect() before giving up — that's what
+## lets the saved-token auto-resume below reconnect into a held match.
 func _ensure_connected() -> bool:
 	var mp := multiplayer.multiplayer_peer
-	if mp == null:
-		return false
+	if mp == null or mp.get_connection_status() == MultiplayerPeer.CONNECTION_DISCONNECTED:
+		if not Net.reconnect():
+			return false
+		mp = multiplayer.multiplayer_peer
 	if mp.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
 		return true
 	while mp.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTING:

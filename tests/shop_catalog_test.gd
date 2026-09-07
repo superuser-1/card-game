@@ -14,6 +14,7 @@ func _initialize() -> void:
 	test_is_premium()
 	test_is_buyable()
 	test_ids_of_type()
+	test_buyable_ids_of_type()
 
 	# Print final result
 	if _fail_count == 0:
@@ -120,3 +121,20 @@ func test_ids_of_type() -> void:
 
 	var unknown := ShopCatalog.ids_of_type("unknown_type")
 	assert_equal(unknown.size(), 0, "unknown type returns empty array")
+
+
+func test_buyable_ids_of_type() -> void:
+	print("\n=== buyable_ids_of_type ===")
+	var avatars := ShopCatalog.buyable_ids_of_type("avatar")
+	assert_true("aphrodite" in avatars, "buyable avatars include aphrodite")
+	assert_true(not ("avatar_champion" in avatars), "buyable avatars exclude achievement reward avatar_champion")
+	assert_true(not ("30_ranked_losses_avatar" in avatars), "buyable avatars exclude ranked-loss reward avatars")
+
+	var frames := ShopCatalog.buyable_ids_of_type("frame")
+	assert_true("frame_neon" in frames, "buyable frames include frame_neon")
+	assert_true(not ("frame_champion" in frames), "buyable frames exclude achievement reward frame_champion")
+
+	# Every id returned must itself be buyable.
+	for t in ShopCatalog.TYPES:
+		for id in ShopCatalog.buyable_ids_of_type(t):
+			assert_true(ShopCatalog.is_buyable(id), "%s is buyable" % id)

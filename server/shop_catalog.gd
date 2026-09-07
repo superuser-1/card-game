@@ -61,3 +61,10 @@ static func ids_of_type(t: String) -> Array:
 		if str(item.type) == t:
 			ids.append(str(item.id))
 	return ids
+
+
+## Ids of a type that are actually for sale. Achievement-only rewards are
+## granted by unlocks and equipped from the avatar picker once owned — they are
+## never listed in the shop.
+static func buyable_ids_of_type(t: String) -> Array:
+	return ids_of_type(t).filter(func(id): return is_buyable(id))
