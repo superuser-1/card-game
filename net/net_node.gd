@@ -1448,8 +1448,14 @@ func _rpc_request_my_tournament() -> void:
 		return
 	var acc_id := int(_peer_account[peer_id])
 	var found := []
+	var now := int(Time.get_unix_time_from_system())
 	for t in _store.all_tournaments():
-		if str(t.status) in ["completed", "cancelled"]:
+		var st := str(t.status)
+		if st == "completed":
+			continue
+		# A cancelled tournament lingers on the menu as a "didn't fire" notice
+		# for 30 minutes, then drops off.
+		if st == "cancelled" and now - int(t.get("cancelled_ts", 0)) >= 1800:
 			continue
 		for p in (t.participants as Array):
 			if int(p.account_id) == acc_id:

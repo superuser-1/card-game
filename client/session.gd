@@ -89,6 +89,11 @@ var active_tournament_id: int = 0
 ## check-in (see _tournament_has_my_stake).
 var my_tournaments: Dictionary = {}
 
+## Tournament ids whose menu status card the player has explicitly dismissed
+## (used as a set). Currently only meaningful for cancelled tournaments — a
+## cancelled card otherwise lingers 30 min on its own.
+var _dismissed_tournament_cards: Dictionary = {}
+
 const _DEFAULT_SETTINGS := {
 	"master_volume": 0.8,
 	"sfx_volume": 0.8,
@@ -264,12 +269,34 @@ func _on_my_tournament_status(tournaments: Array) -> void:
 	active_tournament_id = 0
 	var my_id := int(account.get("id", 0))
 	for t in tournaments:
+		if not _tournament_card_still_relevant(t):
+			continue   # dismissed, or a stale cancelled notice past its 30 min
 		my_tournaments[int(t.get("id", 0))] = t
 		if _tournament_is_my_live_run(t):
 			for p in (t.get("participants", []) as Array):
 				if int(p.get("account_id", -1)) == my_id and bool(p.get("checked_in", false)):
 					active_tournament_id = int(t.get("id", 0))
 					break
+
+
+## Player closed a tournament's menu status card (only offered for cancelled
+## ones). Remember it so a fresh my_tournament_status fetch doesn't bring it
+## straight back.
+func dismiss_tournament_card(tournament_id: int) -> void:
+	_dismissed_tournament_cards[tournament_id] = true
+	my_tournaments.erase(tournament_id)
+
+
+## Drop any card entries that are no longer worth showing (dismissed, or a
+## cancelled notice older than 30 min). Called by the menu on a timer so a
+## lingering "didn't fire" card clears itself even with no new signal.
+func prune_tournament_cards() -> bool:
+	var changed := false
+	for tid in my_tournaments.keys():
+		if not _tournament_card_still_relevant(my_tournaments[tid]):
+			my_tournaments.erase(tid)
+			changed = true
+	return changed
 
 
 func _on_tournament_joined(result: Dictionary) -> void:
@@ -308,16 +335,26 @@ func _on_tournament_updated(tournament: Dictionary) -> void:
 ## Whether to keep showing a status card for this tournament at all — an
 ## eliminated player still sees their card (with an "Eliminated" notice, see
 ## main_menu.gd) until the tournament itself wraps up, so this is deliberately
-## more permissive than _tournament_is_my_live_run below.
+## more permissive than _tournament_is_my_live_run below. A cancelled
+## tournament lingers as a "didn't fire" notice for 30 min (unless dismissed).
 func _tournament_card_still_relevant(tournament: Dictionary) -> bool:
+	var tid := int(tournament.get("id", 0))
+	if _dismissed_tournament_cards.has(tid):
+		return false
 	var status := str(tournament.get("status", ""))
-	if status == "completed" or status == "cancelled":
+	if status == "completed":
 		return false
 	var my_id := int(account.get("id", 0))
+	var mine := false
 	for p in (tournament.get("participants", []) as Array):
 		if int(p.get("account_id", -1)) == my_id:
-			return true
-	return false
+			mine = true
+			break
+	if not mine:
+		return false
+	if status == "cancelled":
+		return Time.get_unix_time_from_system() - int(tournament.get("cancelled_ts", 0)) < 1800
+	return true
 
 
 ## False once this account no longer has a LIVE, playable run in this

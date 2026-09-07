@@ -754,6 +754,7 @@ func test_tournament_cancel() -> void:
 	assert_equal(res.ok, true, "cancel_tournament returns ok")
 	assert_equal(s1.get_tournament(tid).status, "cancelled", "status is cancelled in memory")
 	assert_equal(s1.get_tournament(tid).cancel_reason, "insufficient_players", "cancel_reason recorded")
+	assert_true(int(s1.get_tournament(tid).get("cancelled_ts", 0)) > 0, "cancelled_ts stamped")
 
 	# Re-cancelling a terminal tournament is a harmless no-op.
 	assert_equal(s1.cancel_tournament(tid).ok, true, "re-cancel is a no-op ok")

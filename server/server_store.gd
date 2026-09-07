@@ -1002,6 +1002,7 @@ func cancel_tournament(tournament_id: int, reason := "insufficient_players") -> 
 		return {"ok": true, "error": "", "tournament": t}
 	t.status = "cancelled"
 	t.cancel_reason = reason
+	t.cancelled_ts = int(Time.get_unix_time_from_system())
 	_save_tournaments()
 	return {"ok": true, "error": "", "tournament": t}
 

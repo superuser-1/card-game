@@ -438,6 +438,9 @@ const TOURNAMENT_CARD_WIDTH := 176.0
 ## Ticked once a second from _process — see _update_tournament_countdowns.
 var _tournament_countdowns: Array = []
 var _countdown_accum := 0.0
+## Soonest unix ts at which a shown "Cancelled" card should self-remove; 0 if
+## none. Checked in _process so the card clears without needing a fresh signal.
+var _cancelled_card_expiry := 0
 
 
 func _process(delta: float) -> void:
@@ -446,6 +449,9 @@ func _process(delta: float) -> void:
 		return
 	_countdown_accum = 0.0
 	_update_tournament_countdowns()
+	if _cancelled_card_expiry > 0 and Time.get_unix_time_from_system() >= _cancelled_card_expiry:
+		_cancelled_card_expiry = 0
+		_render_tournament_status()
 
 
 func _update_tournament_countdowns() -> void:
@@ -511,14 +517,21 @@ func _on_tournament_card_input(event: InputEvent, tournament_id: int) -> void:
 ## few can show side by side (name, status line, participant count, and while
 ## check-in is open and not yet done, a one-click Check In button).
 func _render_tournament_status() -> void:
+	Session.prune_tournament_cards()
+
 	var container := %TournamentStatusContainer
 	for child in container.get_children():
 		child.queue_free()
 	_tournament_countdowns.clear()
+	_cancelled_card_expiry = 0
 
 	var my_id := int(Session.account.get("id", 0))
 	for t in (Session.my_tournaments as Dictionary).values():
 		container.add_child(_make_tournament_card(t, my_id))
+		if str(t.get("status", "")) == "cancelled":
+			var exp := int(t.get("cancelled_ts", 0)) + 1800
+			if _cancelled_card_expiry == 0 or exp < _cancelled_card_expiry:
+				_cancelled_card_expiry = exp
 	_update_tournament_countdowns()
 
 
@@ -562,6 +575,7 @@ func _make_tournament_card(t: Dictionary, my_id: int) -> PanelContainer:
 	const GREEN := Color(0.4, 0.9, 0.45)
 	const YELLOW := Color(0.95, 0.85, 0.35)
 	const NEUTRAL := Color(0.85, 0.85, 0.85)
+	const RED := Color(0.95, 0.4, 0.4)
 
 	var status_label := Label.new()
 	status_label.add_theme_font_size_override("font_size", 12)
@@ -598,6 +612,12 @@ func _make_tournament_card(t: Dictionary, my_id: int) -> PanelContainer:
 			status_label.text = "Round %d in progress" % int(t.get("current_round", 0))
 			status_label.add_theme_color_override("font_color", NEUTRAL)
 			show_time_label = false
+		"cancelled":
+			var reason := str(t.get("cancel_reason", ""))
+			status_label.text = "Cancelled — too few players" if reason == "insufficient_players" else "Cancelled"
+			status_label.add_theme_color_override("font_color", RED)
+			var mins_left: int = maxi(0, (int(t.get("cancelled_ts", 0)) + 1800 - int(Time.get_unix_time_from_system())) / 60)
+			time_label.text = "Auto-hides in ~%dm" % mins_left
 		_:
 			status_label.text = status.capitalize()
 			status_label.add_theme_color_override("font_color", NEUTRAL)
@@ -627,6 +647,15 @@ func _make_tournament_card(t: Dictionary, my_id: int) -> PanelContainer:
 		cancel_btn.add_theme_font_size_override("font_size", 12)
 		cancel_btn.pressed.connect(_on_tournament_cancel_pressed.bind(tid, cancel_btn))
 		vbox.add_child(cancel_btn)
+
+	if status == "cancelled":
+		var dismiss_btn := Button.new()
+		dismiss_btn.text = "Dismiss"
+		dismiss_btn.add_theme_font_size_override("font_size", 12)
+		dismiss_btn.pressed.connect(func():
+			Session.dismiss_tournament_card(tid)
+			_render_tournament_status())
+		vbox.add_child(dismiss_btn)
 
 	if eliminated_round != 0:
 		var elim_label := Label.new()
