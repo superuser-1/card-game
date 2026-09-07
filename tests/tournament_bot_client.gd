@@ -27,6 +27,11 @@ var _checked_in := false
 var _finished := false
 var _in_match := false
 var _last_status := ""
+var _points_at_auth := 0
+
+# seq 0 funds a prize pool so completion exercises the payout path.
+const PRIZE_1 := 300
+const PRIZE_2 := 100
 
 
 func _ready() -> void:
@@ -44,6 +49,7 @@ func _ready() -> void:
 	Net.tournament_joined.connect(_on_joined)
 	Net.tournament_checked_in.connect(_on_checked_in)
 	Net.tournament_updated.connect(_on_updated)
+	Net.tournament_prize_awarded.connect(_on_prize)
 	Net.match_found.connect(_on_match_found)
 	Net.match_ended.connect(_on_match_ended)
 	Net.state_updated.connect(_on_state)
@@ -83,12 +89,17 @@ func _on_auth(result: Dictionary) -> void:
 		_fail("auth failed: %s" % result.error)
 		return
 	_my_id = int(result.account.id)
-	_log("authenticated (account %d)" % _my_id)
+	_points_at_auth = int(result.account.get("points", 0))
+	_log("authenticated (account %d, points %d)" % [_my_id, _points_at_auth])
 	if _seq == 0:
+		# Fund the wallet (dev-only RPC), then create with a prize pool so the
+		# completion path runs pay_tournament_prizes for real.
+		Net.dev_grant_points(PRIZE_1 * 4 + PRIZE_2 * 4)
+		await get_tree().create_timer(1.5).timeout
 		var now := int(Time.get_unix_time_from_system())
-		# Windows generous enough to survive the 5s tournament tick: sign-up
-		# closes ~15s out, check-in ~15s, start ~35s.
-		Net.create_tournament("%s cup" % _tag, CAP, now + 15, now + 15, now + 35, false, 1)
+		Net.create_tournament("%s cup" % _tag, CAP, now + 15, now + 15, now + 35, false, 1,
+			PackedStringArray(), "open", "", 0, false, 0,
+			{"1": {"points": PRIZE_1, "items": []}, "2": {"points": PRIZE_2, "items": []}})
 	else:
 		Net.list_tournaments()
 
@@ -169,6 +180,14 @@ func _on_updated(t: Dictionary) -> void:
 		if int(p.get("account_id", -1)) == _my_id and int(p.get("eliminated_round", 0)) != 0:
 			_ok("eliminated in round %d" % int(p.eliminated_round))
 			return
+
+
+func _on_prize(info: Dictionary) -> void:
+	if int(info.get("tournament_id", 0)) != _tid:
+		return
+	_log("PRIZE won bucket=%s points=%d wallet_now=%d" % [
+		str(info.get("bucket", "?")), int(info.get("points", 0)),
+		int((info.get("account", {}) as Dictionary).get("points", -1))])
 
 
 func _on_match_found(info: Dictionary) -> void:

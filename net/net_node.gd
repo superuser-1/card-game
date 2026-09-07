@@ -316,6 +316,12 @@ func shop_purchase(item_id: String) -> void:
 	_rpc_shop_purchase.rpc_id(1, item_id)
 
 
+## DEV-ONLY: top up the caller's points wallet. Silently ignored unless the
+## server was started with --dev-tournaments. Reply on `account_updated`.
+func dev_grant_points(amount: int) -> void:
+	_rpc_dev_grant_points.rpc_id(1, amount)
+
+
 func auth_login(username: String, password: String) -> void:
 	_rpc_auth_login.rpc_id(1, username, password)
 
@@ -1777,6 +1783,20 @@ func _rpc_shop_purchase(item_id: String) -> void:
 		_rpc_receive_error.rpc_id(peer_id, "Purchase failed: %s" % res.get("error", "unknown error"))
 		return
 	_rpc_shop_purchase_result.rpc_id(peer_id, _store.account_snapshot(res.account))
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_dev_grant_points(amount: int) -> void:
+	if not is_server or is_solo or not _dev_tournaments:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not _require_auth(peer_id):
+		return
+	var account := _store.get_account(int(_peer_account[peer_id]))
+	if account.is_empty() or amount <= 0:
+		return
+	_store.grant_reward(account, amount, [])
+	_rpc_account_snapshot.rpc_id(peer_id, _store.account_snapshot(account))
 
 
 # =========================================================================

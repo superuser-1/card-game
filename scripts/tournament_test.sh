@@ -66,7 +66,9 @@ done
 
 echo
 echo "----- seq 0 log (relevant) -----"
-grep -E "status ->|match_found|match ended|TOURNAMENT TEST|PASS|FAIL" "$LOGDIR/c0.log" | sed 's/^/  /'
+grep -E "status ->|match_found|match ended|TOURNAMENT TEST|PRIZE|PASS|FAIL" "$LOGDIR/c0.log" | sed 's/^/  /'
+echo "----- prize lines (all clients) -----"
+grep -h "PRIZE won" "$LOGDIR"/c*.log | sed 's/^/  /'
 echo "----- server log (tournament) -----"
 grep -iE "tournament|cancel" "$LOGDIR/server.log" | sed 's/^/  /' | tail -20
 echo
@@ -78,6 +80,13 @@ if ! grep -qE "TOURNAMENT TEST: COMPLETE winner=[1-9][0-9]*" "$LOGDIR/c0.log"; t
 fi
 if grep -qi "was cancelled" "$LOGDIR"/c*.log; then
 	echo "FAIL: tournament cancelled"; PASS=0
+fi
+# Prize payout: the champion should have logged a bucket-1 win worth 300.
+if ! grep -qh "PRIZE won bucket=1 points=300" "$LOGDIR"/c*.log; then
+	echo "FAIL: no 1st-place prize payout observed"; PASS=0
+fi
+if ! grep -qh "PRIZE won bucket=2 points=100" "$LOGDIR"/c*.log; then
+	echo "FAIL: no 2nd-place prize payout observed"; PASS=0
 fi
 
 if [ "$PASS" -eq 1 ]; then
