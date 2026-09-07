@@ -38,6 +38,7 @@ func _initialize() -> void:
 	test_tournament_sign_up_password()
 	test_tournament_public_view()
 	test_tournament_withdraw_private()
+	test_tournament_late_check_in()
 	test_shop_purchase_happy_path()
 	test_shop_purchase_insufficient()
 	test_shop_purchase_already_owned()
@@ -857,6 +858,38 @@ func test_tournament_withdraw_private() -> void:
 	s.sign_up(t.id, pid, "pw")
 	s.get_tournament(t.id).status = "check_in"
 	assert_equal(s.withdraw(t.id, pid).error, "too_late", "withdraw blocked once check-in opens")
+
+
+func test_tournament_late_check_in() -> void:
+	print("\n=== Tournament Late Check-In ===")
+	var s = fresh()
+	s.create_account("Admin", "pass1")
+	s.create_account("Never", "pass2")   # never signs up
+	var never_id := int(s._accounts[1].id)
+	var now := int(Time.get_unix_time_from_system())
+
+	# late_check_in OFF: a stranger can't check in.
+	var toff = s.create_tournament(1, "NoLate", 32, now + 60, now + 60, now + 120, false, false, 1, [], "open", "", 0, false).tournament
+	s.get_tournament(toff.id).status = "check_in"
+	assert_equal(s.check_in(toff.id, never_id).error, "not_signed_up", "late check-in off -> stranger rejected")
+
+	# late_check_in ON (even a PRIVATE tournament — no password on late check-in).
+	var ton = s.create_tournament(1, "Late", 32, now + 60, now + 60, now + 120, false, false, 1, [], "private", "pw", now + 60, true).tournament
+	s.get_tournament(ton.id).status = "check_in"
+	var res := s.check_in(ton.id, never_id)
+	assert_equal(res.ok, true, "late check-in on -> stranger admitted with no password")
+	var parts: Array = s.get_tournament(ton.id).participants
+	assert_equal(parts.size(), 1, "late check-in created a participant record")
+	assert_equal(bool(parts[0].checked_in), true, "late check-in participant is already checked_in")
+
+	# Second late check-in for the same account is 'already_checked_in'.
+	assert_equal(s.check_in(ton.id, never_id).error, "already_checked_in", "repeat late check-in rejected")
+
+	# Cap enforced: shrink the cap to the current count and try another stranger.
+	s.create_account("Another", "pass3")
+	var another_id := int(s._accounts[2].id)
+	s.get_tournament(ton.id).bracket_size = 1
+	assert_equal(s.check_in(ton.id, another_id).error, "tournament_full", "late check-in blocked at the sign-up cap")
 
 
 func test_shop_purchase_happy_path() -> void:

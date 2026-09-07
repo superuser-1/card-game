@@ -909,23 +909,25 @@ func sign_up(tournament_id: int, account_id: int, password := "") -> Dictionary:
 	var account := get_account(account_id)
 	if account.is_empty():
 		return {"ok": false, "error": "no_such_user", "tournament": {}}
-	participants.append({
+	participants.append(_new_participant(account, account_id, false))
+	_save_tournaments()
+	return {"ok": true, "error": "", "tournament": t}
+
+
+## One participant record. Portrait/elo are snapshotted here (same convention
+## as display_name) so the bracket card renders without a live account lookup.
+func _new_participant(account: Dictionary, account_id: int, checked_in: bool) -> Dictionary:
+	return {
 		"account_id": account_id,
 		"display_name": str(account.get("display_name", "Player")),
-		# Snapshotted at signup time (same convention as display_name) so the
-		# bracket card shows what this account looked like when it joined,
-		# not a live-updating portrait — consistent, simpler, and avoids
-		# needing a lookup back to ServerStore just to render a bracket.
 		"avatar": str(account.get("avatar", "")),
 		"frame": str(account.get("frame", "")),
 		"background": str(account.get("background", "")),
 		"elo": int(account.get("elo", START_ELO)),
 		"signed_up_ts": int(Time.get_unix_time_from_system()),
-		"checked_in": false,
+		"checked_in": checked_in,
 		"eliminated_round": 0,
-	})
-	_save_tournaments()
-	return {"ok": true, "error": "", "tournament": t}
+	}
 
 
 func check_in(tournament_id: int, account_id: int) -> Dictionary:
@@ -942,7 +944,20 @@ func check_in(tournament_id: int, account_id: int) -> Dictionary:
 			p.checked_in = true
 			_save_tournaments()
 			return {"ok": true, "error": "", "tournament": t}
-	return {"ok": false, "error": "not_signed_up", "tournament": {}}
+
+	# Not a pre-registered participant. With late check-in enabled this is a
+	# one-step sign-up-and-check-in (no password, any availability mode); the
+	# sign-up cap still applies. Otherwise it's just "you never signed up".
+	if not bool(t.get("late_check_in", false)):
+		return {"ok": false, "error": "not_signed_up", "tournament": {}}
+	if participants.size() >= int(t.bracket_size):
+		return {"ok": false, "error": "tournament_full", "tournament": {}}
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "tournament": {}}
+	participants.append(_new_participant(account, account_id, true))
+	_save_tournaments()
+	return {"ok": true, "error": "", "tournament": t}
 
 
 ## Withdraws a signed-up participant. Allowed only while status is "signup" —
