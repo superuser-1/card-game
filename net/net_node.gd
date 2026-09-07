@@ -1007,8 +1007,24 @@ func _tick_tournaments() -> void:
 
 
 func _start_tournament(t: Dictionary) -> void:
+	var checked_in_ids := []
+	for p in (t.participants as Array):
+		if bool(p.get("checked_in", false)):
+			checked_in_ids.append(int(p.account_id))
+
+	# Real tournaments need a real crowd — below the floor they cancel rather
+	# than run (tournament matches feed quests/achievements). Dev-bot
+	# tournaments skip the check and still bot-fill, so testing stays cheap.
+	var dev_bot := bool(t.get("is_dev_bot_tournament", false))
+	if not dev_bot and checked_in_ids.size() < TournamentSystem.MIN_TOURNAMENT_PLAYERS:
+		_cancel_tournament_insufficient(t)
+		return
+
 	t.rng_seed = Time.get_ticks_usec()
-	t.rounds = [TournamentSystem.generate_bracket(t.participants, int(t.bracket_size), int(t.rng_seed))]
+	if dev_bot:
+		t.rounds = [TournamentSystem.generate_bracket(t.participants, int(t.bracket_size), int(t.rng_seed))]
+	else:
+		t.rounds = [TournamentSystem.generate_bracket_shrink(checked_in_ids, int(t.rng_seed))]
 	t.status = "in_progress"
 	t.current_round = 1
 	# Credit "tournament played" to everyone who checked in (a no-show who
@@ -1017,6 +1033,17 @@ func _start_tournament(t: Dictionary) -> void:
 		if bool(p.get("checked_in", false)):
 			_apply_tournament_achievement(int(p.account_id), "tournaments_played")
 	_dispatch_round(t, 0)
+	_store.persist_tournament(t)
+	_broadcast_tournament(t)
+
+
+## Too few checked-in players by start time: mark the tournament cancelled,
+## free every participant's check-in gameplay lock, and push the terminal
+## state to clients (which already render "cancelled").
+func _cancel_tournament_insufficient(t: Dictionary) -> void:
+	_store.cancel_tournament(int(t.id))
+	for acc_id in _tournament_participant_account_ids(t):
+		_release_tournament_lock(acc_id)
 	_store.persist_tournament(t)
 	_broadcast_tournament(t)
 
@@ -1041,6 +1068,8 @@ func _dispatch_round(t: Dictionary, round_idx: int) -> bool:
 	for slot in round:
 		if bool(slot.resolved):
 			continue
+		if bool(slot.get("is_bye", false)):
+			continue   # one-player slot, already resolved at creation
 		if int(slot.match_id) != 0 and _matches.has(int(slot.match_id)):
 			continue
 		slot.match_id = 0
@@ -1067,7 +1096,10 @@ func _maybe_advance_round(t: Dictionary) -> void:
 	if TournamentSystem.is_tournament_complete(t.rounds):
 		_complete_tournament(t)
 		return
-	var next_round := TournamentSystem.advance_round(round)
+	# Pass the seed + round index so a real (bot-free) bracket re-shuffles the
+	# winners each round (fresh random bye). A dev-bot bracket has a power-of-two
+	# winner count every round, so the shuffle can't change its shape.
+	var next_round := TournamentSystem.advance_round(round, int(t.get("rng_seed", 0)), (t.rounds as Array).size())
 	(t.rounds as Array).append(next_round)
 	t.current_round = int(t.current_round) + 1
 	_dispatch_round(t, (t.rounds as Array).size() - 1)

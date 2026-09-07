@@ -33,6 +33,7 @@ func _initialize() -> void:
 	test_tournament_sign_up()
 	test_tournament_check_in()
 	test_tournament_persistence()
+	test_tournament_cancel()
 	test_shop_purchase_happy_path()
 	test_shop_purchase_insufficient()
 	test_shop_purchase_already_owned()
@@ -733,6 +734,31 @@ func test_tournament_persistence() -> void:
 	# Verify both tournaments visible in s2
 	var all_t_s2 = s2_persistent.all_tournaments()
 	assert_equal(all_t_s2.size(), 2, "s2 sees both tournaments after fresh open")
+
+
+func test_tournament_cancel() -> void:
+	print("\n=== Tournament Cancel ===")
+	var dir := "%scancel_test/" % _dir
+	var s1 := ServerStore.new()
+	s1.open(dir)
+	s1.create_account("Alice", "pass1")
+	var now := int(Time.get_unix_time_from_system())
+	var tid: int = s1.create_tournament(1, "Doomed", 32, now, now + 3600, now + 7200, false).tournament.id
+
+	var res := s1.cancel_tournament(tid)
+	assert_equal(res.ok, true, "cancel_tournament returns ok")
+	assert_equal(s1.get_tournament(tid).status, "cancelled", "status is cancelled in memory")
+	assert_equal(s1.get_tournament(tid).cancel_reason, "insufficient_players", "cancel_reason recorded")
+
+	# Re-cancelling a terminal tournament is a harmless no-op.
+	assert_equal(s1.cancel_tournament(tid).ok, true, "re-cancel is a no-op ok")
+
+	# Persisted across a fresh open of the same dir.
+	var s2 := ServerStore.new()
+	s2.open(dir)
+	assert_equal(s2.get_tournament(tid).status, "cancelled", "cancelled status persisted")
+
+	assert_equal(s1.cancel_tournament(9999).ok, false, "cancel of unknown tournament fails")
 
 
 func test_shop_purchase_happy_path() -> void:

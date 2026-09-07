@@ -891,6 +891,21 @@ func withdraw(tournament_id: int, account_id: int) -> Dictionary:
 	return {"ok": false, "error": "not_signed_up", "tournament": {}}
 
 
+## Marks a tournament cancelled (e.g. too few players checked in by start time).
+## Lock release / client broadcast is the caller's job (Net). Idempotent-ish:
+## re-cancelling an already-terminal tournament is a no-op.
+func cancel_tournament(tournament_id: int, reason := "insufficient_players") -> Dictionary:
+	var t := get_tournament(tournament_id)
+	if t.is_empty():
+		return {"ok": false, "error": "no_such_tournament", "tournament": {}}
+	if str(t.status) in ["completed", "cancelled"]:
+		return {"ok": true, "error": "", "tournament": t}
+	t.status = "cancelled"
+	t.cancel_reason = reason
+	_save_tournaments()
+	return {"ok": true, "error": "", "tournament": t}
+
+
 ## Tournament records are references into `_tournaments` (GDScript Dictionaries
 ## are by-reference), so in-place mutation elsewhere (e.g. Net's bracket
 ## advancement) just needs this to flush to disk.
