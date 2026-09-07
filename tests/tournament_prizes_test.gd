@@ -16,6 +16,7 @@ func _initialize() -> void:
 	test_sanitize_prize_gap()
 	test_sanitize_bad_bucket()
 	test_sanitize_bad_item()
+	test_sanitize_too_many_items()
 	test_sanitize_dedupes_items()
 	test_cost_of()
 	test_bucket_for_placement()
@@ -97,6 +98,19 @@ func test_sanitize_bad_item() -> void:
 	eq(r.error, "prize_bad_item", "non-buyable item rejected")
 	var r2 = TournamentPrizes.sanitize({"1": {"points": 0, "items": ["nope"]}}, _price_of)
 	eq(r2.error, "prize_bad_item", "unknown item rejected")
+
+
+func test_sanitize_too_many_items() -> void:
+	print("\n=== sanitize: prize_too_many_items ===")
+	var tbl := {"a": 5, "b": 5, "c": 5, "d": 5}
+	var _pf := func(id): return int(tbl.get(id, -1))
+	var r = TournamentPrizes.sanitize({"1": {"points": 0, "items": ["a", "b", "c", "d"]}}, _pf)
+	eq(r.error, "prize_too_many_items", "more than MAX_ITEMS_PER_BUCKET rejected")
+	var r2 = TournamentPrizes.sanitize({"1": {"points": 0, "items": ["a", "b", "c"]}}, _pf)
+	ok(r2.ok, "exactly MAX_ITEMS_PER_BUCKET is fine")
+	# dupes don't count toward the cap
+	var r3 = TournamentPrizes.sanitize({"1": {"points": 0, "items": ["a", "a", "b", "b", "c", "c"]}}, _pf)
+	ok(r3.ok and (r3.prizes["1"].items as Array).size() == 3, "duplicates collapse under the cap")
 
 
 func test_sanitize_dedupes_items() -> void:

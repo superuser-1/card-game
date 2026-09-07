@@ -252,6 +252,7 @@ func _on_tournament_created(result: Dictionary) -> void:
 			"prize_gap": "Set a prize for every earlier placement first.",
 			"prize_bad_item": "One of the prize items isn't a buyable shop item.",
 			"prize_bad_bucket": "Unknown prize placement.",
+			"prize_too_many_items": "Up to %d shop items per placement." % TournamentPrizes.MAX_ITEMS_PER_BUCKET,
 		}
 		_toast(friendly.get(error, "Error: %s" % error))
 

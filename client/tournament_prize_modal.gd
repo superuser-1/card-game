@@ -26,7 +26,7 @@ func setup(bucket: String, spec: Dictionary) -> void:
 
 		var cb := CheckBox.new()
 		cb.button_pressed = id in have
-		cb.toggled.connect(func(_p): _update_cost())
+		cb.toggled.connect(func(_p): _refresh())
 		row.add_child(cb)
 
 		row.add_child(PrizeView.make_icon(id, 36.0))
@@ -39,12 +39,12 @@ func setup(bucket: String, spec: Dictionary) -> void:
 
 		%ItemsBox.add_child(row)
 		_checks[id] = cb
-	_update_cost()
+	_refresh()
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	%PointsSpin.value_changed.connect(func(_v): _update_cost())
+	%PointsSpin.value_changed.connect(func(_v): _refresh())
 	%OkButton.pressed.connect(_on_ok)
 	%CancelButton.pressed.connect(queue_free)
 
@@ -57,14 +57,21 @@ func _current_spec() -> Dictionary:
 	return {"points": int(%PointsSpin.value), "items": items}
 
 
-func _update_cost() -> void:
+func _refresh() -> void:
 	var spec := _current_spec()
+
+	# Cap at MAX_ITEMS_PER_BUCKET — once the limit is hit, lock the unchecked
+	# boxes so no more can be added.
+	var at_limit: bool = (spec.items as Array).size() >= TournamentPrizes.MAX_ITEMS_PER_BUCKET
+	for id in _checks:
+		_checks[id].disabled = at_limit and not _checks[id].button_pressed
+
 	var slots := int(TournamentPrizes.SLOTS.get(_bucket, 1))
 	var per := int(spec.points)
 	for id in spec.items:
 		per += ShopCatalog.price_for(id)
-	%CostLabel.text = "This placement: ◈%d  ·  ×%d slot%s  =  ◈%d" % [
-		per, slots, "" if slots == 1 else "s", per * slots
+	%CostLabel.text = "This placement: ◈%d  ·  ×%d slot%s  =  ◈%d   (up to %d items)" % [
+		per, slots, "" if slots == 1 else "s", per * slots, TournamentPrizes.MAX_ITEMS_PER_BUCKET
 	]
 
 

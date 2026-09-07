@@ -17,6 +17,10 @@ const BUCKETS := ["1", "2", "3", "4_8", "9_16"]
 ## total payout.
 const SLOTS := {"1": 1, "2": 1, "3": 2, "4_8": 4, "9_16": 8}
 
+## Cap on shop items per bucket (plus optional points) — keeps the prize card
+## tiles a bounded width.
+const MAX_ITEMS_PER_BUCKET := 3
+
 ## Human labels for UI. The bracket has no bronze match, so the two semifinal
 ## losers share 3rd/4th; keys stay short ("3", "4_8") but the LABELS reflect the
 ## real placement ranges (2 / 4 / 8 players).
@@ -56,6 +60,8 @@ static func sanitize(raw, price_of: Callable) -> Dictionary:
 				return {"ok": false, "error": "prize_bad_item", "prizes": {}, "cost": 0}
 			seen[id] = true
 			items.append(id)
+		if items.size() > MAX_ITEMS_PER_BUCKET:
+			return {"ok": false, "error": "prize_too_many_items", "prizes": {}, "cost": 0}
 		if points == 0 and items.is_empty():
 			continue   # bucket not actually "set"
 		clean[bucket] = {"points": points, "items": items}

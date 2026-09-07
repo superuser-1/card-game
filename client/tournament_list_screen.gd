@@ -13,7 +13,7 @@ var _refresh_accum := 0.0
 
 ## Fixed card width so rows read consistently and several can sit side by side
 ## on wide screens (the rows box is an HFlowContainer).
-const CARD_W := 480
+const CARD_W := 500
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -239,7 +239,7 @@ func _add_tournament_row(tournament: Dictionary, target_box: Container, is_finis
 
 	# --- right column: prizes + action ---
 	var right := VBoxContainer.new()
-	right.custom_minimum_size = Vector2(172, 0)
+	right.custom_minimum_size = Vector2(210, 0)
 	right.add_theme_constant_override("separation", 8)
 	right.add_child(PrizeView.column(prizes, 22.0))
 	var spacer := Control.new()
