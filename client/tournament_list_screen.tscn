@@ -76,22 +76,26 @@ text = "Private Tournaments"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="RowsBox" type="VBoxContainer" parent="MarginContainer/Root/ScrollContainer"]
+[node name="RowsBox" type="HFlowContainer" parent="MarginContainer/Root/ScrollContainer"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-separation = 12
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
 
 [node name="PrivateScrollContainer" type="ScrollContainer" parent="MarginContainer/Root"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="PrivateRowsBox" type="VBoxContainer" parent="MarginContainer/Root/PrivateScrollContainer"]
+[node name="PrivateRowsBox" type="HFlowContainer" parent="MarginContainer/Root/PrivateScrollContainer"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-separation = 12
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
 
 [node name="FinishedToggleButton" type="Button" parent="MarginContainer/Root"]
 unique_name_in_owner = true
@@ -104,9 +108,11 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 custom_minimum_size = Vector2(0, 200)
 
-[node name="FinishedRowsBox" type="VBoxContainer" parent="MarginContainer/Root/FinishedScrollContainer"]
+[node name="FinishedRowsBox" type="HFlowContainer" parent="MarginContainer/Root/FinishedScrollContainer"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-separation = 12
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12

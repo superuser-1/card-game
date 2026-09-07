@@ -934,6 +934,7 @@ func list_tournaments(status_filter := "") -> Array:
 			# True when this tournament runs on a player-curated cube rather than
 			# the full card set (see net_node cube handling).
 			"has_cube": (t.get("cube_ids", []) as Array).size() > 0,
+			"prizes": t.get("prizes", {}),
 			"availability": str(t.get("availability", "open")),
 			"late_check_in": bool(t.get("late_check_in", false)),
 			"late_check_in_open_ts": int(t.get("late_check_in_open_ts", 0)),

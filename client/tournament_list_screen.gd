@@ -11,6 +11,10 @@ var _countdowns: Array = []   # {label, target_ts, prefix}
 var _tick_accum := 0.0
 var _refresh_accum := 0.0
 
+## Fixed card width so rows read consistently and several can sit side by side
+## on wide screens (the rows box is an HFlowContainer).
+const CARD_W := 480
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
@@ -171,7 +175,7 @@ func _info_label(text: String, col: Color, sz := 12) -> Label:
 	return l
 
 
-func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_finished: bool, is_private: bool) -> void:
+func _add_tournament_row(tournament: Dictionary, target_box: Container, is_finished: bool, is_private: bool) -> void:
 	var tid := int(tournament.get("id", 0))
 	var name := str(tournament.get("name", ""))
 	var status := str(tournament.get("status", ""))
@@ -183,6 +187,8 @@ func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_f
 	var prizes: Dictionary = tournament.get("prizes", {})
 
 	var card := PanelContainer.new()
+	card.custom_minimum_size = Vector2(CARD_W, 0)
+	card.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	card.add_theme_stylebox_override("panel", _card_style())
 	if is_finished:
 		card.modulate = Color(1, 1, 1, 0.6)
