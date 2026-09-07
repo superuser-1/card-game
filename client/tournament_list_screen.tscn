@@ -55,11 +55,40 @@ theme_override_font_sizes/font_size = 12
 text = "Loading…"
 modulate = Color(1, 1, 1, 0.6)
 
+[node name="TabBar" type="HBoxContainer" parent="MarginContainer/Root"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="PublicTabButton" type="Button" parent="MarginContainer/Root/TabBar"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "Public"
+
+[node name="PrivateTabButton" type="Button" parent="MarginContainer/Root/TabBar"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "Private Tournaments"
+
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/Root"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
 [node name="RowsBox" type="VBoxContainer" parent="MarginContainer/Root/ScrollContainer"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+separation = 12
+
+[node name="PrivateScrollContainer" type="ScrollContainer" parent="MarginContainer/Root"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PrivateRowsBox" type="VBoxContainer" parent="MarginContainer/Root/PrivateScrollContainer"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
 separation = 12

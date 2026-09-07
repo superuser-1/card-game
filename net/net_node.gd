@@ -1118,10 +1118,12 @@ func _maybe_advance_round(t: Dictionary) -> void:
 	if TournamentSystem.is_tournament_complete(t.rounds):
 		_complete_tournament(t)
 		return
-	# Pass the seed + round index so a real (bot-free) bracket re-shuffles the
-	# winners each round (fresh random bye). A dev-bot bracket has a power-of-two
-	# winner count every round, so the shuffle can't change its shape.
-	var next_round := TournamentSystem.advance_round(round, int(t.get("rng_seed", 0)), (t.rounds as Array).size())
+	# Positional advancement (winner of slot 2i meets winner of slot 2i+1), so
+	# the bracket stays a fixed, drawable tree after round 0's random seeding.
+	# A trailing unpaired winner (odd slot count, from a bye upstream) byes
+	# forward. advance_round() can re-shuffle if passed a non-zero seed; we
+	# deliberately don't.
+	var next_round := TournamentSystem.advance_round(round)
 	(t.rounds as Array).append(next_round)
 	t.current_round = int(t.current_round) + 1
 	_dispatch_round(t, (t.rounds as Array).size() - 1)

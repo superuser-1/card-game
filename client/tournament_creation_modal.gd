@@ -4,13 +4,29 @@ extends Control
 var _cubes: Array = []
 
 
+const _AVAILABILITY := ["open", "semi_private", "private"]
+
+
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
 	Net.tournament_created.connect(_on_tournament_created)
 	_cubes = CubePicker.populate(%CubeOptionButton)
+	%AvailabilityOptionButton.item_selected.connect(func(_i): _refresh_availability_rows())
+	_refresh_availability_rows()
 	%CreateButton.pressed.connect(_on_create_pressed)
 	%CancelButton.pressed.connect(_close)
+
+
+## Password rows show for anything but Open; the private-close row is
+## Semi-Private only (Open has no private phase, Private reuses sign-up close).
+func _refresh_availability_rows() -> void:
+	var mode: String = _AVAILABILITY[int(%AvailabilityOptionButton.selected)]
+	var gated := mode != "open"
+	%PasswordLabel.visible = gated
+	%PasswordLineEdit.visible = gated
+	%PrivateCloseLabel.visible = mode == "semi_private"
+	%MinutesUntilPrivateCloseSpinBox.visible = mode == "semi_private"
 
 
 func _on_create_pressed() -> void:
@@ -19,10 +35,17 @@ func _on_create_pressed() -> void:
 		_toast("Enter a tournament name")
 		return
 
+	var availability: String = _AVAILABILITY[int(%AvailabilityOptionButton.selected)]
+	var password := (%PasswordLineEdit.text as String).strip_edges()
+	if availability != "open" and password.is_empty():
+		_toast("Set a password for a private / semi-private tournament")
+		return
+
 	var bracket_size := int(%BracketSizeSpinBox.value)
 	var minutes_until_close := int(%MinutesUntilCloseSpinBox.value)
 	var minutes_until_start := int(%MinutesUntilStartSpinBox.value)
 	var is_dev_bot: bool = %DevBotCheckBox.button_pressed
+	var late_check_in: bool = %LateCheckInCheckBox.button_pressed
 	var match_format: int = [1, 3, 5][int(%MatchFormatOptionButton.selected)]
 	var cube_ids := CubePicker.selected_ids(%CubeOptionButton, _cubes)
 
@@ -31,8 +54,16 @@ func _on_create_pressed() -> void:
 	var check_in_open_ts := signup_close_ts
 	var start_ts := now + minutes_until_start * 60
 
+	var private_signup_close_ts := 0
+	if availability == "semi_private":
+		private_signup_close_ts = now + int(%MinutesUntilPrivateCloseSpinBox.value) * 60
+		if private_signup_close_ts >= signup_close_ts:
+			_toast("Private sign-up must close before open sign-up does")
+			return
+
 	%CreateButton.disabled = true
-	Net.create_tournament(name_text, bracket_size, signup_close_ts, check_in_open_ts, start_ts, is_dev_bot, match_format, cube_ids)
+	Net.create_tournament(name_text, bracket_size, signup_close_ts, check_in_open_ts, start_ts,
+		is_dev_bot, match_format, cube_ids, availability, password, private_signup_close_ts, late_check_in)
 
 
 func _on_tournament_created(result: Dictionary) -> void:
@@ -52,7 +83,9 @@ func _on_tournament_created(result: Dictionary) -> void:
 			"cube_too_small": "That cube has fewer than %d cards — add more in the Deckbuilder." % CubeRules.MIN_SIZE,
 			"not_admin": "You don't have permission to create tournaments.",
 			"bad_name": "Tournament name must be 1–60 characters.",
-			"bad_schedule": "Sign-up close must be before start.",
+			"bad_availability": "Pick a valid availability mode.",
+			"bad_password": "Private tournaments need a password of 1–72 characters.",
+			"bad_schedule": "Phase times must be in order: private close < sign-up close ≤ check-in < start.",
 		}
 		_toast(friendly.get(error, "Error: %s" % error))
 

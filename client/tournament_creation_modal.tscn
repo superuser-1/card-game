@@ -36,11 +36,11 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -240.0
-offset_top = -310.0
-offset_right = 240.0
-offset_bottom = 310.0
-custom_minimum_size = Vector2(480, 620)
+offset_left = -250.0
+offset_top = -330.0
+offset_right = 250.0
+offset_bottom = 330.0
+custom_minimum_size = Vector2(500, 660)
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]
@@ -50,32 +50,85 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="Box" type="VBoxContainer" parent="Panel/MarginContainer"]
+[node name="Outer" type="VBoxContainer" parent="Panel/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="Panel/MarginContainer/Box"]
+[node name="Title" type="Label" parent="Panel/MarginContainer/Outer"]
 layout_mode = 2
 text = "Create Tournament"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 20
 
-[node name="NameLabel" type="Label" parent="Panel/MarginContainer/Box"]
+[node name="Scroll" type="ScrollContainer" parent="Panel/MarginContainer/Outer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Box" type="VBoxContainer" parent="Panel/MarginContainer/Outer/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="NameLabel" type="Label" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 layout_mode = 2
 text = "Tournament Name"
 theme_override_font_sizes/font_size = 14
 
-[node name="NameLineEdit" type="LineEdit" parent="Panel/MarginContainer/Box"]
+[node name="NameLineEdit" type="LineEdit" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Enter tournament name"
 
-[node name="BracketSizeLabel" type="Label" parent="Panel/MarginContainer/Box"]
+[node name="AvailabilityLabel" type="Label" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 layout_mode = 2
-text = "Bracket Size"
+text = "Availability"
 theme_override_font_sizes/font_size = 14
 
-[node name="BracketSizeSpinBox" type="SpinBox" parent="Panel/MarginContainer/Box"]
+[node name="AvailabilityOptionButton" type="OptionButton" parent="Panel/MarginContainer/Outer/Scroll/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+selected = 0
+popup/item_0/text = "Open — anyone can sign up"
+popup/item_0/id = 0
+popup/item_1/text = "Semi-Private — private phase, then open"
+popup/item_1/id = 1
+popup/item_2/text = "Private — password only"
+popup/item_2/id = 2
+
+[node name="PasswordLabel" type="Label" parent="Panel/MarginContainer/Outer/Scroll/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Password"
+theme_override_font_sizes/font_size = 14
+
+[node name="PasswordLineEdit" type="LineEdit" parent="Panel/MarginContainer/Outer/Scroll/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+secret = true
+placeholder_text = "Required for private / semi-private"
+
+[node name="PrivateCloseLabel" type="Label" parent="Panel/MarginContainer/Outer/Scroll/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Minutes until private sign-up closes"
+theme_override_font_sizes/font_size = 14
+
+[node name="MinutesUntilPrivateCloseSpinBox" type="SpinBox" parent="Panel/MarginContainer/Outer/Scroll/Box"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+max_value = 10080.0
+step = 1.0
+value = 1.0
+
+[node name="BracketSizeLabel" type="Label" parent="Panel/MarginContainer/Outer/Scroll/Box"]
+layout_mode = 2
+text = "Max Players (sign-up cap)"
+theme_override_font_sizes/font_size = 14
+
+[node name="BracketSizeSpinBox" type="SpinBox" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 2.0
@@ -83,12 +136,12 @@ max_value = 512.0
 step = 1.0
 value = 32.0
 
-[node name="MinutesUntilCloseLabel" type="Label" parent="Panel/MarginContainer/Box"]
+[node name="MinutesUntilCloseLabel" type="Label" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 layout_mode = 2
 text = "Minutes until sign-up close"
 theme_override_font_sizes/font_size = 14
 
-[node name="MinutesUntilCloseSpinBox" type="SpinBox" parent="Panel/MarginContainer/Box"]
+[node name="MinutesUntilCloseSpinBox" type="SpinBox" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
@@ -96,12 +149,12 @@ max_value = 10080.0
 step = 1.0
 value = 2.0
 
-[node name="MinutesUntilStartLabel" type="Label" parent="Panel/MarginContainer/Box"]
+[node name="MinutesUntilStartLabel" type="Label" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 layout_mode = 2
 text = "Minutes until start"
 theme_override_font_sizes/font_size = 14
 
-[node name="MinutesUntilStartSpinBox" type="SpinBox" parent="Panel/MarginContainer/Box"]
+[node name="MinutesUntilStartSpinBox" type="SpinBox" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
@@ -109,12 +162,12 @@ max_value = 10080.0
 step = 1.0
 value = 5.0
 
-[node name="MatchFormatLabel" type="Label" parent="Panel/MarginContainer/Box"]
+[node name="MatchFormatLabel" type="Label" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 layout_mode = 2
 text = "Match Format"
 theme_override_font_sizes/font_size = 14
 
-[node name="MatchFormatOptionButton" type="OptionButton" parent="Panel/MarginContainer/Box"]
+[node name="MatchFormatOptionButton" type="OptionButton" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 item_count = 3
@@ -126,30 +179,45 @@ popup/item_1/id = 1
 popup/item_2/text = "Best of 5"
 popup/item_2/id = 2
 
-[node name="CubeLabel" type="Label" parent="Panel/MarginContainer/Box"]
+[node name="CubeLabel" type="Label" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 layout_mode = 2
 text = "Card Pool"
 theme_override_font_sizes/font_size = 14
 
-[node name="CubeOptionButton" type="OptionButton" parent="Panel/MarginContainer/Box"]
+[node name="CubeOptionButton" type="OptionButton" parent="Panel/MarginContainer/Outer/Scroll/Box"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="DevBotLabel" type="Label" parent="Panel/MarginContainer/Box"]
+[node name="LateCheckInRow" type="HBoxContainer" parent="Panel/MarginContainer/Outer/Scroll/Box"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LateCheckInCheckBox" type="CheckBox" parent="Panel/MarginContainer/Outer/Scroll/Box/LateCheckInRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Allow late (last-minute) check-in"
+
+[node name="DevBotRow" type="HBoxContainer" parent="Panel/MarginContainer/Outer/Scroll/Box"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DevBotCheckBox" type="CheckBox" parent="Panel/MarginContainer/Outer/Scroll/Box/DevBotRow"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "DEV bot tournament"
-theme_override_font_sizes/font_size = 14
 
-[node name="DevBotCheckBox" type="CheckBox" parent="Panel/MarginContainer/Box"]
+[node name="Buttons" type="HBoxContainer" parent="Panel/MarginContainer/Outer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CreateButton" type="Button" parent="Panel/MarginContainer/Outer/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
-
-[node name="CreateButton" type="Button" parent="Panel/MarginContainer/Box"]
-unique_name_in_owner = true
-layout_mode = 2
+size_flags_horizontal = 3
 text = "Create"
 
-[node name="CancelButton" type="Button" parent="Panel/MarginContainer/Box"]
+[node name="CancelButton" type="Button" parent="Panel/MarginContainer/Outer/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Cancel"

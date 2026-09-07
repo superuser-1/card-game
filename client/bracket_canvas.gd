@@ -83,8 +83,16 @@ func _compute_positions() -> void:
 	for r in range(1, _rounds.size()):
 		var prev: Array = _positions[r - 1]
 		var cur := []
+		var pi := 0
 		for i in range((_rounds[r] as Array).size()):
-			cur.append((float(prev[2 * i]) + float(prev[2 * i + 1])) * 0.5)
+			if pi + 1 < prev.size():
+				cur.append((float(prev[pi]) + float(prev[pi + 1])) * 0.5)
+				pi += 2
+			else:
+				# Odd slot count in the previous round (a bye upstream): the
+				# trailing winner advances 1:1 into this slot.
+				cur.append(float(prev[pi]))
+				pi += 1
 		_positions.append(cur)
 
 
@@ -98,16 +106,24 @@ func _draw() -> void:
 
 	var line_color := Color(1, 1, 1, 0.22)
 	for r in range(1, _rounds.size()):
+		var prev_cnt := (_rounds[r - 1] as Array).size()
+		var pi := 0
 		for i in range((_rounds[r] as Array).size()):
 			var x_prev := _round_x(r - 1) + BOX_W
 			var x_mid := x_prev + ROUND_GAP * 0.5
-			var y_a: float = _positions[r - 1][2 * i]
-			var y_b: float = _positions[r - 1][2 * i + 1]
 			var y_c: float = _positions[r][i]
-			draw_line(Vector2(x_prev, y_a), Vector2(x_mid, y_a), line_color, 2.0)
-			draw_line(Vector2(x_prev, y_b), Vector2(x_mid, y_b), line_color, 2.0)
-			draw_line(Vector2(x_mid, y_a), Vector2(x_mid, y_b), line_color, 2.0)
-			draw_line(Vector2(x_mid, y_c), Vector2(_round_x(r), y_c), line_color, 2.0)
+			if pi + 1 < prev_cnt:
+				var y_a: float = _positions[r - 1][pi]
+				var y_b: float = _positions[r - 1][pi + 1]
+				draw_line(Vector2(x_prev, y_a), Vector2(x_mid, y_a), line_color, 2.0)
+				draw_line(Vector2(x_prev, y_b), Vector2(x_mid, y_b), line_color, 2.0)
+				draw_line(Vector2(x_mid, y_a), Vector2(x_mid, y_b), line_color, 2.0)
+				draw_line(Vector2(x_mid, y_c), Vector2(_round_x(r), y_c), line_color, 2.0)
+				pi += 2
+			else:
+				# Bye-forward: one parent, straight connector.
+				draw_line(Vector2(x_prev, _positions[r - 1][pi]), Vector2(_round_x(r), y_c), line_color, 2.0)
+				pi += 1
 
 	for r in range(_rounds.size()):
 		for i in range((_rounds[r] as Array).size()):
@@ -152,20 +168,40 @@ func _build_slot_rows(r: int, i: int) -> void:
 	var score_b := int(slot.get("score_b", 0))
 
 	var row_size := Vector2(BOX_W - ROW_PAD * 2.0, ROW_H - ROW_PAD * 2.0)
+	var is_bye := bool(slot.get("is_bye", false))
 
-	var row_a := _make_player_row(acc_a, is_bot_a, hash("%d_%d_a" % [r, i]), _row_color(is_a_winner, resolved), score_a if resolved else -1)
+	# A bye slot has one real player (side A, the free winner) and no opponent.
+	var row_a := _make_player_row(acc_a, is_bot_a, hash("%d_%d_a" % [r, i]),
+		_row_color(true if is_bye else is_a_winner, resolved), score_a if (resolved and not is_bye) else -1)
 	add_child(row_a)
 	row_a.position = Vector2(x + ROW_PAD, y + ROW_PAD)
 	row_a.size = row_size
 	_row_nodes.append(row_a)
 	_row_targets.append({"node": row_a, "size": row_size})
 
-	var row_b := _make_player_row(acc_b, is_bot_b, hash("%d_%d_b" % [r, i]), _row_color(is_b_winner, resolved), score_b if resolved else -1)
+	var row_b: Control
+	if is_bye:
+		row_b = _make_bye_row()
+	else:
+		row_b = _make_player_row(acc_b, is_bot_b, hash("%d_%d_b" % [r, i]), _row_color(is_b_winner, resolved), score_b if resolved else -1)
 	add_child(row_b)
 	row_b.position = Vector2(x + ROW_PAD, y + ROW_H + ROW_PAD)
 	row_b.size = row_size
 	_row_nodes.append(row_b)
 	_row_targets.append({"node": row_b, "size": row_size})
+
+
+## The empty opponent side of a bye slot: just a muted "BYE" label.
+func _make_bye_row() -> Control:
+	var row := HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var lbl := Label.new()
+	lbl.text = "— BYE —"
+	lbl.add_theme_font_size_override("font_size", 11)
+	lbl.add_theme_color_override("font_color", Color(1, 1, 1, 0.35))
+	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(lbl)
+	return row
 
 
 func _row_color(is_winner: bool, resolved: bool) -> Color:

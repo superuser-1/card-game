@@ -5,6 +5,8 @@ extends Control
 ## arrive a beat after list_tournaments()'s own reply, which would otherwise
 ## leave a just-joined tournament briefly showing "Join" instead of "Cancel".
 var _last_rows: Array = []
+var _has_finished := false
+var _on_private_tab := false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -16,6 +18,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _ready() -> void:
 	%BackButton.pressed.connect(func(): Session.goto("res://client/main_menu.tscn"))
 	%FinishedToggleButton.toggled.connect(_on_finished_toggled)
+	%PublicTabButton.pressed.connect(func(): _select_tab(false))
+	%PrivateTabButton.pressed.connect(func(): _select_tab(true))
 	Net.tournament_list_received.connect(_on_tournament_list)
 	Net.tournament_joined.connect(_on_tournament_joined)
 	Net.tournament_withdrawn.connect(_on_tournament_withdrawn)
@@ -28,6 +32,19 @@ func _ready() -> void:
 func _on_finished_toggled(pressed: bool) -> void:
 	%FinishedScrollContainer.visible = pressed
 	%FinishedToggleButton.text = "Hide Finished Tournaments ▴" if pressed else "Show Finished Tournaments ▾"
+
+
+## Public vs Private-Tournaments tab. Finished tournaments only make sense under
+## the Public view.
+func _select_tab(private_tab: bool) -> void:
+	_on_private_tab = private_tab
+	%PublicTabButton.button_pressed = not private_tab
+	%PrivateTabButton.button_pressed = private_tab
+	%ScrollContainer.visible = not private_tab
+	%PrivateScrollContainer.visible = private_tab
+	%FinishedToggleButton.visible = (not private_tab) and _has_finished
+	if private_tab:
+		%FinishedScrollContainer.visible = false
 
 
 ## Cleanup: finished tournaments (completed/cancelled) never clutter the main
@@ -48,33 +65,45 @@ func _render_rows(rows: Array) -> void:
 
 	for c in %RowsBox.get_children():
 		c.queue_free()
+	for c in %PrivateRowsBox.get_children():
+		c.queue_free()
 	for c in %FinishedRowsBox.get_children():
 		c.queue_free()
 
-	var active_rows := []
+	var public_rows := []
+	var private_rows := []
 	var finished_rows := []
 	for row in rows:
 		if str(row.get("status", "")) in ["completed", "cancelled"]:
 			finished_rows.append(row)
+		elif bool(row.get("is_private_now", false)):
+			private_rows.append(row)
 		else:
-			active_rows.append(row)
+			public_rows.append(row)
 
-	if active_rows.is_empty():
+	if public_rows.is_empty():
 		%RowsBox.add_child(_make_label("No tournaments available.", 0.0))
 	else:
-		for row in active_rows:
-			_add_tournament_row(row, %RowsBox, false)
+		for row in public_rows:
+			_add_tournament_row(row, %RowsBox, false, false)
 
-	%FinishedToggleButton.visible = not finished_rows.is_empty()
-	if finished_rows.is_empty():
+	if private_rows.is_empty():
+		%PrivateRowsBox.add_child(_make_label("No private tournaments open for sign-up.", 0.0))
+	else:
+		for row in private_rows:
+			_add_tournament_row(row, %PrivateRowsBox, false, true)
+
+	_has_finished = not finished_rows.is_empty()
+	%FinishedToggleButton.visible = _has_finished and not _on_private_tab
+	if not _has_finished:
 		%FinishedScrollContainer.visible = false
 		%FinishedToggleButton.button_pressed = false
 	else:
 		for row in finished_rows:
-			_add_tournament_row(row, %FinishedRowsBox, true)
+			_add_tournament_row(row, %FinishedRowsBox, true, false)
 
 
-func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_finished: bool) -> void:
+func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_finished: bool, is_private: bool) -> void:
 	var row_hbox := HBoxContainer.new()
 	row_hbox.add_theme_constant_override("separation", 12)
 	if is_finished:
@@ -105,8 +134,16 @@ func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_f
 	creator_label.modulate = Color(1, 1, 1, 0.7)
 	info_vbox.add_child(creator_label)
 
+	var status_text: String = {
+		"signup_private": "Status: private sign-up (password)",
+		"signup": "Status: sign-up open",
+		"check_in": "Status: check-in",
+		"in_progress": "Status: in progress",
+	}.get(status, "Status: %s" % status)
+	if status == "signup" and str(tournament.get("availability", "")) == "semi_private":
+		status_text = "Status: open sign-up (was private)"
 	var status_label := Label.new()
-	status_label.text = "Status: %s" % status
+	status_label.text = status_text
 	status_label.add_theme_font_size_override("font_size", 12)
 	status_label.modulate = Color(1, 1, 1, 0.7)
 	info_vbox.add_child(status_label)
@@ -135,18 +172,22 @@ func _add_tournament_row(tournament: Dictionary, target_box: VBoxContainer, is_f
 	buttons_hbox.add_theme_constant_override("separation", 8)
 
 	if not is_finished:
+		var in_signup := status in ["signup", "signup_private"]
 		# Cancel only ever shows up (and only ever works) pre-check-in — once
 		# check-in opens, backing out is no longer a plain "never mind",
 		# there's the no-show/bot-fill machinery to consider instead.
-		if status == "signup" and (Session.my_tournaments as Dictionary).has(tid):
+		if in_signup and (Session.my_tournaments as Dictionary).has(tid):
 			var cancel_btn := Button.new()
 			cancel_btn.text = "Cancel"
 			cancel_btn.pressed.connect(_on_cancel_pressed.bind(tid))
 			buttons_hbox.add_child(cancel_btn)
-		elif status == "signup":
+		elif in_signup:
 			var join_btn := Button.new()
 			join_btn.text = "Join"
-			join_btn.pressed.connect(_on_join_pressed.bind(tid))
+			if is_private or status == "signup_private":
+				join_btn.pressed.connect(_on_private_join_pressed.bind(tid, name))
+			else:
+				join_btn.pressed.connect(_on_join_pressed.bind(tid))
 			buttons_hbox.add_child(join_btn)
 
 		if status == "check_in":
@@ -169,6 +210,29 @@ func _on_join_pressed(tournament_id: int) -> void:
 	Net.join_tournament(tournament_id)
 
 
+## Password-gated join: prompt for the password, then sign up. The tournament
+## name is already known from the row, so it's just the one field.
+func _on_private_join_pressed(tournament_id: int, tournament_name: String) -> void:
+	var dialog := AcceptDialog.new()
+	dialog.title = "Join \"%s\"" % tournament_name
+	dialog.ok_button_text = "Join"
+	var edit := LineEdit.new()
+	edit.secret = true
+	edit.placeholder_text = "Tournament password"
+	edit.custom_minimum_size = Vector2(280, 0)
+	dialog.add_child(edit)
+	var submit := func():
+		Net.join_tournament(tournament_id, edit.text.strip_edges())
+		dialog.queue_free()
+	dialog.confirmed.connect(submit)
+	edit.text_submitted.connect(func(_t): submit.call())
+	dialog.canceled.connect(dialog.queue_free)
+	dialog.close_requested.connect(dialog.queue_free)
+	add_child(dialog)
+	dialog.popup_centered(Vector2i(320, 130))
+	edit.grab_focus()
+
+
 func _on_cancel_pressed(tournament_id: int) -> void:
 	Net.withdraw_tournament(tournament_id)
 
@@ -186,8 +250,14 @@ func _on_tournament_joined(result: Dictionary) -> void:
 	if bool(result.get("ok", false)):
 		_toast("Joined tournament!")
 	else:
+		var friendly := {
+			"bad_password": "Wrong password.",
+			"signup_closed": "Sign-up for that tournament has closed.",
+			"tournament_full": "That tournament is full.",
+			"already_signed_up": "You're already signed up.",
+		}
 		var error := str(result.get("error", "Unknown error"))
-		_toast("Error: %s" % error)
+		_toast(friendly.get(error, "Error: %s" % error))
 	Net.list_tournaments()
 
 
