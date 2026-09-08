@@ -108,25 +108,25 @@ visible = false
 layout_mode = 2
 
 [node name="LeftPlayerPanel" type="PanelContainer" parent="." unique_id=1220576569]
-custom_minimum_size = Vector2(140, 0)
+custom_minimum_size = Vector2(189, 0)
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = 38.0
-offset_top = -260.0
-offset_right = 178.0
-offset_bottom = -77.0
+offset_top = -292.0
+offset_right = 227.0
+offset_bottom = -45.0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_player_panel")
 
 [node name="LeftPlayerBox" type="VBoxContainer" parent="LeftPlayerPanel" unique_id=1691413574]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 alignment = 1
 
 [node name="LeftAvatarWrap" type="Control" parent="LeftPlayerPanel/LeftPlayerBox" unique_id=2083160627]
-custom_minimum_size = Vector2(112, 112)
+custom_minimum_size = Vector2(151, 151)
 layout_mode = 2
 size_flags_horizontal = 4
 
@@ -136,10 +136,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 2.8
-offset_top = 2.8
-offset_right = -2.8
-offset_bottom = -2.8
+offset_left = 3.8
+offset_top = 3.8
+offset_right = -3.8
+offset_bottom = -3.8
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -154,10 +154,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -50.0
-offset_top = -50.0
-offset_right = 50.0
-offset_bottom = 50.0
+offset_left = -67.5
+offset_top = -67.5
+offset_right = 67.5
+offset_bottom = 67.5
 grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
@@ -179,7 +179,7 @@ stretch_mode = 5
 [node name="LeftName" type="Label" parent="LeftPlayerPanel/LeftPlayerBox" unique_id=1149921768]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 autowrap_mode = 2
 
@@ -187,7 +187,7 @@ autowrap_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 
 [node name="LeftStars" type="Label" parent="LeftPlayerPanel/LeftPlayerBox"]
@@ -195,32 +195,32 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
-theme_override_font_sizes/font_size = 21
+theme_override_font_sizes/font_size = 28
 horizontal_alignment = 1
 
 [node name="RightPlayerPanel" type="PanelContainer" parent="." unique_id=1354325337]
-custom_minimum_size = Vector2(140, 0)
+custom_minimum_size = Vector2(189, 0)
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -181.0
-offset_top = -260.0
+offset_left = -230.0
+offset_top = -292.0
 offset_right = -41.0
-offset_bottom = -77.0
+offset_bottom = -45.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_player_panel")
 
 [node name="RightPlayerBox" type="VBoxContainer" parent="RightPlayerPanel" unique_id=1542548144]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 alignment = 1
 
 [node name="RightAvatarWrap" type="Control" parent="RightPlayerPanel/RightPlayerBox" unique_id=536153065]
-custom_minimum_size = Vector2(112, 112)
+custom_minimum_size = Vector2(151, 151)
 layout_mode = 2
 size_flags_horizontal = 4
 
@@ -230,10 +230,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 2.8
-offset_top = 2.8
-offset_right = -2.8
-offset_bottom = -2.8
+offset_left = 3.8
+offset_top = 3.8
+offset_right = -3.8
+offset_bottom = -3.8
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -249,10 +249,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -50.0
-offset_top = -50.0
-offset_right = 50.0
-offset_bottom = 50.0
+offset_left = -67.5
+offset_top = -67.5
+offset_right = 67.5
+offset_bottom = 67.5
 grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
@@ -276,7 +276,7 @@ flip_h = true
 [node name="RightName" type="Label" parent="RightPlayerPanel/RightPlayerBox" unique_id=1860825040]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 autowrap_mode = 2
 
@@ -284,7 +284,7 @@ autowrap_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 
 [node name="RightStars" type="Label" parent="RightPlayerPanel/RightPlayerBox"]
@@ -292,7 +292,7 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
-theme_override_font_sizes/font_size = 21
+theme_override_font_sizes/font_size = 28
 horizontal_alignment = 1
 
 [node name="HandBox" type="Control" parent="." unique_id=844244485]
