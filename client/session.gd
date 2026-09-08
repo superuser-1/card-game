@@ -33,6 +33,7 @@ var token: String = ""
 ## Loaded settings, with defaults applied. Keys:
 ##   master_volume  : float 0..1  (default 0.8)  — Master bus gain
 ##   sfx_volume     : float 0..1  (default 0.8)  — SFX bus gain
+##   music_volume   : float 0..1  (default 0.5)  — Music bus gain (max music level)
 ##   muted          : bool        (default false) — hard mute, independent of sliders
 ##   mute_unfocused : bool        (default false) — silence audio while the window
 ##                                 is not the active app
@@ -102,6 +103,7 @@ var _dismissed_tournament_cards: Dictionary = {}
 const _DEFAULT_SETTINGS := {
 	"master_volume": 0.8,
 	"sfx_volume": 0.8,
+	"music_volume": 0.5,
 	"muted": false,
 	"mute_unfocused": false,
 	"fullscreen": false,
@@ -423,6 +425,10 @@ func apply_settings() -> void:
 	var sfx_bus := AudioServer.get_bus_index("SFX")
 	if sfx_bus != -1:
 		AudioServer.set_bus_volume_db(sfx_bus, linear_to_db(sfx_vol) if sfx_vol > 0.0 else -80.0)
+	var music_vol: float = clampf(float(settings.get("music_volume", 0.5)), 0.0, 1.0)
+	var music_bus := AudioServer.get_bus_index("Music")
+	if music_bus != -1:
+		AudioServer.set_bus_volume_db(music_bus, linear_to_db(music_vol) if music_vol > 0.0 else -80.0)
 	_refresh_master_mute()
 
 	# Window mode: fullscreen wins; otherwise windowed, with the borderless flag

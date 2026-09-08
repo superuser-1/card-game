@@ -43,6 +43,8 @@ func _ready() -> void:
 		Session.goto("res://client/login_screen.tscn")
 		return
 
+	MusicPlayer.play_menu()
+
 	# Safety net: any path back to the menu from a singleplayer game restores
 	# the client's networked role, so matchmaking/ladder RPCs work again even
 	# if we didn't come through the result screen's Menu button.

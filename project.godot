@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Net="*res://net/net_node.gd"
 Session="*res://client/session.gd"
+MusicPlayer="*res://client/music_player.gd"
 
 [display]
 

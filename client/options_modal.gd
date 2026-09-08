@@ -4,6 +4,7 @@ extends Control
 
 @onready var volume_slider: HSlider = %VolumeSlider
 @onready var sfx_slider: HSlider = %SfxSlider
+@onready var music_slider: HSlider = %MusicSlider
 @onready var mute_toggle: CheckButton = %MuteToggle
 @onready var mute_unfocused_toggle: CheckButton = %MuteUnfocusedToggle
 @onready var fullscreen_toggle: CheckButton = %FullscreenToggle
@@ -22,6 +23,7 @@ func _ready() -> void:
 	# Load current settings into controls
 	volume_slider.value = Session.settings.get("master_volume", 0.8)
 	sfx_slider.value = Session.settings.get("sfx_volume", 0.8)
+	music_slider.value = Session.settings.get("music_volume", 0.5)
 	mute_toggle.button_pressed = Session.settings.get("muted", false)
 	mute_unfocused_toggle.button_pressed = Session.settings.get("mute_unfocused", false)
 	fullscreen_toggle.button_pressed = Session.settings.get("fullscreen", false)
@@ -32,6 +34,7 @@ func _ready() -> void:
 	# Connect signal handlers
 	volume_slider.value_changed.connect(_on_volume_changed)
 	sfx_slider.value_changed.connect(_on_sfx_changed)
+	music_slider.value_changed.connect(_on_music_changed)
 	mute_toggle.toggled.connect(_on_bool_setting.bind("muted"))
 	mute_unfocused_toggle.toggled.connect(_on_bool_setting.bind("mute_unfocused"))
 	fullscreen_toggle.toggled.connect(_on_bool_setting.bind("fullscreen"))
@@ -63,6 +66,10 @@ func _on_volume_changed(value: float) -> void:
 
 func _on_sfx_changed(value: float) -> void:
 	_apply("sfx_volume", value)
+
+
+func _on_music_changed(value: float) -> void:
+	_apply("music_volume", value)
 
 
 func _on_bool_setting(pressed: bool, key: String) -> void:

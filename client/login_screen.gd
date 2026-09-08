@@ -13,6 +13,11 @@ func _ready() -> void:
 	%ToggleModeButton.pressed.connect(_toggle_mode)
 	%PasswordField.text_submitted.connect(_on_submit)
 
+	MusicPlayer.play_menu()
+	%MuteButton.button_pressed = bool(Session.settings.get("muted", false))
+	_refresh_mute_button()
+	%MuteButton.toggled.connect(_on_mute_toggled)
+
 	if Session.kicked_message != "":
 		%ErrorLabel.text = Session.kicked_message
 		Session.kicked_message = ""
@@ -51,6 +56,17 @@ func _ensure_connected() -> bool:
 	while mp.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTING:
 		await get_tree().process_frame
 	return mp.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
+
+
+func _on_mute_toggled(pressed: bool) -> void:
+	Session.settings["muted"] = pressed
+	Session.save_settings()
+	Session.apply_settings()
+	_refresh_mute_button()
+
+
+func _refresh_mute_button() -> void:
+	%MuteButton.text = "Unmute" if %MuteButton.button_pressed else "Mute"
 
 
 func _toggle_mode() -> void:

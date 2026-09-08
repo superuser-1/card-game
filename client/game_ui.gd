@@ -172,6 +172,8 @@ func _ready() -> void:
 	Net.match_ended.connect(_on_match_ended)
 	Net.match_found.connect(_apply_match_info)
 
+	MusicPlayer.play_game()
+
 	_draw_sfx = AudioStreamPlayer.new()
 	_draw_sfx.stream = DRAW_SOUND
 	_draw_sfx.volume_db = DRAW_DB

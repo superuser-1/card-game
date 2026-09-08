@@ -93,6 +93,22 @@ max_value = 1.0
 step = 0.01
 value = 0.8
 
+[node name="MusicRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/MarginContainer/Content/MusicRow"]
+layout_mode = 2
+text = "Music Volume"
+
+[node name="MusicSlider" type="HSlider" parent="Panel/MarginContainer/Content/MusicRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 0.5
+
 [node name="MuteRow" type="HBoxContainer" parent="Panel/MarginContainer/Content"]
 layout_mode = 2
 
