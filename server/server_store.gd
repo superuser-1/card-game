@@ -814,9 +814,10 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 			return {"ok": false, "error": "insufficient_points", "tournament": {}}
 
 	var bracket_size := TournamentSystem.resolve_bracket_size(requested_bracket_size, allow_small)
-	# Only Bo1/Bo3/Bo5 are valid match formats; anything else silently falls
-	# back to Bo1 rather than rejecting the whole creation call.
-	var match_format := requested_match_format if requested_match_format in [1, 3, 5] else 1
+	# Only Bo1/Bo3 are offered — Bo5 tournaments run too long. Anything else
+	# (incl. a stale client still sending 5) silently falls back to Bo1 rather
+	# than rejecting the whole creation call.
+	var match_format := requested_match_format if requested_match_format in [1, 3] else 1
 	var tournament := {
 		"id": _next_tournament_id,
 		"name": clean_name,

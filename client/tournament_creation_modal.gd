@@ -186,7 +186,7 @@ func _on_create_pressed() -> void:
 	var bracket_size := int(%BracketSizeSpinBox.value)
 	var is_dev_bot: bool = %DevBotCheckBox.button_pressed
 	var late_check_in: bool = %LateCheckInCheckBox.button_pressed
-	var match_format: int = [1, 3, 5][int(%MatchFormatOptionButton.selected)]
+	var match_format: int = [1, 3][int(%MatchFormatOptionButton.selected)]
 	var cube_ids := CubePicker.selected_ids(%CubeOptionButton, _cubes)
 
 	# Absolute start time from the local-time pickers.
