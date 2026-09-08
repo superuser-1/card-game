@@ -271,11 +271,15 @@ func _on_back_pressed() -> void:
 
 
 ## ESC steps back one submenu level, mirroring the Back button. On the top
-## level there's nowhere to go, so it's left unhandled. An open modal
-## consumes ui_cancel itself (marks it handled) before this runs.
+## level there's nowhere to step back to, so it opens the options overlay
+## instead. An open modal consumes ui_cancel itself (marks it handled) before
+## this runs, so this never fires while options is already up.
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel") and _view != "main":
-		_on_back_pressed()
+	if event.is_action_pressed("ui_cancel"):
+		if _view != "main":
+			_on_back_pressed()
+		else:
+			_on_options()
 		get_viewport().set_input_as_handled()
 		return
 
