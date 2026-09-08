@@ -22,6 +22,30 @@ const MIN_BRACKET_SIZE := 32  # UI-suggested default; admin can override smaller
 ## must not become a farm. Not admin-configurable. Dev-bot tournaments bypass it.
 const MIN_TOURNAMENT_PLAYERS := 32
 
+## Wall-clock backstop for a single tournament match, per match_format. If a
+## match outlives this the tournament tick force-resolves it (winner = whoever
+## leads on games won, then on card score, then a coin flip) so one hung or
+## broken game can't freeze the whole bracket forever — every unresolved slot
+## blocks the round. Sized WAY above any legitimate game: hitting it means
+## something is wrong, not that someone is playing slowly.
+##
+##   per round  ~ 2 * 30s turn clocks + 7s reveal                       = 67 s
+##   per game   ~ (7 hand + 6 very generous tie) rounds * 67s
+##                 + 15s deal / inter-game                              ~ 886 s
+##   per match  ~ max_games * per-game
+##                 + 2 * 60s reconnect grace (whole-series budget)
+##                 + 60s buffer
+##   max_games is 1 / 3 / 5 for Bo1 / Bo3 / Bo5.
+const MATCH_HARD_CAP_MS := {
+	1: 1066000,   # Bo1  ~18 min
+	3: 2838000,   # Bo3  ~47 min
+	5: 4610000,   # Bo5  ~77 min
+}
+
+
+static func match_hard_cap_ms(match_format: int) -> int:
+	return int(MATCH_HARD_CAP_MS.get(match_format, int(MATCH_HARD_CAP_MS[1])))
+
 
 static func next_power_of_2(n: int) -> int:
 	var p := 1

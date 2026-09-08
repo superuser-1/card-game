@@ -22,6 +22,7 @@ func _initialize() -> void:
 	test_resolve_bot_vs_bot()
 	test_round_fully_resolved()
 	test_is_tournament_complete()
+	test_match_hard_cap_ms()
 
 	# Print final result
 	if _fail_count == 0:
@@ -366,6 +367,20 @@ func test_is_tournament_complete() -> void:
 		[{"resolved": true}],
 	]
 	assert_equal(TournamentSystem.is_tournament_complete(rounds_multi), true, "Multiple rounds with 1-slot resolved final returns true")
+
+
+func test_match_hard_cap_ms() -> void:
+	print("\n=== match_hard_cap_ms Tests ===")
+	var bo1 := TournamentSystem.match_hard_cap_ms(1)
+	var bo3 := TournamentSystem.match_hard_cap_ms(3)
+	var bo5 := TournamentSystem.match_hard_cap_ms(5)
+	assert_true(bo1 < bo3 and bo3 < bo5, "cap grows with series length (Bo1 < Bo3 < Bo5)")
+	# Well above any legitimate game — a slow clock-milked Bo1 is ~12 min.
+	assert_true(bo1 >= 15 * 60 * 1000, "Bo1 cap is at least 15 min")
+	assert_true(bo5 <= 120 * 60 * 1000, "Bo5 cap is under 2 h (still a backstop, not indefinite)")
+	# Unknown format falls back to the Bo1 cap rather than 0 / crashing.
+	assert_equal(TournamentSystem.match_hard_cap_ms(2), bo1, "unknown format falls back to Bo1 cap")
+	assert_equal(TournamentSystem.match_hard_cap_ms(0), bo1, "format 0 falls back to Bo1 cap")
 
 
 # --- shrink-to-fit bracket (real, bot-free) --------------------------------

@@ -314,6 +314,14 @@ func _on_match_ended(summary: Dictionary) -> void:
 	Session.queue_achievement_toasts(summary.get("achievement_unlocks", []))
 	await _wait_for_reveal_to_finish()
 	var tournament_ctx: Dictionary = summary.get("tournament_ctx", {})
+	if not tournament_ctx.is_empty() and bool(summary.get("unfinished", false)):
+		# The match didn't finish through play (hit the tournament hard cap, or
+		# both players dropped) — the bracket result was decided on score. Give
+		# the player a beat to read why before the bracket screen takes over.
+		_status_label.text = "Match ended early — bracket result decided on score."
+		await get_tree().create_timer(3.0).timeout
+		if not is_inside_tree():
+			return  # Session's global listener already swapped us into the next round
 	if not tournament_ctx.is_empty():
 		# The server can create and push the NEXT tournament round's
 		# match_found while we were still mid-reveal above — Session's global

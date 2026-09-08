@@ -183,6 +183,11 @@ var _turn_seconds := TURN_SECONDS
 var _bot_fill_seconds := BOT_FILL_SECONDS
 var _mm_any := false
 
+## >0 overrides TournamentSystem.match_hard_cap_ms for every tournament match
+## (dev/testing — `--tournament-match-cap-seconds=N`). See
+## _enforce_tournament_match_cap.
+var _tournament_match_cap_ms := 0
+
 
 func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
@@ -198,6 +203,9 @@ func _ready() -> void:
 		elif arg == "--dev-tournaments":
 			_dev_tournaments = true
 			print("Net: all accounts may create tournaments (--dev-tournaments)")
+		elif arg.begins_with("--tournament-match-cap-seconds="):
+			_tournament_match_cap_ms = int(maxf(1.0, float(arg.substr("--tournament-match-cap-seconds=".length()))) * 1000.0)
+			print("Net: tournament per-match hard cap overridden to %ds" % (_tournament_match_cap_ms / 1000))
 
 	_turn_timer = Timer.new()
 	# Poll fairly tightly so the timeout fires close to the true deadline
@@ -410,6 +418,10 @@ func _new_match(engine: GameEngine, seats: Dictionary, account_ids: Dictionary,
 		"bot_seat": bot_seat,        # 0, 1 or 2
 		"is_bot_match": is_bot_match,
 		"ended": false,
+		# Wall-clock the match was created (never rolled forward). Only read by
+		# _enforce_tournament_match_cap so a hung tournament game can't wedge the
+		# bracket indefinitely.
+		"created_ms": Time.get_ticks_msec(),
 		"turn_started_ms": Time.get_ticks_msec(),
 		"on_clock_seat": 0,          # 1|2 while the match is live, 0 otherwise
 		# While > now, the turn clock is frozen (round-resolution animation is
@@ -706,8 +718,18 @@ func _check_disconnect_grace() -> void:
 
 
 func _resolve_abandoned_match(m: Dictionary, dc: Dictionary) -> void:
-	# Both sides gone — no one to award, just drop it.
+	var is_tournament: bool = not (m.get("tournament_ctx", {}) as Dictionary).is_empty()
+	# Both sides gone.
 	if dc.size() >= 2:
+		# A tournament slot can't be left unresolved or the round never advances
+		# — coin-flip a winner so the bracket moves on. Neither player is around
+		# to see it; the loser is eliminated like any other loss.
+		if is_tournament and (int(m.account_ids.get(1, 0)) != 0 or int(m.account_ids.get(2, 0)) != 0):
+			var flip := 1 + (randi() % 2)
+			print("GameServer: tournament match %d — both seats abandoned, coin-flip advances seat %d" % [int(m.id), flip])
+			m["unfinished"] = true
+			_finish_match(m, flip)
+			return
 		_abort_match_silently(m)
 		return
 	var gone_seat := int(dc.keys()[0])
@@ -1078,6 +1100,7 @@ func _tick_tournaments() -> void:
 					if _dispatch_round(t, round_idx):
 						_store.persist_tournament(t)
 						_broadcast_tournament(t)
+					_enforce_tournament_match_cap(t, round_idx)
 				_maybe_advance_round(t)
 
 
@@ -1193,6 +1216,45 @@ func _maybe_advance_round(t: Dictionary) -> void:
 	_dispatch_round(t, (t.rounds as Array).size() - 1)
 	_store.persist_tournament(t)
 	_broadcast_tournament(t)
+
+
+## Wall-clock backstop for the current round's live matches. A tournament match
+## that outlives TournamentSystem.match_hard_cap_ms (or the
+## --tournament-match-cap-seconds override) is force-resolved so one hung /
+## broken game can't freeze the bracket — every unresolved slot blocks the
+## round. Winner = whoever leads on games won, then on this game's card score,
+## then a coin flip. A firing cap means something is wrong upstream, so it is
+## logged loud; the resolution still routes through the normal tournament-match
+## finish (slot resolved, loser eliminated, round advances).
+func _enforce_tournament_match_cap(t: Dictionary, round_idx: int) -> void:
+	var round: Array = t.rounds[round_idx]
+	var now_ms := Time.get_ticks_msec()
+	for slot in round:
+		if bool(slot.resolved) or bool(slot.get("is_bye", false)):
+			continue
+		var mid := int(slot.match_id)
+		if mid == 0 or not _matches.has(mid):
+			continue
+		var m: Dictionary = _matches[mid]
+		if m.is_empty() or bool(m.ended):
+			continue
+		var cap_ms: int = _tournament_match_cap_ms if _tournament_match_cap_ms > 0 \
+			else TournamentSystem.match_hard_cap_ms(int(m.get("match_format", 1)))
+		if now_ms - int(m.get("created_ms", now_ms)) < cap_ms:
+			continue
+		var engine: GameEngine = m.get("engine")
+		var sw: Dictionary = m.get("series_wins", {1: 0, 2: 0})
+		var winner := 0
+		if int(sw.get(1, 0)) != int(sw.get(2, 0)):
+			winner = 1 if int(sw.get(1, 0)) > int(sw.get(2, 0)) else 2
+		elif engine != null and int(engine.scores[1]) != int(engine.scores[2]):
+			winner = 1 if int(engine.scores[1]) > int(engine.scores[2]) else 2
+		else:
+			winner = 1 + (randi() % 2)
+		push_warning("GameServer: tournament %d round %d match %d hit the %ds hard cap — force-resolving to seat %d" \
+			% [int(t.id), round_idx + 1, mid, cap_ms / 1000, winner])
+		m["unfinished"] = true
+		_finish_match(m, winner)
 
 
 func _complete_tournament(t: Dictionary) -> void:
@@ -1319,6 +1381,11 @@ func _finish_tournament_match(m: Dictionary, winner: int, ctx: Dictionary) -> vo
 			"match_format": int(m.get("match_format", 1)),
 			"games_won": int(m.series_wins.get(seat, 0)),
 			"games_won_opponent": int(m.series_wins.get(3 - seat, 0)),
+			# True when the match didn't finish through play — hit the hard cap
+			# or both seats abandoned — and the bracket result was decided on
+			# score / coin flip. The client shows a brief note before the
+			# bracket screen.
+			"unfinished": bool(m.get("unfinished", false)),
 		})
 
 	_record_tournament_result(m, actual_winner, ctx)
