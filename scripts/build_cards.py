@@ -5,7 +5,16 @@ Sources:
   - data/cards.json            existing cards (clean UTF-8 titles/names; the
                                canonical id + base-stat list)
   - source_data/Movie_DB.xlsx  joined by Movie_ID for:
-                                 Calculated User Rating -> audience_score
+                                 audience_score  = ROUND((Letterboxd/5*100 +
+                                   Metacritic) / 2)  -- i.e. the sheet's
+                                   "Calculated User Rating" formula, recomputed
+                                   here from the Letterboxd + Metacritic columns
+                                   rather than read from the formula cell, so the
+                                   pipeline still works after a tool (openpyxl,
+                                   a script) rewrites the xlsx and drops Excel's
+                                   cached formula results. Falls back to the
+                                   cached "Calculated User Rating" value if
+                                   either rating column is blank.
                                  Director Oscar Wins    -> director_oscars_won
                                  (overridden per data/director_oscars_overrides.json
                                  where the xlsx disagrees with itself across a
@@ -65,6 +74,8 @@ def main() -> int:
     hdr = list(rows[0])
     ci_id = hdr.index("Movie_ID")
     ci_rating = hdr.index("Calculated User Rating")
+    ci_lb = hdr.index("Letterboxed User Rating")
+    ci_mc = hdr.index("Metacritic User Rating")
     ci_doscars = hdr.index("Director Oscar Wins")
     xl = {r[ci_id]: r for r in rows[1:]}
 
@@ -88,7 +99,15 @@ def main() -> int:
             c["audience_score"] = None
             c["director_oscars_won"] = None
         else:
-            c["audience_score"] = int(row[ci_rating]) if row[ci_rating] is not None else None
+            lb, mc = row[ci_lb], row[ci_mc]
+            if lb is not None and mc is not None:
+                # Excel's ROUND is half-away-from-zero; all values here are
+                # positive so int(x + 0.5) matches it.
+                c["audience_score"] = int((lb / 5 * 100 + mc) / 2 + 0.5)
+            elif row[ci_rating] is not None:
+                c["audience_score"] = int(row[ci_rating])
+            else:
+                c["audience_score"] = None
             c["director_oscars_won"] = int(row[ci_doscars]) if row[ci_doscars] is not None else None
 
         people = split_directors(c["director"])

@@ -3107,6 +3107,588 @@
         "war film"
       ],
       "source": "wikidata"
+    },
+    "card_182": {
+      "title": "Iron Man",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_183": {
+      "title": "The Incredible Hulk",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_184": {
+      "title": "Iron Man 2",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_185": {
+      "title": "Thor",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_186": {
+      "title": "Captain America: The First Avenger",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi",
+        "War"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_187": {
+      "title": "The Avengers",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "crossover fiction",
+        "science fiction film",
+        "speculative fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_188": {
+      "title": "Iron Man 3",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "comedy film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_189": {
+      "title": "Thor: The Dark World",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_190": {
+      "title": "Captain America: The Winter Soldier",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_191": {
+      "title": "Avengers: Age of Ultron",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata+manual"
+    },
+    "card_192": {
+      "title": "Ant-Man",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "comedy film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_193": {
+      "title": "Captain America: Civil War",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "superhero film"
+      ],
+      "source": "wikidata+manual"
+    },
+    "card_194": {
+      "title": "Doctor Strange",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_195": {
+      "title": "Guardians of the Galaxy Vol. 2",
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "comedy film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_196": {
+      "title": "Spider-Man: Homecoming",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "superhero film"
+      ],
+      "source": "wikidata+manual"
+    },
+    "card_197": {
+      "title": "Thor: Ragnarok",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "comedy film",
+        "fantasy film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_198": {
+      "title": "Black Panther",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_199": {
+      "title": "Ant-Man and the Wasp",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "comedy film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_200": {
+      "title": "Captain Marvel",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_201": {
+      "title": "Avengers: Endgame",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "superhero film"
+      ],
+      "source": "wikidata+manual"
+    },
+    "card_202": {
+      "title": "Spider-Man: Far From Home",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "speculative fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_203": {
+      "title": "Black Widow",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_204": {
+      "title": "Shang-Chi and the Legend of the Ten Rings",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "martial arts film",
+        "superhero film"
+      ],
+      "source": "wikidata+manual"
+    },
+    "card_205": {
+      "title": "Eternals",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "drama film",
+        "science fiction film",
+        "speculative fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_206": {
+      "title": "Doctor Strange in the Multiverse of Madness",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Horror",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film",
+        "horror film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_207": {
+      "title": "Thor: Love and Thunder",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_208": {
+      "title": "Black Panther: Wakanda Forever",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "superhero film"
+      ],
+      "source": "wikidata+manual"
+    },
+    "card_209": {
+      "title": "Ant-Man and the Wasp: Quantumania",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Fantasy",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "comedy film",
+        "fantasy film",
+        "science fiction film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_210": {
+      "title": "Guardians of the Galaxy Vol. 3",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Crime",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "comedy film",
+        "crime film",
+        "science fiction film",
+        "space opera",
+        "speculative fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_211": {
+      "title": "The Marvels",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_212": {
+      "title": "Deadpool & Wolverine",
+      "genres": [
+        "Action",
+        "Comedy",
+        "Horror",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "black comedy film",
+        "science fiction film",
+        "splatter film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_213": {
+      "title": "Captain America: Brave New World",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_214": {
+      "title": "Thunderbolts*",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Crime",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "crime film",
+        "science fiction film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_215": {
+      "title": "The Fantastic Four: First Steps",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_216": {
+      "title": "The Hobbit: An Unexpected Journey",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_217": {
+      "title": "The Hobbit: The Desolation of Smaug",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_218": {
+      "title": "The Hobbit: The Battle of the Five Armies",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
     }
   }
 }

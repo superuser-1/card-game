@@ -3707,6 +3707,766 @@
         "Drama",
         "War"
       ]
+    },
+    {
+      "id": "card_182",
+      "title": "Iron Man",
+      "director": "Jon Favreau",
+      "release_year": 2008,
+      "box_office_usd": 584877827,
+      "budget_usd": 186000000,
+      "runtime_minutes": 126,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 42,
+      "profit_cost_ratio_pct": 214
+    },
+    {
+      "id": "card_183",
+      "title": "The Incredible Hulk",
+      "director": "Louis Leterrier",
+      "release_year": 2008,
+      "box_office_usd": 265573859,
+      "budget_usd": 137500000,
+      "runtime_minutes": 112,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 56,
+      "director_oscars_won": 0,
+      "director_birth_year": 1973,
+      "director_age_at_release": 35,
+      "profit_cost_ratio_pct": 93
+    },
+    {
+      "id": "card_184",
+      "title": "Iron Man 2",
+      "director": "Jon Favreau",
+      "release_year": 2010,
+      "box_office_usd": 621156389,
+      "budget_usd": 170000000,
+      "runtime_minutes": 124,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 59,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 44,
+      "profit_cost_ratio_pct": 265
+    },
+    {
+      "id": "card_185",
+      "title": "Thor",
+      "director": "Kenneth Branagh",
+      "release_year": 2011,
+      "box_office_usd": 449326618,
+      "budget_usd": 150000000,
+      "runtime_minutes": 115,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "audience_score": 57,
+      "director_oscars_won": 1,
+      "director_birth_year": 1960,
+      "director_age_at_release": 51,
+      "profit_cost_ratio_pct": 200
+    },
+    {
+      "id": "card_186",
+      "title": "Captain America: The First Avenger",
+      "director": "Joe Johnston",
+      "release_year": 2011,
+      "box_office_usd": 370569776,
+      "budget_usd": 140000000,
+      "runtime_minutes": 124,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi",
+        "War"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 1,
+      "director_birth_year": 1950,
+      "director_age_at_release": 61,
+      "profit_cost_ratio_pct": 165
+    },
+    {
+      "id": "card_187",
+      "title": "The Avengers",
+      "director": "Joss Whedon",
+      "release_year": 2012,
+      "box_office_usd": 1515100211,
+      "budget_usd": 225000000,
+      "runtime_minutes": 143,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 48,
+      "profit_cost_ratio_pct": 573
+    },
+    {
+      "id": "card_188",
+      "title": "Iron Man 3",
+      "director": "Shane Black",
+      "release_year": 2013,
+      "box_office_usd": 1214630956,
+      "budget_usd": 200000000,
+      "runtime_minutes": 130,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Sci-Fi"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 0,
+      "director_birth_year": 1961,
+      "director_age_at_release": 52,
+      "profit_cost_ratio_pct": 507
+    },
+    {
+      "id": "card_189",
+      "title": "Thor: The Dark World",
+      "director": "Alan Taylor",
+      "release_year": 2013,
+      "box_office_usd": 644602516,
+      "budget_usd": 150000000,
+      "runtime_minutes": 112,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "audience_score": 50,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 48,
+      "profit_cost_ratio_pct": 330
+    },
+    {
+      "id": "card_190",
+      "title": "Captain America: The Winter Soldier",
+      "director": "Anthony Russo and Joe Russo",
+      "release_year": 2014,
+      "box_office_usd": 714401889,
+      "budget_usd": 170000000,
+      "runtime_minutes": 136,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1970,
+      "director_age_at_release": 44,
+      "profit_cost_ratio_pct": 320
+    },
+    {
+      "id": "card_191",
+      "title": "Avengers: Age of Ultron",
+      "director": "Joss Whedon",
+      "release_year": 2015,
+      "box_office_usd": 1395316979,
+      "budget_usd": 365000000,
+      "runtime_minutes": 141,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 51,
+      "profit_cost_ratio_pct": 282
+    },
+    {
+      "id": "card_192",
+      "title": "Ant-Man",
+      "director": "Peyton Reed",
+      "release_year": 2015,
+      "box_office_usd": 518858449,
+      "budget_usd": 130000000,
+      "runtime_minutes": 117,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Sci-Fi"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 51,
+      "profit_cost_ratio_pct": 299
+    },
+    {
+      "id": "card_193",
+      "title": "Captain America: Civil War",
+      "director": "Anthony Russo and Joe Russo",
+      "release_year": 2016,
+      "box_office_usd": 1151899586,
+      "budget_usd": 250000000,
+      "runtime_minutes": 147,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1970,
+      "director_age_at_release": 46,
+      "profit_cost_ratio_pct": 361
+    },
+    {
+      "id": "card_194",
+      "title": "Doctor Strange",
+      "director": "Scott Derrickson",
+      "release_year": 2016,
+      "box_office_usd": 676343174,
+      "budget_usd": 165000000,
+      "runtime_minutes": 115,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "audience_score": 71,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 50,
+      "profit_cost_ratio_pct": 310
+    },
+    {
+      "id": "card_195",
+      "title": "Guardians of the Galaxy Vol. 2",
+      "director": "James Gunn",
+      "release_year": 2017,
+      "box_office_usd": 869087963,
+      "budget_usd": 200000000,
+      "runtime_minutes": 136,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Sci-Fi"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 51,
+      "profit_cost_ratio_pct": 335
+    },
+    {
+      "id": "card_196",
+      "title": "Spider-Man: Homecoming",
+      "director": "Jon Watts",
+      "release_year": 2017,
+      "box_office_usd": 878852749,
+      "budget_usd": 175000000,
+      "runtime_minutes": 133,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 0,
+      "director_birth_year": 1981,
+      "director_age_at_release": 36,
+      "profit_cost_ratio_pct": 402
+    },
+    {
+      "id": "card_197",
+      "title": "Thor: Ragnarok",
+      "director": "Taika Waititi",
+      "release_year": 2017,
+      "box_office_usd": 850482778,
+      "budget_usd": 180000000,
+      "runtime_minutes": 130,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 1,
+      "director_birth_year": 1975,
+      "director_age_at_release": 42,
+      "profit_cost_ratio_pct": 372
+    },
+    {
+      "id": "card_198",
+      "title": "Black Panther",
+      "director": "Ryan Coogler",
+      "release_year": 2018,
+      "box_office_usd": 1334157082,
+      "budget_usd": 200000000,
+      "runtime_minutes": 134,
+      "oscars_won": 3,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 81,
+      "director_oscars_won": 0,
+      "director_birth_year": 1986,
+      "director_age_at_release": 32,
+      "profit_cost_ratio_pct": 567
+    },
+    {
+      "id": "card_199",
+      "title": "Ant-Man and the Wasp",
+      "director": "Peyton Reed",
+      "release_year": 2018,
+      "box_office_usd": 623144660,
+      "budget_usd": 130000000,
+      "runtime_minutes": 118,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Sci-Fi"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 54,
+      "profit_cost_ratio_pct": 379
+    },
+    {
+      "id": "card_200",
+      "title": "Captain Marvel",
+      "director": "Anna Boden and Ryan Fleck",
+      "release_year": 2019,
+      "box_office_usd": 1129576094,
+      "budget_usd": 175000000,
+      "runtime_minutes": 123,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 0,
+      "director_birth_year": 1978,
+      "director_age_at_release": 41,
+      "profit_cost_ratio_pct": 545
+    },
+    {
+      "id": "card_201",
+      "title": "Avengers: Endgame",
+      "director": "Anthony Russo and Joe Russo",
+      "release_year": 2019,
+      "box_office_usd": 2717503922,
+      "budget_usd": 400000000,
+      "runtime_minutes": 181,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 0,
+      "director_birth_year": 1970,
+      "director_age_at_release": 49,
+      "profit_cost_ratio_pct": 579
+    },
+    {
+      "id": "card_202",
+      "title": "Spider-Man: Far From Home",
+      "director": "Jon Watts",
+      "release_year": 2019,
+      "box_office_usd": 1132298674,
+      "budget_usd": 160000000,
+      "runtime_minutes": 129,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1981,
+      "director_age_at_release": 38,
+      "profit_cost_ratio_pct": 608
+    },
+    {
+      "id": "card_203",
+      "title": "Black Widow",
+      "director": "Cate Shortland",
+      "release_year": 2021,
+      "box_office_usd": 379751131,
+      "budget_usd": 200000000,
+      "runtime_minutes": 134,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1968,
+      "director_age_at_release": 53,
+      "profit_cost_ratio_pct": 90
+    },
+    {
+      "id": "card_204",
+      "title": "Shang-Chi and the Legend of the Ten Rings",
+      "director": "Destin Daniel Cretton",
+      "release_year": 2021,
+      "box_office_usd": 432233010,
+      "budget_usd": 150000000,
+      "runtime_minutes": 132,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1978,
+      "director_age_at_release": 43,
+      "profit_cost_ratio_pct": 188
+    },
+    {
+      "id": "card_205",
+      "title": "Eternals",
+      "director": "Chloé Zhao",
+      "release_year": 2021,
+      "box_office_usd": 402064929,
+      "budget_usd": 200000000,
+      "runtime_minutes": 156,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "Sci-Fi"
+      ],
+      "audience_score": 53,
+      "director_oscars_won": 2,
+      "director_birth_year": 1982,
+      "director_age_at_release": 39,
+      "profit_cost_ratio_pct": 101
+    },
+    {
+      "id": "card_206",
+      "title": "Doctor Strange in the Multiverse of Madness",
+      "director": "Sam Raimi",
+      "release_year": 2022,
+      "box_office_usd": 955775804,
+      "budget_usd": 200000000,
+      "runtime_minutes": 126,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Horror",
+        "Sci-Fi"
+      ],
+      "audience_score": 60,
+      "director_oscars_won": 0,
+      "director_birth_year": 1959,
+      "director_age_at_release": 63,
+      "profit_cost_ratio_pct": 378
+    },
+    {
+      "id": "card_207",
+      "title": "Thor: Love and Thunder",
+      "director": "Taika Waititi",
+      "release_year": 2022,
+      "box_office_usd": 760928081,
+      "budget_usd": 250000000,
+      "runtime_minutes": 118,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 52,
+      "director_oscars_won": 1,
+      "director_birth_year": 1975,
+      "director_age_at_release": 47,
+      "profit_cost_ratio_pct": 204
+    },
+    {
+      "id": "card_208",
+      "title": "Black Panther: Wakanda Forever",
+      "director": "Ryan Coogler",
+      "release_year": 2022,
+      "box_office_usd": 859208836,
+      "budget_usd": 250000000,
+      "runtime_minutes": 161,
+      "oscars_won": 1,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1986,
+      "director_age_at_release": 36,
+      "profit_cost_ratio_pct": 244
+    },
+    {
+      "id": "card_209",
+      "title": "Ant-Man and the Wasp: Quantumania",
+      "director": "Peyton Reed",
+      "release_year": 2023,
+      "box_office_usd": 476071180,
+      "budget_usd": 200000000,
+      "runtime_minutes": 124,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Fantasy",
+        "Sci-Fi",
+        "Thriller"
+      ],
+      "audience_score": 45,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 59,
+      "profit_cost_ratio_pct": 138
+    },
+    {
+      "id": "card_210",
+      "title": "Guardians of the Galaxy Vol. 3",
+      "director": "James Gunn",
+      "release_year": 2023,
+      "box_office_usd": 845555777,
+      "budget_usd": 250000000,
+      "runtime_minutes": 150,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Crime",
+        "Sci-Fi"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 57,
+      "profit_cost_ratio_pct": 238
+    },
+    {
+      "id": "card_211",
+      "title": "The Marvels",
+      "director": "Nia DaCosta",
+      "release_year": 2023,
+      "box_office_usd": 206136825,
+      "budget_usd": 270000000,
+      "runtime_minutes": 105,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 49,
+      "director_oscars_won": 0,
+      "director_birth_year": 1989,
+      "director_age_at_release": 34,
+      "profit_cost_ratio_pct": -24
+    },
+    {
+      "id": "card_212",
+      "title": "Deadpool & Wolverine",
+      "director": "Shawn Levy",
+      "release_year": 2024,
+      "box_office_usd": 1338073645,
+      "budget_usd": 200000000,
+      "runtime_minutes": 128,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Comedy",
+        "Horror",
+        "Sci-Fi"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 0,
+      "director_birth_year": 1968,
+      "director_age_at_release": 56,
+      "profit_cost_ratio_pct": 569
+    },
+    {
+      "id": "card_213",
+      "title": "Captain America: Brave New World",
+      "director": "Julius Onah",
+      "release_year": 2025,
+      "box_office_usd": 415101577,
+      "budget_usd": 180000000,
+      "runtime_minutes": 118,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 45,
+      "director_oscars_won": 0,
+      "director_birth_year": 1983,
+      "director_age_at_release": 42,
+      "profit_cost_ratio_pct": 131
+    },
+    {
+      "id": "card_214",
+      "title": "Thunderbolts*",
+      "director": "Jake Schreier",
+      "release_year": 2025,
+      "box_office_usd": 382436917,
+      "budget_usd": 180000000,
+      "runtime_minutes": 126,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Crime",
+        "Sci-Fi"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1981,
+      "director_age_at_release": 44,
+      "profit_cost_ratio_pct": 112
+    },
+    {
+      "id": "card_215",
+      "title": "The Fantastic Four: First Steps",
+      "director": "Matt Shakman",
+      "release_year": 2025,
+      "box_office_usd": 521858728,
+      "budget_usd": 200000000,
+      "runtime_minutes": 115,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1975,
+      "director_age_at_release": 50,
+      "profit_cost_ratio_pct": 161
+    },
+    {
+      "id": "card_216",
+      "title": "The Hobbit: An Unexpected Journey",
+      "director": "Peter Jackson",
+      "release_year": 2012,
+      "box_office_usd": 1017003568,
+      "budget_usd": 180000000,
+      "runtime_minutes": 169,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 65,
+      "director_oscars_won": 3,
+      "director_birth_year": 1961,
+      "director_age_at_release": 51,
+      "profit_cost_ratio_pct": 465
+    },
+    {
+      "id": "card_217",
+      "title": "The Hobbit: The Desolation of Smaug",
+      "director": "Peter Jackson",
+      "release_year": 2013,
+      "box_office_usd": 958366855,
+      "budget_usd": 225000000,
+      "runtime_minutes": 161,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 3,
+      "director_birth_year": 1961,
+      "director_age_at_release": 52,
+      "profit_cost_ratio_pct": 326
+    },
+    {
+      "id": "card_218",
+      "title": "The Hobbit: The Battle of the Five Armies",
+      "director": "Peter Jackson",
+      "release_year": 2014,
+      "box_office_usd": 956019788,
+      "budget_usd": 250000000,
+      "runtime_minutes": 144,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 3,
+      "director_birth_year": 1961,
+      "director_age_at_release": 53,
+      "profit_cost_ratio_pct": 282
     }
   ]
 }
