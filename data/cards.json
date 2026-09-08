@@ -4467,6 +4467,1815 @@
       "director_birth_year": 1961,
       "director_age_at_release": 53,
       "profit_cost_ratio_pct": 282
+    },
+    {
+      "id": "card_219",
+      "title": "Deadpool",
+      "director": "Tim Miller",
+      "release_year": 2016,
+      "box_office_usd": 782612155,
+      "budget_usd": 58000000,
+      "runtime_minutes": 108,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Comedy"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 52,
+      "profit_cost_ratio_pct": 1249
+    },
+    {
+      "id": "card_220",
+      "title": "Deadpool 2",
+      "director": "David Leitch",
+      "release_year": 2018,
+      "box_office_usd": 785896609,
+      "budget_usd": 110000000,
+      "runtime_minutes": 119,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1975,
+      "director_age_at_release": 43,
+      "profit_cost_ratio_pct": 614
+    },
+    {
+      "id": "card_221",
+      "title": "Spider-Man: Brand New Day",
+      "director": "Destin Daniel Cretton",
+      "release_year": 2026,
+      "box_office_usd": null,
+      "budget_usd": 225000000,
+      "runtime_minutes": null,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Comedy",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "audience_score": null,
+      "director_oscars_won": 0,
+      "director_birth_year": 1978,
+      "director_age_at_release": 48,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_222",
+      "title": "Quo Vadis",
+      "director": "Mervyn LeRoy",
+      "release_year": 1951,
+      "box_office_usd": 21000000,
+      "budget_usd": 7600000,
+      "runtime_minutes": 171,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1900,
+      "director_age_at_release": 51,
+      "profit_cost_ratio_pct": 176
+    },
+    {
+      "id": "card_223",
+      "title": "David and Bathsheba",
+      "director": "Henry King",
+      "release_year": 1951,
+      "box_office_usd": 4720000,
+      "budget_usd": 2170000,
+      "runtime_minutes": 116,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Romance"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1886,
+      "director_age_at_release": 65,
+      "profit_cost_ratio_pct": 118
+    },
+    {
+      "id": "card_224",
+      "title": "Salome",
+      "director": "William Dieterle",
+      "release_year": 1953,
+      "box_office_usd": 4750000,
+      "budget_usd": null,
+      "runtime_minutes": 103,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 0,
+      "director_birth_year": 1893,
+      "director_age_at_release": 60,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_225",
+      "title": "The Robe",
+      "director": "Henry Koster",
+      "release_year": 1953,
+      "box_office_usd": 36000000,
+      "budget_usd": 4350000,
+      "runtime_minutes": 135,
+      "oscars_won": 2,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1905,
+      "director_age_at_release": 48,
+      "profit_cost_ratio_pct": 728
+    },
+    {
+      "id": "card_226",
+      "title": "Demetrius and the Gladiators",
+      "director": "Delmer Daves",
+      "release_year": 1954,
+      "box_office_usd": 26000000,
+      "budget_usd": 1990000,
+      "runtime_minutes": 101,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1904,
+      "director_age_at_release": 50,
+      "profit_cost_ratio_pct": 1207
+    },
+    {
+      "id": "card_227",
+      "title": "The Egyptian",
+      "director": "Michael Curtiz",
+      "release_year": 1954,
+      "box_office_usd": 9250000,
+      "budget_usd": 3900000,
+      "runtime_minutes": 140,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 1,
+      "director_birth_year": 1886,
+      "director_age_at_release": 68,
+      "profit_cost_ratio_pct": 137
+    },
+    {
+      "id": "card_228",
+      "title": "Sign of the Pagan",
+      "director": "Douglas Sirk",
+      "release_year": 1954,
+      "box_office_usd": 6000000,
+      "budget_usd": 1500000,
+      "runtime_minutes": 92,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1897,
+      "director_age_at_release": 57,
+      "profit_cost_ratio_pct": 300
+    },
+    {
+      "id": "card_229",
+      "title": "The Silver Chalice",
+      "director": "Victor Saville",
+      "release_year": 1954,
+      "box_office_usd": 3200000,
+      "budget_usd": 4500000,
+      "runtime_minutes": 135,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Drama"
+      ],
+      "audience_score": 54,
+      "director_oscars_won": 0,
+      "director_birth_year": 1895,
+      "director_age_at_release": 59,
+      "profit_cost_ratio_pct": -29
+    },
+    {
+      "id": "card_230",
+      "title": "Land of the Pharaohs",
+      "director": "Howard Hawks",
+      "release_year": 1955,
+      "box_office_usd": 2700000,
+      "budget_usd": 2900000,
+      "runtime_minutes": 106,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 0,
+      "director_birth_year": 1896,
+      "director_age_at_release": 59,
+      "profit_cost_ratio_pct": -7
+    },
+    {
+      "id": "card_231",
+      "title": "Helen of Troy",
+      "director": "Robert Wise",
+      "release_year": 1956,
+      "box_office_usd": 3200000,
+      "budget_usd": 6000000,
+      "runtime_minutes": 118,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History",
+        "Romance",
+        "War"
+      ],
+      "audience_score": 60,
+      "director_oscars_won": 4,
+      "director_birth_year": 1914,
+      "director_age_at_release": 42,
+      "profit_cost_ratio_pct": -47
+    },
+    {
+      "id": "card_232",
+      "title": "Alexander the Great",
+      "director": "Robert Rossen",
+      "release_year": 1956,
+      "box_office_usd": 2500000,
+      "budget_usd": 4000000,
+      "runtime_minutes": 136,
+      "oscars_won": 0,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 1,
+      "director_birth_year": 1908,
+      "director_age_at_release": 48,
+      "profit_cost_ratio_pct": -38
+    },
+    {
+      "id": "card_233",
+      "title": "War and Peace",
+      "director": "King Vidor",
+      "release_year": 1956,
+      "box_office_usd": 12250000,
+      "budget_usd": 5000000,
+      "runtime_minutes": 208,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History",
+        "Romance",
+        "War"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 0,
+      "director_birth_year": 1894,
+      "director_age_at_release": 62,
+      "profit_cost_ratio_pct": 145
+    },
+    {
+      "id": "card_234",
+      "title": "The Ten Commandments",
+      "director": "Cecil B. DeMille",
+      "release_year": 1956,
+      "box_office_usd": 122700000,
+      "budget_usd": 13000000,
+      "runtime_minutes": 220,
+      "oscars_won": 1,
+      "genres": [
+        "Adventure",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 1,
+      "director_birth_year": 1881,
+      "director_age_at_release": 75,
+      "profit_cost_ratio_pct": 844
+    },
+    {
+      "id": "card_235",
+      "title": "The Hunchback of Notre Dame",
+      "director": "Jean Delannoy",
+      "release_year": 1956,
+      "box_office_usd": 2250000,
+      "budget_usd": 2000000,
+      "runtime_minutes": 115,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Horror"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1908,
+      "director_age_at_release": 48,
+      "profit_cost_ratio_pct": 12
+    },
+    {
+      "id": "card_236",
+      "title": "The Last Days of Pompeii",
+      "director": "Mario Bonnard",
+      "release_year": 1959,
+      "box_office_usd": null,
+      "budget_usd": null,
+      "runtime_minutes": 100,
+      "oscars_won": 0,
+      "genres": [
+        "History"
+      ],
+      "audience_score": 60,
+      "director_oscars_won": 0,
+      "director_birth_year": 1889,
+      "director_age_at_release": 70,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_237",
+      "title": "Ben-Hur",
+      "director": "William Wyler",
+      "release_year": 1959,
+      "box_office_usd": 146900000,
+      "budget_usd": 15200000,
+      "runtime_minutes": 212,
+      "oscars_won": 11,
+      "genres": [
+        "Action",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 82,
+      "director_oscars_won": 3,
+      "director_birth_year": 1902,
+      "director_age_at_release": 57,
+      "profit_cost_ratio_pct": 866
+    },
+    {
+      "id": "card_238",
+      "title": "Solomon and Sheba",
+      "director": "King Vidor",
+      "release_year": 1959,
+      "box_office_usd": 12200000,
+      "budget_usd": 5000000,
+      "runtime_minutes": 141,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 0,
+      "director_birth_year": 1894,
+      "director_age_at_release": 65,
+      "profit_cost_ratio_pct": 144
+    },
+    {
+      "id": "card_239",
+      "title": "The Human Condition",
+      "director": "Masaki Kobayashi",
+      "release_year": 1959,
+      "box_office_usd": null,
+      "budget_usd": null,
+      "runtime_minutes": 574,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "War"
+      ],
+      "audience_score": 92,
+      "director_oscars_won": 0,
+      "director_birth_year": 1916,
+      "director_age_at_release": 43,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_240",
+      "title": "Knights of the Teutonic Order",
+      "director": "Aleksander Ford",
+      "release_year": 1960,
+      "box_office_usd": null,
+      "budget_usd": null,
+      "runtime_minutes": 166,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Romance",
+        "War"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1908,
+      "director_age_at_release": 52,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_241",
+      "title": "Spartacus",
+      "director": "Stanley Kubrick",
+      "release_year": 1960,
+      "box_office_usd": 60000000,
+      "budget_usd": 12000000,
+      "runtime_minutes": 197,
+      "oscars_won": 4,
+      "genres": [
+        "Action",
+        "Biography",
+        "Drama",
+        "History",
+        "Romance",
+        "War"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 1,
+      "director_birth_year": 1928,
+      "director_age_at_release": 32,
+      "profit_cost_ratio_pct": 400
+    },
+    {
+      "id": "card_242",
+      "title": "Exodus",
+      "director": "Otto Preminger",
+      "release_year": 1960,
+      "box_office_usd": 20000000,
+      "budget_usd": 4500000,
+      "runtime_minutes": 208,
+      "oscars_won": 1,
+      "genres": [
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 65,
+      "director_oscars_won": 0,
+      "director_birth_year": 1905,
+      "director_age_at_release": 55,
+      "profit_cost_ratio_pct": 344
+    },
+    {
+      "id": "card_243",
+      "title": "The Story of Ruth",
+      "director": "Henry Koster",
+      "release_year": 1960,
+      "box_office_usd": 3000000,
+      "budget_usd": 2930000,
+      "runtime_minutes": 132,
+      "oscars_won": 0,
+      "genres": [
+        "Drama"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1905,
+      "director_age_at_release": 55,
+      "profit_cost_ratio_pct": 2
+    },
+    {
+      "id": "card_244",
+      "title": "King of Kings",
+      "director": "Nicholas Ray",
+      "release_year": 1961,
+      "box_office_usd": 13400000,
+      "budget_usd": 7750000,
+      "runtime_minutes": 171,
+      "oscars_won": 0,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 0,
+      "director_birth_year": 1911,
+      "director_age_at_release": 50,
+      "profit_cost_ratio_pct": 73
+    },
+    {
+      "id": "card_245",
+      "title": "El Cid",
+      "director": "Anthony Mann",
+      "release_year": 1961,
+      "box_office_usd": 26600000,
+      "budget_usd": 8000000,
+      "runtime_minutes": 184,
+      "oscars_won": 0,
+      "genres": [
+        "Biography",
+        "Drama",
+        "Romance",
+        "War"
+      ],
+      "audience_score": 71,
+      "director_oscars_won": 0,
+      "director_birth_year": 1906,
+      "director_age_at_release": 55,
+      "profit_cost_ratio_pct": 233
+    },
+    {
+      "id": "card_246",
+      "title": "Barabbas",
+      "director": "Richard Fleischer",
+      "release_year": 1961,
+      "box_office_usd": 2900000,
+      "budget_usd": null,
+      "runtime_minutes": 137,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 71,
+      "director_oscars_won": 0,
+      "director_birth_year": 1916,
+      "director_age_at_release": 45,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_247",
+      "title": "The Colossus of Rhodes",
+      "director": "Sergio Leone",
+      "release_year": 1961,
+      "box_office_usd": null,
+      "budget_usd": null,
+      "runtime_minutes": 142,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 0,
+      "director_birth_year": 1929,
+      "director_age_at_release": 32,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_248",
+      "title": "The Longest Day",
+      "director": "Ken Annakin, Andrew Marton, Bernhard Wicki",
+      "release_year": 1962,
+      "box_office_usd": 50100000,
+      "budget_usd": 7750000,
+      "runtime_minutes": 178,
+      "oscars_won": 2,
+      "genres": [
+        "Action",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1912,
+      "director_age_at_release": 50,
+      "profit_cost_ratio_pct": 546
+    },
+    {
+      "id": "card_249",
+      "title": "How the West Was Won",
+      "director": "Henry Hathaway, John Ford, George Marshall",
+      "release_year": 1962,
+      "box_office_usd": 50000000,
+      "budget_usd": 14400000,
+      "runtime_minutes": 164,
+      "oscars_won": 3,
+      "genres": [
+        "Drama",
+        "Western"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 4,
+      "director_birth_year": 1894,
+      "director_age_at_release": 68,
+      "profit_cost_ratio_pct": 247
+    },
+    {
+      "id": "card_250",
+      "title": "Sodom and Gomorrah",
+      "director": "Robert Aldrich",
+      "release_year": 1962,
+      "box_office_usd": null,
+      "budget_usd": 4500000,
+      "runtime_minutes": 154,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 61,
+      "director_oscars_won": 0,
+      "director_birth_year": 1918,
+      "director_age_at_release": 44,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_251",
+      "title": "55 Days at Peking",
+      "director": "Nicholas Ray",
+      "release_year": 1963,
+      "box_office_usd": 10000000,
+      "budget_usd": 10000000,
+      "runtime_minutes": 153,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "War"
+      ],
+      "audience_score": 65,
+      "director_oscars_won": 0,
+      "director_birth_year": 1911,
+      "director_age_at_release": 52,
+      "profit_cost_ratio_pct": 0
+    },
+    {
+      "id": "card_252",
+      "title": "Cleopatra",
+      "director": "Joseph L. Mankiewicz",
+      "release_year": 1963,
+      "box_office_usd": 57800000,
+      "budget_usd": 31100000,
+      "runtime_minutes": 192,
+      "oscars_won": 4,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "Romance",
+        "War"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 4,
+      "director_birth_year": 1909,
+      "director_age_at_release": 54,
+      "profit_cost_ratio_pct": 86
+    },
+    {
+      "id": "card_253",
+      "title": "Kings of the Sun",
+      "director": "J. Lee Thompson",
+      "release_year": 1963,
+      "box_office_usd": 1600000,
+      "budget_usd": 4000000,
+      "runtime_minutes": 108,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "History"
+      ],
+      "audience_score": 61,
+      "director_oscars_won": 0,
+      "director_birth_year": 1914,
+      "director_age_at_release": 49,
+      "profit_cost_ratio_pct": -60
+    },
+    {
+      "id": "card_254",
+      "title": "The Fall of the Roman Empire",
+      "director": "Anthony Mann",
+      "release_year": 1964,
+      "box_office_usd": 4800000,
+      "budget_usd": 16000000,
+      "runtime_minutes": 185,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 0,
+      "director_birth_year": 1906,
+      "director_age_at_release": 58,
+      "profit_cost_ratio_pct": -70
+    },
+    {
+      "id": "card_255",
+      "title": "The Greatest Story Ever Told",
+      "director": "George Stevens",
+      "release_year": 1965,
+      "box_office_usd": 15500000,
+      "budget_usd": 20000000,
+      "runtime_minutes": 199,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 2,
+      "director_birth_year": 1904,
+      "director_age_at_release": 61,
+      "profit_cost_ratio_pct": -22
+    },
+    {
+      "id": "card_256",
+      "title": "Genghis Khan",
+      "director": "Henry Levin",
+      "release_year": 1965,
+      "box_office_usd": 2250000,
+      "budget_usd": 4500000,
+      "runtime_minutes": 120,
+      "oscars_won": 0,
+      "genres": [
+        "Biography",
+        "Drama",
+        "War"
+      ],
+      "audience_score": 60,
+      "director_oscars_won": 0,
+      "director_birth_year": 1909,
+      "director_age_at_release": 56,
+      "profit_cost_ratio_pct": -50
+    },
+    {
+      "id": "card_257",
+      "title": "Doctor Zhivago",
+      "director": "David Lean",
+      "release_year": 1965,
+      "box_office_usd": 111700000,
+      "budget_usd": 11000000,
+      "runtime_minutes": 193,
+      "oscars_won": 5,
+      "genres": [
+        "Drama",
+        "Romance",
+        "War"
+      ],
+      "audience_score": 80,
+      "director_oscars_won": 2,
+      "director_birth_year": 1908,
+      "director_age_at_release": 57,
+      "profit_cost_ratio_pct": 915
+    },
+    {
+      "id": "card_258",
+      "title": "The Bible: In the Beginning...",
+      "director": "John Huston",
+      "release_year": 1966,
+      "box_office_usd": 34900000,
+      "budget_usd": 16500000,
+      "runtime_minutes": 174,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 2,
+      "director_birth_year": 1906,
+      "director_age_at_release": 60,
+      "profit_cost_ratio_pct": 112
+    },
+    {
+      "id": "card_259",
+      "title": "Hawaii",
+      "director": "George Roy Hill",
+      "release_year": 1966,
+      "box_office_usd": 34500000,
+      "budget_usd": 15000000,
+      "runtime_minutes": 189,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 61,
+      "director_oscars_won": 1,
+      "director_birth_year": 1921,
+      "director_age_at_release": 45,
+      "profit_cost_ratio_pct": 130
+    },
+    {
+      "id": "card_260",
+      "title": "Pharaoh",
+      "director": "Jerzy Kawalerowicz",
+      "release_year": 1966,
+      "box_office_usd": null,
+      "budget_usd": null,
+      "runtime_minutes": 145,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1922,
+      "director_age_at_release": 44,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_261",
+      "title": "Khartoum",
+      "director": "Basil Dearden",
+      "release_year": 1966,
+      "box_office_usd": 3000000,
+      "budget_usd": 7000000,
+      "runtime_minutes": 134,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Drama",
+        "War"
+      ],
+      "audience_score": 65,
+      "director_oscars_won": 0,
+      "director_birth_year": 1911,
+      "director_age_at_release": 55,
+      "profit_cost_ratio_pct": -57
+    },
+    {
+      "id": "card_262",
+      "title": "War and Peace",
+      "director": "Sergei Bondarchuk",
+      "release_year": 1966,
+      "box_office_usd": null,
+      "budget_usd": null,
+      "runtime_minutes": 431,
+      "oscars_won": 1,
+      "genres": [
+        "Drama",
+        "History",
+        "Romance",
+        "War"
+      ],
+      "audience_score": 88,
+      "director_oscars_won": 1,
+      "director_birth_year": 1920,
+      "director_age_at_release": 46,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_263",
+      "title": "Waterloo",
+      "director": "Sergei Bondarchuk",
+      "release_year": 1970,
+      "box_office_usd": null,
+      "budget_usd": 28800000,
+      "runtime_minutes": 128,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 1,
+      "director_birth_year": 1920,
+      "director_age_at_release": 50,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_264",
+      "title": "Ludwig",
+      "director": "Luchino Visconti",
+      "release_year": 1973,
+      "box_office_usd": null,
+      "budget_usd": 4400000,
+      "runtime_minutes": 238,
+      "oscars_won": 0,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 0,
+      "director_birth_year": 1906,
+      "director_age_at_release": 67,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_265",
+      "title": "1900",
+      "director": "Bernardo Bertolucci",
+      "release_year": 1976,
+      "box_office_usd": null,
+      "budget_usd": 9000000,
+      "runtime_minutes": 317,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History",
+        "Romance"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 2,
+      "director_birth_year": 1941,
+      "director_age_at_release": 35,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_266",
+      "title": "The Message",
+      "director": "Moustapha Akkad",
+      "release_year": 1976,
+      "box_office_usd": 5000000,
+      "budget_usd": 17000000,
+      "runtime_minutes": 178,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Biography",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 84,
+      "director_oscars_won": 0,
+      "director_birth_year": 1930,
+      "director_age_at_release": 46,
+      "profit_cost_ratio_pct": -71
+    },
+    {
+      "id": "card_267",
+      "title": "A Bridge Too Far",
+      "director": "Richard Attenborough",
+      "release_year": 1977,
+      "box_office_usd": 50700000,
+      "budget_usd": 25000000,
+      "runtime_minutes": 176,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Drama",
+        "War"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 2,
+      "director_birth_year": 1923,
+      "director_age_at_release": 54,
+      "profit_cost_ratio_pct": 103
+    },
+    {
+      "id": "card_268",
+      "title": "Heaven's Gate",
+      "director": "Michael Cimino",
+      "release_year": 1980,
+      "box_office_usd": 3500000,
+      "budget_usd": 38000000,
+      "runtime_minutes": 219,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Western"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 2,
+      "director_birth_year": 1939,
+      "director_age_at_release": 41,
+      "profit_cost_ratio_pct": -91
+    },
+    {
+      "id": "card_269",
+      "title": "Excalibur",
+      "director": "John Boorman",
+      "release_year": 1981,
+      "box_office_usd": 46800000,
+      "budget_usd": 11000000,
+      "runtime_minutes": 140,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Drama",
+        "Fantasy"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1933,
+      "director_age_at_release": 48,
+      "profit_cost_ratio_pct": 325
+    },
+    {
+      "id": "card_270",
+      "title": "Reds",
+      "director": "Warren Beatty",
+      "release_year": 1981,
+      "box_office_usd": 40400000,
+      "budget_usd": 32000000,
+      "runtime_minutes": 195,
+      "oscars_won": 3,
+      "genres": [
+        "Biography",
+        "Drama",
+        "Romance",
+        "War"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 1,
+      "director_birth_year": 1937,
+      "director_age_at_release": 44,
+      "profit_cost_ratio_pct": 26
+    },
+    {
+      "id": "card_271",
+      "title": "Gandhi",
+      "director": "Richard Attenborough",
+      "release_year": 1982,
+      "box_office_usd": 127800000,
+      "budget_usd": 22000000,
+      "runtime_minutes": 191,
+      "oscars_won": 8,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 2,
+      "director_birth_year": 1923,
+      "director_age_at_release": 59,
+      "profit_cost_ratio_pct": 481
+    },
+    {
+      "id": "card_272",
+      "title": "Dune",
+      "director": "David Lynch",
+      "release_year": 1984,
+      "box_office_usd": 30900000,
+      "budget_usd": 41000000,
+      "runtime_minutes": 137,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 57,
+      "director_oscars_won": 0,
+      "director_birth_year": 1946,
+      "director_age_at_release": 38,
+      "profit_cost_ratio_pct": -25
+    },
+    {
+      "id": "card_273",
+      "title": "King David",
+      "director": "Bruce Beresford",
+      "release_year": 1985,
+      "box_office_usd": 5111099,
+      "budget_usd": 21000000,
+      "runtime_minutes": 114,
+      "oscars_won": 0,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 0,
+      "director_birth_year": 1940,
+      "director_age_at_release": 45,
+      "profit_cost_ratio_pct": -76
+    },
+    {
+      "id": "card_274",
+      "title": "The Last Emperor",
+      "director": "Bernardo Bertolucci",
+      "release_year": 1987,
+      "box_office_usd": 44000000,
+      "budget_usd": 23800000,
+      "runtime_minutes": 163,
+      "oscars_won": 9,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 2,
+      "director_birth_year": 1941,
+      "director_age_at_release": 46,
+      "profit_cost_ratio_pct": 85
+    },
+    {
+      "id": "card_275",
+      "title": "La Révolution française",
+      "director": "Robert Enrico, Richard T. Heffron",
+      "release_year": 1989,
+      "box_office_usd": 4800000,
+      "budget_usd": null,
+      "runtime_minutes": 360,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1930,
+      "director_age_at_release": 59,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_276",
+      "title": "Dances with Wolves",
+      "director": "Kevin Costner",
+      "release_year": 1990,
+      "box_office_usd": 424200000,
+      "budget_usd": 22000000,
+      "runtime_minutes": 181,
+      "oscars_won": 7,
+      "genres": [
+        "Adventure",
+        "Drama",
+        "War",
+        "Western"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 2,
+      "director_birth_year": 1955,
+      "director_age_at_release": 35,
+      "profit_cost_ratio_pct": 1828
+    },
+    {
+      "id": "card_277",
+      "title": "1492: Conquest of Paradise",
+      "director": "Ridley Scott",
+      "release_year": 1992,
+      "box_office_usd": 59000000,
+      "budget_usd": 47000000,
+      "runtime_minutes": 156,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Biography",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 0,
+      "director_birth_year": 1937,
+      "director_age_at_release": 55,
+      "profit_cost_ratio_pct": 26
+    },
+    {
+      "id": "card_278",
+      "title": "The Last of the Mohicans",
+      "director": "Michael Mann",
+      "release_year": 1992,
+      "box_office_usd": 143000000,
+      "budget_usd": 40000000,
+      "runtime_minutes": 112,
+      "oscars_won": 1,
+      "genres": [
+        "Drama",
+        "Romance",
+        "War"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 0,
+      "director_birth_year": 1943,
+      "director_age_at_release": 49,
+      "profit_cost_ratio_pct": 258
+    },
+    {
+      "id": "card_279",
+      "title": "Gettysburg",
+      "director": "Ronald F. Maxwell",
+      "release_year": 1993,
+      "box_office_usd": 12700000,
+      "budget_usd": 20000000,
+      "runtime_minutes": 254,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1949,
+      "director_age_at_release": 44,
+      "profit_cost_ratio_pct": -36
+    },
+    {
+      "id": "card_280",
+      "title": "Braveheart",
+      "director": "Mel Gibson",
+      "release_year": 1995,
+      "box_office_usd": 209000000,
+      "budget_usd": 62000000,
+      "runtime_minutes": 177,
+      "oscars_won": 5,
+      "genres": [
+        "Action",
+        "Biography",
+        "Drama",
+        "War"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 2,
+      "director_birth_year": 1956,
+      "director_age_at_release": 39,
+      "profit_cost_ratio_pct": 237
+    },
+    {
+      "id": "card_281",
+      "title": "Titanic",
+      "director": "James Cameron",
+      "release_year": 1997,
+      "box_office_usd": 2264000000,
+      "budget_usd": 200000000,
+      "runtime_minutes": 195,
+      "oscars_won": 11,
+      "genres": [
+        "Action",
+        "Drama",
+        "History",
+        "Romance"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 3,
+      "director_birth_year": 1954,
+      "director_age_at_release": 43,
+      "profit_cost_ratio_pct": 1032
+    },
+    {
+      "id": "card_282",
+      "title": "With Fire and Sword",
+      "director": "Jerzy Hoffman",
+      "release_year": 1999,
+      "box_office_usd": 26366071,
+      "budget_usd": 8000000,
+      "runtime_minutes": 175,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1932,
+      "director_age_at_release": 67,
+      "profit_cost_ratio_pct": 230
+    },
+    {
+      "id": "card_283",
+      "title": "The Messenger: The Story of Joan of Arc",
+      "director": "Luc Besson",
+      "release_year": 1999,
+      "box_office_usd": 67000000,
+      "budget_usd": 60000000,
+      "runtime_minutes": 158,
+      "oscars_won": 0,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1959,
+      "director_age_at_release": 40,
+      "profit_cost_ratio_pct": 12
+    },
+    {
+      "id": "card_284",
+      "title": "The Patriot",
+      "director": "Roland Emmerich",
+      "release_year": 2000,
+      "box_office_usd": 215000000,
+      "budget_usd": 110000000,
+      "runtime_minutes": 165,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1955,
+      "director_age_at_release": 45,
+      "profit_cost_ratio_pct": 95
+    },
+    {
+      "id": "card_285",
+      "title": "Gangs of New York",
+      "director": "Martin Scorsese",
+      "release_year": 2002,
+      "box_office_usd": 193800000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 168,
+      "oscars_won": 0,
+      "genres": [
+        "Crime",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 1,
+      "director_birth_year": 1942,
+      "director_age_at_release": 60,
+      "profit_cost_ratio_pct": 94
+    },
+    {
+      "id": "card_286",
+      "title": "The Last Samurai",
+      "director": "Edward Zwick",
+      "release_year": 2003,
+      "box_office_usd": 456800000,
+      "budget_usd": 140000000,
+      "runtime_minutes": 154,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 1,
+      "director_birth_year": 1952,
+      "director_age_at_release": 51,
+      "profit_cost_ratio_pct": 226
+    },
+    {
+      "id": "card_287",
+      "title": "Gods and Generals",
+      "director": "Ronald F. Maxwell",
+      "release_year": 2003,
+      "box_office_usd": 12800000,
+      "budget_usd": 56000000,
+      "runtime_minutes": 219,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "War"
+      ],
+      "audience_score": 54,
+      "director_oscars_won": 0,
+      "director_birth_year": 1949,
+      "director_age_at_release": 54,
+      "profit_cost_ratio_pct": -77
+    },
+    {
+      "id": "card_288",
+      "title": "Troy",
+      "director": "Wolfgang Petersen",
+      "release_year": 2004,
+      "box_office_usd": 497400000,
+      "budget_usd": 175000000,
+      "runtime_minutes": 162,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1941,
+      "director_age_at_release": 63,
+      "profit_cost_ratio_pct": 184
+    },
+    {
+      "id": "card_289",
+      "title": "Alexander",
+      "director": "Oliver Stone",
+      "release_year": 2004,
+      "box_office_usd": 167300000,
+      "budget_usd": 155000000,
+      "runtime_minutes": 175,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Biography",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 56,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 58,
+      "profit_cost_ratio_pct": 8
+    },
+    {
+      "id": "card_290",
+      "title": "Kingdom of Heaven",
+      "director": "Ridley Scott",
+      "release_year": 2005,
+      "box_office_usd": 218100000,
+      "budget_usd": 130000000,
+      "runtime_minutes": 144,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1937,
+      "director_age_at_release": 68,
+      "profit_cost_ratio_pct": 68
+    },
+    {
+      "id": "card_291",
+      "title": "Australia",
+      "director": "Baz Luhrmann",
+      "release_year": 2008,
+      "box_office_usd": 211800000,
+      "budget_usd": 130000000,
+      "runtime_minutes": 165,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Drama",
+        "Romance",
+        "War"
+      ],
+      "audience_score": 59,
+      "director_oscars_won": 0,
+      "director_birth_year": 1962,
+      "director_age_at_release": 46,
+      "profit_cost_ratio_pct": 63
+    },
+    {
+      "id": "card_292",
+      "title": "10,000 BC",
+      "director": "Roland Emmerich",
+      "release_year": 2008,
+      "box_office_usd": 269800000,
+      "budget_usd": 105000000,
+      "runtime_minutes": 109,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "Fantasy",
+        "History"
+      ],
+      "audience_score": 42,
+      "director_oscars_won": 0,
+      "director_birth_year": 1955,
+      "director_age_at_release": 53,
+      "profit_cost_ratio_pct": 157
+    },
+    {
+      "id": "card_293",
+      "title": "Agora",
+      "director": "Alejandro Amenábar",
+      "release_year": 2009,
+      "box_office_usd": 39000000,
+      "budget_usd": 70000000,
+      "runtime_minutes": 126,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 1,
+      "director_birth_year": 1972,
+      "director_age_at_release": 37,
+      "profit_cost_ratio_pct": -44
+    },
+    {
+      "id": "card_294",
+      "title": "Lincoln",
+      "director": "Steven Spielberg",
+      "release_year": 2012,
+      "box_office_usd": 275300000,
+      "budget_usd": 65000000,
+      "runtime_minutes": 150,
+      "oscars_won": 2,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 66,
+      "profit_cost_ratio_pct": 324
+    },
+    {
+      "id": "card_295",
+      "title": "Exodus: Gods and Kings",
+      "director": "Ridley Scott",
+      "release_year": 2014,
+      "box_office_usd": 268200000,
+      "budget_usd": 175000000,
+      "runtime_minutes": 150,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Fantasy",
+        "History"
+      ],
+      "audience_score": 51,
+      "director_oscars_won": 0,
+      "director_birth_year": 1937,
+      "director_age_at_release": 77,
+      "profit_cost_ratio_pct": 53
+    },
+    {
+      "id": "card_296",
+      "title": "Pompeii",
+      "director": "Paul W. S. Anderson",
+      "release_year": 2014,
+      "box_office_usd": 117800000,
+      "budget_usd": 90000000,
+      "runtime_minutes": 105,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 48,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 49,
+      "profit_cost_ratio_pct": 31
+    },
+    {
+      "id": "card_297",
+      "title": "Noah",
+      "director": "Darren Aronofsky",
+      "release_year": 2014,
+      "box_office_usd": 359000000,
+      "budget_usd": 145000000,
+      "runtime_minutes": 138,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Drama",
+        "Fantasy"
+      ],
+      "audience_score": 52,
+      "director_oscars_won": 0,
+      "director_birth_year": 1969,
+      "director_age_at_release": 45,
+      "profit_cost_ratio_pct": 148
+    },
+    {
+      "id": "card_298",
+      "title": "The King's Choice",
+      "director": "Erik Poppe",
+      "release_year": 2016,
+      "box_office_usd": 9100000,
+      "budget_usd": 7500000,
+      "runtime_minutes": 133,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Biography",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1960,
+      "director_age_at_release": 56,
+      "profit_cost_ratio_pct": 21
+    },
+    {
+      "id": "card_299",
+      "title": "Silence",
+      "director": "Martin Scorsese",
+      "release_year": 2016,
+      "box_office_usd": 24000000,
+      "budget_usd": 46000000,
+      "runtime_minutes": 161,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 80,
+      "director_oscars_won": 1,
+      "director_birth_year": 1942,
+      "director_age_at_release": 74,
+      "profit_cost_ratio_pct": -48
+    },
+    {
+      "id": "card_300",
+      "title": "The Irishman",
+      "director": "Martin Scorsese",
+      "release_year": 2019,
+      "box_office_usd": 8000000,
+      "budget_usd": 200000000,
+      "runtime_minutes": 209,
+      "oscars_won": 0,
+      "genres": [
+        "Biography",
+        "Crime",
+        "Drama"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 1,
+      "director_birth_year": 1942,
+      "director_age_at_release": 77,
+      "profit_cost_ratio_pct": -96
+    },
+    {
+      "id": "card_301",
+      "title": "The Last Duel",
+      "director": "Ridley Scott",
+      "release_year": 2021,
+      "box_office_usd": 30600000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 153,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "History"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1937,
+      "director_age_at_release": 84,
+      "profit_cost_ratio_pct": -69
+    },
+    {
+      "id": "card_302",
+      "title": "Dune",
+      "director": "Denis Villeneuve",
+      "release_year": 2021,
+      "box_office_usd": 411000000,
+      "budget_usd": 165000000,
+      "runtime_minutes": 155,
+      "oscars_won": 6,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1967,
+      "director_age_at_release": 54,
+      "profit_cost_ratio_pct": 149
+    },
+    {
+      "id": "card_303",
+      "title": "All Quiet on the Western Front",
+      "director": "Edward Berger",
+      "release_year": 2022,
+      "box_office_usd": null,
+      "budget_usd": 20000000,
+      "runtime_minutes": 147,
+      "oscars_won": 4,
+      "genres": [
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 82,
+      "director_oscars_won": 1,
+      "director_birth_year": 1970,
+      "director_age_at_release": 52,
+      "profit_cost_ratio_pct": null
+    },
+    {
+      "id": "card_304",
+      "title": "Oppenheimer",
+      "director": "Christopher Nolan",
+      "release_year": 2023,
+      "box_office_usd": 983100000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 180,
+      "oscars_won": 7,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "Thriller"
+      ],
+      "audience_score": 83,
+      "director_oscars_won": 2,
+      "director_birth_year": 1970,
+      "director_age_at_release": 53,
+      "profit_cost_ratio_pct": 883
+    },
+    {
+      "id": "card_305",
+      "title": "Napoleon",
+      "director": "Ridley Scott",
+      "release_year": 2023,
+      "box_office_usd": 222400000,
+      "budget_usd": 200000000,
+      "runtime_minutes": 158,
+      "oscars_won": 0,
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "War"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 0,
+      "director_birth_year": 1937,
+      "director_age_at_release": 86,
+      "profit_cost_ratio_pct": 11
+    },
+    {
+      "id": "card_306",
+      "title": "Killers of the Flower Moon",
+      "director": "Martin Scorsese",
+      "release_year": 2023,
+      "box_office_usd": 158800000,
+      "budget_usd": 215000000,
+      "runtime_minutes": 206,
+      "oscars_won": 0,
+      "genres": [
+        "Crime",
+        "Drama",
+        "Thriller",
+        "Western"
+      ],
+      "audience_score": 80,
+      "director_oscars_won": 1,
+      "director_birth_year": 1942,
+      "director_age_at_release": 81,
+      "profit_cost_ratio_pct": -26
+    },
+    {
+      "id": "card_307",
+      "title": "Dune: Part Two",
+      "director": "Denis Villeneuve",
+      "release_year": 2024,
+      "box_office_usd": 714444358,
+      "budget_usd": 190000000,
+      "runtime_minutes": 166,
+      "oscars_won": 1,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 88,
+      "director_oscars_won": 0,
+      "director_birth_year": 1967,
+      "director_age_at_release": 57,
+      "profit_cost_ratio_pct": 276
+    },
+    {
+      "id": "card_308",
+      "title": "Gladiator II",
+      "director": "Ridley Scott",
+      "release_year": 2024,
+      "box_office_usd": 462700000,
+      "budget_usd": 250000000,
+      "runtime_minutes": 148,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Drama",
+        "History"
+      ],
+      "audience_score": 65,
+      "director_oscars_won": 0,
+      "director_birth_year": 1937,
+      "director_age_at_release": 87,
+      "profit_cost_ratio_pct": 85
     }
   ]
 }

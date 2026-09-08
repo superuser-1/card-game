@@ -63,7 +63,7 @@ func _ready() -> void:
 		_update_status()
 	_apply_filter()
 
-	# The grid (text + layout) is up immediately; stream the ~220 card textures
+	# The grid (text + layout) is up immediately; stream the ~300 card textures
 	# in over the following frames so entering the screen doesn't freeze.
 	_hydrate_art()
 

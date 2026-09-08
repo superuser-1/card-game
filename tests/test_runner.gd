@@ -79,7 +79,7 @@ func assert_true(condition: bool, message: String) -> void:
 func test_card_loader_basic() -> void:
 	print("\n=== CardLoader Tests ===")
 	var cards = CardLoader.load_cards("res://data/cards.json")
-	assert_true(cards.size() == 218, "load_cards returns 181 cards from real data")
+	assert_true(cards.size() == 308, "load_cards returns 308 cards from real data")
 	assert_true(cards[0] is Dictionary, "first card is a Dictionary")
 	assert_true(cards[0].has("title"), "first card has 'title' key")
 

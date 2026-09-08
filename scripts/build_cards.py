@@ -104,6 +104,11 @@ def main() -> int:
                 # Excel's ROUND is half-away-from-zero; all values here are
                 # positive so int(x + 0.5) matches it.
                 c["audience_score"] = int((lb / 5 * 100 + mc) / 2 + 0.5)
+            elif lb is not None:
+                # Letterboxd-only fallback: no Metacritic user score exists for
+                # this title (common for pre-1980 films). Use the Letterboxd
+                # average alone rather than leaving the card unplayable.
+                c["audience_score"] = int(lb / 5 * 100 + 0.5)
             elif row[ci_rating] is not None:
                 c["audience_score"] = int(row[ci_rating])
             else:
