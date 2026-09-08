@@ -856,6 +856,14 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		"participants": [],
 		"rounds": [],
 		"current_round": 0,
+		# Round pacing (set by net_node as rounds start / finish):
+		#   round_started_ts    unix s the current round's matches went live
+		#   round_deadline_ts   unix s the round's hard-cap force-resolve point
+		#                       (round_started_ts + match cap for this format)
+		#   intermission_until_ts  unix s the next round is held until (0 = none)
+		"round_started_ts": 0,
+		"round_deadline_ts": 0,
+		"intermission_until_ts": 0,
 		"winner_account_id": 0,
 	}
 	if int(pr.cost) > 0:

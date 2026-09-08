@@ -188,6 +188,11 @@ var _mm_any := false
 ## _enforce_tournament_match_cap.
 var _tournament_match_cap_ms := 0
 
+## Between-round tournament pause, seconds. Overridable with
+## `--tournament-intermission-seconds=N` (dev/testing; 0 = advance immediately).
+## See _maybe_advance_round.
+var _intermission_seconds := TournamentSystem.INTERMISSION_SECONDS
+
 
 func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
@@ -206,6 +211,9 @@ func _ready() -> void:
 		elif arg.begins_with("--tournament-match-cap-seconds="):
 			_tournament_match_cap_ms = int(maxf(1.0, float(arg.substr("--tournament-match-cap-seconds=".length()))) * 1000.0)
 			print("Net: tournament per-match hard cap overridden to %ds" % (_tournament_match_cap_ms / 1000))
+		elif arg.begins_with("--tournament-intermission-seconds="):
+			_intermission_seconds = int(maxf(0.0, float(arg.substr("--tournament-intermission-seconds=".length()))))
+			print("Net: tournament between-round pause overridden to %ds" % _intermission_seconds)
 
 	_turn_timer = Timer.new()
 	# Poll fairly tightly so the timeout fires close to the true deadline
@@ -1133,6 +1141,7 @@ func _start_tournament(t: Dictionary) -> void:
 	for p in (t.participants as Array):
 		if bool(p.get("checked_in", false)):
 			_apply_tournament_achievement(int(p.account_id), "tournaments_played")
+	_mark_round_started(t)
 	_dispatch_round(t, 0)
 	_store.persist_tournament(t)
 	_broadcast_tournament(t)
@@ -1170,6 +1179,9 @@ func _dispatch_round(t: Dictionary, round_idx: int) -> bool:
 		"tournament_id": int(t.id), "round": round_idx + 1, "bracket_size": int(t.bracket_size),
 		"match_format": int(t.get("match_format", 1)),
 		"cube_ids": t.get("cube_ids", []),
+		# unix s this round's matches are force-resolved if still unfinished, so
+		# game_ui can show a round-time countdown alongside the turn clock.
+		"round_deadline_ts": int(t.get("round_deadline_ts", 0)),
 	}
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(t.rng_seed) + round_idx + 1
@@ -1205,6 +1217,24 @@ func _maybe_advance_round(t: Dictionary) -> void:
 	if TournamentSystem.is_tournament_complete(t.rounds):
 		_complete_tournament(t)
 		return
+
+	# Between-round breather so players can step away. On the first tick the
+	# finished round reads as fully resolved we arm intermission_until_ts and
+	# hold; later ticks fall through here until it elapses. Skipped entirely
+	# when the pause is disabled (dev override 0). No pause before round 1
+	# (that path is _start_tournament) or after the final (handled above).
+	var now := int(Time.get_unix_time_from_system())
+	if _intermission_seconds > 0:
+		var until := int(t.get("intermission_until_ts", 0))
+		if until == 0:
+			t.intermission_until_ts = now + _intermission_seconds
+			_store.persist_tournament(t)
+			_broadcast_tournament(t)
+			return
+		if now < until:
+			return
+	t.intermission_until_ts = 0
+
 	# Positional advancement (winner of slot 2i meets winner of slot 2i+1), so
 	# the bracket stays a fixed, drawable tree after round 0's random seeding.
 	# A trailing unpaired winner (odd slot count, from a bye upstream) byes
@@ -1213,9 +1243,24 @@ func _maybe_advance_round(t: Dictionary) -> void:
 	var next_round := TournamentSystem.advance_round(round)
 	(t.rounds as Array).append(next_round)
 	t.current_round = int(t.current_round) + 1
+	# Stamp the new round's window BEFORE dispatch so each match's ctx carries
+	# the round deadline.
+	_mark_round_started(t)
 	_dispatch_round(t, (t.rounds as Array).size() - 1)
 	_store.persist_tournament(t)
 	_broadcast_tournament(t)
+
+
+## Stamp when the current round's matches went live and when the round's
+## hard-cap force-resolve deadline lands, so clients can show a countdown. The
+## match format is uniform across a tournament, so one deadline covers every
+## match in the round.
+func _mark_round_started(t: Dictionary) -> void:
+	var now := int(Time.get_unix_time_from_system())
+	var cap_ms: int = _tournament_match_cap_ms if _tournament_match_cap_ms > 0 \
+		else TournamentSystem.match_hard_cap_ms(int(t.get("match_format", 1)))
+	t.round_started_ts = now
+	t.round_deadline_ts = now + int(cap_ms / 1000.0)
 
 
 ## Wall-clock backstop for the current round's live matches. A tournament match
@@ -1260,6 +1305,7 @@ func _enforce_tournament_match_cap(t: Dictionary, round_idx: int) -> void:
 func _complete_tournament(t: Dictionary) -> void:
 	var final_slot: Dictionary = t.rounds[-1][0]
 	t.status = "completed"
+	t.intermission_until_ts = 0
 	t.winner_account_id = int(final_slot.winner_account_id) if not bool(final_slot.winner_is_bot) else 0
 	if int(t.winner_account_id) != 0:
 		_release_tournament_lock(int(t.winner_account_id))

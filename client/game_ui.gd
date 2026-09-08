@@ -9,6 +9,7 @@ extends Control
 @onready var _status_label: Label = %StatusLabel
 @onready var _score_label: Label = %ScoreLabel
 @onready var _turn_timer_label: Label = %TurnTimerLabel
+@onready var _round_cap_label: Label = %RoundCapLabel
 @onready var _exit_button: Button = %ExitButton
 @onready var _forfeit_dialog: ConfirmationDialog = %ForfeitDialog
 @onready var _category_box: HBoxContainer = %CategoryBox
@@ -111,6 +112,10 @@ var _revealing := false
 # `turn_seconds_left` on every state broadcast; counted down in _process
 # between broadcasts so the label moves smoothly.
 var _client_turn_left := -1.0
+# unix s this tournament round is force-resolved if unfinished (from the match's
+# tournament_ctx); 0 for non-tournament games. Shown as a slow countdown under
+# the turn clock so a long round has a visible ceiling.
+var _round_deadline_ts := 0
 var _forfeiting := false
 var _hand_render_id := 0
 
@@ -224,6 +229,7 @@ func _on_player_assigned(player_id: int) -> void:
 ## account; falls back to the match_found payload, then to neutral defaults
 ## (e.g. the --solo CLI role, which has no login).
 func _apply_match_info(info: Dictionary) -> void:
+	_round_deadline_ts = int((info.get("tournament_ctx", {}) as Dictionary).get("round_deadline_ts", 0))
 	var acc: Dictionary = Session.account
 	var my_name: String = str(acc.get("display_name", info.get("your_name", "You")))
 	var my_elo: int = int(acc.get("elo", info.get("your_elo", 0)))
@@ -284,6 +290,7 @@ func _on_forfeit_confirmed() -> void:
 
 
 func _process(_delta: float) -> void:
+	_update_round_cap_label()
 	if _latest_state.is_empty():
 		return
 	var on_clock: int = int(_latest_state.get("on_clock_player", 0))
@@ -303,6 +310,20 @@ func _process(_delta: float) -> void:
 	# Truncate (not ceil) so the last whole second reads "0 s" — the server
 	# fires somewhere inside that second, so it looks like it resolves at zero.
 	_turn_timer_label.text = "%s turn — %d s" % [who, int(_client_turn_left)]
+
+
+## Slow countdown to this tournament round's hard-cap deadline, shown under the
+## turn clock. Non-tournament games have no deadline and hide the label.
+func _update_round_cap_label() -> void:
+	if _round_deadline_ts <= 0:
+		_round_cap_label.visible = false
+		return
+	var left := _round_deadline_ts - int(Time.get_unix_time_from_system())
+	if left > 0:
+		_round_cap_label.text = "Round time limit: %d:%02d" % [left / 60, left % 60]
+	else:
+		_round_cap_label.text = "Round time limit reached — resolving…"
+	_round_cap_label.visible = true
 
 
 func _on_match_ended(summary: Dictionary) -> void:

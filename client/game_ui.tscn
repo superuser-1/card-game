@@ -79,6 +79,14 @@ unique_name_in_owner = true
 layout_mode = 2
 horizontal_alignment = 1
 
+[node name="RoundCapLabel" type="Label" parent="VBox" unique_id=1487860579]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+modulate = Color(1, 0.86, 0.5, 0.85)
+
 [node name="TableRow" type="HBoxContainer" parent="VBox" unique_id=1957514880]
 unique_name_in_owner = true
 layout_mode = 2

@@ -47,6 +47,13 @@ static func match_hard_cap_ms(match_format: int) -> int:
 	return int(MATCH_HARD_CAP_MS.get(match_format, int(MATCH_HARD_CAP_MS[1])))
 
 
+## Breather between tournament rounds — the next round's matches are not
+## dispatched until this many seconds after the previous round fully resolves,
+## so players can step away. See net_node._maybe_advance_round; dev override
+## --tournament-intermission-seconds=N.
+const INTERMISSION_SECONDS := 120
+
+
 static func next_power_of_2(n: int) -> int:
 	var p := 1
 	while p < n:

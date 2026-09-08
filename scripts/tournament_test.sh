@@ -31,7 +31,10 @@ echo "Importing..."
 "$GODOT" --path "$PROJECT" --headless --import >/dev/null 2>&1
 
 echo "Starting server on port $PORT (--dev-tournaments)..."
+# Short between-round pause so a 3-round test doesn't sit through 2x the real
+# 2-minute intermission.
 "$GODOT" --path "$PROJECT" --headless -- --server --port="$PORT" --dev-tournaments \
+	--tournament-intermission-seconds=3 \
 	> "$LOGDIR/server.log" 2>&1 &
 sleep 4
 if ! grep -q "listening on port" "$LOGDIR/server.log"; then

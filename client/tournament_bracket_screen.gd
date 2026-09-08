@@ -49,6 +49,37 @@ func _on_tournament_updated(tournament: Dictionary) -> void:
 	_render_bracket()
 
 
+## Live per-second countdowns: the between-round intermission ("next round in
+## 1:47") and, during a round, the round's hard-cap deadline ("round time
+## limit: 41:07"). Both are driven off unix timestamps in the tournament
+## snapshot, so they keep ticking smoothly between broadcasts.
+func _process(_delta: float) -> void:
+	if _tournament.is_empty():
+		return
+	var now := int(Time.get_unix_time_from_system())
+	var in_progress := str(_tournament.get("status", "")) == "in_progress"
+	var inter_left := int(_tournament.get("intermission_until_ts", 0)) - now
+	var round_left := int(_tournament.get("round_deadline_ts", 0)) - now
+
+	if in_progress and inter_left > 0:
+		%IntermissionLabel.text = "Next round starts in %s — time for a break" % _fmt_clock(inter_left)
+		%IntermissionLabel.visible = true
+		%RoundClockLabel.visible = false
+	elif in_progress and int(_tournament.get("round_deadline_ts", 0)) > 0:
+		%IntermissionLabel.visible = false
+		%RoundClockLabel.text = ("Round time limit: %s" % _fmt_clock(round_left)) if round_left > 0 \
+			else "Round time limit reached — resolving…"
+		%RoundClockLabel.visible = true
+	else:
+		%IntermissionLabel.visible = false
+		%RoundClockLabel.visible = false
+
+
+func _fmt_clock(secs: int) -> String:
+	secs = max(secs, 0)
+	return "%d:%02d" % [secs / 60, secs % 60]
+
+
 func _on_match_found(info: Dictionary) -> void:
 	var ctx = info.get("tournament_ctx", {})
 	if ctx.is_empty() or int(ctx.get("tournament_id", 0)) != _tournament_id:
@@ -110,7 +141,9 @@ func _render_bracket() -> void:
 				has_current_match = true
 				break
 
-		if not has_current_match:
+		# During the between-round pause the IntermissionLabel says it better.
+		var in_intermission := int(_tournament.get("intermission_until_ts", 0)) > int(Time.get_unix_time_from_system())
+		if not has_current_match and not in_intermission:
 			%WaitingLabel.visible = true
 
 

@@ -60,6 +60,24 @@ unique_name_in_owner = true
 layout_mode = 2
 visible = false
 
+[node name="RoundClockLabel" type="Label" parent="MarginContainer/Root"]
+unique_name_in_owner = true
+layout_mode = 2
+visible = false
+theme_override_font_sizes/font_size = 15
+horizontal_alignment = 1
+modulate = Color(1, 0.86, 0.5, 1)
+text = ""
+
+[node name="IntermissionLabel" type="Label" parent="MarginContainer/Root"]
+unique_name_in_owner = true
+layout_mode = 2
+visible = false
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+modulate = Color(0.55, 0.85, 1, 1)
+text = ""
+
 [node name="WaitingLabel" type="Label" parent="MarginContainer/Root"]
 unique_name_in_owner = true
 layout_mode = 2
