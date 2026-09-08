@@ -421,6 +421,20 @@ func _new_match(engine: GameEngine, seats: Dictionary, account_ids: Dictionary,
 		# match is holding for their reconnect; the turn clock is frozen and
 		# _check_disconnect_grace decides the match if the deadline passes.
 		"disconnected": {},
+		# seat (1|2) -> reconnect-grace budget still available THIS MATCH, in ms.
+		# Each drop's hold window is capped at whatever is left here, and each
+		# rejoin subtracts the time spent away — so serial disconnects can't keep
+		# minting fresh 60s freezes. Runs out => the next drop is an instant loss.
+		"grace_left_ms": {1: int(RECONNECT_GRACE_SECONDS * 1000.0), 2: int(RECONNECT_GRACE_SECONDS * 1000.0)},
+		# seat (1|2) -> ticks_msec the current drop began (for the budget maths).
+		"dc_started_ms": {},
+		# seat (1|2) -> ms left on that seat's turn clock at the instant it
+		# dropped (only set if it was on the clock). The rejoin restores this
+		# instead of handing out a fresh full turn.
+		"turn_left_at_drop_ms": {},
+		# Consumed by the next _broadcast_match: ms to resume the turn clock with
+		# (a disconnect-interrupted turn picks up where it left off). -1 = unset.
+		"turn_resume_ms": -1,
 		# {tournament_id, round, bracket_size} when this match is a tournament
 		# round; empty for ranked/solo/bot-fill matches.
 		"tournament_ctx": tournament_ctx,
@@ -480,11 +494,19 @@ func _broadcast_match(m: Dictionary) -> void:
 	# on. If the pause window has already elapsed, drop it.
 	var pause_until := int(m.get("clock_pause_until_ms", 0))
 	var paused := on_clock != 0 and pause_until > now
+	# A turn interrupted by a disconnect resumes with the time it had left, not a
+	# fresh 30s — backdate turn_started_ms by the already-used slice.
+	var resume_ms := int(m.get("turn_resume_ms", -1))
+	var used_ms := 0
+	if resume_ms >= 0 and on_clock != 0:
+		used_ms = clampi(int(_turn_seconds * 1000.0) - resume_ms, 0, int(_turn_seconds * 1000.0))
 	if paused:
-		m.turn_started_ms = pause_until
+		m.turn_started_ms = pause_until - used_ms
 	else:
-		m.turn_started_ms = now
+		m.turn_started_ms = now - used_ms
 		m.clock_pause_until_ms = 0
+	if resume_ms >= 0:
+		m.turn_resume_ms = -1
 
 	for seat in [1, 2]:
 		var target = m.seats[seat]
@@ -738,8 +760,24 @@ func _try_rejoin_match(peer_id: int, account_id: int) -> bool:
 			m.seats[seat] = peer_id
 			_peer_match[peer_id] = int(m.id)
 			(m.get("disconnected", {}) as Dictionary).erase(seat)
-			# A breather before the turn clock resumes.
-			m.clock_pause_until_ms = Time.get_ticks_msec() + int(REJOIN_PAUSE_SECONDS * 1000.0)
+			var now_ms := Time.get_ticks_msec()
+			# Charge the time spent away against this seat's grace budget so a
+			# later drop gets only what's left (and eventually nothing).
+			var started := int((m.get("dc_started_ms", {}) as Dictionary).get(seat, 0))
+			if started > 0:
+				var gl := m.get("grace_left_ms", {}) as Dictionary
+				gl[seat] = maxi(0, int(gl.get(seat, 0)) - (now_ms - started))
+			(m.get("dc_started_ms", {}) as Dictionary).erase(seat)
+			# Resume the interrupted turn with the time it had left; only grant
+			# the settle-in breather when that remainder is nearly gone.
+			var restore_ms := int((m.get("turn_left_at_drop_ms", {}) as Dictionary).get(seat, -1))
+			(m.get("turn_left_at_drop_ms", {}) as Dictionary).erase(seat)
+			if restore_ms >= 0:
+				m.turn_resume_ms = restore_ms
+				m.clock_pause_until_ms = now_ms + int(REJOIN_PAUSE_SECONDS * 1000.0) if restore_ms < 5000 else 0
+			else:
+				m.turn_resume_ms = -1
+				m.clock_pause_until_ms = 0
 			var other = m.seats[3 - seat]
 			if typeof(other) == TYPE_INT and other > 0:
 				_rpc_receive_error.rpc_id(other, "Opponent reconnected.")
@@ -1607,11 +1645,27 @@ func _on_peer_disconnected(peer_id: int) -> void:
 			var seat := _seat_of_peer(m, peer_id)
 			if seat == 1 or seat == 2:
 				m.seats[seat] = 0  # vacant; rebound by account id on reconnect
-				(m.disconnected as Dictionary)[seat] = Time.get_ticks_msec() + int(RECONNECT_GRACE_SECONDS * 1000.0)
+				var now_ms := Time.get_ticks_msec()
+				# Hold only for whatever grace this seat has left this match. Zero
+				# left => deadline is now, so the next _check_disconnect_grace tick
+				# ends the match against them.
+				var budget: int = maxi(0, int((m.get("grace_left_ms", {}) as Dictionary).get(seat, int(RECONNECT_GRACE_SECONDS * 1000.0))))
+				(m.disconnected as Dictionary)[seat] = now_ms + budget
+				(m.dc_started_ms as Dictionary)[seat] = now_ms
+				# Remember how much of their turn was left so the rejoin restores
+				# it rather than granting a fresh full turn.
+				if int(m.get("on_clock_seat", 0)) == seat:
+					var left_ms := clampi(int(_turn_seconds * 1000.0) - (now_ms - int(m.turn_started_ms)), 0, int(_turn_seconds * 1000.0))
+					(m.turn_left_at_drop_ms as Dictionary)[seat] = left_ms
+				else:
+					(m.turn_left_at_drop_ms as Dictionary).erase(seat)
 				var other = m.seats[3 - seat]
 				if typeof(other) == TYPE_INT and other > 0:
-					_rpc_receive_error.rpc_id(other, "Opponent disconnected — up to %d s to reconnect…" % int(RECONNECT_GRACE_SECONDS))
-				print("GameServer: match %d seat %d dropped — holding %ds for reconnect" % [int(m.id), seat, int(RECONNECT_GRACE_SECONDS)])
+					if budget > 0:
+						_rpc_receive_error.rpc_id(other, "Opponent disconnected — up to %d s to reconnect…" % ceili(budget / 1000.0))
+					else:
+						_rpc_receive_error.rpc_id(other, "Opponent disconnected.")
+				print("GameServer: match %d seat %d dropped — holding %.0fs for reconnect (budget)" % [int(m.id), seat, budget / 1000.0])
 
 
 func _require_auth(peer_id: int) -> bool:
