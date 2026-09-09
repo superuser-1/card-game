@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://co483k85oubc3"]
 
 [ext_resource type="Script" uid="uid://cod4ygtu8in8q" path="res://client/category_view.gd" id="1_category"]
-[ext_resource type="Texture2D" path="res://assets/cards/card_border1.png" id="2_border"]
+[ext_resource type="Texture2D" path="res://assets/cards/category_border1.png" id="2_border"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_transparent"]
 
