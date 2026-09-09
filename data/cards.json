@@ -4510,7 +4510,7 @@
       "title": "Spider-Man: Brand New Day",
       "director": "Destin Daniel Cretton",
       "release_year": 2026,
-      "box_office_usd": null,
+      "box_office_usd": 1200000000,
       "budget_usd": 225000000,
       "runtime_minutes": null,
       "oscars_won": 0,
@@ -4525,7 +4525,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1978,
       "director_age_at_release": 48,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": 433
     },
     {
       "id": "card_222",
@@ -4571,7 +4571,7 @@
       "director": "William Dieterle",
       "release_year": 1953,
       "box_office_usd": 4750000,
-      "budget_usd": null,
+      "budget_usd": 2300000,
       "runtime_minutes": 103,
       "oscars_won": 0,
       "genres": [
@@ -4582,7 +4582,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1893,
       "director_age_at_release": 60,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": 107
     },
     {
       "id": "card_225",
@@ -4806,8 +4806,8 @@
       "title": "The Last Days of Pompeii",
       "director": "Mario Bonnard",
       "release_year": 1959,
-      "box_office_usd": null,
-      "budget_usd": null,
+      "box_office_usd": 3000000,
+      "budget_usd": 1200000,
       "runtime_minutes": 100,
       "oscars_won": 0,
       "genres": [
@@ -4817,7 +4817,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1889,
       "director_age_at_release": 70,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": 150
     },
     {
       "id": "card_237",
@@ -4863,8 +4863,8 @@
       "title": "The Human Condition",
       "director": "Masaki Kobayashi",
       "release_year": 1959,
-      "box_office_usd": null,
-      "budget_usd": null,
+      "box_office_usd": 4000000,
+      "budget_usd": 2000000,
       "runtime_minutes": 574,
       "oscars_won": 0,
       "genres": [
@@ -4875,15 +4875,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1916,
       "director_age_at_release": 43,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": 100
     },
     {
       "id": "card_240",
       "title": "Knights of the Teutonic Order",
       "director": "Aleksander Ford",
       "release_year": 1960,
-      "box_office_usd": null,
-      "budget_usd": null,
+      "box_office_usd": 6000000,
+      "budget_usd": 2000000,
       "runtime_minutes": 166,
       "oscars_won": 0,
       "genres": [
@@ -4895,7 +4895,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1908,
       "director_age_at_release": 52,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": 200
     },
     {
       "id": "card_241",
@@ -5005,7 +5005,7 @@
       "director": "Richard Fleischer",
       "release_year": 1961,
       "box_office_usd": 2900000,
-      "budget_usd": null,
+      "budget_usd": 9000000,
       "runtime_minutes": 137,
       "oscars_won": 0,
       "genres": [
@@ -5016,15 +5016,15 @@
       "director_oscars_won": 0,
       "director_birth_year": 1916,
       "director_age_at_release": 45,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": -68
     },
     {
       "id": "card_247",
       "title": "The Colossus of Rhodes",
       "director": "Sergio Leone",
       "release_year": 1961,
-      "box_office_usd": null,
-      "budget_usd": null,
+      "box_office_usd": 4000000,
+      "budget_usd": 2000000,
       "runtime_minutes": 142,
       "oscars_won": 0,
       "genres": [
@@ -5036,7 +5036,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1929,
       "director_age_at_release": 32,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": 100
     },
     {
       "id": "card_248",
@@ -5083,7 +5083,7 @@
       "title": "Sodom and Gomorrah",
       "director": "Robert Aldrich",
       "release_year": 1962,
-      "box_office_usd": null,
+      "box_office_usd": 2500000,
       "budget_usd": 4500000,
       "runtime_minutes": 154,
       "oscars_won": 0,
@@ -5095,7 +5095,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1918,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": -44
     },
     {
       "id": "card_251",
@@ -5279,8 +5279,8 @@
       "title": "Pharaoh",
       "director": "Jerzy Kawalerowicz",
       "release_year": 1966,
-      "box_office_usd": null,
-      "budget_usd": null,
+      "box_office_usd": 3000000,
+      "budget_usd": 2000000,
       "runtime_minutes": 145,
       "oscars_won": 0,
       "genres": [
@@ -5291,7 +5291,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1922,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": 50
     },
     {
       "id": "card_261",
@@ -5318,8 +5318,8 @@
       "title": "War and Peace - UdSSR 4 Parts",
       "director": "Sergei Bondarchuk",
       "release_year": 1966,
-      "box_office_usd": null,
-      "budget_usd": null,
+      "box_office_usd": 12000000,
+      "budget_usd": 9000000,
       "runtime_minutes": 431,
       "oscars_won": 1,
       "genres": [
@@ -5332,14 +5332,14 @@
       "director_oscars_won": 1,
       "director_birth_year": 1920,
       "director_age_at_release": 46,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": 33
     },
     {
       "id": "card_263",
       "title": "Waterloo",
       "director": "Sergei Bondarchuk",
       "release_year": 1970,
-      "box_office_usd": null,
+      "box_office_usd": 4000000,
       "budget_usd": 28800000,
       "runtime_minutes": 128,
       "oscars_won": 0,
@@ -5352,14 +5352,14 @@
       "director_oscars_won": 1,
       "director_birth_year": 1920,
       "director_age_at_release": 50,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": -86
     },
     {
       "id": "card_264",
       "title": "Ludwig",
       "director": "Luchino Visconti",
       "release_year": 1973,
-      "box_office_usd": null,
+      "box_office_usd": 3000000,
       "budget_usd": 4400000,
       "runtime_minutes": 238,
       "oscars_won": 0,
@@ -5372,14 +5372,14 @@
       "director_oscars_won": 0,
       "director_birth_year": 1906,
       "director_age_at_release": 67,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": -32
     },
     {
       "id": "card_265",
       "title": "1900",
       "director": "Bernardo Bertolucci",
       "release_year": 1976,
-      "box_office_usd": null,
+      "box_office_usd": 5000000,
       "budget_usd": 9000000,
       "runtime_minutes": 317,
       "oscars_won": 0,
@@ -5392,7 +5392,7 @@
       "director_oscars_won": 2,
       "director_birth_year": 1941,
       "director_age_at_release": 35,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": -44
     },
     {
       "id": "card_266",
@@ -5582,7 +5582,7 @@
       "director": "Robert Enrico, Richard T. Heffron",
       "release_year": 1989,
       "box_office_usd": 4800000,
-      "budget_usd": null,
+      "budget_usd": 45000000,
       "runtime_minutes": 360,
       "oscars_won": 0,
       "genres": [
@@ -5594,7 +5594,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1930,
       "director_age_at_release": 59,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": -89
     },
     {
       "id": "card_276",
@@ -6158,7 +6158,7 @@
       "title": "All Quiet on the Western Front",
       "director": "Edward Berger",
       "release_year": 2022,
-      "box_office_usd": null,
+      "box_office_usd": 1500000,
       "budget_usd": 20000000,
       "runtime_minutes": 147,
       "oscars_won": 4,
@@ -6171,7 +6171,7 @@
       "director_oscars_won": 1,
       "director_birth_year": 1970,
       "director_age_at_release": 52,
-      "profit_cost_ratio_pct": null
+      "profit_cost_ratio_pct": -92
     },
     {
       "id": "card_304",
