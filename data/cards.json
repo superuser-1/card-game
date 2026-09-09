@@ -4512,7 +4512,7 @@
       "release_year": 2026,
       "box_office_usd": 1200000000,
       "budget_usd": 225000000,
-      "runtime_minutes": null,
+      "runtime_minutes": 145,
       "oscars_won": 0,
       "genres": [
         "Action",
@@ -4521,7 +4521,7 @@
         "Fantasy",
         "Sci-Fi"
       ],
-      "audience_score": null,
+      "audience_score": 80,
       "director_oscars_won": 0,
       "director_birth_year": 1978,
       "director_age_at_release": 48,
