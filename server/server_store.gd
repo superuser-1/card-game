@@ -430,9 +430,11 @@ func apply_match_stats(account_id: int, match_ctx: Dictionary) -> Dictionary:
 				var key := "%s_games_won" % group
 				stats[key] = int(stats.get(key, 0)) + 1
 
-	# Points earned total (from match points delta)
-	var points_delta := ServerStore.points_delta(str(match_ctx.get("outcome", "")))
-	stats["points_earned_total"] = int(stats.get("points_earned_total", 0)) + points_delta
+	# Points earned total — the amount actually banked for this match, computed
+	# once in _finish_match and handed down so achievements and the wallet
+	# never disagree.
+	var match_points := int(match_ctx.get("match_points_awarded", 0))
+	stats["points_earned_total"] = int(stats.get("points_earned_total", 0)) + match_points
 
 	# Evaluate achievements
 	var ach_res := AchievementSystem.evaluate(stats, account["achievements"]["unlocked"])
@@ -575,11 +577,17 @@ static func apply_result(elo_a: int, games_a: int, elo_b: int, games_b: int, win
 	}
 
 
-static func points_delta(outcome: String) -> int:
+## Ranked match points, scaled by how many categories the player actually won
+## across the whole match (a Bo1's single game, or the running total over a
+## Bo3/Bo5 series). The loser banks exactly what they fought for; the winner
+## banks double. So a Bo1 clean sweep is 14 for the winner / 0 for the loser,
+## a 4–3 grind is 8 / 3, and a swept Bo3 is ~28 / ~7. Points-per-minute stays
+## roughly flat across formats; points-per-match scales with series length.
+static func match_points(outcome: String, own_score: int) -> int:
 	match outcome:
-		"win": return 10
-		"loss": return 3
-		"draw": return 5
+		"win": return maxi(own_score, 0) * 2
+		"loss": return maxi(own_score, 0)
+		"draw": return maxi(own_score, 0)
 		_: return 0
 
 
@@ -591,6 +599,9 @@ static func _outcome_for(winner: int, seat: int) -> String:
 
 # --- match write ----------------------------------------------------------
 
+# `score1` / `score2` are each seat's category wins across the WHOLE match —
+# for a Bo1 that's the single game's score, for a Bo3/Bo5 the running total
+# over every game played. They drive the points award (see match_points).
 func record_match(a1_id: int, a2_id: int, winner: int, score1: int, score2: int, is_bot_match: bool) -> Dictionary:
 	var account_1 := get_account(a1_id)
 	if account_1.is_empty():
@@ -614,9 +625,9 @@ func record_match(a1_id: int, a2_id: int, winner: int, score1: int, score2: int,
 
 	var res := apply_result(elo_1_before, games_1_before, elo_2_before, games_2_before, winner)
 
-	_apply_account_result(account_1, res["elo_a_after"], _outcome_for(winner, 1))
+	_apply_account_result(account_1, res["elo_a_after"], _outcome_for(winner, 1), score1)
 	if is_real:
-		_apply_account_result(account_2, res["elo_b_after"], _outcome_for(winner, 2))
+		_apply_account_result(account_2, res["elo_b_after"], _outcome_for(winner, 2), score2)
 	_save_accounts()
 
 	var record := {
@@ -631,8 +642,8 @@ func record_match(a1_id: int, a2_id: int, winner: int, score1: int, score2: int,
 		"elo_1_after": res["elo_a_after"],
 		"elo_2_before": elo_2_before,
 		"elo_2_after": res["elo_b_after"],
-		"points_1_delta": points_delta(_outcome_for(winner, 1)),
-		"points_2_delta": points_delta(_outcome_for(winner, 2)),
+		"points_1_delta": match_points(_outcome_for(winner, 1), score1),
+		"points_2_delta": match_points(_outcome_for(winner, 2), score2),
 		"is_bot_match": is_bot_match,
 	}
 	_matches.append(record)
@@ -641,10 +652,10 @@ func record_match(a1_id: int, a2_id: int, winner: int, score1: int, score2: int,
 	return record
 
 
-func _apply_account_result(account: Dictionary, elo_after: int, outcome: String) -> void:
+func _apply_account_result(account: Dictionary, elo_after: int, outcome: String, own_score: int) -> void:
 	account["elo"] = elo_after
 	account["games"] = int(account.get("games", 0)) + 1
-	account["points"] = int(account.get("points", 0)) + points_delta(outcome)
+	account["points"] = int(account.get("points", 0)) + match_points(outcome, own_score)
 	match outcome:
 		"win": account["wins"] = int(account.get("wins", 0)) + 1
 		"loss": account["losses"] = int(account.get("losses", 0)) + 1

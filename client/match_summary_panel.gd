@@ -41,8 +41,9 @@ func _render_result(s: Dictionary) -> void:
 
 	var match_format: int = int(s.get("match_format", 1))
 	if match_format > 1:
-		%ScoreLabel.text = "You %d — %d Opponent  (Best of %d)" % [
-			int(s.get("games_won", 0)), int(s.get("games_won_opponent", 0)), match_format]
+		%ScoreLabel.text = "You %d — %d Opponent  (Best of %d,  %d — %d categories)" % [
+			int(s.get("games_won", 0)), int(s.get("games_won_opponent", 0)), match_format,
+			int(s.get("series_score", 0)), int(s.get("series_score_opponent", 0))]
 	else:
 		%ScoreLabel.text = "You %d — %d Opponent" % [
 			int(s.get("your_score", 0)), int(s.get("opponent_score", 0))]

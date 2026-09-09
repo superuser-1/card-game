@@ -22,7 +22,7 @@ func _initialize() -> void:
 	test_k_factor()
 	test_apply_result_win()
 	test_apply_result_draw()
-	test_points_delta()
+	test_match_points()
 	test_record_match_normal()
 	test_record_match_bot()
 	test_rank_and_ladder()
@@ -258,13 +258,16 @@ func test_apply_result_draw() -> void:
 	assert_equal(result.delta_b, 0, "Draw with equal elo gives 0")
 
 
-func test_points_delta() -> void:
-	print("\n=== Points Delta ===")
+func test_match_points() -> void:
+	print("\n=== Match Points ===")
 
-	assert_equal(ServerStore.points_delta("win"), 10, "Win gives 10 points")
-	assert_equal(ServerStore.points_delta("loss"), 3, "Loss gives 3 points")
-	assert_equal(ServerStore.points_delta("draw"), 5, "Draw gives 5 points")
-	assert_equal(ServerStore.points_delta("x"), 0, "Unknown outcome gives 0 points")
+	assert_equal(ServerStore.match_points("win", 7), 14, "Bo1 sweep win gives 2x score = 14")
+	assert_equal(ServerStore.match_points("win", 4), 8, "4-3 win gives 2x score = 8")
+	assert_equal(ServerStore.match_points("loss", 3), 3, "4-3 loss gives own score = 3")
+	assert_equal(ServerStore.match_points("loss", 0), 0, "Swept loser gets 0")
+	assert_equal(ServerStore.match_points("draw", 3), 3, "Draw gives own score")
+	assert_equal(ServerStore.match_points("win", 13), 26, "Swept Bo3 win (7+6) gives 26")
+	assert_equal(ServerStore.match_points("x", 7), 0, "Unknown outcome gives 0 points")
 
 
 func test_record_match_normal() -> void:
@@ -277,7 +280,7 @@ func test_record_match_normal() -> void:
 	var bob_result = s.create_account("Bob", "secret2")
 	var bob = bob_result.account
 
-	# Record match: Alice wins
+	# Record match: Alice wins 5–3
 	var match = s.record_match(alice.id, bob.id, 1, 5, 3, false)
 
 	# Reload accounts
@@ -287,11 +290,14 @@ func test_record_match_normal() -> void:
 	assert_equal(alice_reloaded.elo, 1020, "Alice elo is 1020 after win")
 	assert_equal(alice_reloaded.wins, 1, "Alice wins is 1")
 	assert_equal(alice_reloaded.games, 1, "Alice games is 1")
-	assert_equal(alice_reloaded.points, 10, "Alice points is 10 (win delta)")
+	assert_equal(alice_reloaded.points, 10, "Alice points is 2x her score of 5 = 10")
 
 	assert_equal(bob_reloaded.elo, 980, "Bob elo is 980 after loss")
 	assert_equal(bob_reloaded.losses, 1, "Bob losses is 1")
-	assert_equal(bob_reloaded.points, 3, "Bob points is 3 (loss delta)")
+	assert_equal(bob_reloaded.points, 3, "Bob points is his score of 3")
+
+	assert_equal(match.points_1_delta, 10, "match record: winner delta 10")
+	assert_equal(match.points_2_delta, 3, "match record: loser delta 3")
 
 	assert_equal(match.is_bot_match, false, "Match is_bot_match is false")
 	assert_equal(match.winner, 1, "Match winner is 1")
@@ -308,7 +314,7 @@ func test_record_match_bot() -> void:
 	# Count accounts before bot match
 	var accounts_before = s._accounts.size()
 
-	# Record bot match: Alice loses to bot
+	# Record bot match: Alice loses to bot 2–4
 	var match = s.record_match(alice.id, 0, 2, 2, 4, true)
 
 	# Verify no new account created
@@ -317,7 +323,7 @@ func test_record_match_bot() -> void:
 	# Check Alice's stats
 	var alice_reloaded = s.get_account(alice.id)
 	assert_equal(alice_reloaded.losses, 1, "Alice losses is 1")
-	assert_equal(alice_reloaded.points, 3, "Alice points is 3 (loss delta)")
+	assert_equal(alice_reloaded.points, 2, "Alice points is her score of 2 (loss)")
 	assert_equal(alice_reloaded.games, 1, "Alice games is 1")
 
 	# Check match record

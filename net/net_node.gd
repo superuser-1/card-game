@@ -461,6 +461,12 @@ func _new_match(engine: GameEngine, seats: Dictionary, account_ids: Dictionary,
 		"match_format": match_format,
 		"games_to_win": (match_format / 2) + 1,
 		"series_wins": {1: 0, 2: 0},  # completed games won by each seat so far
+		# Running total of categories won by each seat across every game of the
+		# match — drives the ranked points award (see _fold_current_game_score
+		# / ServerStore.match_points). "_scored_engine" is the last GameEngine
+		# instance already folded in, so the fold is idempotent.
+		"series_score": {1: 0, 2: 0},
+		"_scored_engine": null,
 	}
 	_next_match_id += 1
 	_matches[m.id] = m
@@ -625,8 +631,22 @@ func _after_move(m: Dictionary) -> void:
 ## the same two seats and the series continues. A drawn game (equal score at
 ## hands-empty) awards neither seat a series win, so the series simply plays
 ## another game instead of getting stuck undecided.
+## Add the current game's category-win counts to the match's running series
+## total. Idempotent per GameEngine instance: safe to call from both
+## _handle_game_over (once per completed game) and _finish_match (to catch a
+## forfeit/abandon that ends mid-game without going through _handle_game_over).
+func _fold_current_game_score(m: Dictionary) -> void:
+	var engine: GameEngine = m.engine
+	if m.get("_scored_engine") == engine:
+		return
+	m["_scored_engine"] = engine
+	m.series_score[1] = int(m.series_score.get(1, 0)) + int(engine.scores.get(1, 0))
+	m.series_score[2] = int(m.series_score.get(2, 0)) + int(engine.scores.get(2, 0))
+
+
 func _handle_game_over(m: Dictionary) -> void:
 	var engine: GameEngine = m.engine
+	_fold_current_game_score(m)
 	var game_winner := engine.get_winner()
 	var format := int(m.get("match_format", 1))
 	var games_to_win := int(m.get("games_to_win", 1))
@@ -877,6 +897,10 @@ func _finish_match(m: Dictionary, forced_winner := -1) -> void:
 	m.ended = true
 	m.on_clock_seat = 0
 	var engine: GameEngine = m.engine
+	# Fold this game's score in now too — a forfeit/abandon reaches here
+	# directly, without _handle_game_over, and the categories won so far still
+	# count toward the points award.
+	_fold_current_game_score(m)
 	var winner := engine.get_winner() if forced_winner < 0 else forced_winner
 	var tournament_ctx: Dictionary = m.get("tournament_ctx", {})
 
@@ -901,9 +925,10 @@ func _finish_match(m: Dictionary, forced_winner := -1) -> void:
 		}
 		match_ended.emit(summary)
 	else:
+		var series_score: Dictionary = m.get("series_score", {1: 0, 2: 0})
 		var rec := _store.record_match(
 			int(m.account_ids[1]), int(m.account_ids[2]), winner,
-			engine.scores[1], engine.scores[2], bool(m.is_bot_match)
+			int(series_score.get(1, 0)), int(series_score.get(2, 0)), bool(m.is_bot_match)
 		)
 		for seat in [1, 2]:
 			var target = m.seats[seat]
@@ -923,6 +948,9 @@ func _finish_match(m: Dictionary, forced_winner := -1) -> void:
 					"opp_score": engine.scores[3 - seat],
 					"your_group_picks": engine.group_pick_counts(seat),
 					"your_pick_count": engine.pick_count(seat),
+					# The points actually banked for this match — achievements
+					# tally the same number the wallet received.
+					"match_points_awarded": int(rec.get("points_%d_delta" % seat, 0)),
 				}
 				var q_res := _store.apply_quest_progress(acc_id, q_ctx)
 				quest_completions = q_res["completed"]
@@ -934,6 +962,10 @@ func _finish_match(m: Dictionary, forced_winner := -1) -> void:
 				"outcome": _outcome_str(winner, seat),
 				"your_score": engine.scores[seat],
 				"opponent_score": engine.scores[3 - seat],
+				# Category wins across the whole match — equals your_score for a
+				# Bo1; the points award is derived from these.
+				"series_score": int(series_score.get(seat, 0)),
+				"series_score_opponent": int(series_score.get(3 - seat, 0)),
 				"ranked": true,
 				"elo_before": before,
 				"elo_after": after,
