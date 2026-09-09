@@ -5249,8 +5249,8 @@
       "title": "Barabbas",
       "director": "Richard Fleischer",
       "release_year": 1961,
-      "box_office_usd": 2900000,
-      "budget_usd": 9000000,
+      "box_office_usd": 11000000,
+      "budget_usd": 10000000,
       "runtime_minutes": 137,
       "oscars_won": 0,
       "genres": [
@@ -5261,7 +5261,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1916,
       "director_age_at_release": 45,
-      "profit_cost_ratio_pct": -68,
+      "profit_cost_ratio_pct": 10,
       "streaming_release": false
     },
     {
@@ -5332,7 +5332,7 @@
       "title": "Sodom and Gomorrah",
       "director": "Robert Aldrich",
       "release_year": 1962,
-      "box_office_usd": 2500000,
+      "box_office_usd": 6500000,
       "budget_usd": 4500000,
       "runtime_minutes": 154,
       "oscars_won": 0,
@@ -5344,7 +5344,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1918,
       "director_age_at_release": 44,
-      "profit_cost_ratio_pct": -44,
+      "profit_cost_ratio_pct": 44,
       "streaming_release": false
     },
     {
@@ -5395,7 +5395,7 @@
       "title": "Kings of the Sun",
       "director": "J. Lee Thompson",
       "release_year": 1963,
-      "box_office_usd": 1600000,
+      "box_office_usd": 4000000,
       "budget_usd": 4000000,
       "runtime_minutes": 108,
       "oscars_won": 0,
@@ -5407,7 +5407,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1914,
       "director_age_at_release": 49,
-      "profit_cost_ratio_pct": -60,
+      "profit_cost_ratio_pct": 0,
       "streaming_release": false
     },
     {
@@ -5456,7 +5456,7 @@
       "title": "Genghis Khan",
       "director": "Henry Levin",
       "release_year": 1965,
-      "box_office_usd": 2250000,
+      "box_office_usd": 7000000,
       "budget_usd": 4500000,
       "runtime_minutes": 120,
       "oscars_won": 0,
@@ -5469,7 +5469,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1909,
       "director_age_at_release": 56,
-      "profit_cost_ratio_pct": -50,
+      "profit_cost_ratio_pct": 56,
       "streaming_release": false
     },
     {
@@ -5558,7 +5558,7 @@
       "title": "Khartoum",
       "director": "Basil Dearden",
       "release_year": 1966,
-      "box_office_usd": 3000000,
+      "box_office_usd": 8000000,
       "budget_usd": 7000000,
       "runtime_minutes": 134,
       "oscars_won": 0,
@@ -5571,7 +5571,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1911,
       "director_age_at_release": 55,
-      "profit_cost_ratio_pct": -57,
+      "profit_cost_ratio_pct": 14,
       "streaming_release": false
     },
     {
@@ -5622,7 +5622,7 @@
       "title": "Ludwig",
       "director": "Luchino Visconti",
       "release_year": 1973,
-      "box_office_usd": 3000000,
+      "box_office_usd": 5000000,
       "budget_usd": 4400000,
       "runtime_minutes": 238,
       "oscars_won": 0,
@@ -5635,7 +5635,7 @@
       "director_oscars_won": 0,
       "director_birth_year": 1906,
       "director_age_at_release": 67,
-      "profit_cost_ratio_pct": -32,
+      "profit_cost_ratio_pct": 14,
       "streaming_release": false
     },
     {
