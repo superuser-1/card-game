@@ -33,10 +33,15 @@ var is_drop_target: bool = false
 var _highlight_tween: Tween
 
 
+# Caption geometry inside the art frame — twin of CardView's constants (the
+# scene reuses the card frame). Box height matches NameLabel.custom_minimum_size.
+const NAME_WRAP_PX := 180.0
+const NAME_BOX_PX := 88.0
+
 func set_category(key: String, accepts_drops: bool) -> void:
 	category_key = key
 	is_drop_target = accepts_drops
-	_name_label.text = DISPLAY_NAME.get(key, key)
+	LabelFit.fit(_name_label, DISPLAY_NAME.get(key, key), NAME_WRAP_PX, NAME_BOX_PX, 22, 15)
 
 	var icon_path := "res://assets/categories/%s.png" % key
 	_icon_rect.texture = load(icon_path) if ResourceLoader.exists(icon_path) else null

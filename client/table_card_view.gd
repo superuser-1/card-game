@@ -84,7 +84,13 @@ func flip_to_face_up(card: Dictionary, value_text: String, name_text := "") -> v
 	await tween.finished
 
 	_art_rect.texture = load(CardArt.path_for(card))
-	_name_label.text = name_text if name_text != "" else str(card.get("title", ""))
+	# Fit the caption (title, or director name(s) for director categories) into
+	# the fixed 2-line box above the value — shrink the font, ellipsize last.
+	LabelFit.fit(
+		_name_label,
+		name_text if name_text != "" else str(card.get("title", "")),
+		178.0, 40.0, 15, 10,
+	)
 	_value_label.text = value_text
 	_back_rect.visible = false
 	_front.visible = true

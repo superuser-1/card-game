@@ -67,10 +67,21 @@ func _ready() -> void:
 	mouse_exited.connect(_on_mouse_exited)
 
 
+# Caption geometry, shared with CategoryView. Width: art frame (CARD_SIZE.x
+# minus the 10px scene margins) x the overlay's ~0.884 span, minus its 6px
+# text margins. Heights match the labels' custom_minimum_size in the scene so
+# the caption never reflows the layout.
+const NAME_WRAP_PX := 180.0
+const NAME_BOX_PX := 66.0
+const DIRECTOR_BOX_PX := 18.0
+
 func set_card(card: Dictionary, load_art := true) -> void:
 	_card = card
-	name_label.text = str(card.get("title", ""))
-	director_label.text = str(card.get("director", ""))
+	# Titles run from "Her" to 50+ characters; fit each into its fixed caption
+	# box by shrinking the font, then ellipsizing only if it still overflows at
+	# the minimum size.
+	LabelFit.fit(name_label, str(card.get("title", "")), NAME_WRAP_PX, NAME_BOX_PX, 17, 11)
+	LabelFit.fit(director_label, str(card.get("director", "")), NAME_WRAP_PX, DIRECTOR_BOX_PX, 12, 10)
 	if load_art:
 		apply_art()
 
