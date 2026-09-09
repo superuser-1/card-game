@@ -1,7 +1,11 @@
 class_name CardLoader
 
 
-static func load_cards(path: String = "res://data/cards.json") -> Array:
+# Cards flagged `streaming_release` are direct-to-streaming titles (Netflix
+# originals etc.) whose theatrical box office is a token awards run or nothing —
+# not a meaningful stat — so they are kept out of every playable pool. Pass
+# include_streaming = true only for data tooling that needs the full list.
+static func load_cards(path: String = "res://data/cards.json", include_streaming: bool = false) -> Array:
 	var file = FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		push_error("CardLoader: Failed to open file at %s" % path)
@@ -37,4 +41,12 @@ static func load_cards(path: String = "res://data/cards.json") -> Array:
 				if card.get(f) != null:
 					card[f] = int(card[f])
 
-	return cards
+	if include_streaming:
+		return cards
+
+	var playable: Array = []
+	for card in cards:
+		if card is Dictionary and bool(card.get("streaming_release", false)):
+			continue
+		playable.append(card)
+	return playable

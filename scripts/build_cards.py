@@ -35,6 +35,11 @@ budget_usd * 100) from the existing box_office_usd/budget_usd fields already on
 each card (null if either is null or budget_usd is 0 — same nullability as the
 box_office/budget categories).
 
+Reads the xlsx "Streaming Release" column into streaming_release (bool). For a
+direct-to-streaming title the theatrical box office is meaningless, so
+box_office_usd is forced to null here (which also nulls profit_cost_ratio_pct)
+and CardLoader drops streaming_release cards from the playable pool.
+
 Re-runnable and idempotent. Requires openpyxl (`pip install openpyxl`).
 
 Usage:  python scripts/build_cards.py
@@ -77,6 +82,7 @@ def main() -> int:
     ci_lb = hdr.index("Letterboxed User Rating")
     ci_mc = hdr.index("Metacritic User Rating")
     ci_doscars = hdr.index("Director Oscar Wins")
+    ci_stream = hdr.index("Streaming Release")
     xl = {r[ci_id]: r for r in rows[1:]}
 
     births = json.loads(BIRTHS.read_text(encoding="utf-8"))["years"]
@@ -147,6 +153,14 @@ def main() -> int:
             c["director_birth_year"] = by
             c["director_age_at_release"] = int(c["release_year"]) - by
             n_birth_ok += 1
+
+        # Direct-to-streaming releases (Netflix originals etc.): their theatrical
+        # "box office" is a token awards-qualifying run or nothing at all, so it
+        # is not a meaningful stat. Flag them, null their box office, and let the
+        # loader drop them from the playable pool.
+        c["streaming_release"] = bool(row is not None and row[ci_stream])
+        if c["streaming_release"]:
+            c["box_office_usd"] = None
 
         bo = c.get("box_office_usd")
         bu = c.get("budget_usd")

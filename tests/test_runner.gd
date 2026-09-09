@@ -79,9 +79,17 @@ func assert_true(condition: bool, message: String) -> void:
 func test_card_loader_basic() -> void:
 	print("\n=== CardLoader Tests ===")
 	var cards = CardLoader.load_cards("res://data/cards.json")
-	assert_true(cards.size() == 308, "load_cards returns 308 cards from real data")
+	# 308 rows in the data, minus the 2 direct-to-streaming titles the loader
+	# drops from the playable pool by default (see CardLoader.load_cards).
+	assert_true(cards.size() == 306, "load_cards returns 306 playable cards from real data")
 	assert_true(cards[0] is Dictionary, "first card is a Dictionary")
 	assert_true(cards[0].has("title"), "first card has 'title' key")
+	var has_streaming := false
+	for c in cards:
+		if bool(c.get("streaming_release", false)):
+			has_streaming = true
+	assert_true(not has_streaming, "playable pool excludes streaming_release cards")
+	assert_true(CardLoader.load_cards("res://data/cards.json", true).size() == 308, "include_streaming returns all 308")
 
 
 func test_deal_hands() -> void:
