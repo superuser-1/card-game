@@ -36,6 +36,21 @@ imports project assets, and installs/enables:
   starts on boot.
 - `flickbattle-backup.timer` — runs `backup_accounts.sh` daily.
 
+**`e2-micro` only has ~1GB RAM, which is NOT enough to run `--import` on a
+large asset batch** (confirmed during first deploy: it silently stalled,
+and eventually starved the box badly enough that even opening a new SSH
+session hung). Actual runtime footprint of the server itself is tiny
+(~60-150MB) — it's specifically the one-time/occasional asset (re)import
+that needs headroom. If a future `git pull` brings in a lot of new art and
+`--import` seems to hang or the VM gets sluggish, don't fight it on
+`e2-micro`:
+1. Stop the VM, Edit → machine type → `e2-medium` (or bigger), Start.
+2. Re-run the import: `/opt/godot/godot --headless --path ~/card-game --import`
+   (or just `bash deploy/provision_vm.sh` again — idempotent).
+3. Once it's done, stop → Edit → back to `e2-micro` → Start.
+Costs a few cents for the hour it's upsized; far less painful than waiting
+out a starved 1GB import.
+
 ## Day-to-day
 
 Deploy an update:
