@@ -470,7 +470,13 @@ func _on_state_updated(state: Dictionary) -> void:
 
 
 func _clear_table() -> void:
+	# remove_child() before queue_free(): _render_table() rebuilds the
+	# category tiles synchronously right after calling this, with no frame
+	# boundary in between, so a plain queue_free() left the old tiles
+	# attached to _category_box until later in the frame — old and new tiles
+	# both in the tree, overlapping, for one frame.
 	for child in _category_box.get_children():
+		_category_box.remove_child(child)
 		child.queue_free()
 
 
@@ -1027,15 +1033,7 @@ func _render_hand(hand: Array, draggable: bool) -> void:
 	_hand_render_id += 1
 	var my_render_id := _hand_render_id
 
-	for child in _hand_box.get_children():
-		child.queue_free()
-	_hand_card_views.clear()
-	_live_preview_order = []
-
 	var n := hand.size()
-	if n == 0:
-		return
-
 	var ordered_hand := _reordered_hand(hand)
 
 	# Which of these cards are being drawn for the first time (opening deal or a
@@ -1063,6 +1061,25 @@ func _render_hand(hand: Array, draggable: bool) -> void:
 
 	if my_render_id != _hand_render_id:
 		return  # a newer render started while we were waiting; abandon this one
+
+	# Tear down the previous render's cards only now, right before the new
+	# ones go up — clearing this at the top of the function (before the frame
+	# wait above) left the hand box empty for a frame on every single render
+	# (every category pick, card play, and round resolution), which read as a
+	# visible flicker of the card art. remove_child() first (immediate) rather
+	# than just queue_free() (deferred to end of frame): without it, the old
+	# nodes stayed attached to _hand_box until later in the frame, so for that
+	# one frame both the old and the newly-added cards were in the tree at
+	# once, overlapping — which reads as a flash/pop, worse on fan positions
+	# where the old and new cards overlapped most.
+	for child in _hand_box.get_children():
+		_hand_box.remove_child(child)
+		child.queue_free()
+	_hand_card_views.clear()
+	_live_preview_order = []
+
+	if n == 0:
+		return
 
 	_hand_box_width = _hand_box.size.x if _hand_box.size.x > 0.0 else get_viewport_rect().size.x
 	_hand_box_height = _hand_box.size.y if _hand_box.size.y > 0.0 else HAND_BOX_HEIGHT_FALLBACK
