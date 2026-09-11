@@ -49,15 +49,15 @@ const CATALOG: Array = [
 	# code handles a 1-element `tiers` array the same as a 3-element one.
 
 	# Ranked wins — stat `wins` (ranked human-vs-human only, see PLAN_achievements §2)
-	{"id": "ranked_win_1",    "name": "First Ranked Win",   "stat": "wins", "tiers": [{"threshold": 1,    "points": 10,   "reward": ""}]},
-	{"id": "ranked_win_5",    "name": "5 Ranked Wins",      "stat": "wins", "tiers": [{"threshold": 5,    "points": 25,   "reward": ""}]},
-	{"id": "ranked_win_10",   "name": "10 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 10,   "points": 50,   "reward": ""}]},
-	{"id": "ranked_win_30",   "name": "30 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 30,   "points": 100,  "reward": ""}]},
-	{"id": "ranked_win_50",   "name": "50 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 50,   "points": 150,  "reward": ""}]},
-	{"id": "ranked_win_100",  "name": "100 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 100,  "points": 300,  "reward": ""}]},
-	{"id": "ranked_win_250",  "name": "250 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 250,  "points": 600,  "reward": ""}]},
-	{"id": "ranked_win_500",  "name": "500 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 500,  "points": 1200, "reward": ""}]},
-	{"id": "ranked_win_1000", "name": "1000 Ranked Wins",   "stat": "wins", "tiers": [{"threshold": 1000, "points": 2500, "reward": ""}]},
+	{"id": "ranked_win_1",    "name": "First Ranked Win",   "stat": "wins", "tiers": [{"threshold": 1,    "points": 10,   "reward": "1_ranked_win"}]},
+	{"id": "ranked_win_5",    "name": "5 Ranked Wins",      "stat": "wins", "tiers": [{"threshold": 5,    "points": 25,   "reward": "5_ranked_win"}]},
+	{"id": "ranked_win_10",   "name": "10 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 10,   "points": 50,   "reward": "10_ranked_win"}]},
+	{"id": "ranked_win_30",   "name": "30 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 30,   "points": 100,  "reward": "30_ranked_win"}]},
+	{"id": "ranked_win_50",   "name": "50 Ranked Wins",     "stat": "wins", "tiers": [{"threshold": 50,   "points": 150,  "reward": "50_ranked_win"}]},
+	{"id": "ranked_win_100",  "name": "100 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 100,  "points": 300,  "reward": "100_ranked_win"}]},
+	{"id": "ranked_win_250",  "name": "250 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 250,  "points": 600,  "reward": "250_ranked_win"}]},
+	{"id": "ranked_win_500",  "name": "500 Ranked Wins",    "stat": "wins", "tiers": [{"threshold": 500,  "points": 1200, "reward": "500_ranked_win"}]},
+	{"id": "ranked_win_1000", "name": "1000 Ranked Wins",   "stat": "wins", "tiers": [{"threshold": 1000, "points": 2500, "reward": "1000_ranked_win"}]},
 
 	# Ranked losses — stat `losses` (same thresholds/points as wins, user's call)
 	{"id": "ranked_loss_1",    "name": "First Ranked Loss",  "stat": "losses", "tiers": [{"threshold": 1,    "points": 10,   "reward": ""}]},

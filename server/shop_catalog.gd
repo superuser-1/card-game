@@ -48,6 +48,16 @@ const CATALOG: Array = [
 	{"id": "100_tournaments_created", "type": "avatar", "name": "100 Tournaments Created", "price": 0, "source": "achievement"},
 	{"id": "250_tournaments_created", "type": "avatar", "name": "250 Tournaments Created", "price": 0, "source": "achievement"},
 	{"id": "500_tournaments_created", "type": "avatar", "name": "500 Tournaments Created", "price": 0, "source": "achievement"},
+	# Avatar rewards for the ranked-win ladder (art: res://assets/avatars/<id>.png).
+	{"id": "1_ranked_win",    "type": "avatar", "name": "First Ranked Win", "price": 0, "source": "achievement"},
+	{"id": "5_ranked_win",    "type": "avatar", "name": "5 Ranked Wins",    "price": 0, "source": "achievement"},
+	{"id": "10_ranked_win",   "type": "avatar", "name": "10 Ranked Wins",   "price": 0, "source": "achievement"},
+	{"id": "30_ranked_win",   "type": "avatar", "name": "30 Ranked Wins",   "price": 0, "source": "achievement"},
+	{"id": "50_ranked_win",   "type": "avatar", "name": "50 Ranked Wins",   "price": 0, "source": "achievement"},
+	{"id": "100_ranked_win",  "type": "avatar", "name": "100 Ranked Wins",  "price": 0, "source": "achievement"},
+	{"id": "250_ranked_win",  "type": "avatar", "name": "250 Ranked Wins",  "price": 0, "source": "achievement"},
+	{"id": "500_ranked_win",  "type": "avatar", "name": "500 Ranked Wins",  "price": 0, "source": "achievement"},
+	{"id": "1000_ranked_win", "type": "avatar", "name": "1000 Ranked Wins", "price": 0, "source": "achievement"},
 ]
 
 const TYPES: Array[String] = ["avatar", "frame", "background", "sleeve"]
