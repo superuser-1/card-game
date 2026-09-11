@@ -34,6 +34,13 @@ const CATALOG: Array = [
 	{"id": "250_ranked_losses_avatar",  "type": "avatar", "name": "250 Ranked Losses",  "price": 0, "source": "achievement"},
 	{"id": "500_ranked_losses_avatar",  "type": "avatar", "name": "500 Ranked Losses",  "price": 0, "source": "achievement"},
 	{"id": "1000_ranked_losses_avatar", "type": "avatar", "name": "1000 Ranked Losses", "price": 0, "source": "achievement"},
+	# Avatar rewards for the tournament-win ladder (art: res://assets/avatars/<id>.png).
+	{"id": "1_tournament_win_avatar",   "type": "avatar", "name": "1 Tournament Win",    "price": 0, "source": "achievement"},
+	{"id": "5_tournament_win_avatar",   "type": "avatar", "name": "5 Tournament Wins",   "price": 0, "source": "achievement"},
+	{"id": "10_tournament_win_avatar",  "type": "avatar", "name": "10 Tournament Wins",  "price": 0, "source": "achievement"},
+	{"id": "25_tournament_win_avatar",  "type": "avatar", "name": "25 Tournament Wins",  "price": 0, "source": "achievement"},
+	{"id": "50_tournament_win_avatar",  "type": "avatar", "name": "50 Tournament Wins",  "price": 0, "source": "achievement"},
+	{"id": "100_tournament_win_avatar", "type": "avatar", "name": "100 Tournament Wins", "price": 0, "source": "achievement"},
 ]
 
 const TYPES: Array[String] = ["avatar", "frame", "background", "sleeve"]

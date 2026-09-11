@@ -71,12 +71,12 @@ const CATALOG: Array = [
 	{"id": "ranked_loss_1000", "name": "1000 Ranked Losses", "stat": "losses", "tiers": [{"threshold": 1000, "points": 2500, "reward": "1000_ranked_losses_avatar"}]},
 
 	# Tournament wins — stat `tournaments_won` (bumped by apply_tournament_stat)
-	{"id": "tourney_win_1",   "name": "1 Tournament Win",    "stat": "tournaments_won", "tiers": [{"threshold": 1,   "points": 100,  "reward": ""}]},
-	{"id": "tourney_win_5",   "name": "5 Tournament Wins",   "stat": "tournaments_won", "tiers": [{"threshold": 5,   "points": 300,  "reward": ""}]},
-	{"id": "tourney_win_10",  "name": "10 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 10,  "points": 600,  "reward": ""}]},
-	{"id": "tourney_win_25",  "name": "25 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 25,  "points": 1200, "reward": ""}]},
-	{"id": "tourney_win_50",  "name": "50 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 50,  "points": 2500, "reward": ""}]},
-	{"id": "tourney_win_100", "name": "100 Tournament Wins", "stat": "tournaments_won", "tiers": [{"threshold": 100, "points": 5000, "reward": ""}]},
+	{"id": "tourney_win_1",   "name": "1 Tournament Win",    "stat": "tournaments_won", "tiers": [{"threshold": 1,   "points": 100,  "reward": "1_tournament_win_avatar"}]},
+	{"id": "tourney_win_5",   "name": "5 Tournament Wins",   "stat": "tournaments_won", "tiers": [{"threshold": 5,   "points": 300,  "reward": "5_tournament_win_avatar"}]},
+	{"id": "tourney_win_10",  "name": "10 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 10,  "points": 600,  "reward": "10_tournament_win_avatar"}]},
+	{"id": "tourney_win_25",  "name": "25 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 25,  "points": 1200, "reward": "25_tournament_win_avatar"}]},
+	{"id": "tourney_win_50",  "name": "50 Tournament Wins",  "stat": "tournaments_won", "tiers": [{"threshold": 50,  "points": 2500, "reward": "50_tournament_win_avatar"}]},
+	{"id": "tourney_win_100", "name": "100 Tournament Wins", "stat": "tournaments_won", "tiers": [{"threshold": 100, "points": 5000, "reward": "100_tournament_win_avatar"}]},
 
 	# Quests completed — stat `quests_completed` (bumped by apply_quest_progress).
 	# Ids match the art files in assets/achievements/ (quests_completed_*.png).
