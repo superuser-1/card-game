@@ -58,6 +58,13 @@ const CATALOG: Array = [
 	{"id": "250_ranked_win",  "type": "avatar", "name": "250 Ranked Wins",  "price": 0, "source": "achievement"},
 	{"id": "500_ranked_win",  "type": "avatar", "name": "500 Ranked Wins",  "price": 0, "source": "achievement"},
 	{"id": "1000_ranked_win", "type": "avatar", "name": "1000 Ranked Wins", "price": 0, "source": "achievement"},
+	# Avatar rewards for the quests-completed ladder (art: res://assets/avatars/<id>.png).
+	{"id": "5_quests_completed",    "type": "avatar", "name": "5 Quests Completed",    "price": 0, "source": "achievement"},
+	{"id": "10_quests_completed",   "type": "avatar", "name": "10 Quests Completed",   "price": 0, "source": "achievement"},
+	{"id": "25_quests_completed",   "type": "avatar", "name": "25 Quests Completed",   "price": 0, "source": "achievement"},
+	{"id": "100_quests_completed",  "type": "avatar", "name": "100 Quests Completed",  "price": 0, "source": "achievement"},
+	{"id": "250_quests_completed",  "type": "avatar", "name": "250 Quests Completed",  "price": 0, "source": "achievement"},
+	{"id": "1000_quests_completed", "type": "avatar", "name": "1000 Quests Completed", "price": 0, "source": "achievement"},
 ]
 
 const TYPES: Array[String] = ["avatar", "frame", "background", "sleeve"]
