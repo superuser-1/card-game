@@ -74,6 +74,12 @@ signal admin_account_detail(account: Dictionary)
 signal admin_action_result(result: Dictionary)   # {ok, error, action, account}
 signal admin_online_list(rows: Array)
 signal admin_log_received(rows: Array)
+signal admin_account_activity(activity: Dictionary)   # {matches, tournaments, rewards, achievements, shop}
+signal admin_tournament_list(rows: Array)
+signal admin_tournament_detail(tournament: Dictionary)
+signal admin_live_ranked_list(rows: Array)
+signal admin_custom_games_list(data: Dictionary)       # {lobbies: [...], in_progress: [...]}
+signal admin_presence_stats(rows: Array)
 
 const BOT_THINK_SECONDS := 0.7
 const BOT_FILL_SECONDS := 15.0
@@ -155,6 +161,7 @@ var _custom_games: Dictionary = {}
 
 # --- tournaments (server-only) ---
 var _tournament_timer: Timer = null
+var _presence_timer: Timer = null
 ## peer_id -> tournament_id, set on successful check-in, cleared on that
 ## player's elimination, tournament victory, or the tournament completing.
 ## While present, the peer is refused ranked queue/solo/custom-game entry
@@ -263,6 +270,15 @@ func start_server(port: int = NetConfig.DEFAULT_PORT) -> void:
 	_tournament_timer.autostart = true
 	add_child(_tournament_timer)
 	_tournament_timer.timeout.connect(_tick_tournaments)
+
+	_presence_timer = Timer.new()
+	_presence_timer.wait_time = ServerStore.PRESENCE_SAMPLE_SECONDS
+	_presence_timer.autostart = true
+	add_child(_presence_timer)
+	_presence_timer.timeout.connect(func(): _store.record_presence_sample(_account_peer.size()))
+	# Sample once immediately too, so a freshly (re)started server doesn't wait
+	# a full interval before the admin tool's graph has any data point.
+	_store.record_presence_sample(_account_peer.size())
 
 	print("GameServer: listening on port %d" % port)
 
@@ -391,6 +407,40 @@ func admin_recent_actions(limit: int = 50) -> void:
 	_rpc_admin_recent_actions.rpc_id(1, limit)
 
 
+func admin_get_account_activity(account_id: int) -> void:
+	_rpc_admin_get_account_activity.rpc_id(1, account_id)
+
+
+func admin_list_tournaments(days: int = 30) -> void:
+	_rpc_admin_list_tournaments.rpc_id(1, days)
+
+
+func admin_get_tournament(tournament_id: int) -> void:
+	_rpc_admin_get_tournament.rpc_id(1, tournament_id)
+
+
+func admin_rollback_tournament(tournament_id: int) -> void:
+	_rpc_admin_rollback_tournament.rpc_id(1, tournament_id)
+
+
+func admin_list_live_ranked() -> void:
+	_rpc_admin_list_live_ranked.rpc_id(1)
+
+
+func admin_list_custom_games() -> void:
+	_rpc_admin_list_custom_games.rpc_id(1)
+
+
+## Voids a live match with no result recorded (not a forfeit — neither side is
+## credited a win/loss/elo change), for breaking a stuck or abusive match.
+func admin_force_end_match(match_id: int) -> void:
+	_rpc_admin_force_end_match.rpc_id(1, match_id)
+
+
+func admin_get_presence_stats(hours: int = 24) -> void:
+	_rpc_admin_get_presence_stats.rpc_id(1, hours)
+
+
 ## Singleplayer: no networking, a local GameEngine with player 1 as the human
 ## (driven by the UI via submit_*), player 2 driven by BotPlayer. Always
 ## unranked. `start_solo()` is kept as the no-arg alias used by the --solo CLI
@@ -471,10 +521,14 @@ func _new_match(engine: GameEngine, seats: Dictionary, account_ids: Dictionary,
 		"bot_seat": bot_seat,        # 0, 1 or 2
 		"is_bot_match": is_bot_match,
 		"ended": false,
-		# Wall-clock the match was created (never rolled forward). Only read by
-		# _enforce_tournament_match_cap so a hung tournament game can't wedge the
-		# bracket indefinitely.
+		# Monotonic engine-uptime timestamp the match was created (never rolled
+		# forward). Only read by _enforce_tournament_match_cap so a hung
+		# tournament game can't wedge the bracket indefinitely — NOT a real
+		# clock time, so it can't be rendered as "started at HH:MM".
 		"created_ms": Time.get_ticks_msec(),
+		# Real wall-clock epoch seconds, for admin-tool display only (elapsed
+		# duration, "started at" timestamps on the live-games tabs).
+		"created_ts": int(Time.get_unix_time_from_system()),
 		"turn_started_ms": Time.get_ticks_msec(),
 		"on_clock_seat": 0,          # 1|2 while the match is live, 0 otherwise
 		# While > now, the turn clock is frozen (round-resolution animation is
@@ -1382,6 +1436,7 @@ func _enforce_tournament_match_cap(t: Dictionary, round_idx: int) -> void:
 func _complete_tournament(t: Dictionary) -> void:
 	var final_slot: Dictionary = t.rounds[-1][0]
 	t.status = "completed"
+	t.completed_ts = int(Time.get_unix_time_from_system())
 	t.intermission_until_ts = 0
 	t.winner_account_id = int(final_slot.winner_account_id) if not bool(final_slot.winner_is_bot) else 0
 	if int(t.winner_account_id) != 0:
@@ -1990,6 +2045,205 @@ func _rpc_admin_log_result(rows: Array) -> void:
 	admin_log_received.emit(rows)
 
 
+## Shared row shape for a live match on the admin tool's Live Ranked / Live
+## Custom tabs: both seats' identity + elo, live score, format, when it began.
+func _admin_match_row(m: Dictionary) -> Dictionary:
+	var acc1 := int((m.get("account_ids", {}) as Dictionary).get(1, 0))
+	var acc2 := int((m.get("account_ids", {}) as Dictionary).get(2, 0))
+	var a1 := _store.get_account(acc1) if acc1 > 0 else {}
+	var a2 := _store.get_account(acc2) if acc2 > 0 else {}
+	var engine: GameEngine = m.get("engine")
+	return {
+		"match_id": int(m.get("id", 0)),
+		"seat1_username": str(a1.get("username", "Bot")) if acc1 > 0 else "Bot",
+		"seat1_account_id": acc1,
+		"seat1_elo": int(a1.get("elo", 0)),
+		"seat2_username": str(a2.get("username", "Bot")) if acc2 > 0 else "Bot",
+		"seat2_account_id": acc2,
+		"seat2_elo": int(a2.get("elo", 0)),
+		"score1": int(engine.scores.get(1, 0)) if engine != null else 0,
+		"score2": int(engine.scores.get(2, 0)) if engine != null else 0,
+		"match_format": int(m.get("match_format", 1)),
+		"is_bot_match": bool(m.get("is_bot_match", false)),
+		"created_ts": int(m.get("created_ts", 0)),
+	}
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_get_account_activity(account_id: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "account_activity", "account": {}})
+		return
+	_rpc_admin_account_activity_result.rpc_id(peer_id, _store.account_activity(account_id))
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_list_tournaments(days: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "list_tournaments", "account": {}})
+		return
+	_rpc_admin_tournament_list_result.rpc_id(peer_id, _store.recent_tournaments(clampi(days, 1, 3650)))
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_get_tournament(tournament_id: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "get_tournament", "account": {}})
+		return
+	_rpc_admin_tournament_detail_result.rpc_id(peer_id, _store.tournament_admin_detail(tournament_id))
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_rollback_tournament(tournament_id: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "rollback_tournament", "account": {}})
+		return
+	var res := _store.rollback_tournament(tournament_id, str(admin.get("username", "")))
+	res["action"] = "rollback_tournament"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+	if bool(res.get("ok", false)):
+		var t: Dictionary = res.get("tournament", {})
+		for p in (t.get("participants", []) as Array):
+			_push_account_snapshot(int(p.get("account_id", 0)))
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_list_live_ranked() -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "list_live_ranked", "account": {}})
+		return
+	var rows := []
+	for m in _matches.values():
+		if not (m.get("tournament_ctx", {}) as Dictionary).is_empty():
+			continue
+		if bool(m.get("is_custom_match", false)):
+			continue
+		rows.append(_admin_match_row(m))
+	_rpc_admin_live_ranked_result.rpc_id(peer_id, rows)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_list_custom_games() -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "list_custom_games", "account": {}})
+		return
+	var lobbies := []
+	for lobby in _custom_games.values():
+		var creator := _store.get_account(int(lobby.get("creator_account_id", 0)))
+		lobbies.append({
+			"name": str(lobby.get("name", "")),
+			"creator_username": str(creator.get("username", "Unknown")),
+			"match_format": int(lobby.get("match_format", 1)),
+			"created_ts": int(lobby.get("created_ts", 0)),
+		})
+	var in_progress := []
+	for m in _matches.values():
+		if bool(m.get("is_custom_match", false)):
+			in_progress.append(_admin_match_row(m))
+	_rpc_admin_custom_games_result.rpc_id(peer_id, {"lobbies": lobbies, "in_progress": in_progress})
+
+
+## Voids a live match with no result recorded — not a forfeit, neither seat is
+## credited a win/loss/elo/points change. For a stuck or abusive match only;
+## a tournament-round match voided this way leaves its bracket slot
+## unresolved (same as any other orphaned tournament match — self-heals via
+## _dispatch_round's staleness check, a fresh match_found is sent next tick).
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_force_end_match(match_id: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "force_end_match", "account": {}})
+		return
+	var m: Dictionary = _matches.get(match_id, {})
+	if m.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "no_such_match", "action": "force_end_match", "account": {}})
+		return
+	m.ended = true
+	for seat in [1, 2]:
+		var target = m.seats[seat]
+		if typeof(target) == TYPE_INT and target > 0:
+			_peer_match.erase(target)
+			_rpc_receive_error.rpc_id(target, "Match ended by an administrator.")
+	_matches.erase(match_id)
+	_store.log_admin_action(str(admin.get("username", "")), "force_end_match", "match #%d" % match_id)
+	_rpc_admin_action_result.rpc_id(peer_id, {"ok": true, "error": "", "action": "force_end_match", "account": {}})
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_get_presence_stats(hours: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "presence_stats", "account": {}})
+		return
+	_rpc_admin_presence_stats_result.rpc_id(peer_id, _store.presence_samples_since(clampi(hours, 1, 24 * 30)))
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_account_activity_result(activity: Dictionary) -> void:
+	if is_server:
+		return
+	admin_account_activity.emit(activity)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_tournament_list_result(rows: Array) -> void:
+	if is_server:
+		return
+	admin_tournament_list.emit(rows)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_tournament_detail_result(tournament: Dictionary) -> void:
+	if is_server:
+		return
+	admin_tournament_detail.emit(tournament)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_live_ranked_result(rows: Array) -> void:
+	if is_server:
+		return
+	admin_live_ranked_list.emit(rows)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_custom_games_result(data: Dictionary) -> void:
+	if is_server:
+		return
+	admin_custom_games_list.emit(data)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_presence_stats_result(rows: Array) -> void:
+	if is_server:
+		return
+	admin_presence_stats.emit(rows)
+
+
 # =========================================================================
 # Connection lifecycle (networked server)
 # =========================================================================
@@ -2423,6 +2677,7 @@ func _rpc_create_custom_game(name: String, match_format: int,
 		"match_format": format,
 		"cube_ids": cube.ids,
 		"created_ms": Time.get_ticks_msec(),
+		"created_ts": int(Time.get_unix_time_from_system()),
 	}
 	_rpc_custom_game_created.rpc_id(peer_id, {"ok": true, "error": "", "name": clean_name})
 

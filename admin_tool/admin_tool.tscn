@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://c8g5x3k2mfq7h"]
+[gd_scene load_steps=3 format=3 uid="uid://c8g5x3k2mfq7h"]
 
 [ext_resource type="Script" path="res://admin_tool/admin_tool.gd" id="1_script"]
+[ext_resource type="Script" path="res://admin_tool/presence_chart.gd" id="2_chart"]
 
 [node name="AdminTool" type="Control"]
 layout_mode = 3
@@ -92,6 +93,7 @@ text = ""
 autowrap_mode = 2
 
 [node name="Tabs" type="TabContainer" parent="MainPanel"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -115,7 +117,7 @@ text = "Search"
 
 [node name="ResultsList" type="ItemList" parent="MainPanel/Tabs/Accounts"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 160)
+custom_minimum_size = Vector2(0, 130)
 layout_mode = 2
 
 [node name="DetailLabel" type="Label" parent="MainPanel/Tabs/Accounts"]
@@ -170,6 +172,66 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Adjust Points"
 
+[node name="ActivityTabs" type="TabContainer" parent="MainPanel/Tabs/Accounts"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="History" type="VBoxContainer" parent="MainPanel/Tabs/Accounts/ActivityTabs"]
+layout_mode = 2
+
+[node name="MatchHistoryList" type="ItemList" parent="MainPanel/Tabs/Accounts/ActivityTabs/History"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Tournaments" type="VBoxContainer" parent="MainPanel/Tabs/Accounts/ActivityTabs"]
+layout_mode = 2
+
+[node name="TournamentHistoryList" type="ItemList" parent="MainPanel/Tabs/Accounts/ActivityTabs/Tournaments"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Unlocks" type="VBoxContainer" parent="MainPanel/Tabs/Accounts/ActivityTabs"]
+layout_mode = 2
+
+[node name="RewardLogList" type="ItemList" parent="MainPanel/Tabs/Accounts/ActivityTabs/Unlocks"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Achievements" type="VBoxContainer" parent="MainPanel/Tabs/Accounts/ActivityTabs"]
+layout_mode = 2
+
+[node name="AchievementLogList" type="ItemList" parent="MainPanel/Tabs/Accounts/ActivityTabs/Achievements"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Shop" type="VBoxContainer" parent="MainPanel/Tabs/Accounts/ActivityTabs"]
+layout_mode = 2
+
+[node name="ShopLogList" type="ItemList" parent="MainPanel/Tabs/Accounts/ActivityTabs/Shop"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Cosmetics" type="VBoxContainer" parent="MainPanel/Tabs/Accounts/ActivityTabs"]
+layout_mode = 2
+
+[node name="CosmeticsScroll" type="ScrollContainer" parent="MainPanel/Tabs/Accounts/ActivityTabs/Cosmetics"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CosmeticsLabel" type="Label" parent="MainPanel/Tabs/Accounts/ActivityTabs/Cosmetics/CosmeticsScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = ""
+autowrap_mode = 2
+
 [node name="Online" type="VBoxContainer" parent="MainPanel/Tabs"]
 layout_mode = 2
 theme_override_constants/separation = 6
@@ -184,6 +246,165 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
+[node name="Tournaments" type="VBoxContainer" parent="MainPanel/Tabs"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TopRow" type="HBoxContainer" parent="MainPanel/Tabs/Tournaments"]
+layout_mode = 2
+
+[node name="TournamentSearchField" type="LineEdit" parent="MainPanel/Tabs/Tournaments/TopRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Filter by name"
+
+[node name="TournamentDaysField" type="LineEdit" parent="MainPanel/Tabs/Tournaments/TopRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "30"
+placeholder_text = "days"
+
+[node name="RefreshTournamentsButton" type="Button" parent="MainPanel/Tabs/Tournaments/TopRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Refresh"
+
+[node name="TournamentList" type="ItemList" parent="MainPanel/Tabs/Tournaments"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+
+[node name="TournamentDetailLabel" type="Label" parent="MainPanel/Tabs/Tournaments"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Select a tournament above."
+autowrap_mode = 2
+
+[node name="ParticipantsList" type="ItemList" parent="MainPanel/Tabs/Tournaments"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RollbackButton" type="Button" parent="MainPanel/Tabs/Tournaments"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rollback Prizes"
+
+[node name="LiveRanked" type="VBoxContainer" parent="MainPanel/Tabs"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TopRow" type="HBoxContainer" parent="MainPanel/Tabs/LiveRanked"]
+layout_mode = 2
+
+[node name="LiveRankedSearchField" type="LineEdit" parent="MainPanel/Tabs/LiveRanked/TopRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Filter by player name"
+
+[node name="RefreshLiveRankedButton" type="Button" parent="MainPanel/Tabs/LiveRanked/TopRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Refresh"
+
+[node name="LiveRankedList" type="ItemList" parent="MainPanel/Tabs/LiveRanked"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ForceEndRankedButton" type="Button" parent="MainPanel/Tabs/LiveRanked"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Force-End Selected Match"
+
+[node name="LiveCustom" type="VBoxContainer" parent="MainPanel/Tabs"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TopRow" type="HBoxContainer" parent="MainPanel/Tabs/LiveCustom"]
+layout_mode = 2
+
+[node name="LiveCustomSearchField" type="LineEdit" parent="MainPanel/Tabs/LiveCustom/TopRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Filter by name/player"
+
+[node name="RefreshLiveCustomButton" type="Button" parent="MainPanel/Tabs/LiveCustom/TopRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Refresh"
+
+[node name="LobbiesLabel" type="Label" parent="MainPanel/Tabs/LiveCustom"]
+layout_mode = 2
+text = "Open lobbies (waiting for a 2nd player)"
+theme_override_font_sizes/font_size = 12
+modulate = Color(1, 1, 1, 0.7)
+
+[node name="CustomLobbiesList" type="ItemList" parent="MainPanel/Tabs/LiveCustom"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="InProgressLabel" type="Label" parent="MainPanel/Tabs/LiveCustom"]
+layout_mode = 2
+text = "In progress"
+theme_override_font_sizes/font_size = 12
+modulate = Color(1, 1, 1, 0.7)
+
+[node name="CustomInProgressList" type="ItemList" parent="MainPanel/Tabs/LiveCustom"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ForceEndCustomButton" type="Button" parent="MainPanel/Tabs/LiveCustom"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Force-End Selected In-Progress Match"
+
+[node name="Stats" type="VBoxContainer" parent="MainPanel/Tabs"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="RangeRow" type="HBoxContainer" parent="MainPanel/Tabs/Stats"]
+layout_mode = 2
+
+[node name="Range24hButton" type="Button" parent="MainPanel/Tabs/Stats/RangeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "24h"
+
+[node name="Range7dButton" type="Button" parent="MainPanel/Tabs/Stats/RangeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "7d"
+
+[node name="Range30dButton" type="Button" parent="MainPanel/Tabs/Stats/RangeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "30d"
+
+[node name="StatsSummaryLabel" type="Label" parent="MainPanel/Tabs/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+modulate = Color(1, 1, 1, 0.7)
+theme_override_font_sizes/font_size = 12
+
+[node name="PresenceChart" type="Control" parent="MainPanel/Tabs/Stats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 240)
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("2_chart")
+
 [node name="Log" type="VBoxContainer" parent="MainPanel/Tabs"]
 layout_mode = 2
 theme_override_constants/separation = 6
@@ -197,3 +418,12 @@ text = "Refresh"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="ConfirmDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Please confirm"
+
+[node name="LiveRefreshTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 5.0
+autostart = false

@@ -60,6 +60,10 @@ func _initialize() -> void:
 	test_admin_adjust_points()
 	test_admin_search_accounts()
 	test_admin_log()
+	test_rollback_tournament()
+	test_recent_tournament_history()
+	test_presence_samples()
+	test_account_activity_logs()
 
 	# Print final result
 	if _fail_count == 0:
@@ -1028,6 +1032,132 @@ func test_tournament_prizes_payout() -> void:
 	# idempotent
 	assert_equal(s.pay_tournament_prizes(t).size(), 0, "second payout call is a no-op")
 	assert_equal(int(s.get_account(champ).points) - before_champ, 1000, "no double payout")
+
+
+func test_rollback_tournament() -> void:
+	print("\n=== Tournament Rollback ===")
+	var s = fresh()
+	s.create_account("Creator", "pass1")
+	s.create_account("Champ", "pass2")
+	var cid := int(s._accounts[0].id)
+	var champ := int(s._accounts[1].id)
+	s.get_account(cid)["points"] = 100000
+	var now := int(Time.get_unix_time_from_system())
+	var spec := {"1": {"points": 1000, "items": ["athena"]}}
+
+	var r = s.create_tournament(cid, "Rollback", 32, now + 60, now + 60, now + 120,
+		false, false, 1, [], "open", "", 0, false, 0, spec)
+	var t := s.get_tournament(int(r.tournament.id))
+	t.rounds = [[]]
+	t.participants = [{"account_id": champ, "eliminated_round": 0}]
+
+	var unpaid_res := s.rollback_tournament(int(t.id), "admin1")
+	assert_equal(unpaid_res.ok, false, "rollback fails before any payout")
+	assert_equal(unpaid_res.error, "nothing_paid_out", "error is nothing_paid_out")
+
+	s.pay_tournament_prizes(t)
+	assert_equal(int(s.get_account(champ).points), 1000, "champ got 1000 points from payout")
+	assert_true("athena" in (s.get_account(champ).owned_rewards as Array), "champ got athena item")
+
+	var res := s.rollback_tournament(int(t.id), "admin1")
+	assert_equal(res.ok, true, "rollback succeeds once prizes were paid")
+	assert_equal(int(s.get_account(champ).points), 0, "points clawed back")
+	assert_true(not ("athena" in (s.get_account(champ).owned_rewards as Array)), "item removed")
+	assert_equal(bool(t.rolled_back), true, "tournament marked rolled_back")
+	assert_equal(t.rolled_back_by, "admin1", "rolled_back_by recorded")
+
+	var again := s.rollback_tournament(int(t.id), "admin1")
+	assert_equal(again.ok, false, "second rollback refused (idempotent)")
+	assert_equal(again.error, "already_rolled_back", "error is already_rolled_back")
+
+
+func test_recent_tournament_history() -> void:
+	print("\n=== Recent Tournament History ===")
+	var s = fresh()
+	s.create_account("Creator", "pass1")
+	s.create_account("Champ", "pass2")
+	var cid := int(s._accounts[0].id)
+	var champ := int(s._accounts[1].id)
+	s.get_account(cid)["points"] = 100000
+	var now := int(Time.get_unix_time_from_system())
+	var spec := {"1": {"points": 500, "items": []}}
+
+	var r = s.create_tournament(cid, "HistoryTest", 32, now + 60, now + 60, now + 120,
+		false, false, 1, [], "open", "", 0, false, 0, spec)
+	var t := s.get_tournament(int(r.tournament.id))
+	t.rounds = [[]]
+	t.participants = [{"account_id": champ, "eliminated_round": 0}]
+	s.pay_tournament_prizes(t)
+
+	var history := s.recent_tournament_history(champ, 30)
+	assert_equal(history.size(), 1, "champ has one tournament in history")
+	assert_equal(history[0].name, "HistoryTest", "history entry has the tournament name")
+	assert_equal(history[0].placement_bucket, "1", "placement bucket is 1 (champion)")
+	assert_equal(history[0].prize_points, 500, "prize points recorded")
+	assert_equal(history[0].rolled_back, false, "not rolled back")
+
+	var no_history := s.recent_tournament_history(cid, 30)
+	assert_equal(no_history.size(), 0, "non-participant has no tournament history")
+
+
+func test_presence_samples() -> void:
+	print("\n=== Presence Samples ===")
+	var s = fresh()
+	s.record_presence_sample(5)
+	s.record_presence_sample(7)
+	var recent := s.presence_samples_since(24)
+	assert_equal(recent.size(), 2, "two samples recorded")
+	assert_equal(int(recent[-1].count), 7, "latest sample has count 7")
+
+	# Capping: pre-fill past PRESENCE_MAX directly (avoids PRESENCE_MAX+ disk
+	# writes in a test) then let one real call trigger the trim.
+	var padding := []
+	for i in range(ServerStore.PRESENCE_MAX):
+		padding.append({"ts": 0, "count": 0})
+	s._presence_samples = padding
+	s.record_presence_sample(99)
+	assert_equal(s._presence_samples.size(), ServerStore.PRESENCE_MAX, "presence log capped at PRESENCE_MAX")
+	assert_equal(int(s._presence_samples[-1].count), 99, "newest sample kept after trim")
+
+	var old_ts := int(Time.get_unix_time_from_system()) - 100000
+	s._presence_samples.append({"ts": old_ts, "count": 42})
+	var window := s.presence_samples_since(1)
+	assert_true(not window.any(func(x): return int(x.count) == 42), "sample older than the window is excluded")
+
+
+func test_account_activity_logs() -> void:
+	print("\n=== Account Activity Logs (reward/achievement/shop) ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account_id = int(res.account.id)
+	var account = s.get_account(account_id)
+
+	account["points"] = 100
+	s._save_accounts()
+	s.purchase(account_id, "aphrodite")
+	var shop_log := s.recent_shop_log(account_id, 30)
+	assert_equal(shop_log.size(), 1, "one shop purchase logged")
+	assert_equal(shop_log[0].item_id, "aphrodite", "shop log item_id recorded")
+
+	s.grant_reward(account, 50, [], "achievement")
+	s.grant_reward(account, 25, ["ares"], "tournament")
+	var reward_log := s.recent_reward_log(account_id, 30)
+	assert_equal(reward_log.size(), 2, "two reward grants logged")
+	assert_equal(reward_log[0].source, "achievement", "first grant source is achievement")
+	assert_equal(reward_log[1].source, "tournament", "second grant source is tournament")
+
+	var q_ctx := {"outcome": "win", "your_score": 4, "opp_score": 3, "your_group_picks": {}, "your_pick_count": 0, "match_points_awarded": 8}
+	s.apply_match_stats(account_id, q_ctx)
+	var ach_log := s.recent_achievement_log(account_id, 30)
+	assert_true(ach_log.size() >= 1, "at least one achievement logged on first win")
+	assert_true(ach_log.any(func(e): return e.id == "ranked_win_1"), "ranked_win_1 present in achievement log")
+
+	var activity := s.account_activity(account_id)
+	assert_true(
+		activity.has("matches") and activity.has("tournaments") and activity.has("rewards")
+		and activity.has("achievements") and activity.has("shop"),
+		"account_activity returns all 5 sections"
+	)
 
 
 func test_shop_purchase_happy_path() -> void:

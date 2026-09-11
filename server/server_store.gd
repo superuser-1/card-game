@@ -32,6 +32,7 @@ var _accounts: Array
 var _matches: Array
 var _tournaments: Array
 var _admin_log: Array
+var _presence_samples: Array
 var _next_account_id: int
 var _next_match_id: int
 var _next_tournament_id: int
@@ -40,6 +41,13 @@ var _next_tournament_id: int
 ## it's an incident-review trail, not a permanent ledger.
 const ADMIN_LOG_MAX := 1000
 
+## Presence samples: one {ts, count} row every PRESENCE_SAMPLE_SECONDS
+## (net_node.gd's timer), capped to roughly 30 days of history at that
+## interval — the admin tool's "players over time" graph, not a permanent
+## record.
+const PRESENCE_SAMPLE_SECONDS := 300
+const PRESENCE_MAX := 8640
+
 
 func open(dir := "user://flickbattle/") -> void:
 	_dir = dir
@@ -47,6 +55,7 @@ func open(dir := "user://flickbattle/") -> void:
 	_matches = []
 	_tournaments = []
 	_admin_log = []
+	_presence_samples = []
 	_next_account_id = 1
 	_next_match_id = 1
 	_next_tournament_id = 1
@@ -96,6 +105,8 @@ func open(dir := "user://flickbattle/") -> void:
 					"pw_iterations": 0, "private_signup_close_ts": 0, "late_check_in": false,
 					"late_check_in_open_ts": 0, "prizes": {}, "prize_escrow": 0,
 					"escrow_refunded": false, "prizes_paid": false,
+					"completed_ts": 0, "payout_records": [],
+					"rolled_back": false, "rolled_back_ts": 0, "rolled_back_by": "",
 				}
 				for t in _tournaments:
 					if int(t.get("id", 0)) >= _next_tournament_id:
@@ -116,6 +127,14 @@ func open(dir := "user://flickbattle/") -> void:
 			var parsed = JSON.parse_string(file.get_as_text())
 			if parsed is Dictionary and parsed.has("actions"):
 				_admin_log = parsed["actions"]
+
+	var presence_path := dir + "presence.json"
+	if FileAccess.file_exists(presence_path):
+		var file := FileAccess.open(presence_path, FileAccess.READ)
+		if file != null:
+			var parsed = JSON.parse_string(file.get_as_text())
+			if parsed is Dictionary and parsed.has("samples"):
+				_presence_samples = parsed["samples"]
 
 
 # --- auth ------------------------------------------------------------------
@@ -170,6 +189,9 @@ func create_account(username: String, password: String, avatar := "") -> Diction
 		"quests": {"day": "", "state": {}},
 		"stats": {},
 		"achievements": {"unlocked": {}},
+		"reward_log": [],
+		"achievement_log": [],
+		"shop_log": [],
 		"is_admin": false,
 		"banned": false,
 		"ban_reason": "",
@@ -339,6 +361,12 @@ func account_admin_view(account: Dictionary) -> Dictionary:
 		"banned_ts": account.get("banned_ts", 0),
 		"banned_by": account.get("banned_by", ""),
 		"created_ts": account.get("created_ts", 0),
+		"owned_rewards": (account.get("owned_rewards", []) as Array).duplicate(),
+		"avatar": account.get("avatar", ""),
+		"frame": account.get("frame", ""),
+		"background": account.get("background", ""),
+		"sleeve": account.get("sleeve", ""),
+		"achievements_unlocked": (account.get("achievements", {}).get("unlocked", {}) as Dictionary).duplicate(),
 	}
 
 
@@ -375,6 +403,13 @@ func _log_admin_action(admin_username: String, action: String, account_id: int, 
 	if _admin_log.size() > ADMIN_LOG_MAX:
 		_admin_log = _admin_log.slice(_admin_log.size() - ADMIN_LOG_MAX)
 	_save_admin_log()
+
+
+## Public entry point for logging an admin action that isn't itself a
+## ServerStore mutation (e.g. net_node.gd force-ending a live match, which is
+## live in-memory state, not persisted account/tournament data).
+func log_admin_action(admin_username: String, action: String, details: String, account_id := 0) -> void:
+	_log_admin_action(admin_username, action, account_id, details)
 
 
 ## Most recent actions first.
@@ -442,6 +477,193 @@ func admin_adjust_points(account_id: int, delta: int, admin_username: String) ->
 	return {"ok": true, "error": "", "account": account_admin_view(account)}
 
 
+## Every tournament this account has ever participated in, most recent first
+## (by start_ts), capped at `limit`. Placement/payout are derived from the
+## same data pay_tournament_prizes() already uses, so this stays correct even
+## for tournaments that haven't been queried this way before.
+func recent_tournament_history(account_id: int, limit := 30) -> Array:
+	var mine := []
+	for t in _tournaments:
+		for p in (t.get("participants", []) as Array):
+			if int(p.get("account_id", -1)) == account_id:
+				mine.append(t)
+				break
+	mine.sort_custom(func(a, b): return int(a.get("start_ts", 0)) > int(b.get("start_ts", 0)))
+
+	var out := []
+	for i in range(mini(limit, mine.size())):
+		var t: Dictionary = mine[i]
+		var placement := ""
+		var prize_points := 0
+		var prize_items := []
+		for pay in (t.get("payout_records", []) as Array):
+			if int(pay.get("account_id", -1)) == account_id:
+				placement = str(pay.get("bucket", ""))
+				prize_points = int(pay.get("points", 0))
+				prize_items = pay.get("granted", [])
+				break
+		out.append({
+			"id": int(t.get("id", 0)),
+			"name": str(t.get("name", "")),
+			"status": str(t.get("status", "")),
+			"start_ts": int(t.get("start_ts", 0)),
+			"placement_bucket": placement,
+			"prize_points": prize_points,
+			"prize_items": prize_items,
+			"rolled_back": bool(t.get("rolled_back", false)),
+		})
+	return out
+
+
+func recent_reward_log(account_id: int, limit := 30) -> Array:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return []
+	var log: Array = account.get("reward_log", [])
+	return log.slice(maxi(0, log.size() - limit))
+
+
+func recent_achievement_log(account_id: int, limit := 30) -> Array:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return []
+	var log: Array = account.get("achievement_log", [])
+	return log.slice(maxi(0, log.size() - limit))
+
+
+func recent_shop_log(account_id: int, limit := 30) -> Array:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return []
+	var log: Array = account.get("shop_log", [])
+	return log.slice(maxi(0, log.size() - limit))
+
+
+## Everything the admin tool's account-detail view needs beyond
+## account_admin_view() in one call, so the UI doesn't have to sequence 5
+## separate RPC round-trips per account selected.
+func account_activity(account_id: int) -> Dictionary:
+	return {
+		"matches": recent_matches(account_id, 30),
+		"tournaments": recent_tournament_history(account_id, 30),
+		"rewards": recent_reward_log(account_id, 30),
+		"achievements": recent_achievement_log(account_id, 30),
+		"shop": recent_shop_log(account_id, 30),
+	}
+
+
+## Tournaments that started within the last `days` days, most recent first,
+## capped at `limit`. Mirrors list_tournaments()'s row shape plus admin-only
+## fields (winner, total prize pool, rollback state).
+func recent_tournaments(days := 30, limit := 100) -> Array:
+	var cutoff := int(Time.get_unix_time_from_system()) - days * 86400
+	var rows := []
+	for t in _tournaments:
+		if int(t.get("start_ts", 0)) < cutoff:
+			continue
+		var prize_total := 0
+		for bucket in (t.get("prizes", {}) as Dictionary).values():
+			prize_total += int((bucket as Dictionary).get("points", 0))
+		rows.append({
+			"id": int(t.get("id", 0)),
+			"name": str(t.get("name", "")),
+			"status": str(t.get("status", "")),
+			"start_ts": int(t.get("start_ts", 0)),
+			"completed_ts": int(t.get("completed_ts", 0)),
+			"participant_count": (t.get("participants", []) as Array).size(),
+			"winner_account_id": int(t.get("winner_account_id", 0)),
+			"prize_pool_points": prize_total,
+			"prizes_paid": bool(t.get("prizes_paid", false)),
+			"rolled_back": bool(t.get("rolled_back", false)),
+		})
+	rows.sort_custom(func(a, b): return int(a.start_ts) > int(b.start_ts))
+	if rows.size() > limit:
+		rows = rows.slice(0, limit)
+	return rows
+
+
+## Full admin view of one tournament: parameters + every participant's
+## placement and payout (derived from payout_records, same source rollback
+## reads from).
+func tournament_admin_detail(tournament_id: int) -> Dictionary:
+	var t := get_tournament(tournament_id)
+	if t.is_empty():
+		return {}
+	var payouts_by_account := {}
+	for pay in (t.get("payout_records", []) as Array):
+		payouts_by_account[int(pay.get("account_id", -1))] = pay
+
+	var participants := []
+	var total_rounds := (t.get("rounds", []) as Array).size()
+	for p in (t.get("participants", []) as Array):
+		var acc_id := int(p.get("account_id", 0))
+		var account := get_account(acc_id)
+		var pay: Dictionary = payouts_by_account.get(acc_id, {})
+		participants.append({
+			"account_id": acc_id,
+			"username": str(account.get("username", "Unknown")),
+			"eliminated_round": int(p.get("eliminated_round", 0)),
+			"placement_bucket": TournamentPrizes.bucket_for_placement(int(p.get("eliminated_round", 0)), total_rounds),
+			"prize_points": int(pay.get("points", 0)),
+			"prize_items": pay.get("granted", []),
+		})
+
+	return {
+		"id": int(t.get("id", 0)),
+		"name": str(t.get("name", "")),
+		"status": str(t.get("status", "")),
+		"availability": str(t.get("availability", "open")),
+		"bracket_size": int(t.get("bracket_size", 0)),
+		"match_format": int(t.get("match_format", 1)),
+		"start_ts": int(t.get("start_ts", 0)),
+		"completed_ts": int(t.get("completed_ts", 0)),
+		"winner_account_id": int(t.get("winner_account_id", 0)),
+		"prizes": t.get("prizes", {}),
+		"prizes_paid": bool(t.get("prizes_paid", false)),
+		"rolled_back": bool(t.get("rolled_back", false)),
+		"rolled_back_ts": int(t.get("rolled_back_ts", 0)),
+		"rolled_back_by": str(t.get("rolled_back_by", "")),
+		"participants": participants,
+	}
+
+
+## Undo a completed tournament's prize payout: subtract the points and
+## remove the items each recipient's payout_records entry granted them.
+## Idempotent (guarded by `rolled_back`), same style as escrow_refunded /
+## prizes_paid. Does NOT touch elo, quest progress, or achievement unlocks
+## earned by actually playing the matches — only the prize itself. Entry
+## costs aren't implemented yet; when they are, refunding them belongs here
+## too (t["entry_cost_*"] would be reversed alongside the payout below).
+func rollback_tournament(tournament_id: int, admin_username: String) -> Dictionary:
+	var t := get_tournament(tournament_id)
+	if t.is_empty():
+		return {"ok": false, "error": "no_such_tournament", "tournament": {}}
+	if bool(t.get("rolled_back", false)):
+		return {"ok": false, "error": "already_rolled_back", "tournament": tournament_admin_detail(tournament_id)}
+	if not bool(t.get("prizes_paid", false)):
+		return {"ok": false, "error": "nothing_paid_out", "tournament": tournament_admin_detail(tournament_id)}
+
+	for pay in (t.get("payout_records", []) as Array):
+		var acc_id := int(pay.get("account_id", -1))
+		var account := get_account(acc_id)
+		if account.is_empty():
+			continue
+		var points_to_claw_back := int(pay.get("points", 0))
+		if points_to_claw_back > 0:
+			account["points"] = maxi(0, int(account.get("points", 0)) - points_to_claw_back)
+		var owned: Array = account.get("owned_rewards", [])
+		for item_id in (pay.get("granted", []) as Array):
+			owned.erase(item_id)
+	_save_accounts()
+
+	t["rolled_back"] = true
+	t["rolled_back_ts"] = int(Time.get_unix_time_from_system())
+	t["rolled_back_by"] = admin_username
+	_save_tournaments()
+	_log_admin_action(admin_username, "rollback_tournament", 0, "tournament #%d '%s'" % [tournament_id, str(t.get("name", ""))])
+	return {"ok": true, "error": "", "tournament": tournament_admin_detail(tournament_id)}
+
+
 ## Roll the daily reset if needed, then apply ONE finished match's result to this
 ## account's quests. Mutates + persists the account (adds any earned points to
 ## account["points"] — the same pool shop purchases spend). Caller MUST only
@@ -486,10 +708,46 @@ func apply_quest_progress(account_id: int, match_ctx: Dictionary, day_override :
 	}
 
 
+## Max entries kept per per-account history log (reward/achievement/shop) —
+## an activity trail for the admin tool, not a permanent ledger. The admin
+## tool only ever displays the last 30; this just bounds account file size.
+const ACCOUNT_LOG_MAX := 100
+
+## Append `entry` (a plain Dictionary) to account[log_key], trimming to
+## ACCOUNT_LOG_MAX. Does NOT persist — callers already call _save_accounts()
+## for the rest of what they just mutated.
+func _append_account_log(account: Dictionary, log_key: String, entry: Dictionary) -> void:
+	var log: Array = account.get(log_key, [])
+	log.append(entry)
+	if log.size() > ACCOUNT_LOG_MAX:
+		log = log.slice(log.size() - ACCOUNT_LOG_MAX)
+	account[log_key] = log
+
+
+## Append one achievement_log entry per newly-unlocked tier (AchievementSystem
+## .evaluate()'s "newly" list) for the admin tool's "recent achievements" view.
+func _log_achievement_unlocks(account: Dictionary, newly: Array) -> void:
+	if newly.is_empty():
+		return
+	var ts := int(Time.get_unix_time_from_system())
+	for entry in newly:
+		_append_account_log(account, "achievement_log", {
+			"ts": ts,
+			"id": str(entry.get("id", "")),
+			"name": str(entry.get("name", "")),
+			"tier_index": int(entry.get("tier_index", 0)),
+			"tier_name": str(entry.get("tier_name", "")),
+			"points": int(entry.get("points", 0)),
+		})
+
+
 ## Credit `points_award` into account["points"] and grant every id in
 ## `item_ids` the account does not already own. Persists. Returns
-## {"points_total": int, "granted": Array of newly-owned ids}.
-func grant_reward(account: Dictionary, points_award: int, item_ids: Array) -> Dictionary:
+## {"points_total": int, "granted": Array of newly-owned ids}. `source`
+## (e.g. "achievement", "tournament") is recorded in account["reward_log"]
+## for the admin tool's "recent unlocks" view — every reward-granting path
+## in the codebase routes through here, so this one hook covers all of them.
+func grant_reward(account: Dictionary, points_award: int, item_ids: Array, source := "achievement") -> Dictionary:
 	if int(points_award) > 0:
 		account["points"] = int(account.get("points", 0)) + int(points_award)
 	var granted := []
@@ -499,6 +757,13 @@ func grant_reward(account: Dictionary, points_award: int, item_ids: Array) -> Di
 		if id_str != "" and id_str not in owned:
 			owned.append(id_str)
 			granted.append(id_str)
+	if int(points_award) > 0 or not granted.is_empty():
+		_append_account_log(account, "reward_log", {
+			"ts": int(Time.get_unix_time_from_system()),
+			"source": source,
+			"points": int(points_award),
+			"items": granted,
+		})
 	_save_accounts()
 	return {
 		"points_total": int(account.get("points", 0)),
@@ -530,6 +795,11 @@ func purchase(account_id: int, item_id: String) -> Dictionary:
 
 	account["points"] = points - price
 	owned.append(item_id)
+	_append_account_log(account, "shop_log", {
+		"ts": int(Time.get_unix_time_from_system()),
+		"item_id": item_id,
+		"price": price,
+	})
 	_save_accounts()
 	return {"ok": true, "error": "", "account": account}
 
@@ -621,6 +891,7 @@ func apply_match_stats(account_id: int, match_ctx: Dictionary) -> Dictionary:
 	# Evaluate achievements
 	var ach_res := AchievementSystem.evaluate(stats, account["achievements"]["unlocked"])
 	account["achievements"]["unlocked"] = ach_res["unlocked"]
+	_log_achievement_unlocks(account, ach_res["newly"])
 
 	# Grant rewards (do NOT include achievement payouts in points_earned_total)
 	grant_reward(account, int(ach_res["points_awarded"]), ach_res["reward_ids"])
@@ -649,7 +920,8 @@ func apply_tournament_stat(account_id: int, key: String) -> Array:
 
 	var ach_res := AchievementSystem.evaluate(stats, account["achievements"]["unlocked"])
 	account["achievements"]["unlocked"] = ach_res["unlocked"]
-	grant_reward(account, int(ach_res["points_awarded"]), ach_res["reward_ids"])
+	_log_achievement_unlocks(account, ach_res["newly"])
+	grant_reward(account, int(ach_res["points_awarded"]), ach_res["reward_ids"], "tournament")
 
 	return ach_res["newly"]
 
@@ -943,6 +1215,11 @@ func recent_matches(account_id: int, limit := 10) -> Array:
 		out.append({
 			"outcome": _outcome_for(winner, seat),
 			"elo_delta": elo_delta,
+			"elo_before": int(m.get("elo_%d_before" % seat, 0)),
+			"elo_after": int(m.get("elo_%d_after" % seat, 0)),
+			"points_delta": int(m.get("points_%d_delta" % seat, 0)),
+			"your_score": int(m.get("score_%d" % seat, 0)),
+			"opponent_score": int(m.get("score_%d" % (3 - seat), 0)),
 			"opponent_name": opp_name,
 			"is_bot_match": bool(m.get("is_bot_match", false)),
 			"ts": int(m.get("ts", 0)),
@@ -1051,6 +1328,10 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		"prize_escrow": int(pr.cost),
 		"escrow_refunded": false,
 		"prizes_paid": false,
+		"payout_records": [],
+		"rolled_back": false,
+		"rolled_back_ts": 0,
+		"rolled_back_by": "",
 		"status": "signup_private" if gated else "signup",
 		"private_signup_close_ts": stored_private_close,
 		"signup_close_ts": signup_close_ts,
@@ -1069,6 +1350,7 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		"round_deadline_ts": 0,
 		"intermission_until_ts": 0,
 		"winner_account_id": 0,
+		"completed_ts": 0,
 	}
 	if int(pr.cost) > 0:
 		creator["points"] = int(creator.get("points", 0)) - int(pr.cost)
@@ -1113,7 +1395,7 @@ func pay_tournament_prizes(t: Dictionary) -> Array:
 			if account.is_empty():
 				continue
 			var prize: Dictionary = prizes[bucket]
-			var res := grant_reward(account, int(prize.get("points", 0)), prize.get("items", []))
+			var res := grant_reward(account, int(prize.get("points", 0)), prize.get("items", []), "tournament")
 			payouts.append({
 				"account_id": int(p.account_id),
 				"bucket": bucket,
@@ -1121,6 +1403,7 @@ func pay_tournament_prizes(t: Dictionary) -> Array:
 				"granted": res.get("granted", []),
 			})
 	t["prizes_paid"] = true
+	t["payout_records"] = payouts
 	_save_tournaments()
 	return payouts
 
@@ -1327,3 +1610,27 @@ func _save_admin_log() -> void:
 	var file := FileAccess.open(_dir + "admin_log.json", FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify({"actions": _admin_log}, "\t"))
+
+
+func _save_presence() -> void:
+	var file := FileAccess.open(_dir + "presence.json", FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify({"samples": _presence_samples}, "\t"))
+
+
+## Called by net_node.gd's presence timer every PRESENCE_SAMPLE_SECONDS.
+func record_presence_sample(count: int) -> void:
+	_presence_samples.append({"ts": int(Time.get_unix_time_from_system()), "count": count})
+	if _presence_samples.size() > PRESENCE_MAX:
+		_presence_samples = _presence_samples.slice(_presence_samples.size() - PRESENCE_MAX)
+	_save_presence()
+
+
+## Samples from the last `hours` hours, oldest first (natural plot order).
+func presence_samples_since(hours: int) -> Array:
+	var cutoff := int(Time.get_unix_time_from_system()) - hours * 3600
+	var out := []
+	for s in _presence_samples:
+		if int(s.get("ts", 0)) >= cutoff:
+			out.append(s)
+	return out

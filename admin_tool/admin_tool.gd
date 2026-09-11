@@ -13,11 +13,27 @@ extends Control
 ## instead of ENet RPCs) and this front-end would be replaced.
 
 var _selected_account_id := 0
+var _selected_tournament_id := 0
+var _selected_live_ranked_match_id := 0
+var _selected_custom_in_progress_match_id := 0
+
+## Set right before opening %ConfirmDialog; run if the user presses OK.
+## Cleared either way once the dialog closes.
+var _pending_confirm: Callable = Callable()
+
+## Cached full row lists from the last server fetch, so the search fields
+## can filter client-side without another round trip.
+var _tournament_rows: Array = []
+var _live_ranked_rows: Array = []
+var _custom_lobby_rows: Array = []
+var _custom_in_progress_rows: Array = []
+
+var _stats_range_hours := 24
 
 
 func _ready() -> void:
 	DisplayServer.window_set_title("Flick Battle — Admin Tool")
-	DisplayServer.window_set_size(Vector2i(720, 640))
+	DisplayServer.window_set_size(Vector2i(900, 720))
 
 	Net.auth_completed.connect(_on_auth_completed)
 	Net.error_received.connect(_on_net_error)
@@ -26,12 +42,19 @@ func _ready() -> void:
 	Net.admin_action_result.connect(_on_admin_action_result)
 	Net.admin_online_list.connect(_on_admin_online_list)
 	Net.admin_log_received.connect(_on_admin_log_result)
+	Net.admin_account_activity.connect(_on_admin_account_activity)
+	Net.admin_tournament_list.connect(_on_admin_tournament_list)
+	Net.admin_tournament_detail.connect(_on_admin_tournament_detail)
+	Net.admin_live_ranked_list.connect(_on_admin_live_ranked_list)
+	Net.admin_custom_games_list.connect(_on_admin_custom_games_list)
+	Net.admin_presence_stats.connect(_on_admin_presence_stats)
 	Net.kicked.connect(_on_kicked)
 	Net.force_logout.connect(_on_force_logout)
 
 	%LoginButton.pressed.connect(_on_login_pressed)
 	%PasswordField.text_submitted.connect(func(_t): _on_login_pressed())
 	%LogoutButton.pressed.connect(_on_logout_pressed)
+
 	%SearchButton.pressed.connect(_on_search_pressed)
 	%SearchField.text_submitted.connect(func(_t): _on_search_pressed())
 	%ResultsList.item_selected.connect(_on_result_selected)
@@ -39,8 +62,33 @@ func _ready() -> void:
 	%UnbanButton.pressed.connect(_on_unban_pressed)
 	%SetEloButton.pressed.connect(_on_set_elo_pressed)
 	%AdjustPointsButton.pressed.connect(_on_adjust_points_pressed)
+
 	%RefreshOnlineButton.pressed.connect(func(): Net.admin_list_online())
 	%RefreshLogButton.pressed.connect(func(): Net.admin_recent_actions(100))
+
+	%TournamentSearchField.text_changed.connect(func(_t): _render_tournament_list())
+	%RefreshTournamentsButton.pressed.connect(_on_refresh_tournaments_pressed)
+	%TournamentList.item_selected.connect(_on_tournament_selected)
+	%RollbackButton.pressed.connect(_on_rollback_pressed)
+
+	%LiveRankedSearchField.text_changed.connect(func(_t): _render_live_ranked_list())
+	%RefreshLiveRankedButton.pressed.connect(func(): Net.admin_list_live_ranked())
+	%LiveRankedList.item_selected.connect(func(i): _selected_live_ranked_match_id = int(_filtered_live_ranked()[i].get("match_id", 0)))
+	%ForceEndRankedButton.pressed.connect(_on_force_end_ranked_pressed)
+
+	%LiveCustomSearchField.text_changed.connect(func(_t): _render_custom_games())
+	%RefreshLiveCustomButton.pressed.connect(func(): Net.admin_list_custom_games())
+	%CustomInProgressList.item_selected.connect(func(i): _selected_custom_in_progress_match_id = int(_filtered_custom_in_progress()[i].get("match_id", 0)))
+	%ForceEndCustomButton.pressed.connect(_on_force_end_custom_pressed)
+
+	%Range24hButton.pressed.connect(func(): _set_stats_range(24, %Range24hButton))
+	%Range7dButton.pressed.connect(func(): _set_stats_range(24 * 7, %Range7dButton))
+	%Range30dButton.pressed.connect(func(): _set_stats_range(24 * 30, %Range30dButton))
+
+	%Tabs.tab_changed.connect(_on_tab_changed)
+	%LiveRefreshTimer.timeout.connect(_on_live_refresh_tick)
+	%ConfirmDialog.confirmed.connect(_on_confirm_dialog_confirmed)
+	%ConfirmDialog.canceled.connect(func(): _pending_confirm = Callable())
 
 	%ConnLabel.text = "Connecting..."
 	var connected: bool = await _ensure_connected()
@@ -103,6 +151,7 @@ func _on_auth_completed(result: Dictionary) -> void:
 
 func _on_logout_pressed() -> void:
 	Session.clear()
+	%LiveRefreshTimer.stop()
 	%MainPanel.visible = false
 	%LoginPanel.visible = true
 	%UsernameField.text = ""
@@ -112,6 +161,7 @@ func _on_logout_pressed() -> void:
 
 func _on_kicked() -> void:
 	Session.clear()
+	%LiveRefreshTimer.stop()
 	%MainPanel.visible = false
 	%LoginPanel.visible = true
 	%LoginErrorLabel.text = "Disconnected from server."
@@ -151,6 +201,7 @@ func _on_result_selected(index: int) -> void:
 		return
 	_selected_account_id = int(rows[index].get("id", 0))
 	Net.admin_get_account(_selected_account_id)
+	Net.admin_get_account_activity(_selected_account_id)
 
 
 func _on_admin_account_detail(account: Dictionary) -> void:
@@ -172,11 +223,66 @@ func _on_admin_account_detail(account: Dictionary) -> void:
 		lines.append("Banned by %s" % str(account.get("banned_by", "")))
 	%DetailLabel.text = "\n".join(lines)
 
+	var equipped := []
+	for slot in [["avatar", "Avatar"], ["frame", "Frame"], ["background", "Background"], ["sleeve", "Sleeve"]]:
+		var val := str(account.get(slot[0], ""))
+		if val != "":
+			equipped.append("%s: %s" % [slot[1], val])
+	var owned: Array = account.get("owned_rewards", [])
+	var cosmetics_lines := []
+	if not equipped.is_empty():
+		cosmetics_lines.append("Equipped:\n  " + "\n  ".join(equipped))
+	cosmetics_lines.append("Owned cosmetics (%d):\n  %s" % [owned.size(), "\n  ".join(owned) if not owned.is_empty() else "(none)"])
+	%CosmeticsLabel.text = "\n\n".join(cosmetics_lines)
+
+
+func _on_admin_account_activity(activity: Dictionary) -> void:
+	%MatchHistoryList.clear()
+	for m in (activity.get("matches", []) as Array):
+		var when := Time.get_datetime_string_from_unix_time(int(m.get("ts", 0)), true)
+		%MatchHistoryList.add_item("%s  %s vs %s  score %d-%d  elo %+d  points %+d" % [
+			when, str(m.get("outcome", "")).to_upper(), str(m.get("opponent_name", "")),
+			int(m.get("your_score", 0)), int(m.get("opponent_score", 0)),
+			int(m.get("elo_delta", 0)), int(m.get("points_delta", 0)),
+		])
+
+	%TournamentHistoryList.clear()
+	for t in (activity.get("tournaments", []) as Array):
+		var when := Time.get_datetime_string_from_unix_time(int(t.get("start_ts", 0)), true)
+		var rb := " [ROLLED BACK]" if bool(t.get("rolled_back", false)) else ""
+		%TournamentHistoryList.add_item("%s  %s  placement=%s  prize=%d pts%s" % [
+			when, str(t.get("name", "")), str(t.get("placement_bucket", "-")),
+			int(t.get("prize_points", 0)), rb,
+		])
+
+	%RewardLogList.clear()
+	for r in (activity.get("rewards", []) as Array):
+		var when := Time.get_datetime_string_from_unix_time(int(r.get("ts", 0)), true)
+		var items: Array = r.get("items", [])
+		%RewardLogList.add_item("%s  [%s]  +%d pts  %s" % [
+			when, str(r.get("source", "")), int(r.get("points", 0)),
+			(", ".join(items) if not items.is_empty() else "-"),
+		])
+
+	%AchievementLogList.clear()
+	for a in (activity.get("achievements", []) as Array):
+		var when := Time.get_datetime_string_from_unix_time(int(a.get("ts", 0)), true)
+		%AchievementLogList.add_item("%s  %s — %s (+%d pts)" % [
+			when, str(a.get("name", a.get("id", ""))), str(a.get("tier_name", "")), int(a.get("points", 0)),
+		])
+
+	%ShopLogList.clear()
+	for s in (activity.get("shop", []) as Array):
+		var when := Time.get_datetime_string_from_unix_time(int(s.get("ts", 0)), true)
+		%ShopLogList.add_item("%s  %s  -%d pts" % [when, str(s.get("item_id", "")), int(s.get("price", 0))])
+
 
 func _on_ban_pressed() -> void:
 	if _selected_account_id == 0:
 		return
-	Net.admin_ban(_selected_account_id, %ReasonField.text.strip_edges())
+	_confirm("Ban this account? Reason: \"%s\"" % %ReasonField.text.strip_edges(), func():
+		Net.admin_ban(_selected_account_id, %ReasonField.text.strip_edges())
+	)
 
 
 func _on_unban_pressed() -> void:
@@ -229,6 +335,15 @@ func _on_admin_action_result(result: Dictionary) -> void:
 			%NewEloField.text = ""
 			%PointsDeltaField.text = ""
 
+	match action:
+		"rollback_tournament":
+			if _selected_tournament_id != 0:
+				Net.admin_get_tournament(_selected_tournament_id)
+			Net.admin_list_tournaments(int(%TournamentDaysField.text.strip_edges()) if %TournamentDaysField.text.strip_edges().is_valid_int() else 30)
+		"force_end_match":
+			Net.admin_list_live_ranked()
+			Net.admin_list_custom_games()
+
 
 # --- online / log ------------------------------------------------------------
 
@@ -244,12 +359,248 @@ func _on_admin_online_list(rows: Array) -> void:
 func _on_admin_log_result(rows: Array) -> void:
 	%LogList.clear()
 	for row in rows:
-		var ts := int(row.get("ts", 0))
-		var when := Time.get_datetime_string_from_unix_time(ts, true)
+		var when := Time.get_datetime_string_from_unix_time(int(row.get("ts", 0)), true)
 		%LogList.add_item("%s  %s  %s -> account #%d  %s" % [
 			when, str(row.get("admin", "")), str(row.get("action", "")),
 			int(row.get("account_id", 0)), str(row.get("details", ""))
 		])
+
+
+# --- tournaments -------------------------------------------------------------
+
+func _on_refresh_tournaments_pressed() -> void:
+	var text: String = %TournamentDaysField.text.strip_edges()
+	var days := int(text) if text.is_valid_int() else 30
+	Net.admin_list_tournaments(days)
+
+
+func _on_admin_tournament_list(rows: Array) -> void:
+	_tournament_rows = rows
+	_render_tournament_list()
+
+
+func _filtered_tournaments() -> Array:
+	var q: String = %TournamentSearchField.text.strip_edges().to_lower()
+	if q == "":
+		return _tournament_rows
+	return _tournament_rows.filter(func(t): return str(t.get("name", "")).to_lower().contains(q))
+
+
+func _render_tournament_list() -> void:
+	%TournamentList.clear()
+	for t in _filtered_tournaments():
+		var when := Time.get_datetime_string_from_unix_time(int(t.get("start_ts", 0)), true)
+		var rb := " [ROLLED BACK]" if bool(t.get("rolled_back", false)) else ""
+		%TournamentList.add_item("%s  %s  %s  %d players  %d pts pool%s" % [
+			when, str(t.get("name", "")), str(t.get("status", "")),
+			int(t.get("participant_count", 0)), int(t.get("prize_pool_points", 0)), rb,
+		])
+
+
+func _on_tournament_selected(index: int) -> void:
+	var rows := _filtered_tournaments()
+	if index < 0 or index >= rows.size():
+		return
+	_selected_tournament_id = int(rows[index].get("id", 0))
+	Net.admin_get_tournament(_selected_tournament_id)
+
+
+func _on_admin_tournament_detail(t: Dictionary) -> void:
+	if t.is_empty():
+		%TournamentDetailLabel.text = "Tournament not found."
+		return
+	var lines := [
+		"#%d  %s  (%s)" % [int(t.get("id", 0)), str(t.get("name", "")), str(t.get("status", ""))],
+		"Bracket size %d, %s, availability %s" % [
+			int(t.get("bracket_size", 0)),
+			"Bo%d" % int(t.get("match_format", 1)), str(t.get("availability", "open")),
+		],
+		"Prizes paid: %s" % ("yes" if bool(t.get("prizes_paid", false)) else "no"),
+	]
+	if bool(t.get("rolled_back", false)):
+		lines.append("ROLLED BACK by %s" % str(t.get("rolled_back_by", "")))
+	%TournamentDetailLabel.text = "\n".join(lines)
+
+	%ParticipantsList.clear()
+	for p in (t.get("participants", []) as Array):
+		%ParticipantsList.add_item("%s (#%d)  placement=%s  prize=%d pts  items=%s" % [
+			str(p.get("username", "")), int(p.get("account_id", 0)),
+			str(p.get("placement_bucket", "-")) if str(p.get("placement_bucket", "")) != "" else "-",
+			int(p.get("prize_points", 0)),
+			(", ".join(p.get("prize_items", [])) if not (p.get("prize_items", []) as Array).is_empty() else "-"),
+		])
+
+
+func _on_rollback_pressed() -> void:
+	if _selected_tournament_id == 0:
+		return
+	_confirm("Roll back prize payouts for tournament #%d? This claws back the points/items it granted." % _selected_tournament_id, func():
+		Net.admin_rollback_tournament(_selected_tournament_id)
+	)
+
+
+# --- live ranked ---------------------------------------------------------
+
+func _filtered_live_ranked() -> Array:
+	var q: String = %LiveRankedSearchField.text.strip_edges().to_lower()
+	if q == "":
+		return _live_ranked_rows
+	return _live_ranked_rows.filter(func(m):
+		return str(m.get("seat1_username", "")).to_lower().contains(q) or str(m.get("seat2_username", "")).to_lower().contains(q)
+	)
+
+
+func _on_admin_live_ranked_list(rows: Array) -> void:
+	_live_ranked_rows = rows
+	_render_live_ranked_list()
+
+
+func _render_live_ranked_list() -> void:
+	%LiveRankedList.clear()
+	for m in _filtered_live_ranked():
+		%LiveRankedList.add_item(_match_row_text(m))
+
+
+func _match_row_text(m: Dictionary) -> String:
+	var elapsed := int(Time.get_unix_time_from_system()) - int(m.get("created_ts", 0))
+	return "#%d  %s (elo %d) %d - %d %s (elo %d)  Bo%d  %s  %dm ago" % [
+		int(m.get("match_id", 0)),
+		str(m.get("seat1_username", "")), int(m.get("seat1_elo", 0)),
+		int(m.get("score1", 0)), int(m.get("score2", 0)),
+		str(m.get("seat2_username", "")), int(m.get("seat2_elo", 0)),
+		int(m.get("match_format", 1)),
+		"[bot]" if bool(m.get("is_bot_match", false)) else "",
+		maxi(0, elapsed) / 60,
+	]
+
+
+func _on_force_end_ranked_pressed() -> void:
+	if _selected_live_ranked_match_id == 0:
+		return
+	var mid := _selected_live_ranked_match_id
+	_confirm("Force-end match #%d? No result will be recorded for either player." % mid, func():
+		Net.admin_force_end_match(mid)
+	)
+
+
+# --- live custom -----------------------------------------------------------
+
+func _filtered_custom_lobbies() -> Array:
+	var q: String = %LiveCustomSearchField.text.strip_edges().to_lower()
+	if q == "":
+		return _custom_lobby_rows
+	return _custom_lobby_rows.filter(func(l):
+		return str(l.get("name", "")).to_lower().contains(q) or str(l.get("creator_username", "")).to_lower().contains(q)
+	)
+
+
+func _filtered_custom_in_progress() -> Array:
+	var q: String = %LiveCustomSearchField.text.strip_edges().to_lower()
+	if q == "":
+		return _custom_in_progress_rows
+	return _custom_in_progress_rows.filter(func(m):
+		return str(m.get("seat1_username", "")).to_lower().contains(q) or str(m.get("seat2_username", "")).to_lower().contains(q)
+	)
+
+
+func _on_admin_custom_games_list(data: Dictionary) -> void:
+	_custom_lobby_rows = data.get("lobbies", [])
+	_custom_in_progress_rows = data.get("in_progress", [])
+	_render_custom_games()
+
+
+func _render_custom_games() -> void:
+	%CustomLobbiesList.clear()
+	for l in _filtered_custom_lobbies():
+		var elapsed := int(Time.get_unix_time_from_system()) - int(l.get("created_ts", 0))
+		%CustomLobbiesList.add_item("%s  host=%s  Bo%d  waiting %dm" % [
+			str(l.get("name", "")), str(l.get("creator_username", "")),
+			int(l.get("match_format", 1)), maxi(0, elapsed) / 60,
+		])
+	%CustomInProgressList.clear()
+	for m in _filtered_custom_in_progress():
+		%CustomInProgressList.add_item(_match_row_text(m))
+
+
+func _on_force_end_custom_pressed() -> void:
+	if _selected_custom_in_progress_match_id == 0:
+		return
+	var mid := _selected_custom_in_progress_match_id
+	_confirm("Force-end custom match #%d? No result will be recorded for either player." % mid, func():
+		Net.admin_force_end_match(mid)
+	)
+
+
+# --- stats -----------------------------------------------------------------
+
+func _set_stats_range(hours: int, pressed_button: Button) -> void:
+	_stats_range_hours = hours
+	for b in [%Range24hButton, %Range7dButton, %Range30dButton]:
+		b.button_pressed = (b == pressed_button)
+	Net.admin_get_presence_stats(hours)
+
+
+func _on_admin_presence_stats(rows: Array) -> void:
+	%PresenceChart.set_samples(rows)
+	if rows.is_empty():
+		%StatsSummaryLabel.text = "No presence data yet for this range."
+		return
+	var peak := 0
+	var total := 0
+	for r in rows:
+		var c := int(r.get("count", 0))
+		peak = maxi(peak, c)
+		total += c
+	%StatsSummaryLabel.text = "Peak online: %d   Average: %.1f   (%d samples)" % [peak, float(total) / rows.size(), rows.size()]
+
+
+# --- confirmation dialog ----------------------------------------------------
+
+func _confirm(message: String, on_confirmed: Callable) -> void:
+	_pending_confirm = on_confirmed
+	%ConfirmDialog.dialog_text = message
+	%ConfirmDialog.popup_centered()
+
+
+func _on_confirm_dialog_confirmed() -> void:
+	if _pending_confirm.is_valid():
+		_pending_confirm.call()
+	_pending_confirm = Callable()
+
+
+# --- tabs / auto-refresh -----------------------------------------------------
+
+func _on_tab_changed(_tab: int) -> void:
+	var current: Control = %Tabs.get_current_tab_control()
+	if current == null:
+		return
+	match current.name:
+		"Tournaments":
+			%LiveRefreshTimer.stop()
+			if _tournament_rows.is_empty():
+				_on_refresh_tournaments_pressed()
+		"LiveRanked":
+			Net.admin_list_live_ranked()
+			%LiveRefreshTimer.start()
+		"LiveCustom":
+			Net.admin_list_custom_games()
+			%LiveRefreshTimer.start()
+		"Stats":
+			%LiveRefreshTimer.stop()
+			Net.admin_get_presence_stats(_stats_range_hours)
+		_:
+			%LiveRefreshTimer.stop()
+
+
+func _on_live_refresh_tick() -> void:
+	var current: Control = %Tabs.get_current_tab_control()
+	if current == null:
+		return
+	match current.name:
+		"LiveRanked":
+			Net.admin_list_live_ranked()
+		"LiveCustom":
+			Net.admin_list_custom_games()
 
 
 func _show_main_panel() -> void:
