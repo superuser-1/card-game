@@ -52,6 +52,7 @@ func _initialize() -> void:
 	test_set_sleeve()
 	test_apply_match_stats()
 	test_apply_tournament_stat()
+	test_backfill_achievement_rewards()
 
 	# Print final result
 	if _fail_count == 0:
@@ -1225,3 +1226,26 @@ func test_apply_tournament_stat() -> void:
 	account = s.get_account(account_id)
 	assert_equal(int(account.stats.tournaments_created), 5, "tournaments_created incremented to 5")
 	assert_true(account.achievements.unlocked.has("tourney_created_5"), "tourney_created_5 unlocked at 5")
+
+
+func test_backfill_achievement_rewards() -> void:
+	print("\n=== Backfill Achievement Rewards ===")
+	var s = fresh()
+	var res = s.create_account("Alice", "secret1")
+	var account_id = int(res.account.id)
+	var account = s.get_account(account_id)
+
+	# Simulate a tier that was unlocked back when its "reward" field was still
+	# empty — the exact scenario a newly-added reward id can't self-heal from,
+	# since evaluate() never re-visits a tier once it's past the high-water mark.
+	account["achievements"] = {"unlocked": {"ranked_win_1": 0}}
+	s._save_accounts()
+	assert_true(not ("1_ranked_win" in account.get("owned_rewards", [])), "reward not owned before backfill")
+
+	var granted = s.backfill_achievement_rewards(account)
+	assert_true("1_ranked_win" in granted, "backfill grants the missed reward")
+	assert_true("1_ranked_win" in account.owned_rewards, "reward now owned")
+
+	# Idempotent: a second pass grants nothing new.
+	var granted_again = s.backfill_achievement_rewards(account)
+	assert_equal(granted_again.size(), 0, "second backfill grants nothing new")

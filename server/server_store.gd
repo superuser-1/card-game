@@ -53,6 +53,7 @@ func open(dir := "user://flickbattle/") -> void:
 				for account in _accounts:
 					if int(account.get("id", 0)) >= _next_account_id:
 						_next_account_id = int(account["id"]) + 1
+				_backfill_all_achievement_rewards()
 	else:
 		_save_accounts()
 
@@ -370,6 +371,26 @@ func purchase(account_id: int, item_id: String) -> Dictionary:
 	owned.append(item_id)
 	_save_accounts()
 	return {"ok": true, "error": "", "account": account}
+
+
+## Runs backfill_achievement_rewards across every loaded account, once, at
+## server startup — catches rewards added to tiers players already cleared.
+func _backfill_all_achievement_rewards() -> void:
+	for account in _accounts:
+		backfill_achievement_rewards(account)
+
+
+## Grant any reward whose achievement tier the account already has unlocked
+## but never received the item for — happens when a reward id is added to a
+## tier after players already cleared it (evaluate() only looks at tiers
+## past the recorded high-water mark, so it can't catch these on its own).
+## Idempotent; safe to call on every account at server startup.
+func backfill_achievement_rewards(account: Dictionary) -> Array:
+	_ensure_stats(account)
+	var reward_ids: Array = AchievementSystem.reward_ids_for_unlocked(account["achievements"]["unlocked"])
+	if reward_ids.is_empty():
+		return []
+	return grant_reward(account, 0, reward_ids)["granted"]
 
 
 ## Ensure account has stats and achievements dicts initialized.

@@ -165,6 +165,26 @@ static func evaluate(stats: Dictionary, unlocked: Dictionary) -> Dictionary:
 	}
 
 
+## Every non-empty reward on a tier the account has ALREADY unlocked (0..
+## highest_tier), regardless of when that reward was added to the catalog.
+## `evaluate()` only ever looks at tiers past the recorded high-water mark,
+## so a reward tacked onto an already-cleared tier never grants through the
+## normal play path — this lets ServerStore backfill it once, on load.
+static func reward_ids_for_unlocked(unlocked: Dictionary) -> Array:
+	var reward_ids := []
+	for ach in CATALOG:
+		var ach_id := str(ach.id)
+		var highest_tier := int(unlocked.get(ach_id, -1))
+		if highest_tier < 0:
+			continue
+		var tiers: Array = ach.get("tiers", [])
+		for tier_idx in range(min(highest_tier + 1, tiers.size())):
+			var reward := str((tiers[tier_idx] as Dictionary).get("reward", ""))
+			if reward != "":
+				reward_ids.append(reward)
+	return reward_ids
+
+
 ## Display rows for the client screen — current stat value, tiers done,
 ## next threshold, whether maxed.
 static func rows(stats: Dictionary, unlocked: Dictionary) -> Array:
