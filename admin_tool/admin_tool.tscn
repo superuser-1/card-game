@@ -431,6 +431,13 @@ unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Tournament name"
 
+[node name="Row1Label" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox"]
+layout_mode = 2
+text = "Bracket size (players) · match format · allow fewer than 32 players"
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 11
+modulate = Color(1, 1, 1, 0.6)
+
 [node name="Row1" type="HBoxContainer" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 layout_mode = 2
 
@@ -438,8 +445,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "32"
-placeholder_text = "Bracket size"
+placeholder_text = "Bracket size, players (default 32)"
 
 [node name="PlanFormatOption" type="OptionButton" parent="MainPanel/Tabs/PlanTournaments/VBox/Row1"]
 unique_name_in_owner = true
@@ -455,6 +461,13 @@ popup/item_1/id = 1
 unique_name_in_owner = true
 layout_mode = 2
 text = "Allow small bracket"
+
+[node name="Row2Label" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox"]
+layout_mode = 2
+text = "Who can sign up · password only matters for Semi-private/Private"
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 11
+modulate = Color(1, 1, 1, 0.6)
 
 [node name="Row2" type="HBoxContainer" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 layout_mode = 2
@@ -477,6 +490,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Password (semi-private/private only)"
 
+[node name="Row3Label" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox"]
+layout_mode = 2
+text = "Scheduling windows, counted backward from the tournament's start time"
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 11
+modulate = Color(1, 1, 1, 0.6)
+
 [node name="Row3" type="HBoxContainer" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 layout_mode = 2
 
@@ -484,15 +504,13 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "24"
-placeholder_text = "Signup window (hours before start)"
+placeholder_text = "Signup window, hours before start (default 24; recurring templates only)"
 
 [node name="PlanCheckInWindowMinutesField" type="LineEdit" parent="MainPanel/Tabs/PlanTournaments/VBox/Row3"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "30"
-placeholder_text = "Check-in opens (minutes before start)"
+placeholder_text = "Check-in opens, minutes before start (default 30)"
 
 [node name="PrizesLabel" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 layout_mode = 2
@@ -603,22 +621,25 @@ placeholder_text = "item ids, comma-separated"
 
 [node name="CatalogLabel" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 layout_mode = 2
-text = "Prize catalog reference (double-click to copy an id — shown here, paste into a field above)"
+text = "Prize catalog reference — every cosmetic that can be used as a prize (not just the ones in the shop). Click a row to copy its id, then paste it into a field above."
 autowrap_mode = 2
 theme_override_font_sizes/font_size = 12
 modulate = Color(1, 1, 1, 0.7)
 
 [node name="PlanPrizeCatalogList" type="ItemList" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 140)
+custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
+icon_scale = 1.6
+fixed_icon_size = Vector2i(40, 40)
 
 [node name="HSeparator1" type="HSeparator" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 layout_mode = 2
 
 [node name="OneTimeLabel" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 layout_mode = 2
-text = "One-time"
+text = "One-time — create and open signup immediately using the parameters and prizes above"
+autowrap_mode = 2
 theme_override_font_sizes/font_size = 14
 
 [node name="Row4" type="HBoxContainer" parent="MainPanel/Tabs/PlanTournaments/VBox"]
@@ -628,8 +649,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "24"
-placeholder_text = "Start in N hours from now"
+placeholder_text = "Start in N hours from now (default 24)"
 
 [node name="PlanCreateNowButton" type="Button" parent="MainPanel/Tabs/PlanTournaments/VBox/Row4"]
 unique_name_in_owner = true
@@ -641,8 +661,16 @@ layout_mode = 2
 
 [node name="RecurringLabel" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 layout_mode = 2
-text = "Recurring"
+text = "Recurring — save a template that auto-creates a fresh tournament on these weekdays, using the parameters and prizes above"
+autowrap_mode = 2
 theme_override_font_sizes/font_size = 14
+
+[node name="WeekdayLabel" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox"]
+layout_mode = 2
+text = "Fires on these weekday(s), at the time below (UTC, 24h HH:MM)"
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 11
+modulate = Color(1, 1, 1, 0.6)
 
 [node name="WeekdayRow" type="HBoxContainer" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 layout_mode = 2

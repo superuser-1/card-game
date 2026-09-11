@@ -648,14 +648,15 @@ func _on_plan_create_now_pressed() -> void:
 		%StatusLabel.text = "Enter a tournament name."
 		return
 	var start_hours_text: String = %PlanStartInHoursField.text.strip_edges()
-	if not start_hours_text.is_valid_float():
-		%StatusLabel.text = "Enter a whole/decimal number of hours for 'Start in N hours'."
+	if start_hours_text != "" and not start_hours_text.is_valid_float():
+		%StatusLabel.text = "Enter a whole/decimal number of hours for 'Start in N hours', or leave it blank for the default (24)."
 		return
+	var start_hours := float(start_hours_text) if start_hours_text.is_valid_float() else 24.0
 	var check_in_text: String = %PlanCheckInWindowMinutesField.text.strip_edges()
 	var check_in_minutes := int(check_in_text) if check_in_text.is_valid_int() else 30
 
 	var now := int(Time.get_unix_time_from_system())
-	var start_ts := now + int(float(start_hours_text) * 3600.0)
+	var start_ts := now + int(start_hours * 3600.0)
 	var check_in_open_ts := start_ts - check_in_minutes * 60
 	# Signup runs from creation (now) until check-in opens — same simplified
 	# shape the recurring scheduler uses, for consistent behavior between the
@@ -748,13 +749,30 @@ func _on_plan_delete_template_pressed() -> void:
 	)
 
 
+## Routes to the matching client-side cosmetic lookup (all four are plain
+## RefCounted static classes, safe to call from this admin tool the same way
+## net_node.gd already calls Avatars.sanitize()/Frames.sanitize()/etc.).
+func _texture_for_catalog_item(type: String, id: String) -> Texture2D:
+	match type:
+		"avatar": return Avatars.texture_for(id)
+		"frame": return Frames.texture_for(id)
+		"background": return Backgrounds.texture_for(id)
+		"sleeve": return Sleeves.texture_for(id)
+		_: return null
+
+
 func _on_admin_prize_catalog(rows: Array) -> void:
 	_prize_catalog_rows = rows
 	%PlanPrizeCatalogList.clear()
 	for item in rows:
-		%PlanPrizeCatalogList.add_item("%s  [%s/%s]  id: %s" % [
-			str(item.get("name", "")), str(item.get("type", "")), str(item.get("source", "")), str(item.get("id", "")),
+		var type := str(item.get("type", ""))
+		var id := str(item.get("id", ""))
+		var idx: int = %PlanPrizeCatalogList.add_item("%s  [%s/%s]  id: %s" % [
+			str(item.get("name", "")), type, str(item.get("source", "")), id,
 		])
+		var tex := _texture_for_catalog_item(type, id)
+		if tex != null:
+			%PlanPrizeCatalogList.set_item_icon(idx, tex)
 
 
 func _on_plan_catalog_item_selected(index: int) -> void:
