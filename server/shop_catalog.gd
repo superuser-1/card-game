@@ -41,6 +41,13 @@ const CATALOG: Array = [
 	{"id": "25_tournament_win_avatar",  "type": "avatar", "name": "25 Tournament Wins",  "price": 0, "source": "achievement"},
 	{"id": "50_tournament_win_avatar",  "type": "avatar", "name": "50 Tournament Wins",  "price": 0, "source": "achievement"},
 	{"id": "100_tournament_win_avatar", "type": "avatar", "name": "100 Tournament Wins", "price": 0, "source": "achievement"},
+	# Avatar rewards for the tournament-created ladder (art: res://assets/avatars/<id>.png).
+	{"id": "5_tournaments_created",   "type": "avatar", "name": "5 Tournaments Created",   "price": 0, "source": "achievement"},
+	{"id": "15_tournaments_created",  "type": "avatar", "name": "15 Tournaments Created",  "price": 0, "source": "achievement"},
+	{"id": "50_tournaments_created",  "type": "avatar", "name": "50 Tournaments Created",  "price": 0, "source": "achievement"},
+	{"id": "100_tournaments_created", "type": "avatar", "name": "100 Tournaments Created", "price": 0, "source": "achievement"},
+	{"id": "250_tournaments_created", "type": "avatar", "name": "250 Tournaments Created", "price": 0, "source": "achievement"},
+	{"id": "500_tournaments_created", "type": "avatar", "name": "500 Tournaments Created", "price": 0, "source": "achievement"},
 ]
 
 const TYPES: Array[String] = ["avatar", "frame", "background", "sleeve"]

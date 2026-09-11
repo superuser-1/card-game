@@ -89,12 +89,12 @@ const CATALOG: Array = [
 
 	# Tournaments created — stat `tournaments_created` (bumped on tournament
 	# creation). Ids match assets/achievements/tourney_created_*.png.
-	{"id": "tourney_created_5",   "name": "5 Tournaments Created",   "stat": "tournaments_created", "tiers": [{"threshold": 5,   "points": 50,   "reward": ""}]},
-	{"id": "tourney_created_15",  "name": "15 Tournaments Created",  "stat": "tournaments_created", "tiers": [{"threshold": 15,  "points": 150,  "reward": ""}]},
-	{"id": "tourney_created_50",  "name": "50 Tournaments Created",  "stat": "tournaments_created", "tiers": [{"threshold": 50,  "points": 500,  "reward": ""}]},
-	{"id": "tourney_created_100", "name": "100 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 100, "points": 1000, "reward": ""}]},
-	{"id": "tourney_created_250", "name": "250 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 250, "points": 2500, "reward": ""}]},
-	{"id": "tourney_created_500", "name": "500 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 500, "points": 5000, "reward": ""}]},
+	{"id": "tourney_created_5",   "name": "5 Tournaments Created",   "stat": "tournaments_created", "tiers": [{"threshold": 5,   "points": 50,   "reward": "5_tournaments_created"}]},
+	{"id": "tourney_created_15",  "name": "15 Tournaments Created",  "stat": "tournaments_created", "tiers": [{"threshold": 15,  "points": 150,  "reward": "15_tournaments_created"}]},
+	{"id": "tourney_created_50",  "name": "50 Tournaments Created",  "stat": "tournaments_created", "tiers": [{"threshold": 50,  "points": 500,  "reward": "50_tournaments_created"}]},
+	{"id": "tourney_created_100", "name": "100 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 100, "points": 1000, "reward": "100_tournaments_created"}]},
+	{"id": "tourney_created_250", "name": "250 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 250, "points": 2500, "reward": "250_tournaments_created"}]},
+	{"id": "tourney_created_500", "name": "500 Tournaments Created", "stat": "tournaments_created", "tiers": [{"threshold": 500, "points": 5000, "reward": "500_tournaments_created"}]},
 ]
 
 const TIER_NAMES := ["Bronze", "Silver", "Gold"]
