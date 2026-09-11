@@ -1,0 +1,9 @@
+[Unit]
+Description=Run flickbattle-backup.service daily
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target

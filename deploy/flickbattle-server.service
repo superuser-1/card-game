@@ -1,0 +1,14 @@
+[Unit]
+Description=Flick Battle authoritative game server
+After=network.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__REPO_DIR__
+ExecStart=__GODOT_BIN__ --headless --path __REPO_DIR__ -- --server --port=8910
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

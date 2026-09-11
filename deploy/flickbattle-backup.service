@@ -1,0 +1,7 @@
+[Unit]
+Description=Flick Battle account data backup
+
+[Service]
+Type=oneshot
+User=__USER__
+ExecStart=/usr/bin/env bash __REPO_DIR__/deploy/backup_accounts.sh

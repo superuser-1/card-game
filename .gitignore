@@ -28,3 +28,6 @@ scripts/.test_run_solo.log
 # Art scratch folder — full-res source exports, not shipped (has a .gdignore
 # so Godot skips it too). Downscaled copies live in assets/achievements/.
 assets/Raw Work folder/
+
+# Account-data backups (contain real player data) — never committed.
+deploy/backups/
