@@ -30,6 +30,10 @@ var _custom_in_progress_rows: Array = []
 
 var _stats_range_hours := 24
 
+var _template_rows: Array = []
+var _prize_catalog_rows: Array = []
+var _selected_template_id := 0
+
 
 func _ready() -> void:
 	DisplayServer.window_set_title("Flick Battle — Admin Tool")
@@ -48,6 +52,8 @@ func _ready() -> void:
 	Net.admin_live_ranked_list.connect(_on_admin_live_ranked_list)
 	Net.admin_custom_games_list.connect(_on_admin_custom_games_list)
 	Net.admin_presence_stats.connect(_on_admin_presence_stats)
+	Net.admin_template_list.connect(_on_admin_template_list)
+	Net.admin_prize_catalog.connect(_on_admin_prize_catalog)
 	Net.kicked.connect(_on_kicked)
 	Net.force_logout.connect(_on_force_logout)
 
@@ -80,6 +86,13 @@ func _ready() -> void:
 	%RefreshLiveCustomButton.pressed.connect(func(): Net.admin_list_custom_games())
 	%CustomInProgressList.item_selected.connect(func(i): _selected_custom_in_progress_match_id = int(_filtered_custom_in_progress()[i].get("match_id", 0)))
 	%ForceEndCustomButton.pressed.connect(_on_force_end_custom_pressed)
+
+	%PlanCreateNowButton.pressed.connect(_on_plan_create_now_pressed)
+	%PlanSaveTemplateButton.pressed.connect(_on_plan_save_template_pressed)
+	%PlanTemplatesList.item_selected.connect(func(i): _selected_template_id = int(_template_rows[i].get("id", 0)))
+	%PlanToggleActiveButton.pressed.connect(_on_plan_toggle_active_pressed)
+	%PlanDeleteTemplateButton.pressed.connect(_on_plan_delete_template_pressed)
+	%PlanPrizeCatalogList.item_selected.connect(_on_plan_catalog_item_selected)
 
 	%Range24hButton.pressed.connect(func(): _set_stats_range(24, %Range24hButton))
 	%Range7dButton.pressed.connect(func(): _set_stats_range(24 * 7, %Range7dButton))
@@ -353,6 +366,11 @@ func _on_admin_action_result(result: Dictionary) -> void:
 		"force_end_match":
 			Net.admin_list_live_ranked()
 			Net.admin_list_custom_games()
+		"create_tournament":
+			%StatusLabel.text = "Tournament created."
+			Net.admin_list_tournaments(int(%TournamentDaysField.text.strip_edges()) if %TournamentDaysField.text.strip_edges().is_valid_int() else 30)
+		"create_template", "delete_template", "set_template_active":
+			Net.admin_list_templates()
 
 
 # --- online / log ------------------------------------------------------------
@@ -564,6 +582,189 @@ func _on_admin_presence_stats(rows: Array) -> void:
 	%StatsSummaryLabel.text = "Peak online: %d   Average: %.1f   (%d samples)" % [peak, float(total) / rows.size(), rows.size()]
 
 
+# --- plan tournaments (one-off + recurring templates) -----------------------
+
+## Reads the 5 bucket rows into the {bucket: {points, items}} shape the
+## server's TournamentPrizes.sanitize() expects. Empty buckets are omitted —
+## the server rejects a "gap" (a set bucket after an unset earlier one), so
+## leaving a later bucket blank while filling an earlier one is fine, but not
+## the reverse.
+func _gather_prize_spec() -> Dictionary:
+	var spec := {}
+	var buckets := [
+		["1", %PlanPrize1PointsField, %PlanPrize1ItemsField],
+		["2", %PlanPrize2PointsField, %PlanPrize2ItemsField],
+		["3", %PlanPrize3PointsField, %PlanPrize3ItemsField],
+		["4_8", %PlanPrize4_8PointsField, %PlanPrize4_8ItemsField],
+		["9_16", %PlanPrize9_16PointsField, %PlanPrize9_16ItemsField],
+	]
+	for row in buckets:
+		var bucket: String = row[0]
+		var points_field: LineEdit = row[1]
+		var items_field: LineEdit = row[2]
+		var points_text := points_field.text.strip_edges()
+		var points := int(points_text) if points_text.is_valid_int() else 0
+		var items := []
+		for raw_id in items_field.text.split(",", false):
+			var id := raw_id.strip_edges()
+			if id != "":
+				items.append(id)
+		if points > 0 or not items.is_empty():
+			spec[bucket] = {"points": points, "items": items}
+	return spec
+
+
+func _selected_weekdays() -> Array:
+	var boxes := [%PlanWeekday0, %PlanWeekday1, %PlanWeekday2, %PlanWeekday3, %PlanWeekday4, %PlanWeekday5, %PlanWeekday6]
+	var days := []
+	for i in range(boxes.size()):
+		if boxes[i].button_pressed:
+			days.append(i)
+	return days
+
+
+## HH:MM (24h, UTC) -> minutes since midnight, or -1 if malformed.
+func _parse_time_of_day(text: String) -> int:
+	var parts := text.strip_edges().split(":")
+	if parts.size() != 2 or not parts[0].is_valid_int() or not parts[1].is_valid_int():
+		return -1
+	var h := int(parts[0])
+	var m := int(parts[1])
+	if h < 0 or h > 23 or m < 0 or m > 59:
+		return -1
+	return h * 60 + m
+
+
+func _availability_string() -> String:
+	match int(%PlanAvailabilityOption.selected):
+		1: return "semi_private"
+		2: return "private"
+		_: return "open"
+
+
+func _on_plan_create_now_pressed() -> void:
+	var name: String = %PlanNameField.text.strip_edges()
+	if name == "":
+		%StatusLabel.text = "Enter a tournament name."
+		return
+	var start_hours_text: String = %PlanStartInHoursField.text.strip_edges()
+	if not start_hours_text.is_valid_float():
+		%StatusLabel.text = "Enter a whole/decimal number of hours for 'Start in N hours'."
+		return
+	var check_in_text: String = %PlanCheckInWindowMinutesField.text.strip_edges()
+	var check_in_minutes := int(check_in_text) if check_in_text.is_valid_int() else 30
+
+	var now := int(Time.get_unix_time_from_system())
+	var start_ts := now + int(float(start_hours_text) * 3600.0)
+	var check_in_open_ts := start_ts - check_in_minutes * 60
+	# Signup runs from creation (now) until check-in opens — same simplified
+	# shape the recurring scheduler uses, for consistent behavior between the
+	# two creation paths.
+	var signup_close_ts := check_in_open_ts
+
+	var bracket_text: String = %PlanBracketSizeField.text.strip_edges()
+	Net.admin_create_tournament_now({
+		"name": name,
+		"bracket_size": int(bracket_text) if bracket_text.is_valid_int() else 32,
+		"match_format": 3 if int(%PlanFormatOption.selected) == 1 else 1,
+		"allow_small": %PlanAllowSmallCheck.button_pressed,
+		"availability": _availability_string(),
+		"password": %PlanPasswordField.text,
+		"signup_close_ts": signup_close_ts,
+		"check_in_open_ts": check_in_open_ts,
+		"start_ts": start_ts,
+		"prize_spec": _gather_prize_spec(),
+	})
+
+
+func _on_plan_save_template_pressed() -> void:
+	var name: String = %PlanNameField.text.strip_edges()
+	if name == "":
+		%StatusLabel.text = "Enter a tournament name."
+		return
+	var weekdays := _selected_weekdays()
+	if weekdays.is_empty():
+		%StatusLabel.text = "Pick at least one weekday for the recurring template."
+		return
+	var time_of_day := _parse_time_of_day(%PlanTimeOfDayField.text)
+	if time_of_day < 0:
+		%StatusLabel.text = "Enter the time of day as HH:MM (24h, UTC)."
+		return
+	var check_in_text: String = %PlanCheckInWindowMinutesField.text.strip_edges()
+	var signup_text: String = %PlanSignupWindowHoursField.text.strip_edges()
+	var bracket_text: String = %PlanBracketSizeField.text.strip_edges()
+
+	Net.admin_create_template({
+		"name": name,
+		"weekdays": weekdays,
+		"time_of_day_minutes": time_of_day,
+		"bracket_size": int(bracket_text) if bracket_text.is_valid_int() else 32,
+		"match_format": 3 if int(%PlanFormatOption.selected) == 1 else 1,
+		"allow_small": %PlanAllowSmallCheck.button_pressed,
+		"availability": _availability_string(),
+		"password": %PlanPasswordField.text,
+		"signup_window_hours": int(signup_text) if signup_text.is_valid_int() else 24,
+		"check_in_window_minutes": int(check_in_text) if check_in_text.is_valid_int() else 30,
+		"prize_spec": _gather_prize_spec(),
+	})
+
+
+func _on_admin_template_list(rows: Array) -> void:
+	_template_rows = rows
+	_render_template_list()
+
+
+func _render_template_list() -> void:
+	%PlanTemplatesList.clear()
+	for t in _template_rows:
+		var days := ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+		var day_names := []
+		for d in (t.get("weekdays", []) as Array):
+			day_names.append(days[int(d)])
+		var minutes := int(t.get("time_of_day_minutes", 0))
+		var time_str := "%02d:%02d" % [minutes / 60, minutes % 60]
+		var active_tag := "" if bool(t.get("active", false)) else " [PAUSED]"
+		var last := int(t.get("last_created_start_ts", 0))
+		var last_str := Time.get_datetime_string_from_unix_time(last, true) if last > 0 else "never"
+		%PlanTemplatesList.add_item("#%d  %s  [%s @ %s UTC]  last fired: %s%s" % [
+			int(t.get("id", 0)), str(t.get("name", "")), ", ".join(day_names), time_str, last_str, active_tag,
+		])
+
+
+func _on_plan_toggle_active_pressed() -> void:
+	if _selected_template_id == 0:
+		return
+	var t := _template_rows.filter(func(x): return int(x.get("id", 0)) == _selected_template_id)
+	var currently_active := bool(t[0].get("active", false)) if not t.is_empty() else false
+	Net.admin_set_template_active(_selected_template_id, not currently_active)
+
+
+func _on_plan_delete_template_pressed() -> void:
+	if _selected_template_id == 0:
+		return
+	var tid := _selected_template_id
+	_confirm("Delete this recurring template? Already-created tournaments from it are unaffected.", func():
+		Net.admin_delete_template(tid)
+	)
+
+
+func _on_admin_prize_catalog(rows: Array) -> void:
+	_prize_catalog_rows = rows
+	%PlanPrizeCatalogList.clear()
+	for item in rows:
+		%PlanPrizeCatalogList.add_item("%s  [%s/%s]  id: %s" % [
+			str(item.get("name", "")), str(item.get("type", "")), str(item.get("source", "")), str(item.get("id", "")),
+		])
+
+
+func _on_plan_catalog_item_selected(index: int) -> void:
+	if index < 0 or index >= _prize_catalog_rows.size():
+		return
+	var id := str(_prize_catalog_rows[index].get("id", ""))
+	DisplayServer.clipboard_set(id)
+	%StatusLabel.text = "Copied '%s' to clipboard — paste it into a prize items field." % id
+
+
 # --- confirmation dialog ----------------------------------------------------
 
 func _confirm(message: String, on_confirmed: Callable) -> void:
@@ -598,6 +799,10 @@ func _on_tab_changed(_tab: int) -> void:
 		"Stats":
 			%LiveRefreshTimer.stop()
 			Net.admin_get_presence_stats(_stats_range_hours)
+		"PlanTournaments":
+			%LiveRefreshTimer.stop()
+			Net.admin_list_prize_catalog()
+			Net.admin_list_templates()
 		_:
 			%LiveRefreshTimer.stop()
 

@@ -33,9 +33,11 @@ var _matches: Array
 var _tournaments: Array
 var _admin_log: Array
 var _presence_samples: Array
+var _tournament_templates: Array
 var _next_account_id: int
 var _next_match_id: int
 var _next_tournament_id: int
+var _next_template_id: int
 
 ## Admin audit log kept on disk stays capped at this many most-recent entries —
 ## it's an incident-review trail, not a permanent ledger.
@@ -56,9 +58,11 @@ func open(dir := "user://flickbattle/") -> void:
 	_tournaments = []
 	_admin_log = []
 	_presence_samples = []
+	_tournament_templates = []
 	_next_account_id = 1
 	_next_match_id = 1
 	_next_tournament_id = 1
+	_next_template_id = 1
 
 	if not DirAccess.dir_exists_absolute(dir):
 		DirAccess.make_dir_recursive_absolute(dir)
@@ -135,6 +139,17 @@ func open(dir := "user://flickbattle/") -> void:
 			var parsed = JSON.parse_string(file.get_as_text())
 			if parsed is Dictionary and parsed.has("samples"):
 				_presence_samples = parsed["samples"]
+
+	var templates_path := dir + "tournament_templates.json"
+	if FileAccess.file_exists(templates_path):
+		var file := FileAccess.open(templates_path, FileAccess.READ)
+		if file != null:
+			var parsed = JSON.parse_string(file.get_as_text())
+			if parsed is Dictionary and parsed.has("templates"):
+				_tournament_templates = parsed["templates"]
+				for t in _tournament_templates:
+					if int(t.get("id", 0)) >= _next_template_id:
+						_next_template_id = int(t["id"]) + 1
 
 
 # --- auth ------------------------------------------------------------------
@@ -1275,12 +1290,20 @@ func is_admin_account(account: Dictionary) -> bool:
 ## per the locked design — sign-ups close exactly when check-in opens).
 const _AVAILABILITY := ["open", "semi_private", "private"]
 
+## `skip_cost`: true for an admin-created tournament (one-off or recurring —
+## see admin_create_tournament / tournament templates below). Bypasses the
+## prize-escrow wallet charge entirely and allows ANY catalog cosmetic
+## (ShopCatalog.is_premium — shop-buyable AND achievement-only ids) as a
+## prize item, not just the normally-buyable subset. Player-initiated
+## tournaments (skip_cost=false, the only path net_node.gd's ordinary
+## _rpc_create_tournament uses) are unaffected — same pricing/escrow as
+## always.
 func create_tournament(created_by: int, name: String, requested_bracket_size: int,
 		signup_close_ts: int, check_in_open_ts: int, start_ts: int,
 		is_dev_bot: bool, allow_small := false, requested_match_format := 1,
 		cube_card_ids: Array = [], availability := "open", password := "",
 		private_signup_close_ts := 0, late_check_in := false,
-		late_check_in_open_ts := 0, prize_spec := {}) -> Dictionary:
+		late_check_in_open_ts := 0, prize_spec := {}, skip_cost := false) -> Dictionary:
 	var clean_name := name.strip_edges()
 	if clean_name.length() < 1 or clean_name.length() > 60:
 		return {"ok": false, "error": "bad_name", "tournament": {}}
@@ -1316,13 +1339,20 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		pw = hash_password(clean_pw)
 
 	# Prize pool: clean + price the spec, then escrow the full cost out of the
-	# creator's wallet (refunded in full if the tournament never fires).
-	var pr := TournamentPrizes.sanitize(prize_spec,
-		func(id): return ShopCatalog.price_for(id) if ShopCatalog.is_buyable(id) else -1)
+	# creator's wallet (refunded in full if the tournament never fires) —
+	# UNLESS skip_cost (admin-created), which validates item ids against the
+	# full catalog (any premium cosmetic) but charges nothing and never touches
+	# the creator's wallet.
+	var pr: Dictionary
+	if skip_cost:
+		pr = TournamentPrizes.sanitize(prize_spec, func(id): return 0 if ShopCatalog.is_premium(id) else -1)
+	else:
+		pr = TournamentPrizes.sanitize(prize_spec,
+			func(id): return ShopCatalog.price_for(id) if ShopCatalog.is_buyable(id) else -1)
 	if not bool(pr.ok):
 		return {"ok": false, "error": pr.error, "tournament": {}}
 	var creator := {}
-	if int(pr.cost) > 0:
+	if not skip_cost and int(pr.cost) > 0:
 		creator = get_account(created_by)
 		if creator.is_empty():
 			return {"ok": false, "error": "no_such_user", "tournament": {}}
@@ -1360,7 +1390,10 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		# from the creator now; escrow_refunded / prizes_paid guard against
 		# double refund / double payout.
 		"prizes": pr.prizes,
-		"prize_escrow": int(pr.cost),
+		# 0 for skip_cost tournaments even though pr.cost is nonzero (sum of
+		# prize points) — no wallet was actually charged, so there's nothing
+		# for refund_tournament_escrow to ever give back.
+		"prize_escrow": 0 if skip_cost else int(pr.cost),
 		"escrow_refunded": false,
 		"prizes_paid": false,
 		"payout_records": [],
@@ -1387,7 +1420,7 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 		"winner_account_id": 0,
 		"completed_ts": 0,
 	}
-	if int(pr.cost) > 0:
+	if not skip_cost and int(pr.cost) > 0:
 		creator["points"] = int(creator.get("points", 0)) - int(pr.cost)
 		_log_points_ledger(creator, "tournament_entry", -int(pr.cost), "tournament #%d" % int(tournament.id))
 		_save_accounts()
@@ -1395,6 +1428,209 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 	_next_tournament_id += 1
 	_save_tournaments()
 	return {"ok": true, "error": "", "tournament": tournament}
+
+
+# --- admin tournament creation + recurring templates ------------------------
+#
+# Two ways for an admin to create a tournament, both always skip_cost=true
+# (see create_tournament's doc): a one-off via admin_create_tournament, or a
+# recurring template that tick_tournament_templates() (called from
+# net_node.gd's existing tournament tick) fires automatically. Locked design
+# (confirmed with the user): admin-created prizes may be ANY catalog cosmetic
+# (ShopCatalog.is_premium — shop-buyable and achievement-only alike), not
+# escrowed from any wallet; recurring templates always keep the NEXT
+# occurrence already created once its signup lead time arrives, even while an
+# earlier occurrence from the same template is still running.
+
+## One-time (or one recurring instance) tournament creation from the admin
+## tool. `spec` is a flat Dictionary: name, bracket_size, match_format,
+## availability, password, cube_ids, signup_close_ts, check_in_open_ts,
+## start_ts, late_check_in, late_check_in_open_ts, prize_spec, allow_small.
+func admin_create_tournament(admin_account_id: int, spec: Dictionary) -> Dictionary:
+	return create_tournament(
+		admin_account_id,
+		str(spec.get("name", "")),
+		int(spec.get("bracket_size", 32)),
+		int(spec.get("signup_close_ts", 0)),
+		int(spec.get("check_in_open_ts", 0)),
+		int(spec.get("start_ts", 0)),
+		false,
+		bool(spec.get("allow_small", false)),
+		int(spec.get("match_format", 1)),
+		spec.get("cube_ids", []),
+		str(spec.get("availability", "open")),
+		str(spec.get("password", "")),
+		int(spec.get("private_signup_close_ts", 0)),
+		bool(spec.get("late_check_in", false)),
+		int(spec.get("late_check_in_open_ts", 0)),
+		spec.get("prize_spec", {}),
+		true,
+	)
+
+
+## `spec.weekdays`: Array of int 0-6 (Sunday=0 .. Saturday=6, matching Godot's
+## Time.get_datetime_dict_from_unix_time "weekday" field). `time_of_day_minutes`:
+## minutes since midnight UTC (0-1439). `signup_window_hours`: how long before
+## each occurrence's start_ts the tournament is created (signup opens
+## immediately on creation, closes when check-in opens). `check_in_window_minutes`
+## must be > 0 (check-in must open strictly before start).
+func create_tournament_template(admin_account_id: int, spec: Dictionary) -> Dictionary:
+	var clean_name := str(spec.get("name", "")).strip_edges()
+	if clean_name.length() < 1 or clean_name.length() > 60:
+		return {"ok": false, "error": "bad_name", "template": {}}
+
+	var weekdays := []
+	for d in (spec.get("weekdays", []) as Array):
+		var di := int(d)
+		if di >= 0 and di <= 6 and di not in weekdays:
+			weekdays.append(di)
+	if weekdays.is_empty():
+		return {"ok": false, "error": "bad_weekdays", "template": {}}
+
+	var time_of_day := int(spec.get("time_of_day_minutes", -1))
+	if time_of_day < 0 or time_of_day > 1439:
+		return {"ok": false, "error": "bad_time_of_day", "template": {}}
+
+	var signup_hours := int(spec.get("signup_window_hours", 24))
+	if signup_hours <= 0:
+		return {"ok": false, "error": "bad_signup_window", "template": {}}
+
+	var check_in_minutes := int(spec.get("check_in_window_minutes", 30))
+	if check_in_minutes <= 0:
+		return {"ok": false, "error": "bad_check_in_window", "template": {}}
+
+	# Validate the prize spec up front (same permissive admin pricing as
+	# admin_create_tournament) so a bad template fails once here rather than
+	# silently every time the scheduler tries and can't create it.
+	var pr := TournamentPrizes.sanitize(spec.get("prize_spec", {}), func(id): return 0 if ShopCatalog.is_premium(id) else -1)
+	if not bool(pr.ok):
+		return {"ok": false, "error": pr.error, "template": {}}
+
+	var template := {
+		"id": _next_template_id,
+		"name": clean_name,
+		"weekdays": weekdays,
+		"time_of_day_minutes": time_of_day,
+		"bracket_size": int(spec.get("bracket_size", 32)),
+		"match_format": int(spec.get("match_format", 1)) if int(spec.get("match_format", 1)) in [1, 3] else 1,
+		"availability": str(spec.get("availability", "open")),
+		"password": str(spec.get("password", "")),
+		"cube_ids": spec.get("cube_ids", []),
+		"signup_window_hours": signup_hours,
+		"check_in_window_minutes": check_in_minutes,
+		"late_check_in": bool(spec.get("late_check_in", false)),
+		"late_check_in_minutes_before_start": maxi(0, int(spec.get("late_check_in_minutes_before_start", 0))),
+		"prize_spec": pr.prizes,
+		"allow_small": bool(spec.get("allow_small", false)),
+		"active": true,
+		"created_by_account_id": admin_account_id,
+		"created_ts": int(Time.get_unix_time_from_system()),
+		"last_created_start_ts": 0,
+	}
+	_tournament_templates.append(template)
+	_next_template_id += 1
+	_save_tournament_templates()
+	return {"ok": true, "error": "", "template": template}
+
+
+func list_tournament_templates() -> Array:
+	return _tournament_templates
+
+
+func get_tournament_template(template_id: int) -> Dictionary:
+	for t in _tournament_templates:
+		if int(t.get("id", -1)) == template_id:
+			return t
+	return {}
+
+
+func delete_tournament_template(template_id: int) -> bool:
+	for i in range(_tournament_templates.size()):
+		if int(_tournament_templates[i].get("id", -1)) == template_id:
+			_tournament_templates.remove_at(i)
+			_save_tournament_templates()
+			return true
+	return false
+
+
+func set_tournament_template_active(template_id: int, active: bool) -> Dictionary:
+	var t := get_tournament_template(template_id)
+	if t.is_empty():
+		return {"ok": false, "error": "no_such_template", "template": {}}
+	t["active"] = active
+	_save_tournament_templates()
+	return {"ok": true, "error": "", "template": t}
+
+
+## Next unix-second timestamp matching one of `weekdays` at
+## `time_of_day_minutes`, strictly after `after_ts`. Scans forward day by day;
+## 8 days always covers a full week even when `after_ts` falls later in the
+## day than time_of_day_minutes on an otherwise-matching weekday.
+static func _next_occurrence_ts(weekdays: Array, time_of_day_minutes: int, after_ts: int) -> int:
+	var day_start := after_ts - (after_ts % 86400)
+	for offset in range(8):
+		var candidate_day := day_start + offset * 86400
+		var dt := Time.get_datetime_dict_from_unix_time(candidate_day)
+		if int(dt.weekday) in weekdays:
+			var candidate_ts := candidate_day + time_of_day_minutes * 60
+			if candidate_ts > after_ts:
+				return candidate_ts
+	return 0
+
+
+## Called every server tournament tick (net_node.gd's existing 5s
+## _tick_tournaments). For each active template, ensures the NEXT occurrence
+## is already created once its signup lead time arrives — even while an
+## earlier occurrence from the same template is still running (locked
+## decision: always keep one queued ahead). Returns the tournaments actually
+## created this call (normally empty — this only does anything once every
+## few days/weeks per template).
+func tick_tournament_templates(now := -1) -> Array:
+	if now < 0:
+		now = int(Time.get_unix_time_from_system())
+	var created := []
+	for t in _tournament_templates:
+		if not bool(t.get("active", false)):
+			continue
+		var after := int(t.get("last_created_start_ts", 0))
+		if after < now:
+			after = now
+		var next_start := _next_occurrence_ts(t.weekdays, int(t.time_of_day_minutes), after)
+		if next_start <= 0 or int(t.get("last_created_start_ts", 0)) >= next_start:
+			continue
+
+		var signup_open_ts := next_start - int(t.signup_window_hours) * 3600
+		if now < signup_open_ts:
+			continue  # not time to open signup for this occurrence yet
+
+		var check_in_open_ts := next_start - int(t.check_in_window_minutes) * 60
+		var late_open_ts := 0
+		if bool(t.get("late_check_in", false)) and int(t.get("late_check_in_minutes_before_start", 0)) > 0:
+			late_open_ts = next_start - int(t.late_check_in_minutes_before_start) * 60
+
+		var res := admin_create_tournament(int(t.created_by_account_id), {
+			"name": "%s — %s" % [str(t.name), Time.get_date_string_from_unix_time(next_start)],
+			"bracket_size": int(t.bracket_size),
+			"match_format": int(t.match_format),
+			"availability": str(t.availability),
+			"password": str(t.get("password", "")),
+			"cube_ids": t.get("cube_ids", []),
+			"signup_close_ts": check_in_open_ts,
+			"check_in_open_ts": check_in_open_ts,
+			"start_ts": next_start,
+			"late_check_in": bool(t.get("late_check_in", false)),
+			"late_check_in_open_ts": late_open_ts,
+			"prize_spec": t.get("prize_spec", {}),
+			"allow_small": bool(t.get("allow_small", false)),
+		})
+		# On failure (e.g. a bad schedule combination), deliberately do NOT
+		# update last_created_start_ts — the tick will just keep retrying this
+		# same occurrence every 5s until it either succeeds or is disabled.
+		if bool(res.get("ok", false)):
+			t["last_created_start_ts"] = next_start
+			_save_tournament_templates()
+			created.append(res.tournament)
+	return created
 
 
 ## Refund a cancelled tournament's prize escrow to its creator (nothing was
@@ -1653,6 +1889,12 @@ func _save_presence() -> void:
 	var file := FileAccess.open(_dir + "presence.json", FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify({"samples": _presence_samples}, "\t"))
+
+
+func _save_tournament_templates() -> void:
+	var file := FileAccess.open(_dir + "tournament_templates.json", FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify({"templates": _tournament_templates}, "\t"))
 
 
 ## Called by net_node.gd's presence timer every PRESENCE_SAMPLE_SECONDS.

@@ -86,6 +86,8 @@ signal admin_tournament_detail(tournament: Dictionary)
 signal admin_live_ranked_list(rows: Array)
 signal admin_custom_games_list(data: Dictionary)       # {lobbies: [...], in_progress: [...]}
 signal admin_presence_stats(rows: Array)
+signal admin_template_list(rows: Array)
+signal admin_prize_catalog(rows: Array)   # every catalog cosmetic: {id, type, name, source}
 
 const BOT_THINK_SECONDS := 0.7
 const BOT_FILL_SECONDS := 15.0
@@ -445,6 +447,32 @@ func admin_force_end_match(match_id: int) -> void:
 
 func admin_get_presence_stats(hours: int = 24) -> void:
 	_rpc_admin_get_presence_stats.rpc_id(1, hours)
+
+
+## `spec` is a flat Dictionary — see ServerStore.admin_create_tournament's doc.
+func admin_create_tournament_now(spec: Dictionary) -> void:
+	_rpc_admin_create_tournament_now.rpc_id(1, spec)
+
+
+## `spec` is a flat Dictionary — see ServerStore.create_tournament_template's doc.
+func admin_create_template(spec: Dictionary) -> void:
+	_rpc_admin_create_template.rpc_id(1, spec)
+
+
+func admin_list_templates() -> void:
+	_rpc_admin_list_templates.rpc_id(1)
+
+
+func admin_delete_template(template_id: int) -> void:
+	_rpc_admin_delete_template.rpc_id(1, template_id)
+
+
+func admin_set_template_active(template_id: int, active: bool) -> void:
+	_rpc_admin_set_template_active.rpc_id(1, template_id, active)
+
+
+func admin_list_prize_catalog() -> void:
+	_rpc_admin_list_prize_catalog.rpc_id(1)
 
 
 ## Singleplayer: no networking, a local GameEngine with player 1 as the human
@@ -1205,6 +1233,11 @@ func _public_result(result: Dictionary) -> Dictionary:
 func _tick_tournaments() -> void:
 	if not is_server:
 		return
+	# Recurring tournament templates: fires a fresh admin_create_tournament
+	# once each active template's next occurrence needs its signup window
+	# opened. Cheap no-op most ticks (only fires every few days/weeks per
+	# template) so sharing this 5s timer rather than a dedicated one is fine.
+	_store.tick_tournament_templates()
 	var now := int(Time.get_unix_time_from_system())
 	for t in _store.all_tournaments():
 		match str(t.status):
@@ -2255,6 +2288,114 @@ func _rpc_match_force_ended() -> void:
 	if is_server:
 		return
 	match_force_ended.emit()
+
+
+# --- admin: create/plan tournaments (one-off + recurring templates) --------
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_create_tournament_now(spec: Dictionary) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "create_tournament", "account": {}})
+		return
+	var res := _store.admin_create_tournament(int(admin.id), spec)
+	res["action"] = "create_tournament"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_create_template(spec: Dictionary) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "create_template", "account": {}})
+		return
+	var res := _store.create_tournament_template(int(admin.id), spec)
+	res["action"] = "create_template"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_list_templates() -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "list_templates", "account": {}})
+		return
+	_rpc_admin_template_list_result.rpc_id(peer_id, _store.list_tournament_templates())
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_delete_template(template_id: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "delete_template", "account": {}})
+		return
+	var ok := _store.delete_tournament_template(template_id)
+	_store.log_admin_action(str(admin.get("username", "")), "delete_tournament_template", "template #%d" % template_id)
+	_rpc_admin_action_result.rpc_id(peer_id, {"ok": ok, "error": "" if ok else "no_such_template", "action": "delete_template", "account": {}})
+	if ok:
+		_rpc_admin_template_list_result.rpc_id(peer_id, _store.list_tournament_templates())
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_set_template_active(template_id: int, active: bool) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "set_template_active", "account": {}})
+		return
+	var res := _store.set_tournament_template_active(template_id, active)
+	res["action"] = "set_template_active"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+	if bool(res.get("ok", false)):
+		_rpc_admin_template_list_result.rpc_id(peer_id, _store.list_tournament_templates())
+
+
+## Every catalog cosmetic (shop-buyable AND achievement-only) — the picker for
+## admin-created tournament prizes, since only catalog ids are meaningfully
+## ownership-gated (a free/legacy asset-only id isn't a real "prize", anyone
+## can already equip it — see ShopCatalog.is_premium).
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_list_prize_catalog() -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "prize_catalog", "account": {}})
+		return
+	var rows := []
+	for item in ShopCatalog.CATALOG:
+		rows.append({
+			"id": str(item.id), "type": str(item.type),
+			"name": str(item.name), "source": str(item.source),
+		})
+	_rpc_admin_prize_catalog_result.rpc_id(peer_id, rows)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_template_list_result(rows: Array) -> void:
+	if is_server:
+		return
+	admin_template_list.emit(rows)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_prize_catalog_result(rows: Array) -> void:
+	if is_server:
+		return
+	admin_prize_catalog.emit(rows)
 
 
 # =========================================================================

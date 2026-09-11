@@ -65,6 +65,10 @@ func _initialize() -> void:
 	test_presence_samples()
 	test_account_activity_logs()
 	test_points_ledger()
+	test_admin_create_tournament_no_escrow()
+	test_tournament_template_validation()
+	test_next_occurrence_ts()
+	test_tick_tournament_templates()
 
 	# Print final result
 	if _fail_count == 0:
@@ -1204,6 +1208,137 @@ func test_points_ledger() -> void:
 	var match_entry = ledger2.filter(func(e): return e.source == "match")
 	assert_equal(match_entry.size(), 1, "one match entry logged")
 	assert_true(int(match_entry[0].delta) > 0, "match win is a positive delta")
+
+
+func test_admin_create_tournament_no_escrow() -> void:
+	print("\n=== Admin Create Tournament (skip_cost) ===")
+	var s = fresh()
+	var res = s.create_account("Admin1", "secret1")
+	var admin_id = int(res.account.id)
+	var admin_before_points := int(s.get_account(admin_id).points)
+	var now := int(Time.get_unix_time_from_system())
+
+	# Achievement-only item (never buyable) — would be rejected by a normal
+	# player-created tournament's pricing callback, but is fine here.
+	var spec := {
+		"name": "Admin Cup",
+		"bracket_size": 4,
+		"allow_small": true,
+		"signup_close_ts": now + 60,
+		"check_in_open_ts": now + 60,
+		"start_ts": now + 120,
+		"prize_spec": {"1": {"points": 500, "items": ["frame_champion"]}},
+	}
+	var t_res := s.admin_create_tournament(admin_id, spec)
+	assert_equal(t_res.ok, true, "Admin-created tournament succeeds with an achievement-only prize item")
+	assert_equal(int(s.get_account(admin_id).points), admin_before_points, "Admin's own wallet is untouched (no escrow)")
+	assert_equal(int(t_res.tournament.prize_escrow), 0, "prize_escrow stored as 0 for skip_cost tournaments")
+
+	# A normal (non-admin) player-created tournament still rejects the same item.
+	var normal_res := s.create_tournament(admin_id, "Player Cup", 4, now + 60, now + 60, now + 120,
+		false, true, 1, [], "open", "", 0, false, 0, {"1": {"points": 0, "items": ["frame_champion"]}})
+	assert_equal(normal_res.ok, false, "Ordinary player-created tournament rejects an achievement-only item")
+	assert_equal(normal_res.error, "prize_bad_item", "Error is prize_bad_item")
+
+
+func test_tournament_template_validation() -> void:
+	print("\n=== Tournament Template Validation ===")
+	var s = fresh()
+	s.create_account("Admin1", "secret1")
+	var admin_id = int(s._accounts[0].id)
+
+	var bad_weekdays := s.create_tournament_template(admin_id, {"name": "X", "weekdays": [], "time_of_day_minutes": 600})
+	assert_equal(bad_weekdays.ok, false, "Empty weekdays rejected")
+	assert_equal(bad_weekdays.error, "bad_weekdays", "Error is bad_weekdays")
+
+	var bad_time := s.create_tournament_template(admin_id, {"name": "X", "weekdays": [1], "time_of_day_minutes": 2000})
+	assert_equal(bad_time.ok, false, "Out-of-range time_of_day rejected")
+	assert_equal(bad_time.error, "bad_time_of_day", "Error is bad_time_of_day")
+
+	var bad_checkin := s.create_tournament_template(admin_id, {"name": "X", "weekdays": [1], "time_of_day_minutes": 600, "check_in_window_minutes": 0})
+	assert_equal(bad_checkin.ok, false, "Zero check-in window rejected (must be strictly before start)")
+	assert_equal(bad_checkin.error, "bad_check_in_window", "Error is bad_check_in_window")
+
+	var good := s.create_tournament_template(admin_id, {
+		"name": "Weekly Ladder", "weekdays": [2, 5], "time_of_day_minutes": 20 * 60,
+		"signup_window_hours": 48, "check_in_window_minutes": 30,
+	})
+	assert_equal(good.ok, true, "Valid template accepted")
+	assert_equal(good.template.active, true, "New template starts active")
+	assert_equal(int(good.template.last_created_start_ts), 0, "New template has never fired yet")
+
+	var listed := s.list_tournament_templates()
+	assert_equal(listed.size(), 1, "One template stored")
+
+	var toggled := s.set_tournament_template_active(int(good.template.id), false)
+	assert_equal(toggled.ok, true, "Toggling active succeeds")
+	assert_equal(toggled.template.active, false, "Template now inactive")
+
+	var deleted := s.delete_tournament_template(int(good.template.id))
+	assert_equal(deleted, true, "Delete succeeds")
+	assert_equal(s.list_tournament_templates().size(), 0, "Template list empty after delete")
+
+
+func test_next_occurrence_ts() -> void:
+	print("\n=== Next Occurrence Timestamp ===")
+	# 2024-01-01 00:00:00 UTC was a Monday (weekday=1 in Godot's convention).
+	var monday_midnight := 1704067200
+	# Next Wednesday (3) at 20:00, starting from Monday midnight.
+	var next := ServerStore._next_occurrence_ts([3], 20 * 60, monday_midnight)
+	var dt := Time.get_datetime_dict_from_unix_time(next)
+	assert_equal(int(dt.weekday), 3, "Resolved timestamp falls on a Wednesday")
+	assert_equal(int(dt.hour), 20, "Resolved timestamp is at hour 20")
+	assert_true(next > monday_midnight, "Resolved timestamp is strictly after the reference point")
+
+	# If `after_ts` is already past today's slot on a matching weekday, it
+	# must roll over to the SAME weekday next week, not return today's slot.
+	var monday_2100 := monday_midnight + 21 * 3600
+	var next2 := ServerStore._next_occurrence_ts([1], 20 * 60, monday_2100)
+	var dt2 := Time.get_datetime_dict_from_unix_time(next2)
+	assert_equal(int(dt2.weekday), 1, "Rolls over to the same weekday (Monday)")
+	assert_true(next2 > monday_2100 + 6 * 86400, "Rolled-over occurrence is roughly a week later, not today")
+
+
+func test_tick_tournament_templates() -> void:
+	print("\n=== Tick Tournament Templates ===")
+	var s = fresh()
+	s.create_account("Admin1", "secret1")
+	var admin_id = int(s._accounts[0].id)
+	var now := int(Time.get_unix_time_from_system())
+	var now_dt := Time.get_datetime_dict_from_unix_time(now)
+
+	# A template whose next occurrence is ~2 days out with only a 1-hour
+	# signup window — nowhere near due yet.
+	var far := s.create_tournament_template(admin_id, {
+		"name": "Far Off", "weekdays": [int(now_dt.weekday + 2) % 7],
+		"time_of_day_minutes": int(now_dt.hour) * 60 + int(now_dt.minute),
+		"signup_window_hours": 1, "check_in_window_minutes": 30,
+	})
+	assert_equal(far.ok, true, "Far-off template created")
+	var created_early := s.tick_tournament_templates(now)
+	assert_equal(created_early.size(), 0, "Nothing fires before the signup window opens")
+
+	# A template whose next occurrence's signup window is ALREADY open (a
+	# realistic 3-day window comfortably covers the ~5-minutes-away first
+	# occurrence) but NOT wide enough to also cover the following week's
+	# occurrence (7 days later) — so a second tick shouldn't double-fire.
+	var due := s.create_tournament_template(admin_id, {
+		"name": "Due Now", "weekdays": [int(now_dt.weekday)],
+		"time_of_day_minutes": int(now_dt.hour) * 60 + int(now_dt.minute) + 5,
+		"signup_window_hours": 72, "check_in_window_minutes": 30,
+	})
+	assert_equal(due.ok, true, "Due-now template created")
+	var created := s.tick_tournament_templates(now)
+	assert_equal(created.size(), 1, "Exactly the due template fires")
+	assert_true(str(created[0].name).begins_with("Due Now"), "Created tournament is named after the due template")
+
+	var refreshed := s.get_tournament_template(int(due.template.id))
+	assert_true(int(refreshed.last_created_start_ts) > 0, "Template's last_created_start_ts is stamped")
+
+	# Idempotent: ticking again immediately doesn't create a second instance
+	# for the same occurrence.
+	var created_again := s.tick_tournament_templates(now)
+	assert_equal(created_again.size(), 0, "No duplicate instance created on the next tick")
 
 
 func test_shop_purchase_happy_path() -> void:

@@ -154,9 +154,18 @@ tool unlocks automatically.
   its own force-end button.
 - **Stats** — a graph of how many players were online over time (24h / 7d
   / 30d buttons), sampled by the server every 5 minutes, kept for 30 days.
+- **Plan Tournaments** — create a tournament yourself (one-time, or a
+  recurring template that fires automatically on chosen weekdays at a set
+  time, always keeping the next occurrence queued ahead of time). Prizes
+  can be ANY cosmetic in the game's catalog (not just the normal
+  shop-buyable ones) — a reference list at the bottom shows every id, and
+  clicking one copies it to your clipboard to paste into a prize field.
+  Admin-created tournaments don't charge your own points wallet for the
+  prize pool. Existing recurring templates are listed with pause/delete
+  controls.
 - **Log** — every admin action ever taken (ban, unban, elo/points
-  corrections, tournament rollbacks, force-ended matches), who did it, and
-  when.
+  corrections, tournament rollbacks, force-ended matches, template
+  create/delete), who did it, and when.
 
 ## Point your local game client at the live server (instead of localhost)
 
