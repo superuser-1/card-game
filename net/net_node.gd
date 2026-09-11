@@ -34,6 +34,12 @@ signal player_assigned(player_id: int)
 ## since a screen-local error_received handler only helps if the player
 ## happens to be looking at a screen that listens for it.
 signal kicked()
+## An admin force-ended the match this client was just in (see
+## admin_force_end_match) — no result recorded either way. Distinct from a
+## generic error_received so the client can react specifically (return to
+## the main menu with an explanatory modal) instead of just showing a status
+## label like an ordinary in-match error would.
+signal match_force_ended()
 signal auth_completed(result: Dictionary)       # {ok, error, token, account}
 signal queue_updated(state: String, elapsed_s: float)   # "searching" | "cancelled"
 signal match_found(info: Dictionary)
@@ -2185,7 +2191,7 @@ func _rpc_admin_force_end_match(match_id: int) -> void:
 		var target = m.seats[seat]
 		if typeof(target) == TYPE_INT and target > 0:
 			_peer_match.erase(target)
-			_rpc_receive_error.rpc_id(target, "Match ended by an administrator.")
+			_rpc_match_force_ended.rpc_id(target)
 	_matches.erase(match_id)
 	_store.log_admin_action(str(admin.get("username", "")), "force_end_match", "match #%d" % match_id)
 	_rpc_admin_action_result.rpc_id(peer_id, {"ok": true, "error": "", "action": "force_end_match", "account": {}})
@@ -2242,6 +2248,13 @@ func _rpc_admin_presence_stats_result(rows: Array) -> void:
 	if is_server:
 		return
 	admin_presence_stats.emit(rows)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_match_force_ended() -> void:
+	if is_server:
+		return
+	match_force_ended.emit()
 
 
 # =========================================================================

@@ -12,6 +12,7 @@ extends Control
 @onready var _round_cap_label: Label = %RoundCapLabel
 @onready var _exit_button: Button = %ExitButton
 @onready var _forfeit_dialog: ConfirmationDialog = %ForfeitDialog
+@onready var _admin_ended_dialog: AcceptDialog = %AdminEndedDialog
 @onready var _category_box: HBoxContainer = %CategoryBox
 @onready var _hand_box: Control = %HandBox
 @onready var _table_label: Label = %TableLabel
@@ -176,6 +177,7 @@ func _ready() -> void:
 	Net.error_received.connect(_on_error_received)
 	Net.match_ended.connect(_on_match_ended)
 	Net.match_found.connect(_apply_match_info)
+	Net.match_force_ended.connect(_on_match_force_ended)
 
 	MusicPlayer.play_game()
 
@@ -187,6 +189,8 @@ func _ready() -> void:
 
 	_exit_button.pressed.connect(func(): _forfeit_dialog.popup_centered())
 	_forfeit_dialog.confirmed.connect(_on_forfeit_confirmed)
+	_admin_ended_dialog.confirmed.connect(_on_admin_ended_confirmed)
+	_admin_ended_dialog.canceled.connect(_on_admin_ended_confirmed)
 
 	# Networked: match_found already fired before this scene loaded — read the
 	# stash. Solo: the stash is empty and Net.match_found fires just after.
@@ -278,6 +282,18 @@ func _apply_match_info(info: Dictionary) -> void:
 
 func _on_error_received(message: String) -> void:
 	_status_label.text = "Error: " + message
+
+
+## An admin force-ended this match server-side (net_node.gd's
+## admin_force_end_match) — no result was recorded, so there's no
+## match_ended summary to route to the result screen; just tell the player
+## and send them home.
+func _on_match_force_ended() -> void:
+	_admin_ended_dialog.popup_centered()
+
+
+func _on_admin_ended_confirmed() -> void:
+	Session.goto("res://client/main_menu.tscn")
 
 
 func _on_forfeit_confirmed() -> void:

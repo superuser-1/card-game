@@ -338,6 +338,14 @@ size = Vector2i(340, 120)
 ok_button_text = "Give Up"
 dialog_text = "Give up the match? This counts as a loss."
 
+[node name="AdminEndedDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "Match Ended"
+initial_position = 1
+size = Vector2i(360, 120)
+ok_button_text = "OK"
+dialog_text = "The game was ended by an admin — all will be good, I promise."
+
 [node name="LastRoundPanel" type="PanelContainer" parent="." unique_id=1829644199]
 layout_mode = 1
 anchors_preset = -1
