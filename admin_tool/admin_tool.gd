@@ -276,6 +276,16 @@ func _on_admin_account_activity(activity: Dictionary) -> void:
 		var when := Time.get_datetime_string_from_unix_time(int(s.get("ts", 0)), true)
 		%ShopLogList.add_item("%s  %s  -%d pts" % [when, str(s.get("item_id", "")), int(s.get("price", 0))])
 
+	%PointsLedgerList.clear()
+	for p in (activity.get("points_ledger", []) as Array):
+		var when := Time.get_datetime_string_from_unix_time(int(p.get("ts", 0)), true)
+		var delta := int(p.get("delta", 0))
+		var details := str(p.get("details", ""))
+		%PointsLedgerList.add_item("%s  [%s]  %+d pts  (balance %d)%s" % [
+			when, str(p.get("source", "")), delta, int(p.get("balance_after", 0)),
+			("  " + details) if details != "" else "",
+		])
+
 
 func _on_ban_pressed() -> void:
 	if _selected_account_id == 0:

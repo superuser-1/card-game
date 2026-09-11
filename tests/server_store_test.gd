@@ -64,6 +64,7 @@ func _initialize() -> void:
 	test_recent_tournament_history()
 	test_presence_samples()
 	test_account_activity_logs()
+	test_points_ledger()
 
 	# Print final result
 	if _fail_count == 0:
@@ -1155,9 +1156,54 @@ func test_account_activity_logs() -> void:
 	var activity := s.account_activity(account_id)
 	assert_true(
 		activity.has("matches") and activity.has("tournaments") and activity.has("rewards")
-		and activity.has("achievements") and activity.has("shop"),
-		"account_activity returns all 5 sections"
+		and activity.has("achievements") and activity.has("shop") and activity.has("points_ledger"),
+		"account_activity returns all 6 sections"
 	)
+
+
+func test_points_ledger() -> void:
+	print("\n=== Points Ledger ===")
+	var s = fresh()
+	var res = s.create_account("Ledger", "secret1")
+	var account_id = int(res.account.id)
+	var account = s.get_account(account_id)
+
+	# Shop purchase: negative entry.
+	account["points"] = 100
+	s._save_accounts()
+	s.purchase(account_id, "aphrodite")
+
+	# Admin adjustment: positive entry, then a floored one (requested -1000
+	# but only ~90-ish available — applied delta should reflect the floor,
+	# not the raw requested delta).
+	s.admin_adjust_points(account_id, 20, "admin1")
+	s.admin_adjust_points(account_id, -1000, "admin1")
+
+	var ledger := s.recent_points_ledger(account_id, 30)
+	assert_true(ledger.size() >= 3, "at least 3 ledger entries recorded")
+
+	var sources := []
+	for e in ledger:
+		sources.append(str(e.source))
+	assert_true("shop_purchase" in sources, "shop_purchase entry present")
+	assert_true("admin_adjustment" in sources, "admin_adjustment entries present")
+
+	var shop_entry = ledger.filter(func(e): return e.source == "shop_purchase")[0]
+	assert_true(int(shop_entry.delta) < 0, "shop purchase is a negative delta")
+
+	var last: Dictionary = ledger[-1]
+	assert_equal(str(last.source), "admin_adjustment", "most recent entry is the floored adjustment")
+	assert_equal(int(last.balance_after), 0, "account floored at 0 after the big negative adjustment")
+	# The floor means the APPLIED delta (not the raw -1000 requested) is logged.
+	assert_true(int(last.delta) > -1000, "applied delta reflects the floor, not the raw requested delta")
+
+	# Ranked match points go through _apply_account_result -> "match" source.
+	var mres := s.record_match(account_id, 0, 1, 5, 2, true)
+	assert_true(not mres.is_empty(), "bot match recorded")
+	var ledger2 := s.recent_points_ledger(account_id, 30)
+	var match_entry = ledger2.filter(func(e): return e.source == "match")
+	assert_equal(match_entry.size(), 1, "one match entry logged")
+	assert_true(int(match_entry[0].delta) > 0, "match win is a positive delta")
 
 
 func test_shop_purchase_happy_path() -> void:

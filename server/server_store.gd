@@ -192,6 +192,7 @@ func create_account(username: String, password: String, avatar := "") -> Diction
 		"reward_log": [],
 		"achievement_log": [],
 		"shop_log": [],
+		"points_ledger": [],
 		"is_admin": false,
 		"banned": false,
 		"ban_reason": "",
@@ -472,6 +473,8 @@ func admin_adjust_points(account_id: int, delta: int, admin_username: String) ->
 		return {"ok": false, "error": "no_such_user", "account": {}}
 	var old_points := int(account.get("points", 0))
 	account["points"] = maxi(0, old_points + delta)
+	var applied_delta := int(account["points"]) - old_points
+	_log_points_ledger(account, "admin_adjustment", applied_delta, "by %s" % admin_username)
 	_save_accounts()
 	_log_admin_action(admin_username, "adjust_points", account_id, "%d -> %d (delta %d)" % [old_points, int(account["points"]), delta])
 	return {"ok": true, "error": "", "account": account_admin_view(account)}
@@ -549,6 +552,7 @@ func account_activity(account_id: int) -> Dictionary:
 		"rewards": recent_reward_log(account_id, 30),
 		"achievements": recent_achievement_log(account_id, 30),
 		"shop": recent_shop_log(account_id, 30),
+		"points_ledger": recent_points_ledger(account_id, 30),
 	}
 
 
@@ -650,7 +654,9 @@ func rollback_tournament(tournament_id: int, admin_username: String) -> Dictiona
 			continue
 		var points_to_claw_back := int(pay.get("points", 0))
 		if points_to_claw_back > 0:
-			account["points"] = maxi(0, int(account.get("points", 0)) - points_to_claw_back)
+			var before := int(account.get("points", 0))
+			account["points"] = maxi(0, before - points_to_claw_back)
+			_log_points_ledger(account, "tournament_rollback", int(account["points"]) - before, "tournament #%d" % tournament_id)
 		var owned: Array = account.get("owned_rewards", [])
 		for item_id in (pay.get("granted", []) as Array):
 			owned.erase(item_id)
@@ -688,6 +694,7 @@ func apply_quest_progress(account_id: int, match_ctx: Dictionary, day_override :
 	account["quests"] = normalised
 	if int(res["points_awarded"]) > 0:
 		account["points"] = int(account.get("points", 0)) + int(res["points_awarded"])
+		_log_points_ledger(account, "quest", int(res["points_awarded"]))
 
 	# Lifetime quest-completion counter, feeds the `quests_completed_*` achievements.
 	# Achievement evaluation itself happens in apply_match_stats, which
@@ -741,6 +748,30 @@ func _log_achievement_unlocks(account: Dictionary, newly: Array) -> void:
 		})
 
 
+## Every points-changing event, one source-tagged entry each — the admin
+## tool's per-account "points ledger" view. Call AFTER account["points"] has
+## already been mutated, so balance_after reflects the real post-change total.
+## `delta` is signed: positive = came in, negative = went out.
+func _log_points_ledger(account: Dictionary, source: String, delta: int, details := "") -> void:
+	if delta == 0:
+		return
+	_append_account_log(account, "points_ledger", {
+		"ts": int(Time.get_unix_time_from_system()),
+		"source": source,
+		"delta": delta,
+		"balance_after": int(account.get("points", 0)),
+		"details": details,
+	})
+
+
+func recent_points_ledger(account_id: int, limit := 30) -> Array:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return []
+	var log: Array = account.get("points_ledger", [])
+	return log.slice(maxi(0, log.size() - limit))
+
+
 ## Credit `points_award` into account["points"] and grant every id in
 ## `item_ids` the account does not already own. Persists. Returns
 ## {"points_total": int, "granted": Array of newly-owned ids}. `source`
@@ -750,6 +781,7 @@ func _log_achievement_unlocks(account: Dictionary, newly: Array) -> void:
 func grant_reward(account: Dictionary, points_award: int, item_ids: Array, source := "achievement") -> Dictionary:
 	if int(points_award) > 0:
 		account["points"] = int(account.get("points", 0)) + int(points_award)
+		_log_points_ledger(account, "tournament_prize" if source == "tournament" else "achievement_reward", int(points_award))
 	var granted := []
 	var owned: Array = account.get("owned_rewards", [])
 	for id in item_ids:
@@ -794,6 +826,7 @@ func purchase(account_id: int, item_id: String) -> Dictionary:
 		return {"ok": false, "error": "insufficient", "account": {}}
 
 	account["points"] = points - price
+	_log_points_ledger(account, "shop_purchase", -price, item_id)
 	owned.append(item_id)
 	_append_account_log(account, "shop_log", {
 		"ts": int(Time.get_unix_time_from_system()),
@@ -1120,7 +1153,9 @@ func _apply_account_result(account: Dictionary, elo_after: int, peak_elo_after: 
 	account["elo"] = elo_after
 	account["peak_elo"] = peak_elo_after
 	account["games"] = int(account.get("games", 0)) + 1
-	account["points"] = int(account.get("points", 0)) + match_points(outcome, own_score)
+	var match_pts := match_points(outcome, own_score)
+	account["points"] = int(account.get("points", 0)) + match_pts
+	_log_points_ledger(account, "match", match_pts, outcome)
 	match outcome:
 		"win": account["wins"] = int(account.get("wins", 0)) + 1
 		"loss": account["losses"] = int(account.get("losses", 0)) + 1
@@ -1354,6 +1389,7 @@ func create_tournament(created_by: int, name: String, requested_bracket_size: in
 	}
 	if int(pr.cost) > 0:
 		creator["points"] = int(creator.get("points", 0)) - int(pr.cost)
+		_log_points_ledger(creator, "tournament_entry", -int(pr.cost), "tournament #%d" % int(tournament.id))
 		_save_accounts()
 	_tournaments.append(tournament)
 	_next_tournament_id += 1
@@ -1371,6 +1407,7 @@ func refund_tournament_escrow(t: Dictionary) -> int:
 	var creator := get_account(int(t.get("created_by_account_id", 0)))
 	if not creator.is_empty():
 		creator["points"] = int(creator.get("points", 0)) + amt
+		_log_points_ledger(creator, "tournament_refund", amt, "tournament #%d" % int(t.get("id", 0)))
 		_save_accounts()
 	t["escrow_refunded"] = true
 	_save_tournaments()
