@@ -1,0 +1,199 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8g5x3k2mfq7h"]
+
+[ext_resource type="Script" path="res://admin_tool/admin_tool.gd" id="1_script"]
+
+[node name="AdminTool" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_script")
+
+[node name="LoginPanel" type="CenterContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LoginPanel"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="LoginPanel/VBoxContainer"]
+layout_mode = 2
+text = "Flick Battle — Admin Tool"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="ConnLabel" type="Label" parent="LoginPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+modulate = Color(1, 1, 1, 0.6)
+
+[node name="UsernameField" type="LineEdit" parent="LoginPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Admin username"
+
+[node name="PasswordField" type="LineEdit" parent="LoginPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Password"
+secret = true
+
+[node name="LoginButton" type="Button" parent="LoginPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Log in"
+
+[node name="LoginErrorLabel" type="Label" parent="LoginPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+autowrap_mode = 2
+modulate = Color(1, 0.5, 0.5, 1)
+
+[node name="MainPanel" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+theme_override_constants/separation = 6
+
+[node name="TopBar" type="HBoxContainer" parent="MainPanel"]
+layout_mode = 2
+
+[node name="WelcomeLabel" type="Label" parent="MainPanel/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Signed in"
+
+[node name="LogoutButton" type="Button" parent="MainPanel/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Log out"
+
+[node name="StatusLabel" type="Label" parent="MainPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+autowrap_mode = 2
+
+[node name="Tabs" type="TabContainer" parent="MainPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Accounts" type="VBoxContainer" parent="MainPanel/Tabs"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="SearchBar" type="HBoxContainer" parent="MainPanel/Tabs/Accounts"]
+layout_mode = 2
+
+[node name="SearchField" type="LineEdit" parent="MainPanel/Tabs/Accounts/SearchBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "username or account id"
+
+[node name="SearchButton" type="Button" parent="MainPanel/Tabs/Accounts/SearchBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Search"
+
+[node name="ResultsList" type="ItemList" parent="MainPanel/Tabs/Accounts"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+
+[node name="DetailLabel" type="Label" parent="MainPanel/Tabs/Accounts"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Select an account above."
+autowrap_mode = 2
+
+[node name="ReasonField" type="LineEdit" parent="MainPanel/Tabs/Accounts"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Ban reason"
+
+[node name="BanRow" type="HBoxContainer" parent="MainPanel/Tabs/Accounts"]
+layout_mode = 2
+
+[node name="BanButton" type="Button" parent="MainPanel/Tabs/Accounts/BanRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Ban"
+
+[node name="UnbanButton" type="Button" parent="MainPanel/Tabs/Accounts/BanRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Unban"
+
+[node name="EloRow" type="HBoxContainer" parent="MainPanel/Tabs/Accounts"]
+layout_mode = 2
+
+[node name="NewEloField" type="LineEdit" parent="MainPanel/Tabs/Accounts/EloRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "New elo value"
+
+[node name="SetEloButton" type="Button" parent="MainPanel/Tabs/Accounts/EloRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Set Elo"
+
+[node name="PointsRow" type="HBoxContainer" parent="MainPanel/Tabs/Accounts"]
+layout_mode = 2
+
+[node name="PointsDeltaField" type="LineEdit" parent="MainPanel/Tabs/Accounts/PointsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Points delta (+/-)"
+
+[node name="AdjustPointsButton" type="Button" parent="MainPanel/Tabs/Accounts/PointsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Adjust Points"
+
+[node name="Online" type="VBoxContainer" parent="MainPanel/Tabs"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="RefreshOnlineButton" type="Button" parent="MainPanel/Tabs/Online"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Refresh"
+
+[node name="OnlineList" type="ItemList" parent="MainPanel/Tabs/Online"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Log" type="VBoxContainer" parent="MainPanel/Tabs"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="RefreshLogButton" type="Button" parent="MainPanel/Tabs/Log"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Refresh"
+
+[node name="LogList" type="ItemList" parent="MainPanel/Tabs/Log"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3

@@ -15,6 +15,9 @@ extends Node
 ##   (headless client that plays, drops its connection mid-match, then resumes
 ##   its token to verify the server's reconnect grace / rejoin — see
 ##   tests/reconnect_bot_client.gd and scripts/reconnect_test.sh.)
+## Admin tool:  godot -- --admin-tool [--address=127.0.0.1] [--port=8910]
+##   (separate lightweight window, no game UI — see admin_tool/admin_tool.gd.
+##   Requires the logged-in account to have is_admin == true server-side.)
 
 func _ready() -> void:
 	var args := OS.get_cmdline_user_args()
@@ -28,6 +31,7 @@ func _ready() -> void:
 	var is_custom_game_test := false
 	var is_reconnect_test := false
 	var is_tournament_test := false
+	var is_admin_tool := false
 
 	for arg: String in args:
 		if arg == "--server":
@@ -40,6 +44,8 @@ func _ready() -> void:
 			is_reconnect_test = true
 		elif arg == "--tournament-test":
 			is_tournament_test = true
+		elif arg == "--admin-tool":
+			is_admin_tool = true
 		elif arg == "--solo":
 			is_solo = true
 		elif arg == "--solo-test":
@@ -67,6 +73,22 @@ func _ready() -> void:
 	elif is_tournament_test:
 		Net.start_client(address, port)
 		add_child(preload("res://tests/tournament_bot_client.gd").new())
+	elif is_admin_tool:
+		# Own session file by default so admin login doesn't collide with (or get
+		# collided with by) a normal player session on the same machine — same
+		# problem --profile= solves for run_local's two test clients. Skipped if
+		# the caller already passed --profile= explicitly.
+		var has_profile_arg := false
+		for arg: String in args:
+			if arg.begins_with("--profile="):
+				has_profile_arg = true
+				break
+		if not has_profile_arg:
+			Session.SESSION_PATH = "user://flickbattle/admin_session.cfg"
+			Session.token = ""
+			Session.load_token()
+		Net.start_client(address, port)
+		add_child(preload("res://admin_tool/admin_tool.tscn").instantiate())
 	elif is_solo:
 		# UI (or the headless test driver) must be in the tree — so its
 		# _ready() connects Net's signals — BEFORE start_solo() fires the

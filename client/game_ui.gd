@@ -929,8 +929,30 @@ func _reflow_after_reorder() -> void:
 	if _revealing:
 		if not _latest_state.is_empty():
 			_render_hand(_latest_state.get("own_hand", []), true)
-	else:
-		_render()
+	elif not _reflow_hand_in_place(_hand_order):
+		_render()  # bookkeeping fell out of sync (e.g. hand changed mid-drag) — full rebuild as a fallback
+
+
+## Re-tweens every existing hand card to its slot in `order`, without freeing
+## and reinstantiating any CardView. A reorder-drag never changes which cards
+## are in hand, only their order, so the nodes (and the dragged card's own,
+## untouched-during-drag position) just need to glide to their new spots —
+## unlike the full _render_hand() rebuild this replaces, which used to visibly
+## hitch on every single card release (destroy + reinstantiate every card,
+## plus a one-frame layout wait). Returns false if the node bookkeeping
+## doesn't match `order` 1:1, so the caller can fall back to a full render.
+func _reflow_hand_in_place(order: Array) -> bool:
+	var n := order.size()
+	if n != _hand_card_views.size():
+		return false
+	for i in range(n):
+		var id = order[i]
+		var card_view: CardView = _hand_card_views.get(id)
+		if card_view == null:
+			return false
+		var t := _hand_slot_transform(i, n)
+		card_view.tween_to_hand_transform(t.pos, t.rot_deg, HAND_CARD_SCALE, i)
+	return true
 
 
 ## Computes where `dragged_id` would land if dropped at the cursor's current

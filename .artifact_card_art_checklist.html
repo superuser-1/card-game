@@ -1,0 +1,542 @@
+<title>Card Art Checklist</title>
+<meta name="description" content="Which Flick Battle movie cards still need artwork.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root{
+    --bg:#f4f0e6;
+    --surface:#ebe4d3;
+    --surface-2:#e1d9c2;
+    --ink:#201d15;
+    --ink-soft:#6b6452;
+    --hair:#d6cdb5;
+    --accent:#a85d15;
+    --accent-weak:#eaddc3;
+    --done:#4c7857;
+    --done-weak:#dde7dc;
+    --focus:#a85d15;
+    --shadow:0 1px 2px rgba(40,32,16,.06);
+    --font-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+    --font-body:"Barlow",-apple-system,Segoe UI,Roboto,sans-serif;
+    --font-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#15130f;
+      --surface:#1e1b15;
+      --surface-2:#26221a;
+      --ink:#ede7d6;
+      --ink-soft:#9a9078;
+      --hair:#352e21;
+      --accent:#e8a13c;
+      --accent-weak:#372a16;
+      --done:#6fa079;
+      --done-weak:#232f1f;
+      --focus:#e8a13c;
+      --shadow:none;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15130f;
+    --surface:#1e1b15;
+    --surface-2:#26221a;
+    --ink:#ede7d6;
+    --ink-soft:#9a9078;
+    --hair:#352e21;
+    --accent:#e8a13c;
+    --accent-weak:#372a16;
+    --done:#6fa079;
+    --done-weak:#232f1f;
+    --focus:#e8a13c;
+    --shadow:none;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:15px;
+    line-height:1.5;
+  }
+  .wrap{max-width:840px;margin:0 auto;padding:0 20px}
+
+  header{
+    position:sticky;top:0;z-index:10;
+    background:var(--bg);
+    border-bottom:1px solid var(--hair);
+  }
+  .strip{padding:18px 0 14px}
+  .kicker{
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:.68rem;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 2px;
+  }
+  h1{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(1.5rem,1.1rem + 1.7vw,2.05rem);
+    letter-spacing:.005em;
+    margin:0 0 12px;
+    text-wrap:balance;
+  }
+  .gauge{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .count{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(2rem,1.4rem + 2.7vw,3rem);
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+    letter-spacing:.01em;
+  }
+  .count .of{color:var(--ink-soft)}
+  .count b{color:var(--accent);font-weight:700}
+  .left{
+    font-family:var(--font-body);
+    font-size:.9rem;
+    color:var(--ink-soft);
+    font-variant-numeric:tabular-nums;
+  }
+  .bar{
+    margin-top:10px;height:6px;border-radius:99px;
+    background:var(--surface-2);
+    overflow:hidden;
+  }
+  .bar>i{
+    display:block;height:100%;
+    background:var(--accent);
+    border-radius:99px;
+    transition:width .35s ease;
+  }
+
+  .controls{
+    display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    padding:12px 0 14px;
+  }
+  .search{
+    flex:1 1 190px;min-width:0;
+    font:inherit;color:var(--ink);
+    background:var(--surface);
+    border:1px solid var(--hair);border-radius:7px;
+    padding:7px 11px;
+  }
+  .search::placeholder{color:var(--ink-soft)}
+  .seg{display:flex;border:1px solid var(--hair);border-radius:7px;overflow:hidden;background:var(--surface)}
+  .seg button{
+    font:inherit;font-size:.82rem;
+    color:var(--ink-soft);background:transparent;border:0;
+    padding:7px 12px;cursor:pointer;white-space:nowrap;
+  }
+  .seg button + button{border-left:1px solid var(--hair)}
+  .seg button[aria-pressed="true"]{
+    background:var(--accent-weak);color:var(--ink);font-weight:600;
+  }
+  select.sort{
+    font:inherit;font-size:.82rem;color:var(--ink);
+    background:var(--surface);
+    border:1px solid var(--hair);border-radius:7px;
+    padding:7px 9px;cursor:pointer;
+  }
+  .tbtn{
+    font:inherit;font-size:.82rem;color:var(--ink-soft);
+    background:var(--surface);
+    border:1px solid var(--hair);border-radius:7px;
+    padding:7px 11px;cursor:pointer;margin-left:auto;
+  }
+  .tbtn:hover{color:var(--ink)}
+
+  :is(.search,.seg button,select.sort,.tbtn,.cb,.copy,.reset):focus-visible{
+    outline:2px solid var(--focus);outline-offset:2px;
+  }
+
+  .sheet{padding:6px 0 0}
+  .row{
+    display:grid;
+    grid-template-columns:20px 1fr;
+    grid-template-areas:
+      "cb main"
+      "cb file";
+    column-gap:13px;row-gap:3px;
+    align-items:start;
+    padding:10px 8px;
+    border-bottom:1px solid var(--hair);
+    cursor:pointer;
+  }
+  .row:hover{background:var(--surface)}
+  .row.done{opacity:.6}
+  .row.done .rtitle{color:var(--ink-soft);font-weight:500}
+
+  .cb{
+    grid-area:cb;
+    appearance:none;-webkit-appearance:none;
+    width:20px;height:20px;margin:2px 0 0;flex:none;
+    border:1.5px solid var(--hair);border-radius:3px;
+    background:var(--surface-2);
+    display:grid;place-content:center;cursor:pointer;
+    transition:background .12s ease,border-color .12s ease;
+  }
+  .cb:checked{border-color:var(--done);background:var(--done)}
+  .cb:checked::after{
+    content:"";width:5px;height:9px;margin-top:-2px;
+    border:solid #fff;border-width:0 2px 2px 0;
+    transform:rotate(45deg);
+  }
+
+  .main{grid-area:main;min-width:0}
+  .rtitle{
+    font-family:var(--font-display);
+    font-weight:600;font-size:1.04rem;line-height:1.25;
+    letter-spacing:.006em;
+    display:block;
+  }
+  .meta{
+    font-size:.79rem;color:var(--ink-soft);
+    display:block;margin-top:1px;
+  }
+  .meta .cid{font-family:var(--font-mono);font-size:.72rem}
+  .chip{
+    font-family:var(--font-body);
+    font-size:.62rem;font-weight:600;
+    letter-spacing:.07em;text-transform:uppercase;
+    color:var(--done);
+    border:1px solid var(--done);
+    border-radius:4px;padding:0 4px;margin-left:7px;
+    white-space:nowrap;vertical-align:1px;
+  }
+
+  .file{
+    grid-area:file;
+    display:flex;align-items:baseline;gap:10px;
+    min-width:0;margin-top:2px;
+  }
+  .fname{
+    flex:1;min-width:0;
+    font-family:var(--font-mono);
+    font-size:.72rem;line-height:1.4;color:var(--ink-soft);
+    overflow-wrap:anywhere;
+    cursor:pointer;
+  }
+  .fname:hover{color:var(--ink)}
+  .copy{
+    flex:none;align-self:flex-start;
+    width:24px;height:24px;padding:0;
+    display:grid;place-content:center;
+    color:var(--ink-soft);
+    background:transparent;
+    border:1px solid var(--hair);border-radius:6px;
+    cursor:pointer;
+  }
+  .copy:hover{color:var(--ink);border-color:var(--ink-soft)}
+  .copy svg{width:13px;height:13px;display:block}
+
+  .empty{
+    padding:40px 8px;color:var(--ink-soft);
+    font-size:.95rem;text-align:center;
+  }
+
+  footer{
+    margin-top:26px;padding:20px 0 48px;
+    border-top:1px solid var(--hair);
+    font-size:.82rem;color:var(--ink-soft);
+  }
+  footer h2{
+    font-family:var(--font-body);
+    font-weight:600;font-size:.68rem;letter-spacing:.11em;
+    text-transform:uppercase;color:var(--ink);
+    margin:0 0 6px;
+  }
+  footer p{margin:0 0 16px;max-width:64ch}
+  footer code{
+    font-family:var(--font-mono);font-size:.86em;
+    background:var(--surface-2);
+    padding:1px 4px;border-radius:4px;
+    color:var(--ink);
+  }
+  .orphans{margin:0 0 16px}
+  .orphans ul{margin:6px 0 0;padding:0;list-style:none}
+  .orphans li{
+    font-family:var(--font-mono);font-size:.75rem;
+    color:var(--ink);padding:2px 0;
+  }
+  .orphans li::before{content:"\2014 ";color:var(--accent)}
+  .reset{
+    font:inherit;font-size:.8rem;color:var(--ink-soft);
+    background:var(--surface);
+    border:1px solid var(--hair);border-radius:6px;
+    padding:6px 11px;cursor:pointer;
+  }
+  .reset:hover{color:var(--ink)}
+  .gen{margin-top:12px;font-size:.76rem}
+
+  #toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(8px);
+    background:var(--ink);color:var(--bg);
+    font-size:.82rem;font-weight:500;
+    padding:8px 15px;border-radius:99px;
+    box-shadow:0 6px 20px rgba(0,0,0,.22);
+    opacity:0;pointer-events:none;
+    transition:opacity .18s ease,transform .18s ease;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important}
+  }
+</style>
+
+<script id="data" type="application/json">
+{"movies":[{"id":"card_001","title":"The Lord of the Rings: The Return of the King","year":2003,"director":"Peter Jackson","file":"The Lord of the Rings The Return of the King.png","hasArt":true},{"id":"card_002","title":"The Lord of the Rings: The Two Towers","year":2002,"director":"Peter Jackson","file":"The Lord of the Rings The Two Towers.png","hasArt":true},{"id":"card_003","title":"The Lord of the Rings: The Fellowship of the Ring","year":2001,"director":"Peter Jackson","file":"The Lord of the Rings The Fellowship of the Ring.png","hasArt":true},{"id":"card_004","title":"The Shawshank Redemption","year":1994,"director":"Frank Darabont","file":"The Shawshank Redemption.png","hasArt":true},{"id":"card_005","title":"12 Angry Men","year":1957,"director":"Sidney Lumet","file":"12 Angry Men.png","hasArt":true},{"id":"card_006","title":"The End of Evangelion","year":1997,"director":"Hideaki Anno","file":"The End of Evangelion.png","hasArt":true},{"id":"card_007","title":"Star Wars: Episode V - The Empire Strikes Back","year":1980,"director":"Irvin Kershner","file":"Star Wars Episode V - The Empire Strikes Back.png","hasArt":true},{"id":"card_008","title":"The Good, the Bad and the Ugly","year":1967,"director":"Sergio Leone","file":"The Good, the Bad and the Ugly.png","hasArt":true},{"id":"card_009","title":"The Godfather","year":1972,"director":"Francis Ford Coppola","file":"The Godfather.png","hasArt":true},{"id":"card_010","title":"The Dark Knight","year":2008,"director":"Christopher Nolan","file":"The Dark Knight.png","hasArt":true},{"id":"card_011","title":"I'm Still Here","year":2024,"director":"Walter Salles","file":"I'm Still Here.png","hasArt":true},{"id":"card_012","title":"Terminator 2: Judgment Day","year":1991,"director":"James Cameron","file":"Terminator 2 Judgment Day.png","hasArt":true},{"id":"card_013","title":"The Godfather: Part II","year":1974,"director":"Francis Ford Coppola","file":"The Godfather Part II.png","hasArt":true},{"id":"card_014","title":"Schindler's List","year":1993,"director":"Steven Spielberg","file":"Schindler's List.png","hasArt":true},{"id":"card_015","title":"Pulp Fiction","year":1994,"director":"Quentin Tarantino","file":"Pulp Fiction.png","hasArt":true},{"id":"card_016","title":"Goodfellas","year":1990,"director":"Martin Scorsese","file":"Goodfellas.png","hasArt":true},{"id":"card_017","title":"City of God","year":2003,"director":"Fernando Meirelles","file":"City of God.png","hasArt":true},{"id":"card_018","title":"Seven Samurai","year":1956,"director":"Akira Kurosawa","file":"Seven Samurai.png","hasArt":true},{"id":"card_019","title":"Back to the Future","year":1985,"director":"Robert Zemeckis","file":"Back to the Future.png","hasArt":true},{"id":"card_020","title":"The Ottoman Lieutenant","year":2017,"director":"Joseph Ruben","file":"The Ottoman Lieutenant.png","hasArt":true},{"id":"card_021","title":"The Second Mother","year":2015,"director":"Anna Muylaert","file":"The Second Mother.png","hasArt":true},{"id":"card_022","title":"Joker","year":2019,"director":"Todd Phillips","file":"Joker.png","hasArt":true},{"id":"card_023","title":"Star Wars: Episode IV - A New Hope","year":1977,"director":"George Lucas","file":"Star Wars Episode IV - A New Hope.png","hasArt":true},{"id":"card_024","title":"Jurassic Park","year":1993,"director":"Steven Spielberg","file":"Jurassic Park.png","hasArt":true},{"id":"card_025","title":"Saving Private Ryan","year":1998,"director":"Steven Spielberg","file":"Saving Private Ryan.png","hasArt":true},{"id":"card_026","title":"The Lion King","year":1994,"director":"Roger Allers","file":"The Lion King.png","hasArt":true},{"id":"card_027","title":"Cinema Paradiso","year":1988,"director":"Giuseppe Tornatore","file":"Cinema Paradiso.png","hasArt":true},{"id":"card_028","title":"A Separation","year":2011,"director":"Asghar Farhadi","file":"A Separation.png","hasArt":true},{"id":"card_029","title":"WALL-E","year":2008,"director":"Andrew Stanton","file":"WALL-E.png","hasArt":true},{"id":"card_030","title":"Forrest Gump","year":1994,"director":"Robert Zemeckis","file":"Forrest Gump.png","hasArt":true},{"id":"card_031","title":"Alien","year":1979,"director":"Ridley Scott","file":"Alien.png","hasArt":true},{"id":"card_032","title":"Princess Mononoke","year":1997,"director":"Hayao Miyazaki","file":"Princess Mononoke.png","hasArt":true},{"id":"card_033","title":"Toy Story","year":1995,"director":"John Lasseter","file":"Toy Story.png","hasArt":true},{"id":"card_034","title":"The Matrix","year":1999,"director":"Lana Wachowski","file":"The Matrix.png","hasArt":true},{"id":"card_035","title":"Fight Club","year":1999,"director":"David Fincher","file":"Fight Club.png","hasArt":true},{"id":"card_036","title":"Chainsaw Man - The Movie: Reze Arc","year":2025,"director":"Tatsuya Yoshihara","file":"Chainsaw Man - The Movie Reze Arc.png","hasArt":true},{"id":"card_037","title":"Your Name.","year":2016,"director":"Makoto Shinkai","file":"Your Name..png","hasArt":true},{"id":"card_038","title":"Aliens","year":1986,"director":"James Cameron","file":"Aliens.png","hasArt":true},{"id":"card_039","title":"Honeyland","year":2019,"director":"Tamara Kotevska","file":"Honeyland.png","hasArt":true},{"id":"card_040","title":"The Thing","year":1982,"director":"John Carpenter","file":"The Thing.png","hasArt":true},{"id":"card_041","title":"A Silent Voice","year":2016,"director":"Naoko Yamada","file":"A Silent Voice.png","hasArt":true},{"id":"card_042","title":"Toy Story 3","year":2010,"director":"Lee Unkrich","file":"Toy Story 3.png","hasArt":true},{"id":"card_043","title":"Puella Magi Madoka Magica the Movie Part III: Rebellion","year":2013,"director":"Akiyuki Shinbo","file":"Puella Magi Madoka Magica the Movie Part III Rebellion.png","hasArt":true},{"id":"card_044","title":"Parasite","year":2019,"director":"Bong Joon-ho","file":"Parasite.png","hasArt":true},{"id":"card_045","title":"Psycho","year":1960,"director":"Alfred Hitchcock","file":"Psycho.png","hasArt":true},{"id":"card_046","title":"Memento","year":2001,"director":"Christopher Nolan","file":"Memento.png","hasArt":true},{"id":"card_047","title":"Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb","year":1964,"director":"Stanley Kubrick","file":"Dr. Strangelove or How I Learned to Stop Worrying and Love the Bomb.png","hasArt":true},{"id":"card_048","title":"One Flew Over the Cuckoo's Nest","year":1975,"director":"Milos Forman","file":"One Flew Over the Cuckoo's Nest.png","hasArt":true},{"id":"card_049","title":"Eternal Sunshine of the Spotless Mind","year":2004,"director":"Michel Gondry","file":"Eternal Sunshine of the Spotless Mind.png","hasArt":true},{"id":"card_050","title":"Whiplash","year":2014,"director":"Damien Chazelle","file":"Whiplash.png","hasArt":true},{"id":"card_051","title":"Puss in Boots: The Last Wish","year":2022,"director":"Joel Crawford","file":"Puss in Boots The Last Wish.png","hasArt":true},{"id":"card_052","title":"Ikiru","year":1952,"director":"Akira Kurosawa","file":"Ikiru.png","hasArt":true},{"id":"card_053","title":"There Will Be Blood","year":2007,"director":"Paul Thomas Anderson","file":"There Will Be Blood.png","hasArt":true},{"id":"card_054","title":"Raiders of the Lost Ark","year":1981,"director":"Steven Spielberg","file":"Raiders of the Lost Ark.png","hasArt":true},{"id":"card_055","title":"Central Station","year":1998,"director":"Walter Salles","file":"Central Station.png","hasArt":true},{"id":"card_056","title":"The Silence of the Lambs","year":1991,"director":"Jonathan Demme","file":"The Silence of the Lambs.png","hasArt":true},{"id":"card_057","title":"The Apartment","year":1960,"director":"Billy Wilder","file":"The Apartment.png","hasArt":true},{"id":"card_058","title":"The Prestige","year":2006,"director":"Christopher Nolan","file":"The Prestige.png","hasArt":true},{"id":"card_059","title":"American Beauty","year":1999,"director":"Sam Mendes","file":"American Beauty.png","hasArt":true},{"id":"card_060","title":"The Iron Giant","year":1999,"director":"Brad Bird","file":"The Iron Giant.png","hasArt":true},{"id":"card_061","title":"The Incredibles","year":2004,"director":"Brad Bird","file":"The Incredibles.png","hasArt":true},{"id":"card_062","title":"Stop Making Sense","year":1984,"director":"Jonathan Demme","file":"Stop Making Sense.png","hasArt":true},{"id":"card_063","title":"Scarface","year":1983,"director":"Brian De Palma","file":"Scarface.png","hasArt":true},{"id":"card_064","title":"Avengers: Infinity War","year":2018,"director":"Anthony Russo and Joe Russo","file":"Avengers Infinity War.png","hasArt":true},{"id":"card_065","title":"Singin' in the Rain","year":1952,"director":"Gene Kelly and Stanley Donen","file":"Singin' in the Rain.png","hasArt":true},{"id":"card_066","title":"Interstellar","year":2014,"director":"Christopher Nolan","file":"Interstellar.png","hasArt":true},{"id":"card_067","title":"Casablanca","year":1943,"director":"Michael Curtiz","file":"Casablanca.png","hasArt":true},{"id":"card_068","title":"Gladiator","year":2000,"director":"Ridley Scott","file":"Gladiator.png","hasArt":true},{"id":"card_069","title":"The Green Mile","year":1999,"director":"Frank Darabont","file":"The Green Mile.png","hasArt":true},{"id":"card_070","title":"Modern Times","year":1936,"director":"Charlie Chaplin","file":"Modern Times.png","hasArt":true},{"id":"card_071","title":"2001: A Space Odyssey","year":1968,"director":"Stanley Kubrick","file":"2001 A Space Odyssey.png","hasArt":true},{"id":"card_072","title":"Spider-Man 2","year":2004,"director":"Sam Raimi","file":"Spider-Man 2.png","hasArt":true},{"id":"card_073","title":"Chinatown","year":1974,"director":"Roman Polanski","file":"Chinatown.png","hasArt":true},{"id":"card_074","title":"Rocky","year":1976,"director":"John G. Avildsen","file":"Rocky.png","hasArt":true},{"id":"card_075","title":"Amadeus","year":1984,"director":"Milos Forman","file":"Amadeus.png","hasArt":true},{"id":"card_076","title":"Once Upon a Time in the West","year":1968,"director":"Sergio Leone","file":"Once Upon a Time in the West.png","hasArt":true},{"id":"card_077","title":"Before Sunset","year":2004,"director":"Richard Linklater","file":"Before Sunset.png","hasArt":true},{"id":"card_078","title":"The Truman Show","year":1998,"director":"Peter Weir","file":"The Truman Show.png","hasArt":true},{"id":"card_079","title":"Before Sunrise","year":1995,"director":"Richard Linklater","file":"Before Sunrise.png","hasArt":true},{"id":"card_080","title":"Apocalypse Now","year":1979,"director":"Francis Ford Coppola","file":"Apocalypse Now.png","hasArt":true},{"id":"card_081","title":"Seven","year":1995,"director":"David Fincher","file":"Seven.png","hasArt":true},{"id":"card_082","title":"Aquarius","year":2016,"director":"Kleber Mendonça Filho","file":"Aquarius.png","hasArt":true},{"id":"card_083","title":"Wild Rose","year":2019,"director":"Tom Harper","file":"Wild Rose.png","hasArt":true},{"id":"card_084","title":"They Shall Not Grow Old","year":2018,"director":"Peter Jackson","file":"They Shall Not Grow Old.png","hasArt":true},{"id":"card_085","title":"Monty Python and the Holy Grail","year":1975,"director":"Terry Gilliam, Terry Jones","file":"Monty Python and the Holy Grail.png","hasArt":true},{"id":"card_086","title":"Toy Story 2","year":1999,"director":"John Lasseter","file":"Toy Story 2.png","hasArt":true},{"id":"card_087","title":"Ratatouille","year":2007,"director":"Brad Bird","file":"Ratatouille.png","hasArt":true},{"id":"card_088","title":"Senna","year":2011,"director":"Asif Kapadia","file":"Senna.png","hasArt":true},{"id":"card_089","title":"City Lights","year":1931,"director":"Charlie Chaplin","file":"City Lights.png","hasArt":true},{"id":"card_090","title":"Vertigo","year":1958,"director":"Alfred Hitchcock","file":"Vertigo.png","hasArt":true},{"id":"card_091","title":"Inside Out","year":2015,"director":"Pete Docter","file":"Inside Out.png","hasArt":true},{"id":"card_092","title":"Zootopia","year":2016,"director":"Byron Howard, Rich Moore","file":"Zootopia.png","hasArt":true},{"id":"card_093","title":"The Shining","year":1980,"director":"Stanley Kubrick","file":"The Shining.png","hasArt":true},{"id":"card_094","title":"Elite Squad: The Enemy Within","year":2011,"director":"Jose Padilha","file":"Elite Squad The Enemy Within.png","hasArt":true},{"id":"card_095","title":"Das Boot","year":1981,"director":"Wolfgang Petersen","file":"Das Boot.png","hasArt":true},{"id":"card_096","title":"Monsters, Inc.","year":2001,"director":"Pete Docter","file":"Monsters, Inc..png","hasArt":true},{"id":"card_097","title":"Dancer in the Dark","year":2000,"director":"Lars von Trier","file":"Dancer in the Dark.png","hasArt":true},{"id":"card_098","title":"Memories of Murder","year":2003,"director":"Bong Joon Ho","file":"Memories of Murder.png","hasArt":true},{"id":"card_099","title":"Ran","year":1985,"director":"Akira Kurosawa","file":"Ran.png","hasArt":true},{"id":"card_100","title":"Good Will Hunting","year":1997,"director":"Gus Van Sant","file":"Good Will Hunting.png","hasArt":true},{"id":"card_101","title":"Indiana Jones and the Last Crusade","year":1989,"director":"Steven Spielberg","file":"Indiana Jones and the Last Crusade.png","hasArt":true},{"id":"card_102","title":"Jaws","year":1975,"director":"Steven Spielberg","file":"Jaws.png","hasArt":true},{"id":"card_103","title":"Downfall","year":2004,"director":"Oliver Hirschbiegel","file":"Downfall.png","hasArt":true},{"id":"card_104","title":"Shrek","year":2001,"director":"Andrew Adamson","file":"Shrek.png","hasArt":true},{"id":"card_105","title":"Sunset Boulevard","year":1950,"director":"Billy Wilder","file":"Sunset Boulevard.png","hasArt":true},{"id":"card_106","title":"Godzilla Minus One","year":2023,"director":"Takashi Yamazaki","file":"Godzilla Minus One.png","hasArt":true},{"id":"card_107","title":"Pan's Labyrinth","year":2006,"director":"Guillermo del Toro","file":"Pan's Labyrinth.png","hasArt":true},{"id":"card_108","title":"Metropolis","year":1927,"director":"Fritz Lang","file":"Metropolis.png","hasArt":true},{"id":"card_109","title":"The Terminator","year":1984,"director":"James Cameron","file":"The Terminator.png","hasArt":true},{"id":"card_110","title":"Donnie Darko","year":2001,"director":"Richard Kelly","file":"Donnie Darko.png","hasArt":true},{"id":"card_111","title":"Howl's Moving Castle","year":2004,"director":"Hayao Miyazaki","file":"Howl's Moving Castle.png","hasArt":true},{"id":"card_112","title":"Oldboy","year":2003,"director":"Park Chan-wook","file":"Oldboy.png","hasArt":true},{"id":"card_113","title":"Weekend","year":2011,"director":"Andrew Haigh","file":"Weekend.png","hasArt":true},{"id":"card_114","title":"Aladdin","year":1992,"director":"Ron Clements","file":"Aladdin.png","hasArt":true},{"id":"card_115","title":"Spider-Man: Across the Spider-Verse","year":2023,"director":"Joaquim Dos Santos","file":"Spider-Man Across the Spider-Verse.png","hasArt":true},{"id":"card_116","title":"Double Indemnity","year":1944,"director":"Billy Wilder","file":"Double Indemnity.png","hasArt":true},{"id":"card_117","title":"Pink Floyd: The Wall","year":1982,"director":"Alan Parker","file":"Pink Floyd The Wall.png","hasArt":true},{"id":"card_118","title":"The Sound of Music","year":1965,"director":"Robert Wise","file":"The Sound of Music.png","hasArt":true},{"id":"card_119","title":"Heat","year":1995,"director":"Michael Mann","file":"Heat.png","hasArt":true},{"id":"card_120","title":"Reservoir Dogs","year":1992,"director":"Quentin Tarantino","file":"Reservoir Dogs.png","hasArt":true},{"id":"card_121","title":"No Country for Old Men","year":2007,"director":"Ethan Coen and Joel Coen","file":"No Country for Old Men.png","hasArt":true},{"id":"card_122","title":"My Name Is Khan","year":2010,"director":"Karan Johar","file":"My Name Is Khan.png","hasArt":true},{"id":"card_123","title":"Dogville","year":2003,"director":"Lars von Trier","file":"Dogville.png","hasArt":true},{"id":"card_124","title":"Raging Bull","year":1980,"director":"Martin Scorsese","file":"Raging Bull.png","hasArt":true},{"id":"card_125","title":"Predator","year":1987,"director":"John McTiernan","file":"Predator.png","hasArt":true},{"id":"card_126","title":"Hot Fuzz","year":2007,"director":"Edgar Wright","file":"Hot Fuzz.png","hasArt":true},{"id":"card_127","title":"Star Trek II: The Wrath of Khan","year":1982,"director":"Nicholas Meyer","file":"Star Trek II The Wrath of Khan.png","hasArt":true},{"id":"card_128","title":"Mad Max: Fury Road","year":2015,"director":"George Miller","file":"Mad Max Fury Road.png","hasArt":true},{"id":"card_129","title":"Ghost in the Shell","year":1995,"director":"Mamoru Oshii","file":"Ghost in the Shell.png","hasArt":true},{"id":"card_130","title":"Coco","year":2017,"director":"Lee Unkrich","file":"Coco.png","hasArt":true},{"id":"card_131","title":"Dog Day Afternoon","year":1975,"director":"Sidney Lumet","file":"Dog Day Afternoon.png","hasArt":true},{"id":"card_132","title":"Portrait of a Lady on Fire","year":2019,"director":"Celine Sciamma","file":"Portrait of a Lady on Fire.png","hasArt":true},{"id":"card_133","title":"The Father","year":2020,"director":"Florian Zeller","file":"The Father.png","hasArt":true},{"id":"card_134","title":"Elite Squad","year":2007,"director":"José Padilha","file":"Elite Squad.png","hasArt":true},{"id":"card_135","title":"Secrets & Lies","year":1996,"director":"Mike Leigh","file":"Secrets & Lies.png","hasArt":true},{"id":"card_136","title":"Shrek 2","year":2004,"director":"Andrew Adamson","file":"Shrek 2.png","hasArt":true},{"id":"card_137","title":"Wild Tales","year":2014,"director":"Damián Szifron","file":"Wild Tales.png","hasArt":true},{"id":"card_138","title":"Barry Lyndon","year":1975,"director":"Stanley Kubrick","file":"Barry Lyndon.png","hasArt":true},{"id":"card_139","title":"Won't You Be My Neighbor?","year":2018,"director":"Morgan Neville","file":"Won't You Be My Neighbor.png","hasArt":true},{"id":"card_140","title":"L.A. Confidential","year":1997,"director":"Curtis Hanson","file":"L.A. Confidential.png","hasArt":true},{"id":"card_141","title":"Gangs of Wasseypur","year":2012,"director":"Anurag Kashyap","file":"Gangs of Wasseypur.png","hasArt":true},{"id":"card_142","title":"The Man Who Shot Liberty Valance","year":1962,"director":"John Ford","file":"The Man Who Shot Liberty Valance.png","hasArt":true},{"id":"card_143","title":"The Handmaiden","year":2016,"director":"Park Chan-wook","file":"The Handmaiden.png","hasArt":true},{"id":"card_144","title":"Wicked","year":2024,"director":"Jon M. Chu","file":"Wicked.png","hasArt":true},{"id":"card_145","title":"The Wild Robot","year":2024,"director":"Chris Sanders","file":"The Wild Robot.png","hasArt":true},{"id":"card_146","title":"Guardians of the Galaxy","year":2014,"director":"James Gunn","file":"Guardians of the Galaxy.png","hasArt":true},{"id":"card_147","title":"Her","year":2013,"director":"Spike Jonze","file":"Her.png","hasArt":true},{"id":"card_148","title":"The Tale of the Princess Kaguya","year":2013,"director":"Isao Takahata","file":"The Tale of the Princess Kaguya.png","hasArt":true},{"id":"card_149","title":"Paths of Glory","year":1957,"director":"Stanley Kubrick","file":"Paths of Glory.png","hasArt":true},{"id":"card_150","title":"Sing Street","year":2016,"director":"John Carney","file":"Sing Street.png","hasArt":true},{"id":"card_151","title":"Alita: Battle Angel","year":2019,"director":"Robert Rodriguez","file":"Alita Battle Angel.png","hasArt":true},{"id":"card_152","title":"My Neighbor Totoro","year":1988,"director":"Hayao Miyazaki","file":"My Neighbor Totoro.png","hasArt":true},{"id":"card_153","title":"La Dolce Vita","year":1960,"director":"Federico Fellini","file":"La Dolce Vita.png","hasArt":true},{"id":"card_154","title":"3 Idiots","year":2009,"director":"Rajkumar Hirani","file":"3 Idiots.png","hasArt":true},{"id":"card_155","title":"The Intouchables","year":2011,"director":"Olivier Nakache, Éric Toledano","file":"The Intouchables.png","hasArt":true},{"id":"card_156","title":"To Kill a Mockingbird","year":1962,"director":"Robert Mulligan","file":"To Kill a Mockingbird.png","hasArt":true},{"id":"card_157","title":"Baahubali 2: The Conclusion","year":2017,"director":"S. S. Rajamouli","file":"Baahubali 2 The Conclusion.png","hasArt":true},{"id":"card_158","title":"Network","year":1976,"director":"Sidney Lumet","file":"Network.png","hasArt":true},{"id":"card_159","title":"The Muppet Christmas Carol","year":1992,"director":"Brian Henson","file":"The Muppet Christmas Carol.png","hasArt":true},{"id":"card_160","title":"Spider-Man: No Way Home","year":2021,"director":"Jon Watts","file":"Spider-Man No Way Home.png","hasArt":true},{"id":"card_161","title":"Cool Hand Luke","year":1967,"director":"Stuart Rosenberg","file":"Cool Hand Luke.png","hasArt":true},{"id":"card_162","title":"Castle in the Sky","year":1986,"director":"Hayao Miyazaki","file":"Castle in the Sky.png","hasArt":true},{"id":"card_163","title":"The Grand Budapest Hotel","year":2014,"director":"Wes Anderson","file":"The Grand Budapest Hotel.png","hasArt":true},{"id":"card_164","title":"Perfect Blue","year":1997,"director":"Satoshi Kon","file":"Perfect Blue.png","hasArt":true},{"id":"card_165","title":"North by Northwest","year":1959,"director":"Alfred Hitchcock","file":"North by Northwest.png","hasArt":true},{"id":"card_166","title":"Nausicaä of the Valley of the Wind","year":1984,"director":"Hayao Miyazaki","file":"Nausicaä of the Valley of the Wind.png","hasArt":true},{"id":"card_167","title":"Weathering with You","year":2019,"director":"Makoto Shinkai","file":"Weathering with You.png","hasArt":true},{"id":"card_168","title":"Million Dollar Baby","year":2004,"director":"Clint Eastwood","file":"Million Dollar Baby.png","hasArt":true},{"id":"card_169","title":"Groundhog Day","year":1993,"director":"Harold Ramis","file":"Groundhog Day.png","hasArt":true},{"id":"card_170","title":"Fargo","year":1996,"director":"Joel Coen","file":"Fargo.png","hasArt":true},{"id":"card_171","title":"The Usual Suspects","year":1995,"director":"Bryan Singer","file":"The Usual Suspects.png","hasArt":true},{"id":"card_172","title":"Halloween","year":1978,"director":"John Carpenter","file":"Halloween.png","hasArt":true},{"id":"card_173","title":"The Straight Story","year":1999,"director":"David Lynch","file":"The Straight Story.png","hasArt":true},{"id":"card_174","title":"Magnolia","year":1999,"director":"Paul Thomas Anderson","file":"Magnolia.png","hasArt":true},{"id":"card_175","title":"Harry Potter and the Prisoner of Azkaban","year":2004,"director":"Alfonso Cuarón","file":"Harry Potter and the Prisoner of Azkaban.png","hasArt":true},{"id":"card_176","title":"Akira","year":1988,"director":"Katsuhiro Otomo","file":"Akira.png","hasArt":true},{"id":"card_177","title":"Star Wars: Episode VI - Return of the Jedi","year":1983,"director":"Richard Marquand","file":"Star Wars Episode VI - Return of the Jedi.png","hasArt":true},{"id":"card_178","title":"The Battle of Algiers","year":1966,"director":"Gillo Pontecorvo","file":"The Battle of Algiers.png","hasArt":true},{"id":"card_179","title":"On the Waterfront","year":1954,"director":"Elia Kazan","file":"On the Waterfront.png","hasArt":true},{"id":"card_180","title":"In the Mood for Love","year":2000,"director":"Wong Kar-wai","file":"In the Mood for Love.png","hasArt":true},{"id":"card_181","title":"Lawrence of Arabia","year":1962,"director":"David Lean","file":"Lawrence of Arabia.png","hasArt":true},{"id":"card_182","title":"Iron Man","year":2008,"director":"Jon Favreau","file":"Iron Man.png","hasArt":false},{"id":"card_183","title":"The Incredible Hulk","year":2008,"director":"Louis Leterrier","file":"The Incredible Hulk.png","hasArt":false},{"id":"card_184","title":"Iron Man 2","year":2010,"director":"Jon Favreau","file":"Iron Man 2.png","hasArt":false},{"id":"card_185","title":"Thor","year":2011,"director":"Kenneth Branagh","file":"Thor.png","hasArt":false},{"id":"card_186","title":"Captain America: The First Avenger","year":2011,"director":"Joe Johnston","file":"Captain America The First Avenger.png","hasArt":false},{"id":"card_187","title":"The Avengers","year":2012,"director":"Joss Whedon","file":"The Avengers.png","hasArt":false},{"id":"card_188","title":"Iron Man 3","year":2013,"director":"Shane Black","file":"Iron Man 3.png","hasArt":false},{"id":"card_189","title":"Thor: The Dark World","year":2013,"director":"Alan Taylor","file":"Thor The Dark World.png","hasArt":false},{"id":"card_190","title":"Captain America: The Winter Soldier","year":2014,"director":"Anthony Russo and Joe Russo","file":"Captain America The Winter Soldier.png","hasArt":false},{"id":"card_191","title":"Avengers: Age of Ultron","year":2015,"director":"Joss Whedon","file":"Avengers Age of Ultron.png","hasArt":false},{"id":"card_192","title":"Ant-Man","year":2015,"director":"Peyton Reed","file":"Ant-Man.png","hasArt":false},{"id":"card_193","title":"Captain America: Civil War","year":2016,"director":"Anthony Russo and Joe Russo","file":"Captain America Civil War.png","hasArt":false},{"id":"card_194","title":"Doctor Strange","year":2016,"director":"Scott Derrickson","file":"Doctor Strange.png","hasArt":false},{"id":"card_195","title":"Guardians of the Galaxy Vol. 2","year":2017,"director":"James Gunn","file":"Guardians of the Galaxy Vol. 2.png","hasArt":false},{"id":"card_196","title":"Spider-Man: Homecoming","year":2017,"director":"Jon Watts","file":"Spider-Man Homecoming.png","hasArt":false},{"id":"card_197","title":"Thor: Ragnarok","year":2017,"director":"Taika Waititi","file":"Thor Ragnarok.png","hasArt":false},{"id":"card_198","title":"Black Panther","year":2018,"director":"Ryan Coogler","file":"Black Panther.png","hasArt":false},{"id":"card_199","title":"Ant-Man and the Wasp","year":2018,"director":"Peyton Reed","file":"Ant-Man and the Wasp.png","hasArt":false},{"id":"card_200","title":"Captain Marvel","year":2019,"director":"Anna Boden and Ryan Fleck","file":"Captain Marvel.png","hasArt":false},{"id":"card_201","title":"Avengers: Endgame","year":2019,"director":"Anthony Russo and Joe Russo","file":"Avengers Endgame.png","hasArt":false},{"id":"card_202","title":"Spider-Man: Far From Home","year":2019,"director":"Jon Watts","file":"Spider-Man Far From Home.png","hasArt":false},{"id":"card_203","title":"Black Widow","year":2021,"director":"Cate Shortland","file":"Black Widow.png","hasArt":false},{"id":"card_204","title":"Shang-Chi and the Legend of the Ten Rings","year":2021,"director":"Destin Daniel Cretton","file":"Shang-Chi and the Legend of the Ten Rings.png","hasArt":false},{"id":"card_205","title":"Eternals","year":2021,"director":"Chloé Zhao","file":"Eternals.png","hasArt":false},{"id":"card_206","title":"Doctor Strange in the Multiverse of Madness","year":2022,"director":"Sam Raimi","file":"Doctor Strange in the Multiverse of Madness.png","hasArt":false},{"id":"card_207","title":"Thor: Love and Thunder","year":2022,"director":"Taika Waititi","file":"Thor Love and Thunder.png","hasArt":false},{"id":"card_208","title":"Black Panther: Wakanda Forever","year":2022,"director":"Ryan Coogler","file":"Black Panther Wakanda Forever.png","hasArt":false},{"id":"card_209","title":"Ant-Man and the Wasp: Quantumania","year":2023,"director":"Peyton Reed","file":"Ant-Man and the Wasp Quantumania.png","hasArt":false},{"id":"card_210","title":"Guardians of the Galaxy Vol. 3","year":2023,"director":"James Gunn","file":"Guardians of the Galaxy Vol. 3.png","hasArt":false},{"id":"card_211","title":"The Marvels","year":2023,"director":"Nia DaCosta","file":"The Marvels.png","hasArt":false},{"id":"card_212","title":"Deadpool & Wolverine","year":2024,"director":"Shawn Levy","file":"Deadpool & Wolverine.png","hasArt":false},{"id":"card_213","title":"Captain America: Brave New World","year":2025,"director":"Julius Onah","file":"Captain America Brave New World.png","hasArt":false},{"id":"card_214","title":"Thunderbolts*","year":2025,"director":"Jake Schreier","file":"Thunderbolts.png","hasArt":false},{"id":"card_215","title":"The Fantastic Four: First Steps","year":2025,"director":"Matt Shakman","file":"The Fantastic Four First Steps.png","hasArt":false},{"id":"card_216","title":"The Hobbit: An Unexpected Journey","year":2012,"director":"Peter Jackson","file":"The Hobbit An Unexpected Journey.png","hasArt":false},{"id":"card_217","title":"The Hobbit: The Desolation of Smaug","year":2013,"director":"Peter Jackson","file":"The Hobbit The Desolation of Smaug.png","hasArt":false},{"id":"card_218","title":"The Hobbit: The Battle of the Five Armies","year":2014,"director":"Peter Jackson","file":"The Hobbit The Battle of the Five Armies.png","hasArt":false},{"id":"card_219","title":"Deadpool","year":2016,"director":"Tim Miller","file":"Deadpool.png","hasArt":false},{"id":"card_220","title":"Deadpool 2","year":2018,"director":"David Leitch","file":"Deadpool 2.png","hasArt":false},{"id":"card_221","title":"Spider-Man: Brand New Day","year":2026,"director":"Destin Daniel Cretton","file":"Spider-Man Brand New Day.png","hasArt":false},{"id":"card_222","title":"Quo Vadis","year":1951,"director":"Mervyn LeRoy","file":"Quo Vadis.png","hasArt":false},{"id":"card_223","title":"David and Bathsheba","year":1951,"director":"Henry King","file":"David and Bathsheba.png","hasArt":false},{"id":"card_224","title":"Salome","year":1953,"director":"William Dieterle","file":"Salome.png","hasArt":false},{"id":"card_225","title":"The Robe","year":1953,"director":"Henry Koster","file":"The Robe.png","hasArt":false},{"id":"card_226","title":"Demetrius and the Gladiators","year":1954,"director":"Delmer Daves","file":"Demetrius and the Gladiators.png","hasArt":false},{"id":"card_227","title":"The Egyptian","year":1954,"director":"Michael Curtiz","file":"The Egyptian.png","hasArt":false},{"id":"card_228","title":"Sign of the Pagan","year":1954,"director":"Douglas Sirk","file":"Sign of the Pagan.png","hasArt":false},{"id":"card_229","title":"The Silver Chalice","year":1954,"director":"Victor Saville","file":"The Silver Chalice.png","hasArt":false},{"id":"card_230","title":"Land of the Pharaohs","year":1955,"director":"Howard Hawks","file":"Land of the Pharaohs.png","hasArt":false},{"id":"card_231","title":"Helen of Troy","year":1956,"director":"Robert Wise","file":"Helen of Troy.png","hasArt":false},{"id":"card_232","title":"Alexander the Great","year":1956,"director":"Robert Rossen","file":"Alexander the Great.png","hasArt":false},{"id":"card_233","title":"War and Peace","year":1956,"director":"King Vidor","file":"War and Peace.png","hasArt":false},{"id":"card_234","title":"The Ten Commandments","year":1956,"director":"Cecil B. DeMille","file":"The Ten Commandments.png","hasArt":false},{"id":"card_235","title":"The Hunchback of Notre Dame","year":1956,"director":"Jean Delannoy","file":"The Hunchback of Notre Dame.png","hasArt":false},{"id":"card_236","title":"The Last Days of Pompeii","year":1959,"director":"Mario Bonnard","file":"The Last Days of Pompeii.png","hasArt":false},{"id":"card_237","title":"Ben-Hur","year":1959,"director":"William Wyler","file":"Ben-Hur.png","hasArt":false},{"id":"card_238","title":"Solomon and Sheba","year":1959,"director":"King Vidor","file":"Solomon and Sheba.png","hasArt":false},{"id":"card_239","title":"The Human Condition","year":1959,"director":"Masaki Kobayashi","file":"The Human Condition.png","hasArt":false},{"id":"card_240","title":"Knights of the Teutonic Order","year":1960,"director":"Aleksander Ford","file":"Knights of the Teutonic Order.png","hasArt":false},{"id":"card_241","title":"Spartacus","year":1960,"director":"Stanley Kubrick","file":"Spartacus.png","hasArt":false},{"id":"card_242","title":"Exodus","year":1960,"director":"Otto Preminger","file":"Exodus.png","hasArt":false},{"id":"card_243","title":"The Story of Ruth","year":1960,"director":"Henry Koster","file":"The Story of Ruth.png","hasArt":false},{"id":"card_244","title":"King of Kings","year":1961,"director":"Nicholas Ray","file":"King of Kings.png","hasArt":false},{"id":"card_245","title":"El Cid","year":1961,"director":"Anthony Mann","file":"El Cid.png","hasArt":false},{"id":"card_246","title":"Barabbas","year":1961,"director":"Richard Fleischer","file":"Barabbas.png","hasArt":false},{"id":"card_247","title":"The Colossus of Rhodes","year":1961,"director":"Sergio Leone","file":"The Colossus of Rhodes.png","hasArt":false},{"id":"card_248","title":"The Longest Day","year":1962,"director":"Ken Annakin, Andrew Marton, Bernhard Wicki","file":"The Longest Day.png","hasArt":false},{"id":"card_249","title":"How the West Was Won","year":1962,"director":"Henry Hathaway, John Ford, George Marshall","file":"How the West Was Won.png","hasArt":false},{"id":"card_250","title":"Sodom and Gomorrah","year":1962,"director":"Robert Aldrich","file":"Sodom and Gomorrah.png","hasArt":false},{"id":"card_251","title":"55 Days at Peking","year":1963,"director":"Nicholas Ray","file":"55 Days at Peking.png","hasArt":false},{"id":"card_252","title":"Cleopatra","year":1963,"director":"Joseph L. Mankiewicz","file":"Cleopatra.png","hasArt":false},{"id":"card_253","title":"Kings of the Sun","year":1963,"director":"J. Lee Thompson","file":"Kings of the Sun.png","hasArt":false},{"id":"card_254","title":"The Fall of the Roman Empire","year":1964,"director":"Anthony Mann","file":"The Fall of the Roman Empire.png","hasArt":false},{"id":"card_255","title":"The Greatest Story Ever Told","year":1965,"director":"George Stevens","file":"The Greatest Story Ever Told.png","hasArt":false},{"id":"card_256","title":"Genghis Khan","year":1965,"director":"Henry Levin","file":"Genghis Khan.png","hasArt":false},{"id":"card_257","title":"Doctor Zhivago","year":1965,"director":"David Lean","file":"Doctor Zhivago.png","hasArt":false},{"id":"card_258","title":"The Bible: In the Beginning...","year":1966,"director":"John Huston","file":"The Bible In the Beginning....png","hasArt":false},{"id":"card_259","title":"Hawaii","year":1966,"director":"George Roy Hill","file":"Hawaii.png","hasArt":false},{"id":"card_260","title":"Pharaoh","year":1966,"director":"Jerzy Kawalerowicz","file":"Pharaoh.png","hasArt":false},{"id":"card_261","title":"Khartoum","year":1966,"director":"Basil Dearden","file":"Khartoum.png","hasArt":false},{"id":"card_262","title":"War and Peace - UdSSR 4 Parts","year":1966,"director":"Sergei Bondarchuk","file":"War and Peace - UdSSR 4 Parts.png","hasArt":false},{"id":"card_263","title":"Waterloo","year":1970,"director":"Sergei Bondarchuk","file":"Waterloo.png","hasArt":false},{"id":"card_264","title":"Ludwig","year":1973,"director":"Luchino Visconti","file":"Ludwig.png","hasArt":false},{"id":"card_265","title":"1900","year":1976,"director":"Bernardo Bertolucci","file":"1900.png","hasArt":false},{"id":"card_266","title":"The Message","year":1976,"director":"Moustapha Akkad","file":"The Message.png","hasArt":false},{"id":"card_267","title":"A Bridge Too Far","year":1977,"director":"Richard Attenborough","file":"A Bridge Too Far.png","hasArt":false},{"id":"card_268","title":"Heaven's Gate","year":1980,"director":"Michael Cimino","file":"Heaven's Gate.png","hasArt":false},{"id":"card_269","title":"Excalibur","year":1981,"director":"John Boorman","file":"Excalibur.png","hasArt":false},{"id":"card_270","title":"Reds","year":1981,"director":"Warren Beatty","file":"Reds.png","hasArt":false},{"id":"card_271","title":"Gandhi","year":1982,"director":"Richard Attenborough","file":"Gandhi.png","hasArt":false},{"id":"card_272","title":"Dune","year":1984,"director":"David Lynch","file":"Dune.png","hasArt":false},{"id":"card_273","title":"King David","year":1985,"director":"Bruce Beresford","file":"King David.png","hasArt":false},{"id":"card_274","title":"The Last Emperor","year":1987,"director":"Bernardo Bertolucci","file":"The Last Emperor.png","hasArt":false},{"id":"card_275","title":"La Révolution française","year":1989,"director":"Robert Enrico, Richard T. Heffron","file":"La Révolution française.png","hasArt":false},{"id":"card_276","title":"Dances with Wolves","year":1990,"director":"Kevin Costner","file":"Dances with Wolves.png","hasArt":false},{"id":"card_277","title":"1492: Conquest of Paradise","year":1992,"director":"Ridley Scott","file":"1492 Conquest of Paradise.png","hasArt":false},{"id":"card_278","title":"The Last of the Mohicans","year":1992,"director":"Michael Mann","file":"The Last of the Mohicans.png","hasArt":false},{"id":"card_279","title":"Gettysburg","year":1993,"director":"Ronald F. Maxwell","file":"Gettysburg.png","hasArt":false},{"id":"card_280","title":"Braveheart","year":1995,"director":"Mel Gibson","file":"Braveheart.png","hasArt":false},{"id":"card_281","title":"Titanic","year":1997,"director":"James Cameron","file":"Titanic.png","hasArt":false},{"id":"card_282","title":"With Fire and Sword","year":1999,"director":"Jerzy Hoffman","file":"With Fire and Sword.png","hasArt":false},{"id":"card_283","title":"The Messenger: The Story of Joan of Arc","year":1999,"director":"Luc Besson","file":"The Messenger The Story of Joan of Arc.png","hasArt":false},{"id":"card_284","title":"The Patriot","year":2000,"director":"Roland Emmerich","file":"The Patriot.png","hasArt":false},{"id":"card_285","title":"Gangs of New York","year":2002,"director":"Martin Scorsese","file":"Gangs of New York.png","hasArt":false},{"id":"card_286","title":"The Last Samurai","year":2003,"director":"Edward Zwick","file":"The Last Samurai.png","hasArt":false},{"id":"card_287","title":"Gods and Generals","year":2003,"director":"Ronald F. Maxwell","file":"Gods and Generals.png","hasArt":false},{"id":"card_288","title":"Troy","year":2004,"director":"Wolfgang Petersen","file":"Troy.png","hasArt":false},{"id":"card_289","title":"Alexander","year":2004,"director":"Oliver Stone","file":"Alexander.png","hasArt":false},{"id":"card_290","title":"Kingdom of Heaven","year":2005,"director":"Ridley Scott","file":"Kingdom of Heaven.png","hasArt":false},{"id":"card_291","title":"Australia","year":2008,"director":"Baz Luhrmann","file":"Australia.png","hasArt":false},{"id":"card_292","title":"10,000 BC","year":2008,"director":"Roland Emmerich","file":"10,000 BC.png","hasArt":false},{"id":"card_293","title":"Agora","year":2009,"director":"Alejandro Amenábar","file":"Agora.png","hasArt":false},{"id":"card_294","title":"Lincoln","year":2012,"director":"Steven Spielberg","file":"Lincoln.png","hasArt":false},{"id":"card_295","title":"Exodus: Gods and Kings","year":2014,"director":"Ridley Scott","file":"Exodus Gods and Kings.png","hasArt":false},{"id":"card_296","title":"Pompeii","year":2014,"director":"Paul W. S. Anderson","file":"Pompeii.png","hasArt":false},{"id":"card_297","title":"Noah","year":2014,"director":"Darren Aronofsky","file":"Noah.png","hasArt":false},{"id":"card_298","title":"The King's Choice","year":2016,"director":"Erik Poppe","file":"The King's Choice.png","hasArt":false},{"id":"card_299","title":"Silence","year":2016,"director":"Martin Scorsese","file":"Silence.png","hasArt":false},{"id":"card_300","title":"The Irishman","year":2019,"director":"Martin Scorsese","file":"The Irishman.png","hasArt":false},{"id":"card_301","title":"The Last Duel","year":2021,"director":"Ridley Scott","file":"The Last Duel.png","hasArt":false},{"id":"card_302","title":"Dune - Part One","year":2021,"director":"Denis Villeneuve","file":"Dune - Part One.png","hasArt":false},{"id":"card_303","title":"All Quiet on the Western Front","year":2022,"director":"Edward Berger","file":"All Quiet on the Western Front.png","hasArt":false},{"id":"card_304","title":"Oppenheimer","year":2023,"director":"Christopher Nolan","file":"Oppenheimer.png","hasArt":false},{"id":"card_305","title":"Napoleon","year":2023,"director":"Ridley Scott","file":"Napoleon.png","hasArt":false},{"id":"card_306","title":"Killers of the Flower Moon","year":2023,"director":"Martin Scorsese","file":"Killers of the Flower Moon.png","hasArt":false},{"id":"card_307","title":"Dune: Part Two","year":2024,"director":"Denis Villeneuve","file":"Dune Part Two.png","hasArt":false},{"id":"card_308","title":"Gladiator II","year":2024,"director":"Ridley Scott","file":"Gladiator II.png","hasArt":false}],"orphans":["Fanny and Alexander.png","The Passion of Joan of Arc.png","Tokyo Story.png"],"generated":"2026-09-08"}
+
+</script>
+
+<header>
+  <div class="wrap strip">
+    <p class="kicker">Flick Battle · card artwork</p>
+    <h1>Card Art Checklist</h1>
+    <div class="gauge">
+      <span class="count" id="count" aria-live="polite"><b>0</b><span class="of"> / 0</span></span>
+      <span class="left" id="left"></span>
+    </div>
+    <div class="bar"><i id="fill" style="width:0%"></i></div>
+    <div class="controls">
+      <input id="q" class="search" type="search" placeholder="Filter by title or director…" autocomplete="off" spellcheck="false">
+      <div class="seg" id="filter" role="group" aria-label="Show">
+        <button data-f="all" aria-pressed="true">All</button>
+        <button data-f="need">Needs art</button>
+        <button data-f="have">Have art</button>
+      </div>
+      <select class="sort" id="sort" aria-label="Sort">
+        <option value="card">Card order</option>
+        <option value="title">Title A–Z</option>
+        <option value="year_desc">Year, newest</option>
+        <option value="year_asc">Year, oldest</option>
+        <option value="need">Needs art first</option>
+      </select>
+      <button class="tbtn" id="theme" type="button">Theme</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="sheet" id="sheet"></div>
+
+  <footer>
+    <h2>Filename rule</h2>
+    <p>Each art file is the movie's exact title with the characters
+      <code>&lt; &gt; : " / \\ | ? *</code> removed, then <code>.png</code> — dropped straight into
+      <code>assets/cards/</code>. A card with no matching file shows the placeholder
+      <code>card_000.png</code>. Copy the target name from any row with the button on its right.</p>
+
+    <div class="orphans">
+      <h2>Orphan art files</h2>
+      <p id="orphan-note"></p>
+      <ul id="orphan-list"></ul>
+    </div>
+
+    <button class="reset" id="reset" type="button">Reset ticks to last disk scan</button>
+    <p class="gen" id="gen"></p>
+  </footer>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+  var DATA = JSON.parse(document.getElementById("data").textContent);
+  var MOVIES = DATA.movies;
+  var TOTAL = MOVIES.length;
+  var SKEY = "flickart:v1:state";
+  var TKEY = "flickart:v1:theme";
+
+  function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+  var savedTheme = lsGet(TKEY);
+  if(savedTheme === "light" || savedTheme === "dark"){
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  }
+  document.getElementById("theme").addEventListener("click", function(){
+    var cur = document.documentElement.getAttribute("data-theme");
+    var isDark = cur ? cur === "dark"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next = isDark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    lsSet(TKEY, next);
+  });
+
+  var state = {};
+  var raw = lsGet(SKEY);
+  if(raw){
+    try{ state = JSON.parse(raw) || {}; }catch(e){ state = {}; }
+  } else {
+    MOVIES.forEach(function(m){ state[m.id] = !!m.hasArt; });
+    lsSet(SKEY, JSON.stringify(state));
+  }
+  MOVIES.forEach(function(m){ if(typeof state[m.id] !== "boolean") state[m.id] = !!m.hasArt; });
+  function save(){ lsSet(SKEY, JSON.stringify(state)); }
+
+  var ui = { q:"", filter:"all", sort:"card" };
+  var sheet = document.getElementById("sheet");
+  var qEl = document.getElementById("q");
+  var filterEl = document.getElementById("filter");
+  var sortEl = document.getElementById("sort");
+
+  qEl.addEventListener("input", function(){ ui.q = qEl.value.trim().toLowerCase(); render(); });
+  filterEl.addEventListener("click", function(e){
+    var b = e.target.closest("button[data-f]"); if(!b) return;
+    ui.filter = b.getAttribute("data-f");
+    [].forEach.call(filterEl.children, function(x){
+      x.setAttribute("aria-pressed", x === b ? "true" : "false");
+    });
+    render();
+  });
+  sortEl.addEventListener("change", function(){ ui.sort = sortEl.value; render(); });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("Reset every tick to match the last disk scan ("
+      + MOVIES.filter(function(m){return m.hasArt;}).length + " with art)? This clears your manual check-offs."))
+      return;
+    MOVIES.forEach(function(m){ state[m.id] = !!m.hasArt; });
+    save(); render();
+  });
+
+  var toast = document.getElementById("toast"), toastT;
+  function flash(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(toastT);
+    toastT = setTimeout(function(){ toast.classList.remove("show"); }, 1500);
+  }
+  function copy(text){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(
+        function(){ flash("Copied  " + text); },
+        function(){ legacyCopy(text); }
+      );
+    } else { legacyCopy(text); }
+  }
+  function legacyCopy(text){
+    var t = document.createElement("textarea");
+    t.value = text; t.setAttribute("readonly","");
+    t.style.position="absolute"; t.style.left="-9999px";
+    document.body.appendChild(t); t.select();
+    try{ document.execCommand("copy"); flash("Copied  " + text); }
+    catch(e){ flash("Couldn't copy — select it manually"); }
+    document.body.removeChild(t);
+  }
+
+  var COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+
+  function visible(){
+    var q = ui.q, f = ui.filter;
+    var list = MOVIES.filter(function(m){
+      if(f === "need" && state[m.id]) return false;
+      if(f === "have" && !state[m.id]) return false;
+      if(q && (m.title + " " + m.director).toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    });
+    var s = ui.sort;
+    list.sort(function(a,b){
+      if(s === "title") return a.title.localeCompare(b.title);
+      if(s === "year_desc") return b.year - a.year || a.title.localeCompare(b.title);
+      if(s === "year_asc") return a.year - b.year || a.title.localeCompare(b.title);
+      if(s === "need"){
+        var d = (state[a.id]?1:0) - (state[b.id]?1:0);
+        if(d) return d;
+      }
+      return a.id.localeCompare(b.id);
+    });
+    return list;
+  }
+
+  function render(){
+    var y = window.scrollY;
+    var list = visible();
+    var done = MOVIES.reduce(function(n,m){ return n + (state[m.id]?1:0); }, 0);
+    var pct = TOTAL ? Math.round(done/TOTAL*100) : 0;
+
+    document.getElementById("count").innerHTML =
+      '<b>' + done + '</b><span class="of"> / ' + TOTAL + '</span>';
+    document.getElementById("left").textContent =
+      (TOTAL - done) + " still need artwork · " + pct + "% done";
+    document.getElementById("fill").style.width = pct + "%";
+
+    if(!list.length){
+      sheet.innerHTML = '<p class="empty">Nothing matches that filter.</p>';
+      return;
+    }
+
+    var html = "";
+    for(var i=0;i<list.length;i++){
+      var m = list[i];
+      var on = !!state[m.id];
+      html +=
+        '<label class="row' + (on ? " done" : "") + '" data-id="' + m.id + '">' +
+          '<input type="checkbox" class="cb"' + (on ? " checked" : "") +
+            ' aria-label="Art added for ' + esc(m.title) + '">' +
+          '<span class="main">' +
+            '<span class="rtitle">' + esc(m.title) + '</span>' +
+            '<span class="meta">' + m.year + ' &middot; ' + esc(m.director) +
+              ' &middot; <span class="cid">' + m.id + '</span>' +
+              (m.hasArt ? '<span class="chip">on disk</span>' : '') +
+            '</span>' +
+          '</span>' +
+          '<span class="file">' +
+            '<span class="fname" title="Click to copy">' + esc(m.file) + '</span>' +
+            '<button class="copy" type="button" aria-label="Copy filename for ' + esc(m.title) + '">' +
+              COPY_ICON + '</button>' +
+          '</span>' +
+        '</label>';
+    }
+    sheet.innerHTML = html;
+    window.scrollTo(0, y);
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+    });
+  }
+
+  sheet.addEventListener("click", function(e){
+    var hit = e.target.closest(".copy, .fname");
+    if(hit){
+      e.preventDefault(); e.stopPropagation();
+      var row = hit.closest(".row");
+      var m = MOVIES.find(function(x){ return x.id === row.getAttribute("data-id"); });
+      if(m) copy(m.file);
+    }
+  });
+  sheet.addEventListener("change", function(e){
+    var cb = e.target.closest(".cb"); if(!cb) return;
+    var row = cb.closest(".row");
+    var id = row.getAttribute("data-id");
+    state[id] = cb.checked;
+    save();
+    render();
+  });
+
+  var orphans = DATA.orphans || [];
+  document.getElementById("orphan-note").textContent = orphans.length
+    ? orphans.length + " file" + (orphans.length>1?"s":"") +
+      " sit in assets/cards/ but match no movie in cards.json — a title was renamed or the card was cut. Rename them to a current title or delete them:"
+    : "None — every art file matches a current movie.";
+  document.getElementById("orphan-list").innerHTML =
+    orphans.map(function(f){ return "<li>" + esc(f) + "</li>"; }).join("");
+
+  document.getElementById("gen").textContent =
+    "Baseline: disk scanned " + DATA.generated + " · " + TOTAL +
+    " movies · ticks saved in this browser.";
+
+  render();
+})();
+</script>

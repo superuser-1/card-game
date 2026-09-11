@@ -22,6 +22,7 @@ func _initialize() -> void:
 	test_k_factor()
 	test_apply_result_win()
 	test_apply_result_draw()
+	test_apply_result_k10_after_peak()
 	test_match_points()
 	test_record_match_normal()
 	test_record_match_bot()
@@ -53,6 +54,12 @@ func _initialize() -> void:
 	test_apply_match_stats()
 	test_apply_tournament_stat()
 	test_backfill_achievement_rewards()
+	test_admin_ban_unban()
+	test_admin_banned_login_rejected()
+	test_admin_set_elo()
+	test_admin_adjust_points()
+	test_admin_search_accounts()
+	test_admin_log()
 
 	# Print final result
 	if _fail_count == 0:
@@ -232,31 +239,49 @@ func test_expected_score() -> void:
 
 
 func test_k_factor() -> void:
-	print("\n=== K Factor ===")
+	print("\n=== K Factor (FIDE B.02) ===")
 
-	assert_equal(ServerStore.k_factor(0), 40, "k_factor(0) == 40")
-	assert_equal(ServerStore.k_factor(9), 40, "k_factor(9) == 40")
-	assert_equal(ServerStore.k_factor(10), 20, "k_factor(10) == 20")
-	assert_equal(ServerStore.k_factor(29), 20, "k_factor(29) == 20")
-	assert_equal(ServerStore.k_factor(30), 10, "k_factor(30) == 10")
+	# First 30 rated games: K=40, regardless of rating.
+	assert_equal(ServerStore.k_factor(0, 1000), 40, "k_factor(0 games, 1000 peak) == 40")
+	assert_equal(ServerStore.k_factor(29, 2500), 40, "k_factor(29 games, 2500 peak) == 40 (still in K-phase)")
+
+	# Established (30+ games), never reached 2400: K=20.
+	assert_equal(ServerStore.k_factor(30, 1000), 20, "k_factor(30 games, 1000 peak) == 20")
+	assert_equal(ServerStore.k_factor(1000, 2399), 20, "k_factor(established, peak 2399) == 20")
+
+	# Established and has ever reached 2400+: K=10, even if current elo has since dropped.
+	assert_equal(ServerStore.k_factor(30, 2400), 10, "k_factor(30 games, peak 2400) == 10")
+	assert_equal(ServerStore.k_factor(1000, 2600), 10, "k_factor(established, peak 2600) == 10")
 
 
 func test_apply_result_win() -> void:
 	print("\n=== Apply Result (Win) ===")
 
-	var result = ServerStore.apply_result(1000, 0, 1000, 0, 1)
+	var result = ServerStore.apply_result(1000, 0, 1000, 1000, 0, 1000, 1)
 	assert_equal(result.delta_a, 20, "Winner gains +20 (round(40*(1-0.5)))")
 	assert_equal(result.delta_b, -20, "Loser loses -20")
 	assert_equal(result.elo_a_after, 1020, "Winner elo becomes 1020")
 	assert_equal(result.elo_b_after, 980, "Loser elo becomes 980")
+	assert_equal(result.peak_a_after, 1020, "Winner peak_elo tracks the new high")
+	assert_equal(result.peak_b_after, 1000, "Loser peak_elo stays at prior peak")
 
 
 func test_apply_result_draw() -> void:
 	print("\n=== Apply Result (Draw) ===")
 
-	var result = ServerStore.apply_result(1000, 50, 1000, 50, 0)
-	assert_equal(result.delta_a, 0, "Draw with equal elo gives 0 (k=10, score-e=0)")
+	var result = ServerStore.apply_result(1000, 50, 1000, 1000, 50, 1000, 0)
+	assert_equal(result.delta_a, 0, "Draw with equal elo gives 0 (k=20, score-e=0)")
 	assert_equal(result.delta_b, 0, "Draw with equal elo gives 0")
+
+
+func test_apply_result_k10_after_peak() -> void:
+	print("\n=== Apply Result (K=10 retained after peak, FIDE rule) ===")
+
+	# Player A once reached 2400 and has since fallen to 2300; still gets K=10,
+	# not the K=20 an always-under-2400 player at the same current elo would get.
+	var result = ServerStore.apply_result(2300, 200, 2400, 2300, 200, 2300, 1)
+	assert_equal(result.delta_a, 5, "K=10 winner at even elo gains +5 (round(10*0.5))")
+	assert_equal(result.delta_b, -10, "K=20 loser (never hit 2400) loses -10 (round(20*0.5))")
 
 
 func test_match_points() -> void:
@@ -1249,3 +1274,115 @@ func test_backfill_achievement_rewards() -> void:
 	# Idempotent: a second pass grants nothing new.
 	var granted_again = s.backfill_achievement_rewards(account)
 	assert_equal(granted_again.size(), 0, "second backfill grants nothing new")
+
+
+func test_admin_ban_unban() -> void:
+	print("\n=== Admin Ban / Unban ===")
+	var s = fresh()
+	var res = s.create_account("Cheater", "secret1")
+	var account_id = int(res.account.id)
+
+	var ban_res = s.ban_account(account_id, "smurfing", "admin1")
+	assert_equal(ban_res.ok, true, "Ban succeeds")
+	assert_equal(ban_res.account.banned, true, "account_admin_view reports banned")
+	assert_equal(ban_res.account.ban_reason, "smurfing", "Ban reason recorded")
+	var account = s.get_account(account_id)
+	assert_equal(account.banned, true, "Raw account record is banned")
+	assert_equal(account.banned_by, "admin1", "banned_by recorded")
+
+	var unban_res = s.unban_account(account_id, "admin1")
+	assert_equal(unban_res.ok, true, "Unban succeeds")
+	assert_equal(unban_res.account.banned, false, "account_admin_view reports unbanned")
+	account = s.get_account(account_id)
+	assert_equal(account.ban_reason, "", "Ban reason cleared on unban")
+
+	var missing_res = s.ban_account(999999, "x", "admin1")
+	assert_equal(missing_res.ok, false, "Ban fails for unknown account")
+	assert_equal(missing_res.error, "no_such_user", "Error is 'no_such_user'")
+
+
+func test_admin_banned_login_rejected() -> void:
+	print("\n=== Banned Account Login Rejected ===")
+	var s = fresh()
+	var res = s.create_account("Banned", "secret1")
+	var account_id = int(res.account.id)
+	s.ban_account(account_id, "abuse", "admin1")
+
+	var login_res = s.verify_login("Banned", "secret1")
+	assert_equal(login_res.ok, false, "Login fails once banned, even with correct password")
+	assert_equal(login_res.error, "banned", "Error is 'banned'")
+
+
+func test_admin_set_elo() -> void:
+	print("\n=== Admin Set Elo ===")
+	var s = fresh()
+	var res = s.create_account("Rated", "secret1")
+	var account_id = int(res.account.id)
+
+	var set_res = s.admin_set_elo(account_id, 1800, "admin1")
+	assert_equal(set_res.ok, true, "Set elo succeeds")
+	assert_equal(set_res.account.elo, 1800, "Elo is now 1800")
+	var account = s.get_account(account_id)
+	assert_equal(int(account.peak_elo), 1800, "peak_elo tracks the manual correction upward")
+
+	# A correction DOWN must not lower peak_elo — the FIDE K=10 rule keys off
+	# the all-time high, and an admin fixing a bad rating shouldn't quietly
+	# erase that a player once legitimately reached it.
+	s.admin_set_elo(account_id, 1500, "admin1")
+	account = s.get_account(account_id)
+	assert_equal(int(account.elo), 1500, "Elo corrected down to 1500")
+	assert_equal(int(account.peak_elo), 1800, "peak_elo stays at the prior high")
+
+
+func test_admin_adjust_points() -> void:
+	print("\n=== Admin Adjust Points ===")
+	var s = fresh()
+	var res = s.create_account("Wallet", "secret1")
+	var account_id = int(res.account.id)
+
+	var add_res = s.admin_adjust_points(account_id, 50, "admin1")
+	assert_equal(add_res.ok, true, "Adjust points (add) succeeds")
+	assert_equal(add_res.account.points, 50, "Points now 50")
+
+	var sub_res = s.admin_adjust_points(account_id, -20, "admin1")
+	assert_equal(sub_res.account.points, 30, "Points now 30 after -20")
+
+	# Floored at 0, never negative.
+	var floor_res = s.admin_adjust_points(account_id, -1000, "admin1")
+	assert_equal(floor_res.account.points, 0, "Points floored at 0, not negative")
+
+
+func test_admin_search_accounts() -> void:
+	print("\n=== Admin Search Accounts ===")
+	var s = fresh()
+	s.create_account("AliceSmith", "secret1")
+	var bob = s.create_account("BobJones", "secret1")
+	s.create_account("Charlie", "secret1")
+
+	var by_substring = s.search_accounts("smith")
+	assert_equal(by_substring.size(), 1, "Substring search (case-insensitive) finds exactly one match")
+	assert_equal(by_substring[0].username, "AliceSmith", "Substring search finds AliceSmith")
+
+	var by_id = s.search_accounts(str(int(bob.account.id)))
+	assert_true(by_id.size() >= 1, "Numeric query matches by exact id")
+	assert_equal(by_id[0].id, int(bob.account.id), "Exact-id match is BobJones")
+
+	var all_rows = s.search_accounts("")
+	assert_equal(all_rows.size(), 3, "Empty query returns every account")
+	assert_true(not ("pw_hash" in all_rows[0]), "Search results never include password material")
+
+
+func test_admin_log() -> void:
+	print("\n=== Admin Audit Log ===")
+	var s = fresh()
+	var res = s.create_account("Logged", "secret1")
+	var account_id = int(res.account.id)
+
+	s.ban_account(account_id, "reason A", "admin1")
+	s.admin_set_elo(account_id, 1200, "admin2")
+
+	var log = s.recent_admin_actions(10)
+	assert_equal(log.size(), 2, "Two admin actions logged")
+	assert_equal(log[0].action, "set_elo", "Most recent action first (set_elo)")
+	assert_equal(log[0].admin, "admin2", "Most recent action attributed to admin2")
+	assert_equal(log[1].action, "ban", "Older action second (ban)")

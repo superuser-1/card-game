@@ -53,6 +53,17 @@ var _app_focused: bool = true
 ## blank form. Read-and-clear by login_screen._ready().
 var kicked_message: String = ""
 
+## True right before login_screen is sent back to after an UNEXPECTED
+## connection drop mid-session (see _on_kicked) — the one case that should
+## silently reuse the saved token, so a dropped connection can drop you
+## straight back into a held match instead of forfeiting it. Read-and-clear
+## by login_screen._ready(). A plain app launch never sets this, so it always
+## shows a real login form — no silent auto-login just because a token
+## happens to be saved on disk. (A proper "stay signed in" story — Steam
+## auth, mobile platform auth — can replace this later; for now, explicit
+## login only, except to rescue an in-progress match.)
+var pending_reconnect: bool = false
+
 ## True between a Net.force_logout signal and the server_disconnected that
 ## follows it — tells _on_kicked the drop is a deliberate server sign-out (wipe
 ## the token) rather than a network blip (keep it and auto-resume).
@@ -114,6 +125,12 @@ const _DEFAULT_SETTINGS := {
 
 
 func _ready() -> void:
+	# Intercept the window close button so _graceful_quit() (below) gets a
+	# chance to close the multiplayer peer cleanly before the process dies —
+	# left to the engine default, the OS just yanks the socket out from under
+	# ENet, which the server only notices via connection timeout. Harmless to
+	# always set even for the server role (systemd sends its own stop signal).
+	get_tree().auto_accept_quit = false
 	DirAccess.make_dir_recursive_absolute("user://flickbattle")
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--profile="):
@@ -156,9 +173,10 @@ func _on_kicked() -> void:
 			kicked_message = "Disconnected — this account may have signed in elsewhere. Please log in again."
 		goto("res://client/login_screen.tscn")
 		return
-	# Unexpected drop — keep the saved token so login_screen auto-resumes and
-	# the server can drop us straight back into the held match (see
-	# net_node RECONNECT_GRACE_SECONDS / _try_rejoin_match).
+	# Unexpected drop — keep the saved token and flag it so login_screen
+	# auto-resumes just this once, dropping us straight back into the held
+	# match (see net_node RECONNECT_GRACE_SECONDS / _try_rejoin_match).
+	pending_reconnect = true
 	kicked_message = "Connection lost — reconnecting…"
 	goto("res://client/login_screen.tscn")
 
@@ -462,13 +480,44 @@ func _refresh_master_mute() -> void:
 	AudioServer.set_bus_mute(master_bus, muted or zeroed or focus_muted)
 
 
+## Closes the multiplayer peer cleanly (if one exists — solo play never
+## creates one) before actually quitting, so the far end gets a real ENet
+## disconnect instead of silently timing the connection out. Matters for a
+## networked client (the server notices we're gone immediately, doesn't hold
+## a stale reconnect-grace slot for us) and equally for the server process
+## itself (systemd restart/stop then notifies every connected client instead
+## of leaving them to time out mid-game) — same call either way, since
+## ENetMultiplayerPeer.close() handles both the "I'm a client" and "I'm the
+## server, tell everyone" cases.
+func _graceful_quit() -> void:
+	var mp := multiplayer.multiplayer_peer
+	if mp != null and mp.get_connection_status() != MultiplayerPeer.CONNECTION_DISCONNECTED:
+		mp.close()
+	get_tree().quit()
+
+
+## FPS cap applied while the window is unfocused, regardless of the user's
+## configured fps_cap — an idle background client doesn't need to redraw fast.
+const UNFOCUSED_FPS_CAP := 15
+
 func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_graceful_quit()
+		return
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
 		_app_focused = false
 		_refresh_master_mute()
+		Engine.max_fps = UNFOCUSED_FPS_CAP
+		# Low-processor mode adds a fixed sleep to every main-loop iteration,
+		# not just idle ones — fine for a backgrounded window, but it costs
+		# frame-pacing precision (occasional missed vsync) while actively
+		# playing, which read as choppy hand-card dragging. Unfocused only.
+		OS.low_processor_usage_mode = true
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
 		_app_focused = true
 		_refresh_master_mute()
+		Engine.max_fps = maxi(0, int(settings.get("fps_cap", 0)))
+		OS.low_processor_usage_mode = false
 
 
 # --- cubes (player-curated card catalogues, local only) -----------------

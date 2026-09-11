@@ -22,7 +22,13 @@ func _ready() -> void:
 		%ErrorLabel.text = Session.kicked_message
 		Session.kicked_message = ""
 
-	var saved: String = Session.load_token()
+	# Only reconnect silently when we were just kicked back here by an
+	# unexpected drop mid-session (rescuing a held match) — never on a plain
+	# app launch, even if a saved token exists on disk. See
+	# Session.pending_reconnect.
+	var auto_resume := Session.pending_reconnect
+	Session.pending_reconnect = false
+	var saved: String = Session.load_token() if auto_resume else ""
 	if saved != "":
 		_resuming = true
 		%StatusLabel.text = "Resuming session..."
@@ -129,6 +135,11 @@ func _on_auth_completed(result: Dictionary) -> void:
 	# Back to a usable form.
 	_enable_inputs()
 	var error: String = result.get("error", "")
+	if error == "banned":
+		Session.clear()
+		var reason: String = str(result.get("extra", {}).get("ban_reason", ""))
+		%ErrorLabel.text = "This account has been suspended." + (" Reason: %s" % reason if reason != "" else "")
+		return
 	if error == "session_expired" or was_resuming:
 		Session.clear()
 		%StatusLabel.text = "Please log in."

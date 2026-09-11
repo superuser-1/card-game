@@ -15,7 +15,12 @@ extends RefCounted
 ## bcrypt via a native addon before any real launch.
 
 const START_ELO := 1000
-const PROVISIONAL_GAMES := 10
+## FIDE Elo regulations (B.02): K=40 for a player's first 30 rated games,
+## K=20 once established below the 2400 threshold, K=10 once a player has
+## ever reached 2400+ (even if their rating later drops back below it —
+## hence tracking `peak_elo` per account rather than current elo).
+const K_PHASE_GAMES := 30
+const K_HIGH_ELO_THRESHOLD := 2400
 const HASH_ITERATIONS := 200000
 
 # DEV: relaxed for local testing. Bump back to 3 / 6 before any real launch.
@@ -26,9 +31,14 @@ var _dir: String
 var _accounts: Array
 var _matches: Array
 var _tournaments: Array
+var _admin_log: Array
 var _next_account_id: int
 var _next_match_id: int
 var _next_tournament_id: int
+
+## Admin audit log kept on disk stays capped at this many most-recent entries —
+## it's an incident-review trail, not a permanent ledger.
+const ADMIN_LOG_MAX := 1000
 
 
 func open(dir := "user://flickbattle/") -> void:
@@ -36,6 +46,7 @@ func open(dir := "user://flickbattle/") -> void:
 	_accounts = []
 	_matches = []
 	_tournaments = []
+	_admin_log = []
 	_next_account_id = 1
 	_next_match_id = 1
 	_next_tournament_id = 1
@@ -98,6 +109,14 @@ func open(dir := "user://flickbattle/") -> void:
 	else:
 		_save_tournaments()
 
+	var admin_log_path := dir + "admin_log.json"
+	if FileAccess.file_exists(admin_log_path):
+		var file := FileAccess.open(admin_log_path, FileAccess.READ)
+		if file != null:
+			var parsed = JSON.parse_string(file.get_as_text())
+			if parsed is Dictionary and parsed.has("actions"):
+				_admin_log = parsed["actions"]
+
 
 # --- auth ------------------------------------------------------------------
 
@@ -139,6 +158,7 @@ func create_account(username: String, password: String, avatar := "") -> Diction
 		"pw_hash": hashed["hash"],
 		"pw_iterations": hashed["iterations"],
 		"elo": START_ELO,
+		"peak_elo": START_ELO,
 		"games": 0,
 		"wins": 0,
 		"losses": 0,
@@ -151,6 +171,10 @@ func create_account(username: String, password: String, avatar := "") -> Diction
 		"stats": {},
 		"achievements": {"unlocked": {}},
 		"is_admin": false,
+		"banned": false,
+		"ban_reason": "",
+		"banned_ts": 0,
+		"banned_by": "",
 	}
 	_accounts.append(account)
 	_next_account_id += 1
@@ -176,6 +200,8 @@ func verify_login(username: String, password: String) -> Dictionary:
 	)
 	if not ok:
 		return {"ok": false, "error": "bad_credentials", "account": {}}
+	if bool(account.get("banned", false)):
+		return {"ok": false, "error": "banned", "account": account}
 	return {"ok": true, "error": "", "account": account}
 
 
@@ -274,7 +300,7 @@ func account_snapshot(account: Dictionary) -> Dictionary:
 		"draws": account.get("draws"),
 		"points": account.get("points"),
 		"owned_rewards": (account.get("owned_rewards", []) as Array).duplicate(),
-		"is_provisional": int(account.get("games", 0)) < PROVISIONAL_GAMES,
+		"is_provisional": int(account.get("games", 0)) < K_PHASE_GAMES,
 		"quests": _quest_rows(QuestSystem.ensure_day(account.get("quests", {}), QuestSystem.today_key())),
 		"stats": (account.get("stats", {}) as Dictionary).duplicate(),
 		"achievements": {
@@ -283,10 +309,145 @@ func account_snapshot(account: Dictionary) -> Dictionary:
 	}
 
 
+## --- admin tools -----------------------------------------------------------
+## Every admin action is a plain method here, taking/returning plain data —
+## no RPC, no auth check (the caller, net_node's admin RPC handlers, already
+## verified the requester is an admin before reaching these). Kept this way so
+## a future HTTP-based admin website can call the exact same functions behind
+## a different transport, instead of duplicating the logic.
+
+## Fuller account view than account_snapshot() (adds id/username/ban/admin
+## fields a player's own client never needs to see). Still never includes
+## password material.
+func account_admin_view(account: Dictionary) -> Dictionary:
+	if account.is_empty():
+		return {}
+	return {
+		"id": account.get("id"),
+		"username": account.get("username"),
+		"display_name": account.get("display_name"),
+		"elo": account.get("elo"),
+		"peak_elo": account.get("peak_elo", account.get("elo")),
+		"games": account.get("games"),
+		"wins": account.get("wins"),
+		"losses": account.get("losses"),
+		"draws": account.get("draws"),
+		"points": account.get("points"),
+		"is_admin": bool(account.get("is_admin", false)),
+		"banned": bool(account.get("banned", false)),
+		"ban_reason": account.get("ban_reason", ""),
+		"banned_ts": account.get("banned_ts", 0),
+		"banned_by": account.get("banned_by", ""),
+		"created_ts": account.get("created_ts", 0),
+	}
+
+
+## Case-insensitive username substring match, or an exact id match if `query`
+## parses as an int. Sorted by username. `limit` caps the result count so a
+## broad/empty query on a big account list can't blow up the reply payload.
+func search_accounts(query: String, limit := 25) -> Array:
+	var q := query.strip_edges().to_lower()
+	var out := []
+	if q.is_valid_int():
+		var by_id := get_account(int(q))
+		if not by_id.is_empty():
+			out.append(account_admin_view(by_id))
+	for account in _accounts:
+		if out.size() >= limit:
+			break
+		if int(account.get("id", -1)) == (int(q) if q.is_valid_int() else -1):
+			continue  # already added above
+		if q != "" and not str(account.get("username_lower", "")).contains(q):
+			continue
+		out.append(account_admin_view(account))
+	out.sort_custom(func(a, b): return str(a.get("username", "")).to_lower() < str(b.get("username", "")).to_lower())
+	return out
+
+
+func _log_admin_action(admin_username: String, action: String, account_id: int, details: String) -> void:
+	_admin_log.append({
+		"ts": int(Time.get_unix_time_from_system()),
+		"admin": admin_username,
+		"action": action,
+		"account_id": account_id,
+		"details": details,
+	})
+	if _admin_log.size() > ADMIN_LOG_MAX:
+		_admin_log = _admin_log.slice(_admin_log.size() - ADMIN_LOG_MAX)
+	_save_admin_log()
+
+
+## Most recent actions first.
+func recent_admin_actions(limit := 100) -> Array:
+	var n := _admin_log.size()
+	var out := []
+	var i := n - 1
+	while i >= 0 and out.size() < limit:
+		out.append(_admin_log[i])
+		i -= 1
+	return out
+
+
+func ban_account(account_id: int, reason: String, admin_username: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+	account["banned"] = true
+	account["ban_reason"] = reason.strip_edges()
+	account["banned_ts"] = int(Time.get_unix_time_from_system())
+	account["banned_by"] = admin_username
+	_save_accounts()
+	_log_admin_action(admin_username, "ban", account_id, reason)
+	return {"ok": true, "error": "", "account": account_admin_view(account)}
+
+
+func unban_account(account_id: int, admin_username: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+	account["banned"] = false
+	account["ban_reason"] = ""
+	account["banned_ts"] = 0
+	account["banned_by"] = ""
+	_save_accounts()
+	_log_admin_action(admin_username, "unban", account_id, "")
+	return {"ok": true, "error": "", "account": account_admin_view(account)}
+
+
+## Manual elo correction — bypasses apply_result entirely (no opponent, no K
+## factor). peak_elo is bumped along with it if the new value is a new high,
+## same invariant record_match maintains, so the FIDE K=10 rule stays correct
+## for this account afterwards.
+func admin_set_elo(account_id: int, new_elo: int, admin_username: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+	var old_elo := int(account.get("elo", START_ELO))
+	account["elo"] = new_elo
+	account["peak_elo"] = maxi(int(account.get("peak_elo", START_ELO)), new_elo)
+	_save_accounts()
+	_log_admin_action(admin_username, "set_elo", account_id, "%d -> %d" % [old_elo, new_elo])
+	return {"ok": true, "error": "", "account": account_admin_view(account)}
+
+
+## `delta` may be negative; the wallet is floored at 0.
+func admin_adjust_points(account_id: int, delta: int, admin_username: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+	var old_points := int(account.get("points", 0))
+	account["points"] = maxi(0, old_points + delta)
+	_save_accounts()
+	_log_admin_action(admin_username, "adjust_points", account_id, "%d -> %d (delta %d)" % [old_points, int(account["points"]), delta])
+	return {"ok": true, "error": "", "account": account_admin_view(account)}
+
+
 ## Roll the daily reset if needed, then apply ONE finished match's result to this
 ## account's quests. Mutates + persists the account (adds any earned points to
 ## account["points"] — the same pool shop purchases spend). Caller MUST only
-## invoke this for ranked, non-bot, human matches (see net_node._finish_match).
+## invoke this for non-bot, human-vs-human matches — ranked or tournament (see
+## net_node._finish_match / _finish_tournament_match). Solo and custom matches
+## never call this.
 ## Returns:
 ##   {"completed": Array of {id, name, points},
 ##    "points_awarded": int,
@@ -577,24 +738,31 @@ static func expected_score(my_elo: int, opp_elo: int) -> float:
 	return 1.0 / (1.0 + pow(10.0, (float(opp_elo) - float(my_elo)) / 400.0))
 
 
-static func k_factor(games_played: int) -> int:
-	if games_played < 10:
+## FIDE B.02: 40 during a player's first 30 rated games, then 20 unless the
+## player's rating has ever reached the high-elo threshold (2400), in which
+## case it drops to 10 permanently — hence `peak_elo` rather than current elo.
+static func k_factor(games_played: int, peak_elo: int) -> int:
+	if games_played < K_PHASE_GAMES:
 		return 40
-	elif games_played < 30:
-		return 20
-	return 10
+	elif peak_elo >= K_HIGH_ELO_THRESHOLD:
+		return 10
+	return 20
 
 
-static func apply_result(elo_a: int, games_a: int, elo_b: int, games_b: int, winner: int) -> Dictionary:
+static func apply_result(elo_a: int, games_a: int, peak_a: int, elo_b: int, games_b: int, peak_b: int, winner: int) -> Dictionary:
 	var score_a := 1.0 if winner == 1 else (0.5 if winner == 0 else 0.0)
 	var score_b := 1.0 - score_a
-	var delta_a := int(round(k_factor(games_a) * (score_a - expected_score(elo_a, elo_b))))
-	var delta_b := int(round(k_factor(games_b) * (score_b - expected_score(elo_b, elo_a))))
+	var delta_a := int(round(k_factor(games_a, peak_a) * (score_a - expected_score(elo_a, elo_b))))
+	var delta_b := int(round(k_factor(games_b, peak_b) * (score_b - expected_score(elo_b, elo_a))))
+	var elo_a_after := elo_a + delta_a
+	var elo_b_after := elo_b + delta_b
 	return {
-		"elo_a_after": elo_a + delta_a,
-		"elo_b_after": elo_b + delta_b,
+		"elo_a_after": elo_a_after,
+		"elo_b_after": elo_b_after,
 		"delta_a": delta_a,
 		"delta_b": delta_b,
+		"peak_a_after": maxi(peak_a, elo_a_after),
+		"peak_b_after": maxi(peak_b, elo_b_after),
 	}
 
 
@@ -632,7 +800,8 @@ func record_match(a1_id: int, a2_id: int, winner: int, score1: int, score2: int,
 	var account_2 := {}
 	var is_real := a2_id != 0
 	var elo_2_before := START_ELO
-	var games_2_before := 1000  # bot: fixed, => k_factor 10
+	var games_2_before := 1000  # bot: fixed, high game count => k_factor 10
+	var peak_2_before := START_ELO
 	if is_real:
 		account_2 = get_account(a2_id)
 		if account_2.is_empty():
@@ -640,15 +809,17 @@ func record_match(a1_id: int, a2_id: int, winner: int, score1: int, score2: int,
 			return {}
 		elo_2_before = int(account_2.get("elo", START_ELO))
 		games_2_before = int(account_2.get("games", 0))
+		peak_2_before = int(account_2.get("peak_elo", elo_2_before))
 
 	var elo_1_before := int(account_1.get("elo", START_ELO))
 	var games_1_before := int(account_1.get("games", 0))
+	var peak_1_before := int(account_1.get("peak_elo", elo_1_before))
 
-	var res := apply_result(elo_1_before, games_1_before, elo_2_before, games_2_before, winner)
+	var res := apply_result(elo_1_before, games_1_before, peak_1_before, elo_2_before, games_2_before, peak_2_before, winner)
 
-	_apply_account_result(account_1, res["elo_a_after"], _outcome_for(winner, 1), score1)
+	_apply_account_result(account_1, res["elo_a_after"], res["peak_a_after"], _outcome_for(winner, 1), score1)
 	if is_real:
-		_apply_account_result(account_2, res["elo_b_after"], _outcome_for(winner, 2), score2)
+		_apply_account_result(account_2, res["elo_b_after"], res["peak_b_after"], _outcome_for(winner, 2), score2)
 	_save_accounts()
 
 	var record := {
@@ -673,8 +844,9 @@ func record_match(a1_id: int, a2_id: int, winner: int, score1: int, score2: int,
 	return record
 
 
-func _apply_account_result(account: Dictionary, elo_after: int, outcome: String, own_score: int) -> void:
+func _apply_account_result(account: Dictionary, elo_after: int, peak_elo_after: int, outcome: String, own_score: int) -> void:
 	account["elo"] = elo_after
+	account["peak_elo"] = peak_elo_after
 	account["games"] = int(account.get("games", 0)) + 1
 	account["points"] = int(account.get("points", 0)) + match_points(outcome, own_score)
 	match outcome:
@@ -1149,3 +1321,9 @@ func _save_tournaments() -> void:
 	var file := FileAccess.open(_dir + "tournaments.json", FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify({"tournaments": _tournaments}, "\t"))
+
+
+func _save_admin_log() -> void:
+	var file := FileAccess.open(_dir + "admin_log.json", FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify({"actions": _admin_log}, "\t"))

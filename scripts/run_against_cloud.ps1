@@ -18,6 +18,7 @@ $pidFile = Join-Path $PSScriptRoot ".flickbattle_cloud_pids.txt"
 
 if (Test-Path $pidFile) {
 	Write-Host "Stopping previous cloud-test client processes..."
+	$pending = @()
 	Get-Content $pidFile | ForEach-Object {
 		$parts = $_ -split ","
 		$procId = $parts[0] -as [int]
@@ -25,7 +26,28 @@ if (Test-Path $pidFile) {
 		if ($procId) {
 			$proc = Get-Process -Id $procId -ErrorAction SilentlyContinue
 			if ($proc -and $proc.StartTime.Ticks -eq $startTicks) {
-				Stop-Process -Id $procId -Force -ErrorAction SilentlyContinue
+				# Ask nicely first: CloseMainWindow() posts WM_CLOSE, which
+				# Session._notification (client/session.gd) handles by closing
+				# the multiplayer peer cleanly before quitting, so the server
+				# sees a real disconnect instead of timing the peer out.
+				# Stop-Process -Force skips straight to TerminateProcess,
+				# which gives it no chance to do that.
+				if ($proc.CloseMainWindow()) {
+					$pending += $proc
+				} else {
+					Stop-Process -Id $procId -Force -ErrorAction SilentlyContinue
+				}
+			}
+		}
+	}
+	if ($pending.Count -gt 0) {
+		$deadline = (Get-Date).AddSeconds(3)
+		while ((Get-Date) -lt $deadline -and ($pending | Where-Object { -not $_.HasExited })) {
+			Start-Sleep -Milliseconds 200
+		}
+		foreach ($proc in $pending) {
+			if (-not $proc.HasExited) {
+				Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
 			}
 		}
 	}

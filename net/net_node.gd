@@ -67,6 +67,14 @@ signal my_tournament_status(tournaments: Array)         # every live tournament 
 signal tournament_prize_awarded(info: Dictionary)       # {tournament_id, name, bucket, points, items, account}
 signal account_updated(account: Dictionary)             # generic "your wallet/inventory changed" snapshot push
 
+# --- admin-tool signals (only ever fired for a connected admin account; see
+# admin_tool/admin_tool.gd, the separate lightweight client that uses these) ---
+signal admin_search_result(rows: Array)
+signal admin_account_detail(account: Dictionary)
+signal admin_action_result(result: Dictionary)   # {ok, error, action, account}
+signal admin_online_list(rows: Array)
+signal admin_log_received(rows: Array)
+
 const BOT_THINK_SECONDS := 0.7
 const BOT_FILL_SECONDS := 15.0
 const MM_TICK_SECONDS := 1.0
@@ -344,6 +352,43 @@ func auth_login(username: String, password: String) -> void:
 
 func auth_resume(token: String) -> void:
 	_rpc_auth_resume.rpc_id(1, token)
+
+
+## --- Admin-tool RPC wrappers (the caller must already be authenticated as an
+## account with is_admin == true; the server re-checks this on every one of
+## these — see _require_admin — so a non-admin caller just gets "not_admin"
+## back on admin_action_result rather than anything actually happening). ---
+
+func admin_search_accounts(query: String) -> void:
+	_rpc_admin_search.rpc_id(1, query)
+
+
+func admin_get_account(account_id: int) -> void:
+	_rpc_admin_get_account.rpc_id(1, account_id)
+
+
+func admin_ban(account_id: int, reason: String) -> void:
+	_rpc_admin_ban.rpc_id(1, account_id, reason)
+
+
+func admin_unban(account_id: int) -> void:
+	_rpc_admin_unban.rpc_id(1, account_id)
+
+
+func admin_set_elo(account_id: int, new_elo: int) -> void:
+	_rpc_admin_set_elo.rpc_id(1, account_id, new_elo)
+
+
+func admin_adjust_points(account_id: int, delta: int) -> void:
+	_rpc_admin_adjust_points.rpc_id(1, account_id, delta)
+
+
+func admin_list_online() -> void:
+	_rpc_admin_list_online.rpc_id(1)
+
+
+func admin_recent_actions(limit: int = 50) -> void:
+	_rpc_admin_recent_actions.rpc_id(1, limit)
 
 
 ## Singleplayer: no networking, a local GameEngine with player 1 as the human
@@ -1432,7 +1477,9 @@ func _create_bot_match_for_account(account_human: int, ctx: Dictionary) -> Dicti
 
 ## Tournament matches are always unranked (a separate track from the ladder) —
 ## the summary carries tournament_ctx so game_ui.gd routes to the bracket
-## screen instead of match_result_screen on match end.
+## screen instead of match_result_screen on match end. Daily quest progress
+## still applies for human-vs-human tournament matches (not bot-fill ones) —
+## same rule as ranked, see ServerStore.apply_quest_progress.
 func _finish_tournament_match(m: Dictionary, winner: int, ctx: Dictionary) -> void:
 	var engine: GameEngine = m.engine
 	# Bo1 draws are possible (GameEngine: equal score at hand-empty is a draw)
@@ -1446,6 +1493,21 @@ func _finish_tournament_match(m: Dictionary, winner: int, ctx: Dictionary) -> vo
 		var target = m.seats[seat]
 		if typeof(target) != TYPE_INT or target <= 0:
 			continue
+		var quest_completions := []
+		var quest_points := 0
+		if not bool(m.get("is_bot_match", false)) and _store != null:
+			var acc_id := int((m.account_ids as Dictionary).get(seat, 0))
+			if acc_id > 0:
+				var q_ctx := {
+					"outcome": _outcome_str(actual_winner, seat),
+					"your_score": engine.scores[seat],
+					"opp_score": engine.scores[3 - seat],
+					"your_group_picks": engine.group_pick_counts(seat),
+					"your_pick_count": engine.pick_count(seat),
+				}
+				var q_res := _store.apply_quest_progress(acc_id, q_ctx)
+				quest_completions = q_res["completed"]
+				quest_points = int(q_res["points_awarded"])
 		_rpc_match_ended.rpc_id(target, {
 			"outcome": _outcome_str(actual_winner, seat),
 			"your_score": engine.scores[seat],
@@ -1453,7 +1515,7 @@ func _finish_tournament_match(m: Dictionary, winner: int, ctx: Dictionary) -> vo
 			"ranked": false,
 			"elo_before": 0, "elo_after": 0, "elo_delta": 0,
 			"points_delta": 0, "points_total": 0, "new_rank": 0,
-			"quest_completions": [], "quest_points": 0,
+			"quest_completions": quest_completions, "quest_points": quest_points,
 			"tournament_ctx": ctx,
 			"match_id": m.id,
 			"match_format": int(m.get("match_format", 1)),
@@ -1748,6 +1810,187 @@ func _rpc_tournament_prize(info: Dictionary) -> void:
 
 
 # =========================================================================
+# Admin tools
+# =========================================================================
+# Thin dispatchers: authenticate, re-check is_admin server-side (never trust
+# the client), call the matching pure ServerStore method, reply. All the real
+# logic lives in ServerStore's admin section so a future website backend can
+# call the same functions behind an HTTP endpoint instead of an RPC.
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_search(query: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "search", "account": {}})
+		return
+	_rpc_admin_search_result.rpc_id(peer_id, _store.search_accounts(query))
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_get_account(account_id: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "get_account", "account": {}})
+		return
+	_rpc_admin_account_detail.rpc_id(peer_id, _store.account_admin_view(_store.get_account(account_id)))
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_ban(account_id: int, reason: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "ban", "account": {}})
+		return
+	var res := _store.ban_account(account_id, reason, str(admin.get("username", "")))
+	res["action"] = "ban"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+	if bool(res.get("ok", false)):
+		_kick_banned_account(account_id)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_unban(account_id: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "unban", "account": {}})
+		return
+	var res := _store.unban_account(account_id, str(admin.get("username", "")))
+	res["action"] = "unban"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_set_elo(account_id: int, new_elo: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "set_elo", "account": {}})
+		return
+	var res := _store.admin_set_elo(account_id, new_elo, str(admin.get("username", "")))
+	res["action"] = "set_elo"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+	if bool(res.get("ok", false)):
+		_push_account_snapshot(account_id)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_adjust_points(account_id: int, delta: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "adjust_points", "account": {}})
+		return
+	var res := _store.admin_adjust_points(account_id, delta, str(admin.get("username", "")))
+	res["action"] = "adjust_points"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+	if bool(res.get("ok", false)):
+		_push_account_snapshot(account_id)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_list_online() -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "list_online", "account": {}})
+		return
+	var rows := []
+	for acc_id in _account_peer.keys():
+		var account := _store.get_account(int(acc_id))
+		if account.is_empty():
+			continue
+		rows.append({
+			"id": account.get("id"),
+			"username": account.get("username"),
+			"elo": account.get("elo"),
+		})
+	rows.sort_custom(func(a, b): return str(a.get("username", "")).to_lower() < str(b.get("username", "")).to_lower())
+	_rpc_admin_online_result.rpc_id(peer_id, rows)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_recent_actions(limit: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "recent_actions", "account": {}})
+		return
+	_rpc_admin_log_result.rpc_id(peer_id, _store.recent_admin_actions(clampi(limit, 1, 500)))
+
+
+## If the account just banned/kicked has a live connection, force it off the
+## same way _bind_session forces off a superseded peer — a deliberate
+## server-initiated logout, not a network drop, so the client wipes its saved
+## token instead of trying to auto-resume straight back in.
+func _kick_banned_account(account_id: int) -> void:
+	var peer: int = int(_account_peer.get(account_id, 0))
+	if peer <= 0:
+		return
+	_rpc_force_logout.rpc_id(peer, "Your account has been suspended.")
+	multiplayer.multiplayer_peer.disconnect_peer(peer)
+
+
+## Pushes a fresh account snapshot to an account's live connection, if any, so
+## an admin's elo/points correction shows up immediately without the player
+## needing to relog. No-op if the account isn't currently connected.
+func _push_account_snapshot(account_id: int) -> void:
+	var peer: int = int(_account_peer.get(account_id, 0))
+	if peer > 0:
+		_rpc_account_snapshot.rpc_id(peer, _store.account_snapshot(_store.get_account(account_id)))
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_search_result(rows: Array) -> void:
+	if is_server:
+		return
+	admin_search_result.emit(rows)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_account_detail(account: Dictionary) -> void:
+	if is_server:
+		return
+	admin_account_detail.emit(account)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_action_result(result: Dictionary) -> void:
+	if is_server:
+		return
+	admin_action_result.emit(result)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_online_result(rows: Array) -> void:
+	if is_server:
+		return
+	admin_online_list.emit(rows)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_log_result(rows: Array) -> void:
+	if is_server:
+		return
+	admin_log_received.emit(rows)
+
+
+# =========================================================================
 # Connection lifecycle (networked server)
 # =========================================================================
 
@@ -1817,6 +2060,21 @@ func _require_auth(peer_id: int) -> bool:
 	return _peer_account.has(peer_id)
 
 
+## Full admin powers (ban, elo/points correction, online-player visibility) are
+## gated ONLY on the account's own `is_admin` field — deliberately NOT the same
+## check as _is_tournament_admin, which also accepts --dev-tournaments and a
+## username fallback list. Those are fine for "who may create a tournament";
+## they're far too loose for account bans and rating edits. Returns the caller's
+## account (or {} if not authenticated / not an admin) so callers get one lookup.
+func _require_admin(peer_id: int) -> Dictionary:
+	if not _require_auth(peer_id):
+		return {}
+	var account := _store.get_account(int(_peer_account[peer_id]))
+	if not bool(account.get("is_admin", false)):
+		return {}
+	return account
+
+
 func _bind_session(peer_id: int, account_id: int) -> String:
 	# One live connection per account: kick any older peer bound to it.
 	if _account_peer.has(account_id) and _account_peer[account_id] != peer_id:
@@ -1870,7 +2128,10 @@ func _rpc_auth_login(username: String, password: String) -> void:
 	var peer_id := multiplayer.get_remote_sender_id()
 	var res := _store.verify_login(username, password)
 	if not res.ok:
-		_rpc_auth_result.rpc_id(peer_id, {"ok": false, "error": res.error, "token": "", "account": {}})
+		var extra := {}
+		if res.error == "banned":
+			extra["ban_reason"] = str(res.account.get("ban_reason", ""))
+		_rpc_auth_result.rpc_id(peer_id, {"ok": false, "error": res.error, "token": "", "account": {}, "extra": extra})
 		return
 	var token := _bind_session(peer_id, int(res.account.id))
 	_rpc_auth_result.rpc_id(peer_id, {
@@ -1894,6 +2155,9 @@ func _rpc_auth_resume(token: String) -> void:
 	var account := _store.get_account(account_id)
 	if account.is_empty():
 		_rpc_auth_result.rpc_id(peer_id, {"ok": false, "error": "session_expired", "token": "", "account": {}})
+		return
+	if bool(account.get("banned", false)):
+		_rpc_auth_result.rpc_id(peer_id, {"ok": false, "error": "banned", "token": "", "account": {}, "extra": {"ban_reason": str(account.get("ban_reason", ""))}})
 		return
 	var new_token := _bind_session(peer_id, account_id)
 	_rpc_auth_result.rpc_id(peer_id, {
