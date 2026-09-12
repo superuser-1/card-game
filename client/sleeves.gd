@@ -5,7 +5,8 @@ extends RefCounted
 ## they show up in the picker automatically). Sleeves are optional decoration for
 ## the face-down card back, so "" (no sleeve / default) is a valid, selectable id
 ## — the default resolves to the existing res://assets/cards/card_back1.png.
-## Everything in the folder is free to use (card backs are not in ShopCatalog).
+## Free-vs-premium is decided per id in ShopCatalog, same as every other
+## cosmetic — an id with no catalog entry is free for everyone.
 
 const DIR := "res://assets/avatars/card_backs/"
 const EXTENSIONS: Array[String] = ["png", "jpg", "jpeg", "webp"]

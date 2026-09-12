@@ -36,6 +36,14 @@ const CATALOG: Array = [
 	{"id": "table_game_canvas_10", "type": "table_background", "name": "Table 10", "price": 5, "source": "shop"},
 	{"id": "table_game_canvas_11", "type": "table_background", "name": "Table 11", "price": 5, "source": "shop"},
 	{"id": "table_game_canvas_12", "type": "table_background", "name": "Table 12", "price": 5, "source": "shop"},
+	# --- card backs (art: res://assets/avatars/card_backs/<id>.png) ---
+	# card_back_1..4 are free for everyone — not in this catalog at all, same
+	# as table_game_canvas_1-3. card_back_6/7/10/11/12 are shop-buyable.
+	{"id": "card_back_6",  "type": "sleeve", "name": "Card Back 6",  "price": 5, "source": "shop"},
+	{"id": "card_back_7",  "type": "sleeve", "name": "Card Back 7",  "price": 5, "source": "shop"},
+	{"id": "card_back_10", "type": "sleeve", "name": "Card Back 10", "price": 5, "source": "shop"},
+	{"id": "card_back_11", "type": "sleeve", "name": "Card Back 11", "price": 5, "source": "shop"},
+	{"id": "card_back_12", "type": "sleeve", "name": "Card Back 12", "price": 5, "source": "shop"},
 	# --- achievement-only (see PLAN_achievements.md §1); not buyable ---
 	{"id": "frame_champion",   "type": "frame",      "name": "Champion",      "price": 0, "source": "achievement"},
 	{"id": "frame_veteran",    "type": "frame",      "name": "Veteran",       "price": 0, "source": "achievement"},
