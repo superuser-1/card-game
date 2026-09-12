@@ -61,11 +61,24 @@ Deploy an update — one command, run from your own machine, no SSH session to s
 "execution policy"/"scripts disabled" error, either double-click
 `deploy\deploy.bat` instead, or run
 `powershell -ExecutionPolicy Bypass -File .\deploy\deploy.ps1`.)
-Runs `git pull` + `provision_vm.sh` + a service restart on the VM in one
-non-interactive shot and streams the output back. Requires the
-[gcloud CLI](https://cloud.google.com/sdk/docs/install) (`gcloud init` once
-to log in and pick the project) — it manages the SSH key for you, no
+Runs `git pull` + a `--import` of any new/changed assets + a service restart
+on the VM in one non-interactive shot and streams the output back. Requires
+the [gcloud CLI](https://cloud.google.com/sdk/docs/install) (`gcloud init`
+once to log in and pick the project) — it manages the SSH key for you, no
 PuTTY/manual key upload needed.
+
+Deliberately does **not** run the full `provision_vm.sh` — that installs
+Godot/system packages and copies systemd unit files, all of which need real
+(password-prompting) `sudo`, which doesn't work over a non-interactive SSH
+command (no TTY to type a password into). None of that is needed for a
+routine code update. Only re-run `provision_vm.sh` by hand (over an
+interactive `ssh_server.ps1` session, see below) if you've actually changed
+a systemd unit file or need a Godot version bump.
+
+Same RAM caveat as below applies to `deploy.ps1`'s own `--import` step, since
+it's the exact same command: a large new asset batch can still stall
+`e2-micro`'s ~1GB RAM — if it seems to hang, upsize the VM temporarily (see
+"First deploy" above) and run `deploy.ps1` again.
 
 **Two Linux accounts exist on the VM** — worth knowing so this doesn't cause
 confusion again: your own gcloud/OS-Login identity maps to a Linux user
