@@ -45,6 +45,12 @@ const CATALOG: Array = [
 	{"id": "card_back_11", "type": "sleeve", "name": "Card Back 11", "price": 5, "source": "shop"},
 	{"id": "card_back_12", "type": "sleeve", "name": "Card Back 12", "price": 5, "source": "shop"},
 	# --- achievement-only (see PLAN_achievements.md §1); not buyable ---
+	# card_back_5/8/9: prize-only by user's request — not free, not in the
+	# shop, not wired to any achievement tier below, so the ONLY way a player
+	# gets one is being awarded it as a tournament prize via the admin tool.
+	{"id": "card_back_5", "type": "sleeve", "name": "Card Back 5", "price": 0, "source": "achievement"},
+	{"id": "card_back_8", "type": "sleeve", "name": "Card Back 8", "price": 0, "source": "achievement"},
+	{"id": "card_back_9", "type": "sleeve", "name": "Card Back 9", "price": 0, "source": "achievement"},
 	{"id": "frame_champion",   "type": "frame",      "name": "Champion",      "price": 0, "source": "achievement"},
 	{"id": "frame_veteran",    "type": "frame",      "name": "Veteran",       "price": 0, "source": "achievement"},
 	{"id": "avatar_champion",  "type": "avatar",     "name": "Grand Champion","price": 0, "source": "achievement"},
