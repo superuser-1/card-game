@@ -40,6 +40,11 @@ func _ready() -> void:
 	DisplayServer.window_set_title("Flick Battle — Admin Tool")
 	DisplayServer.window_set_size(Vector2i(900, 720))
 
+	# "To" defaults to right now (UTC) — covers the overwhelmingly common case
+	# (a window ending "now") without typing it out every time; "From" is left
+	# blank since it varies per cohort and has no sensible default.
+	%CohortEndField.text = Time.get_datetime_string_from_system(true, true)
+
 	Net.auth_completed.connect(_on_auth_completed)
 	Net.error_received.connect(_on_net_error)
 	Net.admin_search_result.connect(_on_admin_search_result)
@@ -369,19 +374,17 @@ func _parse_utc_datetime(text: String) -> int:
 
 
 ## Cached from the last successful Look Up, so Apply Tag targets exactly the
-## window (and tag) the admin actually previewed — re-reading the fields at
-## Apply time could silently apply a different window if they got edited
-## in between without looking up again.
-var _looked_up_window: Dictionary = {}  # {start_ts, end_ts, tag}
+## date range the admin actually previewed — re-reading the fields at Apply
+## time could silently apply a different window if they got edited in
+## between without looking up again. Deliberately does NOT cache the tag
+## name — that's read fresh at Apply time, since it doesn't affect the
+## preview at all (only which accounts logged in during the window does).
+var _looked_up_range: Dictionary = {}  # {start_ts, end_ts}
 
 
-## Shared validation for the tag-name + date-range fields; returns {} (and
-## sets %StatusLabel) on any problem, otherwise {start_ts, end_ts, tag}.
-func _read_window_fields() -> Dictionary:
-	var tag: String = %CohortTagField.text.strip_edges()
-	if tag == "":
-		%StatusLabel.text = "Enter a tag name."
-		return {}
+## Just the date range — Look Up doesn't need a tag name at all, only Apply
+## does. Returns {} (and sets %StatusLabel) on any problem.
+func _read_date_range() -> Dictionary:
 	var start_ts := _parse_utc_datetime(%CohortStartField.text.strip_edges())
 	var end_ts := _parse_utc_datetime(%CohortEndField.text.strip_edges())
 	if start_ts < 0 or end_ts < 0:
@@ -390,26 +393,30 @@ func _read_window_fields() -> Dictionary:
 	if end_ts < start_ts:
 		%StatusLabel.text = "The 'To' date is before the 'From' date."
 		return {}
-	return {"start_ts": start_ts, "end_ts": end_ts, "tag": tag}
+	return {"start_ts": start_ts, "end_ts": end_ts}
 
 
 func _on_look_up_pressed() -> void:
-	var window := _read_window_fields()
-	if window.is_empty():
+	var range_dict := _read_date_range()
+	if range_dict.is_empty():
 		return
-	_looked_up_window = window
+	_looked_up_range = range_dict
 	%ApplyTagButton.disabled = true
-	Net.admin_preview_login_window(window.start_ts, window.end_ts)
+	Net.admin_preview_login_window(range_dict.start_ts, range_dict.end_ts)
 
 
-## Applies the tag to exactly the window that was last successfully looked
-## up — not whatever the fields currently say, in case they've been edited
-## since (see _looked_up_window).
+## Applies the tag (read fresh from the field right now) to exactly the date
+## range that was last successfully looked up — not whatever the date fields
+## currently say, in case they've been edited since (see _looked_up_range).
 func _on_apply_tag_pressed() -> void:
-	if _looked_up_window.is_empty():
+	if _looked_up_range.is_empty():
 		%StatusLabel.text = "Look up a window first."
 		return
-	Net.admin_tag_by_login_window(_looked_up_window.start_ts, _looked_up_window.end_ts, _looked_up_window.tag)
+	var tag: String = %CohortTagField.text.strip_edges()
+	if tag == "":
+		%StatusLabel.text = "Enter a tag name."
+		return
+	Net.admin_tag_by_login_window(_looked_up_range.start_ts, _looked_up_range.end_ts, tag)
 
 
 func _on_undo_tag_pressed() -> void:
@@ -505,7 +512,7 @@ func _on_admin_action_result(result: Dictionary) -> void:
 		"tag_by_login_window":
 			var tagged: Array = result.get("tagged_usernames", [])
 			%StatusLabel.text = "Tagged %d account(s)." % tagged.size()
-			%CohortResultLabel.text = "Tagged %d account(s) with '%s':" % [tagged.size(), _looked_up_window.get("tag", "")]
+			%CohortResultLabel.text = "Tagged %d account(s) with '%s':" % [tagged.size(), %CohortTagField.text.strip_edges()]
 			%CohortResultList.clear()
 			if tagged.is_empty():
 				%CohortResultList.add_item("(nobody new to tag — everyone in the window already had it)")
@@ -515,7 +522,7 @@ func _on_admin_action_result(result: Dictionary) -> void:
 			# fields may have changed since, and a stale re-apply would be
 			# a no-op anyway (already tagged) but silently confusing.
 			%ApplyTagButton.disabled = true
-			_looked_up_window = {}
+			_looked_up_range = {}
 		"undo_tag_by_login_window":
 			var untagged: Array = result.get("untagged_usernames", [])
 			%StatusLabel.text = "Undid last tag: removed from %d account(s)." % untagged.size()
