@@ -172,6 +172,20 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Adjust Points"
 
+[node name="GrantItemRow" type="HBoxContainer" parent="MainPanel/Tabs/Accounts"]
+layout_mode = 2
+
+[node name="GrantItemField" type="LineEdit" parent="MainPanel/Tabs/Accounts/GrantItemRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Item id (copy from the Plan Tournaments prize catalog)"
+
+[node name="GrantItemButton" type="Button" parent="MainPanel/Tabs/Accounts/GrantItemRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Grant Item"
+
 [node name="ActivityTabs" type="TabContainer" parent="MainPanel/Tabs/Accounts"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 220)
@@ -621,10 +635,38 @@ placeholder_text = "item ids, comma-separated"
 
 [node name="CatalogLabel" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 layout_mode = 2
-text = "Prize catalog reference — every cosmetic that can be used as a prize (not just the ones in the shop). Click a row to copy its id, then paste it into a field above."
+text = "Prize catalog reference — every cosmetic that can be used as a prize. Click a row to copy its id, then paste it into a field above (or the Grant Item field on the Accounts tab). Shown by default: Admin only — items never handed out any other way; check more boxes to also see shop/free/achievement items."
 autowrap_mode = 2
 theme_override_font_sizes/font_size = 12
 modulate = Color(1, 1, 1, 0.7)
+
+[node name="CatalogFilterRow" type="HBoxContainer" parent="MainPanel/Tabs/PlanTournaments/VBox"]
+layout_mode = 2
+
+[node name="CatalogFilterLabel" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox/CatalogFilterRow"]
+layout_mode = 2
+text = "Show:"
+
+[node name="FilterShopCheck" type="CheckBox" parent="MainPanel/Tabs/PlanTournaments/VBox/CatalogFilterRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Shop"
+
+[node name="FilterFreeCheck" type="CheckBox" parent="MainPanel/Tabs/PlanTournaments/VBox/CatalogFilterRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Free"
+
+[node name="FilterAchievementCheck" type="CheckBox" parent="MainPanel/Tabs/PlanTournaments/VBox/CatalogFilterRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Achievement"
+
+[node name="FilterAdminCheck" type="CheckBox" parent="MainPanel/Tabs/PlanTournaments/VBox/CatalogFilterRow"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Admin"
 
 [node name="PlanPrizeCatalogList" type="ItemList" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 unique_name_in_owner = true

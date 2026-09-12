@@ -2,7 +2,13 @@ class_name ShopCatalog
 extends RefCounted
 
 # type ∈ "avatar" | "frame" | "background" | "table_background" | "sleeve" | "title"
-# source ∈ "shop" (buyable) | "achievement" (granted only, price ignored)
+# source ∈ "shop" (buyable) | "achievement" (auto-granted by an achievement
+#   tier — see achievement_system.gd's own `reward` fields for which tier)
+#   | "admin" (never auto-granted by anything — the ONLY way a player gets
+#   one is an admin handing it out directly or as a tournament prize)
+# Both achievement and admin items are hidden from the shop and equipped from
+# the avatar/table/title picker once owned; price is ignored (kept at 0) for
+# both.
 # NOTE: every shop price is 5 on purpose — debug placeholder. Real cosmetics +
 # real prices get added here later by the user; this is a data edit only.
 const CATALOG: Array = [
@@ -44,18 +50,21 @@ const CATALOG: Array = [
 	{"id": "card_back_10", "type": "sleeve", "name": "Card Back 10", "price": 5, "source": "shop"},
 	{"id": "card_back_11", "type": "sleeve", "name": "Card Back 11", "price": 5, "source": "shop"},
 	{"id": "card_back_12", "type": "sleeve", "name": "Card Back 12", "price": 5, "source": "shop"},
-	# --- achievement-only (see PLAN_achievements.md §1); not buyable ---
-	# card_back_5/8/9: prize-only by user's request — not free, not in the
-	# shop, not wired to any achievement tier below, so the ONLY way a player
-	# gets one is being awarded it as a tournament prize via the admin tool.
-	{"id": "card_back_5", "type": "sleeve", "name": "Card Back 5", "price": 0, "source": "achievement"},
-	{"id": "card_back_8", "type": "sleeve", "name": "Card Back 8", "price": 0, "source": "achievement"},
-	{"id": "card_back_9", "type": "sleeve", "name": "Card Back 9", "price": 0, "source": "achievement"},
-	{"id": "frame_champion",   "type": "frame",      "name": "Champion",      "price": 0, "source": "achievement"},
+	# --- admin-only: never auto-granted, awarded by hand or as a tournament
+	# prize via the admin tool. card_back_5/8/9 flagged this way on request;
+	# frame_champion/avatar_champion/title_champion are placeholders that were
+	# never actually wired to an achievement tier below, so they belong here
+	# too, not under "achievement".
+	{"id": "card_back_5",      "type": "sleeve", "name": "Card Back 5",   "price": 0, "source": "admin"},
+	{"id": "card_back_8",      "type": "sleeve", "name": "Card Back 8",   "price": 0, "source": "admin"},
+	{"id": "card_back_9",      "type": "sleeve", "name": "Card Back 9",   "price": 0, "source": "admin"},
+	{"id": "frame_champion",   "type": "frame",  "name": "Champion",      "price": 0, "source": "admin"},
+	{"id": "avatar_champion",  "type": "avatar", "name": "Grand Champion","price": 0, "source": "admin"},
+	{"id": "title_champion",   "type": "title",  "name": "Champion",      "price": 0, "source": "admin"},
+	# --- achievement-only: auto-granted by clearing the achievement tier that
+	# names it as a `reward` (see achievement_system.gd); not buyable ---
 	{"id": "frame_veteran",    "type": "frame",      "name": "Veteran",       "price": 0, "source": "achievement"},
-	{"id": "avatar_champion",  "type": "avatar",     "name": "Grand Champion","price": 0, "source": "achievement"},
 	{"id": "sleeve_flame",     "type": "sleeve",     "name": "Flame",         "price": 0, "source": "achievement"},
-	{"id": "title_champion",   "type": "title",      "name": "Champion",      "price": 0, "source": "achievement"},
 	# Avatar rewards for the ranked-loss ladder (art: res://assets/avatars/<id>.png).
 	{"id": "30_ranked_losses_avatar",   "type": "avatar", "name": "30 Ranked Losses",   "price": 0, "source": "achievement"},
 	{"id": "50_ranked_losses_avatar",   "type": "avatar", "name": "50 Ranked Losses",   "price": 0, "source": "achievement"},

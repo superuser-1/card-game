@@ -584,6 +584,26 @@ func admin_adjust_points(account_id: int, delta: int, admin_username: String) ->
 	return {"ok": true, "error": "", "account": account_admin_view(account)}
 
 
+## Admin: grant a single cosmetic item directly to one player's account — the
+## same underlying mechanism (grant_reward, logged with source "admin") a
+## tournament payout uses, just a one-off, one-account version of it. No
+## points involved; item existence isn't validated against ShopCatalog since
+## a free (non-catalog) id is a harmless no-op to "grant" — the account
+## already has access to it regardless.
+func admin_grant_item(account_id: int, item_id: String, admin_username: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+	var clean := item_id.strip_edges()
+	if clean == "" or clean.length() > 40:
+		return {"ok": false, "error": "bad_item", "account": {}}
+	if clean in (account.get("owned_rewards", []) as Array):
+		return {"ok": false, "error": "already_owned", "account": {}}
+	grant_reward(account, 0, [clean], "admin")
+	_log_admin_action(admin_username, "grant_item", account_id, clean)
+	return {"ok": true, "error": "", "account": account_admin_view(account)}
+
+
 ## Every tournament this account has ever participated in, most recent first
 ## (by start_ts), capped at `limit`. Placement/payout are derived from the
 ## same data pay_tournament_prizes() already uses, so this stays correct even

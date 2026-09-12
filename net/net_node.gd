@@ -431,6 +431,13 @@ func admin_adjust_points(account_id: int, delta: int) -> void:
 	_rpc_admin_adjust_points.rpc_id(1, account_id, delta)
 
 
+## Grant a single cosmetic item directly to one player's account, bypassing
+## shop/achievement/tournament entirely. Reply on `admin_action_result`
+## (action "grant_item").
+func admin_grant_item(account_id: int, item_id: String) -> void:
+	_rpc_admin_grant_item.rpc_id(1, account_id, item_id)
+
+
 func admin_list_online() -> void:
 	_rpc_admin_list_online.rpc_id(1)
 
@@ -2020,6 +2027,22 @@ func _rpc_admin_adjust_points(account_id: int, delta: int) -> void:
 
 
 @rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_grant_item(account_id: int, item_id: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "grant_item", "account": {}})
+		return
+	var res := _store.admin_grant_item(account_id, item_id, str(admin.get("username", "")))
+	res["action"] = "grant_item"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+	if bool(res.get("ok", false)):
+		_push_account_snapshot(account_id)
+
+
+@rpc("any_peer", "call_remote", "reliable")
 func _rpc_admin_list_online() -> void:
 	if not is_server or is_solo:
 		return
@@ -2405,6 +2428,18 @@ func _rpc_admin_list_prize_catalog() -> void:
 			"id": str(item.id), "type": str(item.type),
 			"name": str(item.name), "source": str(item.source),
 		})
+	# Free items (no catalog entry at all) are still valid — if slightly
+	# pointless — prizes; tagged source "free" so the admin tool can filter
+	# them out by default (every player already has these).
+	var free_lookups := {
+		"avatar": Avatars.list_ids(), "frame": Frames.list_ids(),
+		"background": Backgrounds.list_ids(), "sleeve": Sleeves.list_ids(),
+		"table_background": TableBackgrounds.list_ids(),
+	}
+	for type_name: String in free_lookups:
+		for id: String in (free_lookups[type_name] as Array):
+			if not ShopCatalog.is_premium(id):
+				rows.append({"id": id, "type": type_name, "name": id, "source": "free"})
 	_rpc_admin_prize_catalog_result.rpc_id(peer_id, rows)
 
 

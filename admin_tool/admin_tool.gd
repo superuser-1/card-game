@@ -31,7 +31,8 @@ var _custom_in_progress_rows: Array = []
 var _stats_range_hours := 24
 
 var _template_rows: Array = []
-var _prize_catalog_rows: Array = []
+var _prize_catalog_rows: Array = []  # unfiltered — every row the server sent
+var _visible_prize_rows: Array = []  # currently shown, after the Show: filter — indices match %PlanPrizeCatalogList
 var _selected_template_id := 0
 
 
@@ -68,6 +69,7 @@ func _ready() -> void:
 	%UnbanButton.pressed.connect(_on_unban_pressed)
 	%SetEloButton.pressed.connect(_on_set_elo_pressed)
 	%AdjustPointsButton.pressed.connect(_on_adjust_points_pressed)
+	%GrantItemButton.pressed.connect(_on_grant_item_pressed)
 
 	%RefreshOnlineButton.pressed.connect(func(): Net.admin_list_online())
 	%RefreshLogButton.pressed.connect(func(): Net.admin_recent_actions(100))
@@ -93,6 +95,8 @@ func _ready() -> void:
 	%PlanToggleActiveButton.pressed.connect(_on_plan_toggle_active_pressed)
 	%PlanDeleteTemplateButton.pressed.connect(_on_plan_delete_template_pressed)
 	%PlanPrizeCatalogList.item_selected.connect(_on_plan_catalog_item_selected)
+	for check: CheckBox in [%FilterShopCheck, %FilterFreeCheck, %FilterAchievementCheck, %FilterAdminCheck]:
+		check.toggled.connect(func(_pressed): _render_prize_catalog_list())
 
 	%Range24hButton.pressed.connect(func(): _set_stats_range(24, %Range24hButton))
 	%Range7dButton.pressed.connect(func(): _set_stats_range(24 * 7, %Range7dButton))
@@ -334,6 +338,16 @@ func _on_adjust_points_pressed() -> void:
 	Net.admin_adjust_points(_selected_account_id, int(text))
 
 
+func _on_grant_item_pressed() -> void:
+	if _selected_account_id == 0:
+		return
+	var item_id: String = %GrantItemField.text.strip_edges()
+	if item_id == "":
+		%StatusLabel.text = "Enter an item id to grant (copy one from the Plan Tournaments prize catalog)."
+		return
+	Net.admin_grant_item(_selected_account_id, item_id)
+
+
 func _on_admin_action_result(result: Dictionary) -> void:
 	var action: String = result.get("action", "")
 	if not bool(result.get("ok", false)):
@@ -357,6 +371,7 @@ func _on_admin_action_result(result: Dictionary) -> void:
 			%ReasonField.text = ""
 			%NewEloField.text = ""
 			%PointsDeltaField.text = ""
+			%GrantItemField.text = ""
 
 	match action:
 		"rollback_tournament":
@@ -371,6 +386,8 @@ func _on_admin_action_result(result: Dictionary) -> void:
 			Net.admin_list_tournaments(int(%TournamentDaysField.text.strip_edges()) if %TournamentDaysField.text.strip_edges().is_valid_int() else 30)
 		"create_template", "delete_template", "set_template_active":
 			Net.admin_list_templates()
+		"grant_item":
+			%StatusLabel.text = "Item granted."
 
 
 # --- online / log ------------------------------------------------------------
@@ -764,8 +781,26 @@ func _texture_for_catalog_item(type: String, id: String) -> Texture2D:
 
 func _on_admin_prize_catalog(rows: Array) -> void:
 	_prize_catalog_rows = rows
+	_render_prize_catalog_list()
+
+
+## Rebuilds %PlanPrizeCatalogList from _prize_catalog_rows, showing only rows
+## whose source has its "Show:" checkbox checked. Defaults to Admin-only
+## (see admin_tool.tscn) since that's the category actually meant to be
+## handed out here — shop/free/achievement items are already reachable by
+## players some other way and mostly just clutter this list.
+func _render_prize_catalog_list() -> void:
+	var shown_sources := {
+		"shop": %FilterShopCheck.button_pressed,
+		"free": %FilterFreeCheck.button_pressed,
+		"achievement": %FilterAchievementCheck.button_pressed,
+		"admin": %FilterAdminCheck.button_pressed,
+	}
+	_visible_prize_rows = _prize_catalog_rows.filter(
+		func(item): return bool(shown_sources.get(str(item.get("source", "")), true))
+	)
 	%PlanPrizeCatalogList.clear()
-	for item in rows:
+	for item in _visible_prize_rows:
 		var type := str(item.get("type", ""))
 		var id := str(item.get("id", ""))
 		var idx: int = %PlanPrizeCatalogList.add_item("%s  [%s/%s]  id: %s" % [
@@ -777,11 +812,11 @@ func _on_admin_prize_catalog(rows: Array) -> void:
 
 
 func _on_plan_catalog_item_selected(index: int) -> void:
-	if index < 0 or index >= _prize_catalog_rows.size():
+	if index < 0 or index >= _visible_prize_rows.size():
 		return
-	var id := str(_prize_catalog_rows[index].get("id", ""))
+	var id := str(_visible_prize_rows[index].get("id", ""))
 	DisplayServer.clipboard_set(id)
-	%StatusLabel.text = "Copied '%s' to clipboard — paste it into a prize items field." % id
+	%StatusLabel.text = "Copied '%s' to clipboard — paste it into a prize items field or the Grant Item field." % id
 
 
 # --- confirmation dialog ----------------------------------------------------
