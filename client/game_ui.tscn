@@ -207,8 +207,9 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="LeftInfoPanel" type="PanelContainer" parent="LeftPlayerPanel/LeftPlayerBox"]
+custom_minimum_size = Vector2(151, 0)
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 4
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_info_backplate")
 
@@ -323,8 +324,9 @@ stretch_mode = 5
 flip_h = true
 
 [node name="RightInfoPanel" type="PanelContainer" parent="RightPlayerPanel/RightPlayerBox"]
+custom_minimum_size = Vector2(151, 0)
 layout_mode = 2
-size_flags_horizontal = 8
+size_flags_horizontal = 4
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_info_backplate")
 
