@@ -186,7 +186,9 @@ func create_account(username: String, password: String, avatar := "") -> Diction
 		"avatar": avatar_id,
 		"frame": "",
 		"background": "",
+		"table_background": TableBackgrounds.DEFAULT_ID,
 		"sleeve": "",
+		"title": "",
 		"auth_provider": "password",
 		"pw_salt": hashed["salt"],
 		"pw_hash": hashed["hash"],
@@ -321,6 +323,57 @@ func set_sleeve(account_id: int, sleeve_id: String) -> Dictionary:
 	return {"ok": true, "error": "", "account": account}
 
 
+## Store a chosen game-table background id (the full-screen backdrop behind a
+## match — see TableBackgrounds, distinct from the avatar's own "background").
+## Unlike avatars, this is still mandatory (never ""), same reasoning as
+## Avatars.sanitize always resolving to something real.
+func set_table_background(account_id: int, table_background_id: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+	var clean := table_background_id.strip_edges()
+	if clean == "" or clean.length() > 40:
+		return {"ok": false, "error": "bad_table_background", "account": {}}
+	if ShopCatalog.is_premium(clean) and clean not in account.get("owned_rewards", []):
+		return {"ok": false, "error": "not_owned", "account": {}}
+	account["table_background"] = clean
+	_save_accounts()
+	return {"ok": true, "error": "", "account": account}
+
+
+## Store a chosen title id. "" means "auto" (always show my current elo tier);
+## any other id must be either the account's live elo tier or a title-type
+## reward it owns — see TitleSystem.is_available.
+func set_title(account_id: int, title_id: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+	var clean := title_id.strip_edges()
+	if clean.length() > 40:
+		return {"ok": false, "error": "bad_title", "account": {}}
+	var elo := int(account.get("elo", START_ELO))
+	var owned: Array = account.get("owned_rewards", [])
+	if not TitleSystem.is_available(clean, elo, owned):
+		return {"ok": false, "error": "not_available", "account": {}}
+	account["title"] = clean
+	_save_accounts()
+	return {"ok": true, "error": "", "account": account}
+
+
+## Clears a stored elo-tier title pick that no longer matches the account's
+## live elo (e.g. picked "Grandmaster" at 1250, then dropped back below 1200)
+## so display_name() falls back to the correct current tier automatically.
+## Granted (owned-reward) titles are never touched here — those stay available
+## at any elo once earned. Call after every elo change.
+func _reconcile_title(account: Dictionary) -> void:
+	var title_id := str(account.get("title", ""))
+	if title_id == "" or not TitleSystem.is_elo_tier_id(title_id):
+		return
+	var elo := int(account.get("elo", START_ELO))
+	if title_id != TitleSystem.elo_tier_id_for(elo):
+		account["title"] = ""
+
+
 func account_snapshot(account: Dictionary) -> Dictionary:
 	_ensure_stats(account)
 	return {
@@ -330,7 +383,9 @@ func account_snapshot(account: Dictionary) -> Dictionary:
 		"avatar": account.get("avatar", ""),
 		"frame": account.get("frame", ""),
 		"background": account.get("background", ""),
+		"table_background": account.get("table_background", ""),
 		"sleeve": account.get("sleeve", ""),
+		"title": account.get("title", ""),
 		"elo": account.get("elo"),
 		"games": account.get("games"),
 		"wins": account.get("wins"),
@@ -381,7 +436,9 @@ func account_admin_view(account: Dictionary) -> Dictionary:
 		"avatar": account.get("avatar", ""),
 		"frame": account.get("frame", ""),
 		"background": account.get("background", ""),
+		"table_background": account.get("table_background", ""),
 		"sleeve": account.get("sleeve", ""),
+		"title": account.get("title", ""),
 		"achievements_unlocked": (account.get("achievements", {}).get("unlocked", {}) as Dictionary).duplicate(),
 	}
 
@@ -476,6 +533,7 @@ func admin_set_elo(account_id: int, new_elo: int, admin_username: String) -> Dic
 	var old_elo := int(account.get("elo", START_ELO))
 	account["elo"] = new_elo
 	account["peak_elo"] = maxi(int(account.get("peak_elo", START_ELO)), new_elo)
+	_reconcile_title(account)
 	_save_accounts()
 	_log_admin_action(admin_username, "set_elo", account_id, "%d -> %d" % [old_elo, new_elo])
 	return {"ok": true, "error": "", "account": account_admin_view(account)}
@@ -1167,6 +1225,7 @@ func record_match(a1_id: int, a2_id: int, winner: int, score1: int, score2: int,
 func _apply_account_result(account: Dictionary, elo_after: int, peak_elo_after: int, outcome: String, own_score: int) -> void:
 	account["elo"] = elo_after
 	account["peak_elo"] = peak_elo_after
+	_reconcile_title(account)
 	account["games"] = int(account.get("games", 0)) + 1
 	var match_pts := match_points(outcome, own_score)
 	account["points"] = int(account.get("points", 0)) + match_pts

@@ -140,6 +140,13 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Player"
 
+[node name="TitleLabel" type="Label" parent="TopBar/AccountPanel/AccountVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1.0, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 13
+text = "Newbie"
+
 [node name="StatsLabel" type="Label" parent="TopBar/AccountPanel/AccountVBox" unique_id=1756722537]
 unique_name_in_owner = true
 layout_mode = 2

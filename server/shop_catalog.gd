@@ -1,7 +1,7 @@
 class_name ShopCatalog
 extends RefCounted
 
-# type ∈ "avatar" | "frame" | "background" | "sleeve"
+# type ∈ "avatar" | "frame" | "background" | "table_background" | "sleeve" | "title"
 # source ∈ "shop" (buyable) | "achievement" (granted only, price ignored)
 # NOTE: every shop price is 5 on purpose — debug placeholder. Real cosmetics +
 # real prices get added here later by the user; this is a data edit only.
@@ -19,14 +19,17 @@ const CATALOG: Array = [
 	{"id": "stephanus", "type": "avatar", "name": "Stephanus", "price": 5, "source": "shop"},
 	{"id": "zeus",      "type": "avatar", "name": "Zeus",      "price": 5, "source": "shop"},
 	# --- placeholders (no art yet — replace when real cosmetics land) ---
-	{"id": "frame_neon",       "type": "frame",      "name": "Neon",          "price": 5, "source": "shop"},
-	{"id": "bg_starfield",     "type": "background", "name": "Starfield",     "price": 5, "source": "shop"},
-	{"id": "sleeve_noir",      "type": "sleeve",     "name": "Noir",          "price": 5, "source": "shop"},
+	{"id": "frame_neon",       "type": "frame",           "name": "Neon",          "price": 5, "source": "shop"},
+	{"id": "bg_starfield",     "type": "background",      "name": "Starfield",     "price": 5, "source": "shop"},
+	{"id": "sleeve_noir",      "type": "sleeve",          "name": "Noir",          "price": 5, "source": "shop"},
+	{"id": "table_starfield",  "type": "table_background", "name": "Starfield Table", "price": 5, "source": "shop"},
+	{"id": "title_night_owl",  "type": "title",           "name": "Night Owl",     "price": 5, "source": "shop"},
 	# --- achievement-only (see PLAN_achievements.md §1); not buyable ---
 	{"id": "frame_champion",   "type": "frame",      "name": "Champion",      "price": 0, "source": "achievement"},
 	{"id": "frame_veteran",    "type": "frame",      "name": "Veteran",       "price": 0, "source": "achievement"},
 	{"id": "avatar_champion",  "type": "avatar",     "name": "Grand Champion","price": 0, "source": "achievement"},
 	{"id": "sleeve_flame",     "type": "sleeve",     "name": "Flame",         "price": 0, "source": "achievement"},
+	{"id": "title_champion",   "type": "title",      "name": "Champion",      "price": 0, "source": "achievement"},
 	# Avatar rewards for the ranked-loss ladder (art: res://assets/avatars/<id>.png).
 	{"id": "30_ranked_losses_avatar",   "type": "avatar", "name": "30 Ranked Losses",   "price": 0, "source": "achievement"},
 	{"id": "50_ranked_losses_avatar",   "type": "avatar", "name": "50 Ranked Losses",   "price": 0, "source": "achievement"},
@@ -67,7 +70,7 @@ const CATALOG: Array = [
 	{"id": "1000_quests_completed", "type": "avatar", "name": "1000 Quests Completed", "price": 0, "source": "achievement"},
 ]
 
-const TYPES: Array[String] = ["avatar", "frame", "background", "sleeve"]
+const TYPES: Array[String] = ["avatar", "frame", "background", "table_background", "sleeve", "title"]
 
 
 static func def_for(id: String) -> Dictionary:

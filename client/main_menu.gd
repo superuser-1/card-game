@@ -57,6 +57,8 @@ func _ready() -> void:
 	Net.avatar_updated.connect(_on_avatar_updated)
 	Net.frame_updated.connect(_on_avatar_updated)
 	Net.background_updated.connect(_on_avatar_updated)
+	Net.table_background_updated.connect(_on_avatar_updated)
+	Net.title_updated.connect(_on_avatar_updated)
 	Net.request_profile()
 
 	_maybe_prompt_avatar()
@@ -137,6 +139,7 @@ func _ready() -> void:
 func _render_account() -> void:
 	var a: Dictionary = Session.account
 	%NameLabel.text = str(a.get("display_name", "Player"))
+	%TitleLabel.text = TitleSystem.display_name(str(a.get("title", "")), int(a.get("elo", 0)))
 	%PortraitBgImage.texture = Backgrounds.texture_for(str(a.get("background", "")))
 	%AvatarImage.texture = Avatars.texture_for(str(a.get("avatar", "")))
 	%PortraitFrameImage.texture = Frames.texture_for(str(a.get("frame", "")))
@@ -206,6 +209,8 @@ func _open_avatar_change() -> void:
 	picker.frame_chosen.connect(func(id: String) -> void: Net.set_frame(id))
 	picker.background_chosen.connect(func(id: String) -> void: Net.set_background(id))
 	picker.sleeve_chosen.connect(func(id: String) -> void: Net.set_sleeve(id))
+	picker.table_background_chosen.connect(func(id: String) -> void: Net.set_table_background(id))
+	picker.title_chosen.connect(func(id: String) -> void: Net.set_title(id))
 	picker.tree_exited.connect(layer.queue_free)
 	layer.add_child(picker)
 	add_child(layer)

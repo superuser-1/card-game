@@ -106,3 +106,9 @@ func _reset(account: Dictionary) -> void:
 		var cur := str(account.get(slot, ""))
 		if cur != "" and ShopCatalog.is_premium(cur) and cur not in kept:
 			account[slot] = ""
+	var cur_table := str(account.get("table_background", ""))
+	if cur_table != "" and ShopCatalog.is_premium(cur_table) and cur_table not in kept:
+		account["table_background"] = TableBackgrounds.DEFAULT_ID
+	var cur_title := str(account.get("title", ""))
+	if cur_title != "" and ShopCatalog.is_premium(cur_title) and cur_title not in kept:
+		account["title"] = ""

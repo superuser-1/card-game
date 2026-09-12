@@ -26,6 +26,8 @@ func _ready() -> void:
 	Net.frame_updated.connect(_on_account_updated)
 	Net.background_updated.connect(_on_account_updated)
 	Net.sleeve_updated.connect(_on_account_updated)
+	Net.table_background_updated.connect(_on_account_updated)
+	Net.title_updated.connect(_on_account_updated)
 
 	_render_tabs()
 	_show_tab(0)
@@ -222,6 +224,7 @@ func _get_preview_texture(item_id: String, type_name: String) -> Texture2D:
 		"avatar": return Avatars.texture_for(item_id)
 		"frame": return Frames.texture_for(item_id)
 		"background": return Backgrounds.texture_for(item_id)
+		"table_background": return TableBackgrounds.texture_for(item_id)
 		"sleeve": return Sleeves.texture_for(item_id)
 	return null
 
@@ -231,7 +234,9 @@ func _get_equipped_id(item_id: String, type_name: String) -> String:
 		"avatar": return str(Session.account.get("avatar", ""))
 		"frame": return str(Session.account.get("frame", ""))
 		"background": return str(Session.account.get("background", ""))
+		"table_background": return str(Session.account.get("table_background", ""))
 		"sleeve": return str(Session.account.get("sleeve", ""))
+		"title": return str(Session.account.get("title", ""))
 	return ""
 
 
@@ -240,7 +245,9 @@ func _equip_item(item_id: String, type_name: String) -> void:
 		"avatar": Net.set_avatar(item_id)
 		"frame": Net.set_frame(item_id)
 		"background": Net.set_background(item_id)
+		"table_background": Net.set_table_background(item_id)
 		"sleeve": Net.set_sleeve(item_id)
+		"title": Net.set_title(item_id)
 
 
 func _purchase_item(item_id: String) -> void:

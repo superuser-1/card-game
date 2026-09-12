@@ -50,6 +50,8 @@ signal avatar_updated(account: Dictionary)      # fresh account snapshot after s
 signal frame_updated(account: Dictionary)       # fresh account snapshot after set_frame
 signal background_updated(account: Dictionary)  # fresh account snapshot after set_background
 signal sleeve_updated(account: Dictionary)      # fresh account snapshot after set_sleeve
+signal table_background_updated(account: Dictionary)  # fresh account snapshot after set_table_background
+signal title_updated(account: Dictionary)       # fresh account snapshot after set_title
 signal shop_purchase_result(account: Dictionary) # fresh account snapshot after shop_purchase
 signal achievements_unlocked(list: Array)       # from out-of-band tournament stat apply
 ## The server is deliberately ending this session (e.g. the same account just
@@ -356,6 +358,19 @@ func set_background(background: String) -> void:
 ## back on `sleeve_updated` with a fresh account snapshot.
 func set_sleeve(sleeve: String) -> void:
 	_rpc_set_sleeve.rpc_id(1, sleeve)
+
+
+## Set the logged-in account's game-table background. Reply comes back on
+## `table_background_updated` with a fresh account snapshot.
+func set_table_background(table_background: String) -> void:
+	_rpc_set_table_background.rpc_id(1, table_background)
+
+
+## Set (or clear, with "" for "auto — my current elo tier") the logged-in
+## account's displayed title. Reply comes back on `title_updated` with a fresh
+## account snapshot.
+func set_title(title: String) -> void:
+	_rpc_set_title.rpc_id(1, title)
 
 
 ## Purchase a shop item by id. Reply comes back on `shop_purchase_result` with
@@ -2641,6 +2656,38 @@ func _rpc_set_sleeve(sleeve: String) -> void:
 
 
 @rpc("any_peer", "call_remote", "reliable")
+func _rpc_set_table_background(table_background: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not _require_auth(peer_id):
+		_rpc_receive_error.rpc_id(peer_id, "Not authenticated.")
+		return
+	var acc_id := int(_peer_account[peer_id])
+	var res := _store.set_table_background(acc_id, TableBackgrounds.sanitize(table_background))
+	if not res.ok:
+		_rpc_receive_error.rpc_id(peer_id, "Could not save table background.")
+		return
+	_rpc_table_background_result.rpc_id(peer_id, _store.account_snapshot(res.account))
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_set_title(title: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not _require_auth(peer_id):
+		_rpc_receive_error.rpc_id(peer_id, "Not authenticated.")
+		return
+	var acc_id := int(_peer_account[peer_id])
+	var res := _store.set_title(acc_id, title.strip_edges())
+	if not res.ok:
+		_rpc_receive_error.rpc_id(peer_id, "Could not save title.")
+		return
+	_rpc_title_result.rpc_id(peer_id, _store.account_snapshot(res.account))
+
+
+@rpc("any_peer", "call_remote", "reliable")
 func _rpc_shop_purchase(item_id: String) -> void:
 	if not is_server or is_solo:
 		return
@@ -3163,6 +3210,20 @@ func _rpc_sleeve_result(account: Dictionary) -> void:
 	if is_server:
 		return
 	sleeve_updated.emit(account)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_table_background_result(account: Dictionary) -> void:
+	if is_server:
+		return
+	table_background_updated.emit(account)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_title_result(account: Dictionary) -> void:
+	if is_server:
+		return
+	title_updated.emit(account)
 
 
 @rpc("authority", "call_remote", "reliable")

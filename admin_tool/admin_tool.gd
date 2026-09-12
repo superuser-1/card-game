@@ -237,7 +237,7 @@ func _on_admin_account_detail(account: Dictionary) -> void:
 	%DetailLabel.text = "\n".join(lines)
 
 	var equipped := []
-	for slot in [["avatar", "Avatar"], ["frame", "Frame"], ["background", "Background"], ["sleeve", "Sleeve"]]:
+	for slot in [["avatar", "Avatar"], ["frame", "Frame"], ["background", "Background"], ["table_background", "Table"], ["sleeve", "Sleeve"], ["title", "Title"]]:
 		var val := str(account.get(slot[0], ""))
 		if val != "":
 			equipped.append("%s: %s" % [slot[1], val])
@@ -757,6 +757,7 @@ func _texture_for_catalog_item(type: String, id: String) -> Texture2D:
 		"avatar": return Avatars.texture_for(id)
 		"frame": return Frames.texture_for(id)
 		"background": return Backgrounds.texture_for(id)
+		"table_background": return TableBackgrounds.texture_for(id)
 		"sleeve": return Sleeves.texture_for(id)
 		_: return null
 

@@ -1,12 +1,12 @@
 extends Control
-## Modal avatar/frame/background grid. Click a tile to highlight it, then
-## press Select to confirm — `chosen(id)` / `frame_chosen(id)` /
-## `background_chosen(id)` are emitted only on Select, never on the first
-## click.
+## Modal avatar/frame/background/table/title grid. Click a tile to highlight
+## it, then press Select to confirm — `chosen(id)` / `frame_chosen(id)` /
+## `background_chosen(id)` / `table_background_chosen(id)` / `title_chosen(id)`
+## are emitted only on Select, never on the first click.
 ##
-## Dismissable mode (default): shows the Avatars/Frames/Backgrounds category
-## tabs, and frees itself right after a Select — or on Cancel / ui_cancel (no
-## signal). Select commits whichever tab is currently active.
+## Dismissable mode (default): shows the category tabs, and frees itself right
+## after a Select — or on Cancel / ui_cancel (no signal). Select commits
+## whichever tab is currently active.
 ## Mandatory mode (`configure(false)`): no category tabs (avatar only, since
 ## this is the first-login onboarding prompt), no Cancel button, ui_cancel is
 ## ignored, and it stays up after `chosen` until the caller calls `close()` —
@@ -16,6 +16,8 @@ signal chosen(id: String)
 signal frame_chosen(id: String)
 signal background_chosen(id: String)
 signal sleeve_chosen(id: String)
+signal table_background_chosen(id: String)
+signal title_chosen(id: String)
 
 const TILE := Vector2(92, 92)
 const ACCENT := Color(0.38, 0.68, 1.0)
@@ -23,24 +25,29 @@ const CAT_AVATAR := "avatar"
 const CAT_FRAME := "frame"
 const CAT_BACKGROUND := "background"
 const CAT_SLEEVE := "sleeve"
+const CAT_TABLE := "table_background"
+const CAT_TITLE := "title"
 const NONE_TILE := "__none__"
 
-const CAT_TITLE := {
+const CATEGORY_HEADING := {
 	CAT_AVATAR: "Choose your avatar",
 	CAT_FRAME: "Choose a frame",
 	CAT_BACKGROUND: "Choose a background",
 	CAT_SLEEVE: "Choose a card back",
+	CAT_TABLE: "Choose a table",
+	CAT_TITLE: "Choose a title",
 }
 
 var _dismissable := true
 var _category := CAT_AVATAR
 var _selected_avatar_id := ""
 
-# Frame/Background both allow "" (none) as a real choice, so a plain string
+# Frame/Background/Sleeve/Table/Title all allow "" as a real choice ("no
+# frame"/"no background"/etc, or "auto elo tier" for Title), so a plain string
 # can't distinguish "nothing picked yet" from "explicitly picked none" —
 # hence the separate _touched flags, keyed by category.
-var _selected := {CAT_FRAME: "", CAT_BACKGROUND: "", CAT_SLEEVE: ""}
-var _touched := {CAT_FRAME: false, CAT_BACKGROUND: false, CAT_SLEEVE: false}
+var _selected := {CAT_FRAME: "", CAT_BACKGROUND: "", CAT_SLEEVE: "", CAT_TABLE: "", CAT_TITLE: ""}
+var _touched := {CAT_FRAME: false, CAT_BACKGROUND: false, CAT_SLEEVE: false, CAT_TABLE: false, CAT_TITLE: false}
 
 var _tiles := {}  # id (or NONE_TILE) -> PanelContainer frame, for the active category
 
@@ -51,6 +58,8 @@ var _tiles := {}  # id (or NONE_TILE) -> PanelContainer frame, for the active ca
 @onready var _frame_tab: Button = %FrameTabButton
 @onready var _background_tab: Button = %BackgroundTabButton
 @onready var _sleeve_tab: Button = %SleeveTabButton
+@onready var _table_tab: Button = %TableTabButton
+@onready var _title_tab: Button = %TitleTabButton
 @onready var _tabs: Control = %CategoryTabs
 @onready var _title: Label = $Panel/MarginContainer/Box/Title
 
@@ -68,6 +77,8 @@ func _ready() -> void:
 	_frame_tab.pressed.connect(_switch_category.bind(CAT_FRAME))
 	_background_tab.pressed.connect(_switch_category.bind(CAT_BACKGROUND))
 	_sleeve_tab.pressed.connect(_switch_category.bind(CAT_SLEEVE))
+	_table_tab.pressed.connect(_switch_category.bind(CAT_TABLE))
+	_title_tab.pressed.connect(_switch_category.bind(CAT_TITLE))
 
 	_cancel.visible = _dismissable
 	_cancel.pressed.connect(_close)
@@ -92,7 +103,9 @@ func _update_tab_styles() -> void:
 	_frame_tab.button_pressed = _category == CAT_FRAME
 	_background_tab.button_pressed = _category == CAT_BACKGROUND
 	_sleeve_tab.button_pressed = _category == CAT_SLEEVE
-	_title.text = str(CAT_TITLE.get(_category, "Choose your avatar"))
+	_table_tab.button_pressed = _category == CAT_TABLE
+	_title_tab.button_pressed = _category == CAT_TITLE
+	_title.text = str(CATEGORY_HEADING.get(_category, "Choose your avatar"))
 
 
 func _list_ids(cat: String) -> Array:
@@ -100,7 +113,17 @@ func _list_ids(cat: String) -> Array:
 		return Frames.list_ids()
 	if cat == CAT_SLEEVE:
 		return Sleeves.list_ids()
+	if cat == CAT_TABLE:
+		return TableBackgrounds.list_ids()
 	return Backgrounds.list_ids()
+
+
+## Every title id this player may currently pick: "" (their live elo tier)
+## plus every title-type reward they own — see TitleSystem.available_titles.
+func _title_options() -> Array:
+	var elo := int(Session.account.get("elo", 0))
+	var owned: Array = Session.account.get("owned_rewards", [])
+	return TitleSystem.available_titles(elo, owned)
 
 
 ## Only the cosmetics this player may actually equip: free (non-catalog) items,
@@ -121,6 +144,8 @@ func _texture_for(cat: String, id: String) -> Texture2D:
 		return Frames.texture_for(id)
 	if cat == CAT_SLEEVE:
 		return Sleeves.texture_for(id)
+	if cat == CAT_TABLE:
+		return TableBackgrounds.texture_for(id)
 	return Backgrounds.texture_for(id)
 
 
@@ -139,9 +164,18 @@ func _build_grid() -> void:
 		if _tiles.has(_selected_avatar_id):
 			_tiles[_selected_avatar_id].add_theme_stylebox_override("panel", _frame_style(true))
 	else:
-		_add_tile(NONE_TILE, null)
-		for id: String in _available(_list_ids(_category)):
-			_add_tile(id, _texture_for(_category, id))
+		# Table is mandatory (no "none" choice); Title's "" entry is itself a
+		# real, labelled option ("my current elo tier"), not a blank slot — so
+		# neither one gets the generic NONE_TILE placeholder.
+		if _category != CAT_TABLE and _category != CAT_TITLE:
+			_add_tile(NONE_TILE, null)
+		if _category == CAT_TITLE:
+			for opt: Dictionary in _title_options():
+				var id := str(opt.id)
+				_add_tile(id if id != "" else NONE_TILE, null, str(opt.name))
+		else:
+			for id: String in _available(_list_ids(_category)):
+				_add_tile(id, _texture_for(_category, id))
 		var touched: bool = _touched[_category]
 		_select.disabled = not touched
 		var sel: String = _selected[_category]
@@ -150,7 +184,10 @@ func _build_grid() -> void:
 			_tiles[key].add_theme_stylebox_override("panel", _frame_style(true))
 
 
-func _add_tile(id: String, tex: Texture2D) -> void:
+## `label_text` only matters when `tex` is null: defaults to "None" (the
+## frame/background/sleeve "no cosmetic" tile), but callers with an actual
+## textless option to show — e.g. a Title's name — pass it explicitly.
+func _add_tile(id: String, tex: Texture2D, label_text := "") -> void:
 	var frame := PanelContainer.new()
 	frame.add_theme_stylebox_override("panel", _frame_style(false))
 
@@ -164,9 +201,10 @@ func _add_tile(id: String, tex: Texture2D) -> void:
 		btn.pressed.connect(_on_tile_pressed.bind(id))
 	else:
 		var btn := Button.new()
-		btn.text = "None"
+		btn.text = label_text if label_text != "" else "None"
 		btn.custom_minimum_size = TILE
 		btn.flat = true
+		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		frame.add_child(btn)
 		btn.pressed.connect(_on_tile_pressed.bind(id))
 
@@ -210,6 +248,14 @@ func _on_select_pressed() -> void:
 		if not _touched[CAT_SLEEVE]:
 			return
 		sleeve_chosen.emit(_selected[CAT_SLEEVE])
+	elif _category == CAT_TABLE:
+		if not _touched[CAT_TABLE]:
+			return
+		table_background_chosen.emit(_selected[CAT_TABLE])
+	elif _category == CAT_TITLE:
+		if not _touched[CAT_TITLE]:
+			return
+		title_chosen.emit(_selected[CAT_TITLE])
 	else:
 		if not _touched[CAT_BACKGROUND]:
 			return

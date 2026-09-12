@@ -6,6 +6,7 @@ extends Control
 ## awaiting_category). The responder drags a card onto that SAME single
 ## category once it's been served to them, instead of clicking.
 
+@onready var _background_rect: TextureRect = %BackgroundRect
 @onready var _status_label: Label = %StatusLabel
 @onready var _score_label: Label = %ScoreLabel
 @onready var _turn_timer_label: Label = %TurnTimerLabel
@@ -180,6 +181,11 @@ func _ready() -> void:
 	Net.match_force_ended.connect(_on_match_force_ended)
 
 	MusicPlayer.play_game()
+
+	# The table backdrop is a local cosmetic choice (this client's own pick),
+	# not synced from the opponent — same reasoning as everything else about
+	# each seat only rendering that player's own equipped cosmetics.
+	_background_rect.texture = TableBackgrounds.texture_for(str(Session.account.get("table_background", "")))
 
 	_draw_sfx = AudioStreamPlayer.new()
 	_draw_sfx.stream = DRAW_SOUND
