@@ -492,7 +492,7 @@ def run_ui() -> int:
                                  command=lambda: refresh_preview_frames())
     trim_end_box.pack(side="left", padx=4)
 
-    ttk.Label(opts, text="Exclude frames (e.g. 3,7,10-12)").grid(row=row, column=0, columnspan=2, sticky="w", pady=(6, 0))
+    ttk.Label(opts, text="Exclude frames — 0-based like Trim above\n(e.g. 3,7,10-12; a 24-frame clip is 0-23)").grid(row=row, column=0, columnspan=2, sticky="w", pady=(6, 0))
     row += 1
     exclude_var = tk.StringVar(value="")
     exclude_entry = ttk.Entry(opts, textvariable=exclude_var, width=22)
@@ -659,7 +659,13 @@ def run_ui() -> int:
         )
 
     def _selected_range_frames() -> list[Image.Image]:
-        """raw_frames filtered by the current trim range + exclusions."""
+        """raw_frames filtered by the current trim range + exclusions. Can be
+        genuinely empty (e.g. Exclude covers the whole Trim range) — that's
+        deliberately NOT silently patched over here (an earlier version fell
+        back to showing frame 0 regardless, which looked like the exclusion
+        had no effect at all); refresh_preview_frames() shows a clear message
+        instead. The real conversion (convert_gif) already refuses outright
+        with "no frames left after trim/exclude" in this situation."""
         raw = state["raw_frames"]
         if not raw:
             return []
@@ -668,8 +674,7 @@ def run_ui() -> int:
         if end < start:
             start, end = end, start
         excl = parse_index_ranges(exclude_var.get())
-        sel = [f for i, f in enumerate(raw) if start <= i <= end and i not in excl]
-        return sel or raw[start:start + 1]
+        return [f for i, f in enumerate(raw) if start <= i <= end and i not in excl]
 
     def refresh_preview_frames() -> None:
         """Rebuilds the (rotated/flipped/color-adjusted, NOT cropped) preview
@@ -686,6 +691,15 @@ def run_ui() -> int:
         if not state["raw_frames"]:
             return
         sel = _selected_range_frames()
+        if not sel:
+            _stop_preview()
+            state["preview_frames"] = []
+            canvas.delete("all")
+            canvas.create_text(_PREVIEW_BOX // 2, _PREVIEW_BOX // 2,
+                                text="(no frames left —\nTrim/Exclude removed everything)",
+                                fill="#f66", justify="center")
+            final_canvas.delete("all")
+            return
         kwargs = _current_edit_kwargs()
         edited = [apply_edits(f, crop_box=None, **kwargs) for f in sel[:MAX_ANIM_FRAMES]]
         state["preview_frames"] = edited
