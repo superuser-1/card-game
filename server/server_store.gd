@@ -187,6 +187,7 @@ func create_account(username: String, password: String, avatar := "") -> Diction
 		"frame": "",
 		"background": "",
 		"table_background": TableBackgrounds.DEFAULT_ID,
+		"favorite_tables": [],
 		"sleeve": "",
 		"title": "",
 		"auth_provider": "password",
@@ -326,8 +327,31 @@ func set_sleeve(account_id: int, sleeve_id: String) -> Dictionary:
 ## Store a chosen game-table background id (the full-screen backdrop behind a
 ## match — see TableBackgrounds, distinct from the avatar's own "background").
 ## Unlike avatars, this is still mandatory (never ""), same reasoning as
-## Avatars.sanitize always resolving to something real.
+## Avatars.sanitize always resolving to something real. Also accepts
+## TableBackgrounds.RANDOM_ID/RANDOM_FAVORITE_ID — modes, not real ids, so they
+## skip the ownership check (they're only ever resolved to a real, owned id
+## client-side at the point of use).
 func set_table_background(account_id: int, table_background_id: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+	var clean := table_background_id.strip_edges()
+	if clean == "" or clean.length() > 40:
+		return {"ok": false, "error": "bad_table_background", "account": {}}
+	if not TableBackgrounds.is_random_mode(clean) and ShopCatalog.is_premium(clean) and clean not in account.get("owned_rewards", []):
+		return {"ok": false, "error": "not_owned", "account": {}}
+	account["table_background"] = clean
+	_save_accounts()
+	return {"ok": true, "error": "", "account": account}
+
+
+## Toggles a table background id in/out of this account's favorites list —
+## used to narrow the "Random Favorite Table" pool. The id is trusted only as
+## far as shape here (non-empty, <=40 chars), same as set_table_background —
+## the RPC layer already ran it through TableBackgrounds.sanitize(), which
+## rewrites anything unresolvable (including the two random-mode sentinels)
+## to a real id before it ever reaches this function.
+func toggle_favorite_table(account_id: int, table_background_id: String) -> Dictionary:
 	var account := get_account(account_id)
 	if account.is_empty():
 		return {"ok": false, "error": "no_such_user", "account": {}}
@@ -336,7 +360,12 @@ func set_table_background(account_id: int, table_background_id: String) -> Dicti
 		return {"ok": false, "error": "bad_table_background", "account": {}}
 	if ShopCatalog.is_premium(clean) and clean not in account.get("owned_rewards", []):
 		return {"ok": false, "error": "not_owned", "account": {}}
-	account["table_background"] = clean
+	var favs: Array = (account.get("favorite_tables", []) as Array).duplicate()
+	if clean in favs:
+		favs.erase(clean)
+	else:
+		favs.append(clean)
+	account["favorite_tables"] = favs
 	_save_accounts()
 	return {"ok": true, "error": "", "account": account}
 
@@ -384,6 +413,7 @@ func account_snapshot(account: Dictionary) -> Dictionary:
 		"frame": account.get("frame", ""),
 		"background": account.get("background", ""),
 		"table_background": account.get("table_background", ""),
+		"favorite_tables": (account.get("favorite_tables", []) as Array).duplicate(),
 		"sleeve": account.get("sleeve", ""),
 		"title": account.get("title", ""),
 		"elo": account.get("elo"),
@@ -437,6 +467,7 @@ func account_admin_view(account: Dictionary) -> Dictionary:
 		"frame": account.get("frame", ""),
 		"background": account.get("background", ""),
 		"table_background": account.get("table_background", ""),
+		"favorite_tables": (account.get("favorite_tables", []) as Array).duplicate(),
 		"sleeve": account.get("sleeve", ""),
 		"title": account.get("title", ""),
 		"achievements_unlocked": (account.get("achievements", {}).get("unlocked", {}) as Dictionary).duplicate(),

@@ -185,7 +185,14 @@ func _ready() -> void:
 	# The table backdrop is a local cosmetic choice (this client's own pick),
 	# not synced from the opponent — same reasoning as everything else about
 	# each seat only rendering that player's own equipped cosmetics.
-	_background_rect.texture = TableBackgrounds.texture_for(str(Session.account.get("table_background", "")))
+	# "Random"/"Random Favorite" are resolved fresh here so each match gets a
+	# new roll instead of picking once and sticking.
+	var table_id: String = TableBackgrounds.resolve_random(
+		str(Session.account.get("table_background", "")),
+		Session.account.get("owned_rewards", []),
+		Session.account.get("favorite_tables", [])
+	)
+	_background_rect.texture = TableBackgrounds.texture_for(table_id)
 
 	_draw_sfx = AudioStreamPlayer.new()
 	_draw_sfx.stream = DRAW_SOUND

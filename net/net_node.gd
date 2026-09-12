@@ -51,6 +51,7 @@ signal frame_updated(account: Dictionary)       # fresh account snapshot after s
 signal background_updated(account: Dictionary)  # fresh account snapshot after set_background
 signal sleeve_updated(account: Dictionary)      # fresh account snapshot after set_sleeve
 signal table_background_updated(account: Dictionary)  # fresh account snapshot after set_table_background
+signal favorite_tables_updated(account: Dictionary)    # fresh account snapshot after toggle_favorite_table
 signal title_updated(account: Dictionary)       # fresh account snapshot after set_title
 signal shop_purchase_result(account: Dictionary) # fresh account snapshot after shop_purchase
 signal achievements_unlocked(list: Array)       # from out-of-band tournament stat apply
@@ -361,9 +362,17 @@ func set_sleeve(sleeve: String) -> void:
 
 
 ## Set the logged-in account's game-table background. Reply comes back on
-## `table_background_updated` with a fresh account snapshot.
+## `table_background_updated` with a fresh account snapshot. `table_background`
+## may be a real id or TableBackgrounds.RANDOM_ID/RANDOM_FAVORITE_ID.
 func set_table_background(table_background: String) -> void:
 	_rpc_set_table_background.rpc_id(1, table_background)
+
+
+## Add/remove a table background id from the logged-in account's favorites
+## (used to narrow the "Random Favorite Table" pool). Reply comes back on
+## `favorite_tables_updated` with a fresh account snapshot.
+func toggle_favorite_table(table_background: String) -> void:
+	_rpc_toggle_favorite_table.rpc_id(1, table_background)
 
 
 ## Set (or clear, with "" for "auto — my current elo tier") the logged-in
@@ -2672,6 +2681,22 @@ func _rpc_set_table_background(table_background: String) -> void:
 
 
 @rpc("any_peer", "call_remote", "reliable")
+func _rpc_toggle_favorite_table(table_background: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not _require_auth(peer_id):
+		_rpc_receive_error.rpc_id(peer_id, "Not authenticated.")
+		return
+	var acc_id := int(_peer_account[peer_id])
+	var res := _store.toggle_favorite_table(acc_id, TableBackgrounds.sanitize(table_background))
+	if not res.ok:
+		_rpc_receive_error.rpc_id(peer_id, "Could not update favorite table.")
+		return
+	_rpc_favorite_table_result.rpc_id(peer_id, _store.account_snapshot(res.account))
+
+
+@rpc("any_peer", "call_remote", "reliable")
 func _rpc_set_title(title: String) -> void:
 	if not is_server or is_solo:
 		return
@@ -3217,6 +3242,13 @@ func _rpc_table_background_result(account: Dictionary) -> void:
 	if is_server:
 		return
 	table_background_updated.emit(account)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_favorite_table_result(account: Dictionary) -> void:
+	if is_server:
+		return
+	favorite_tables_updated.emit(account)
 
 
 @rpc("authority", "call_remote", "reliable")

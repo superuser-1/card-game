@@ -21,6 +21,9 @@ signal title_chosen(id: String)
 
 const TILE := Vector2(92, 92)
 const ACCENT := Color(0.38, 0.68, 1.0)
+const HEART_SIZE := Vector2(24, 24)
+const FAVORITE_COLOR := Color(0.3, 0.9, 0.45)
+const NOT_FAVORITE_COLOR := Color(1, 1, 1, 0.35)
 const CAT_AVATAR := "avatar"
 const CAT_FRAME := "frame"
 const CAT_BACKGROUND := "background"
@@ -49,7 +52,7 @@ var _selected_avatar_id := ""
 var _selected := {CAT_FRAME: "", CAT_BACKGROUND: "", CAT_SLEEVE: "", CAT_TABLE: "", CAT_TITLE: ""}
 var _touched := {CAT_FRAME: false, CAT_BACKGROUND: false, CAT_SLEEVE: false, CAT_TABLE: false, CAT_TITLE: false}
 
-var _tiles := {}  # id (or NONE_TILE) -> PanelContainer frame, for the active category
+var _tiles := {}  # id (or NONE_TILE) -> the tile's Panel background, for the active category
 
 @onready var _grid: GridContainer = %Grid
 @onready var _cancel: Button = %CancelButton
@@ -85,6 +88,10 @@ func _ready() -> void:
 
 	_select.disabled = true
 	_select.pressed.connect(_on_select_pressed)
+
+	# Keeps the heart colours honest if a favorite toggle round-trips while
+	# this tab is up (the click itself already flips it optimistically).
+	Net.favorite_tables_updated.connect(_on_favorite_tables_updated)
 
 	_build_grid()
 	_update_tab_styles()
@@ -173,6 +180,11 @@ func _build_grid() -> void:
 			for opt: Dictionary in _title_options():
 				var id := str(opt.id)
 				_add_tile(id if id != "" else NONE_TILE, null, str(opt.name))
+		elif _category == CAT_TABLE:
+			_add_tile(TableBackgrounds.RANDOM_ID, null, "🎲 Random Table")
+			_add_tile(TableBackgrounds.RANDOM_FAVORITE_ID, null, "💚 Random Favorite")
+			for id: String in _available(_list_ids(CAT_TABLE)):
+				_add_tile(id, _texture_for(CAT_TABLE, id), "", true)
 		else:
 			for id: String in _available(_list_ids(_category)):
 				_add_tile(id, _texture_for(_category, id))
@@ -187,29 +199,87 @@ func _build_grid() -> void:
 ## `label_text` only matters when `tex` is null: defaults to "None" (the
 ## frame/background/sleeve "no cosmetic" tile), but callers with an actual
 ## textless option to show — e.g. a Title's name — pass it explicitly.
-func _add_tile(id: String, tex: Texture2D, label_text := "") -> void:
-	var frame := PanelContainer.new()
-	frame.add_theme_stylebox_override("panel", _frame_style(false))
+## `show_heart` adds a favorite-toggle button in the top-right corner (Table
+## tiles only, for narrowing the "Random Favorite Table" pool) — the tile is
+## built from a plain Control rather than a PanelContainer so the heart can
+## sit anchored in a corner instead of being stretched to fill like a
+## PanelContainer forces on every child.
+func _add_tile(id: String, tex: Texture2D, label_text := "", show_heart := false) -> void:
+	var frame := Control.new()
+	frame.custom_minimum_size = TILE
+
+	var bg := Panel.new()
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bg.add_theme_stylebox_override("panel", _frame_style(false))
+	frame.add_child(bg)
 
 	if tex != null:
 		var btn := TextureButton.new()
 		btn.texture_normal = tex
 		btn.ignore_texture_size = true
 		btn.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-		btn.custom_minimum_size = TILE
+		btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		frame.add_child(btn)
 		btn.pressed.connect(_on_tile_pressed.bind(id))
 	else:
 		var btn := Button.new()
 		btn.text = label_text if label_text != "" else "None"
-		btn.custom_minimum_size = TILE
 		btn.flat = true
 		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		frame.add_child(btn)
 		btn.pressed.connect(_on_tile_pressed.bind(id))
 
+	if show_heart:
+		_add_heart_button(frame, id)
+
 	_grid.add_child(frame)
-	_tiles[id] = frame
+	_tiles[id] = bg
+
+
+func _is_favorite_table(id: String) -> bool:
+	return id in (Session.account.get("favorite_tables", []) as Array)
+
+
+func _add_heart_button(frame: Control, id: String) -> void:
+	var heart := Button.new()
+	heart.flat = true
+	heart.text = "♥"
+	heart.custom_minimum_size = HEART_SIZE
+	heart.anchor_left = 1.0
+	heart.anchor_right = 1.0
+	heart.offset_left = -HEART_SIZE.x - 2.0
+	heart.offset_right = -2.0
+	heart.offset_top = 2.0
+	heart.offset_bottom = 2.0 + HEART_SIZE.y
+	heart.add_theme_font_size_override("font_size", 16)
+	heart.add_theme_color_override("font_color", FAVORITE_COLOR if _is_favorite_table(id) else NOT_FAVORITE_COLOR)
+	heart.add_theme_color_override("font_hover_color", FAVORITE_COLOR if _is_favorite_table(id) else Color(1, 1, 1, 0.7))
+	heart.tooltip_text = "Favorite (used by Random Favorite Table)"
+	heart.pressed.connect(_on_heart_pressed.bind(id, heart))
+	frame.add_child(heart)
+
+
+## Toggles favorite status optimistically (instant visual feedback) and fires
+## the RPC; _on_favorite_tables_updated reconciles from the server's reply.
+func _on_heart_pressed(id: String, heart: Button) -> void:
+	Net.toggle_favorite_table(id)
+	var favs: Array = (Session.account.get("favorite_tables", []) as Array).duplicate()
+	if id in favs:
+		favs.erase(id)
+	else:
+		favs.append(id)
+	Session.account["favorite_tables"] = favs
+	var is_fav: bool = id in favs
+	heart.add_theme_color_override("font_color", FAVORITE_COLOR if is_fav else NOT_FAVORITE_COLOR)
+	heart.add_theme_color_override("font_hover_color", FAVORITE_COLOR if is_fav else Color(1, 1, 1, 0.7))
+
+
+func _on_favorite_tables_updated(account: Dictionary) -> void:
+	Session.set_account(account)
+	if _category == CAT_TABLE:
+		_build_grid()
 
 
 func _on_tile_pressed(id: String) -> void:
