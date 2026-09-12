@@ -11,6 +11,11 @@ all. From your own PC, in the project folder:
 ```powershell
 .\deploy\deploy.ps1
 ```
+**If Windows says "running scripts is disabled" — don't fight it, just
+double-click `deploy\deploy.bat` instead** (does the exact same thing, just
+sidesteps that restriction). A window will open and stay open — read what it
+prints, then press any key to close it.
+
 One command, does everything (pull + reimport + restart), and prints the
 result right there in your own terminal. This is the only thing most updates
 need — read on only if you actually need to poke around on the server itself

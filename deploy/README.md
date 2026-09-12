@@ -57,6 +57,10 @@ Deploy an update — one command, run from your own machine, no SSH session to s
 ```powershell
 .\deploy\deploy.ps1      # or bash deploy/deploy.sh
 ```
+(Windows blocks running `.ps1` files directly by default — if you get an
+"execution policy"/"scripts disabled" error, either double-click
+`deploy\deploy.bat` instead, or run
+`powershell -ExecutionPolicy Bypass -File .\deploy\deploy.ps1`.)
 Runs `git pull` + `provision_vm.sh` + a service restart on the VM in one
 non-interactive shot and streams the output back. Requires the
 [gcloud CLI](https://cloud.google.com/sdk/docs/install) (`gcloud init` once
