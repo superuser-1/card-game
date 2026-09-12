@@ -497,6 +497,11 @@ def run_ui() -> int:
     exclude_var = tk.StringVar(value="")
     exclude_entry = ttk.Entry(opts, textvariable=exclude_var, width=22)
     exclude_entry.grid(row=row, column=0, columnspan=2, sticky="we")
+    # Live update on every keystroke — parse_index_ranges silently ignores
+    # whatever's not finished typing yet ("3,7,1" mid-edit just becomes {3,7,1}
+    # until you finish "10-12"), so there's nothing to wait for a blur/Enter
+    # before refreshing.
+    exclude_entry.bind("<KeyRelease>", lambda e: refresh_preview_frames())
     exclude_entry.bind("<FocusOut>", lambda e: refresh_preview_frames())
     exclude_entry.bind("<Return>", lambda e: refresh_preview_frames())
     row += 1
