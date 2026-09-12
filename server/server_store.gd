@@ -211,6 +211,8 @@ func create_account(username: String, password: String, avatar := "") -> Diction
 		"achievement_log": [],
 		"shop_log": [],
 		"points_ledger": [],
+		"login_log": [],
+		"tags": [],
 		"is_admin": false,
 		"banned": false,
 		"ban_reason": "",
@@ -244,6 +246,19 @@ func verify_login(username: String, password: String) -> Dictionary:
 	if bool(account.get("banned", false)):
 		return {"ok": false, "error": "banned", "account": account}
 	return {"ok": true, "error": "", "account": account}
+
+
+## Appends one login_log entry (capped at ACCOUNT_LOG_MAX, same as every other
+## per-account log) — called by net_node.gd after a successful register or
+## password login (NOT a token resume, which isn't a fresh login). This is
+## what admin_tag_accounts_by_login_window() below reads to find "everyone who
+## logged in during this window" for a beta/playtest cohort.
+func record_login(account_id: int) -> void:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return
+	_append_account_log(account, "login_log", {"ts": int(Time.get_unix_time_from_system())})
+	_save_accounts()
 
 
 func get_account(id: int) -> Dictionary:
@@ -470,6 +485,7 @@ func account_admin_view(account: Dictionary) -> Dictionary:
 		"favorite_tables": (account.get("favorite_tables", []) as Array).duplicate(),
 		"sleeve": account.get("sleeve", ""),
 		"title": account.get("title", ""),
+		"tags": (account.get("tags", []) as Array).duplicate(),
 		"achievements_unlocked": (account.get("achievements", {}).get("unlocked", {}) as Dictionary).duplicate(),
 	}
 
@@ -602,6 +618,107 @@ func admin_grant_item(account_id: int, item_id: String, admin_username: String) 
 	grant_reward(account, 0, [clean], "admin")
 	_log_admin_action(admin_username, "grant_item", account_id, clean)
 	return {"ok": true, "error": "", "account": account_admin_view(account)}
+
+
+## Adds `tag` (any free-form string — "beta_1", "playtest_alpha", whatever
+## this cohort is called) to every account with at least one login_log entry
+## in [start_ts, end_ts] (inclusive). Reusable for any future beta/playtest
+## round — just pick a new tag and a new window. Idempotent: accounts that
+## already carry the tag aren't double-added or re-counted.
+##
+## CAVEAT: login_log is capped at ACCOUNT_LOG_MAX (100) entries per account —
+## an account that logged in more than 100 times *after* the window (before
+## this runs) could have its in-window entries evicted. Run this soon after
+## the window closes to avoid that; for anyone missed, admin_add_tag() below
+## covers it by hand.
+func admin_tag_accounts_by_login_window(start_ts: int, end_ts: int, tag: String, admin_username: String) -> Dictionary:
+	var clean_tag := tag.strip_edges()
+	if clean_tag == "" or clean_tag.length() > 40:
+		return {"ok": false, "error": "bad_tag", "tagged_usernames": []}
+	if end_ts < start_ts:
+		return {"ok": false, "error": "bad_window", "tagged_usernames": []}
+
+	var tagged_usernames := []
+	for account in _accounts:
+		var logged_in_during_window := false
+		for entry in (account.get("login_log", []) as Array):
+			var ts := int((entry as Dictionary).get("ts", 0))
+			if ts >= start_ts and ts <= end_ts:
+				logged_in_during_window = true
+				break
+		if not logged_in_during_window:
+			continue
+		var tags: Array = (account.get("tags", []) as Array)
+		if clean_tag not in tags:
+			tags.append(clean_tag)
+			account["tags"] = tags
+			tagged_usernames.append(str(account.get("username", "")))
+
+	if not tagged_usernames.is_empty():
+		_save_accounts()
+	_log_admin_action(admin_username, "tag_by_login_window", 0,
+		"'%s' [%s .. %s] -> %d account(s): %s" % [
+			clean_tag,
+			Time.get_datetime_string_from_unix_time(start_ts, true),
+			Time.get_datetime_string_from_unix_time(end_ts, true),
+			tagged_usernames.size(), ", ".join(tagged_usernames),
+		])
+	return {"ok": true, "error": "", "tagged_usernames": tagged_usernames}
+
+
+## Manual single-account tag add/remove — for fixing up anyone the login-
+## window sweep missed (or over-caught), without re-running the whole sweep.
+func admin_add_tag(account_id: int, tag: String, admin_username: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+	var clean_tag := tag.strip_edges()
+	if clean_tag == "" or clean_tag.length() > 40:
+		return {"ok": false, "error": "bad_tag", "account": {}}
+	var tags: Array = (account.get("tags", []) as Array)
+	if clean_tag not in tags:
+		tags.append(clean_tag)
+		account["tags"] = tags
+		_save_accounts()
+		_log_admin_action(admin_username, "add_tag", account_id, clean_tag)
+	return {"ok": true, "error": "", "account": account_admin_view(account)}
+
+
+func admin_remove_tag(account_id: int, tag: String, admin_username: String) -> Dictionary:
+	var account := get_account(account_id)
+	if account.is_empty():
+		return {"ok": false, "error": "no_such_user", "account": {}}
+	var clean_tag := tag.strip_edges()
+	var tags: Array = (account.get("tags", []) as Array)
+	if clean_tag in tags:
+		tags.erase(clean_tag)
+		account["tags"] = tags
+		_save_accounts()
+		_log_admin_action(admin_username, "remove_tag", account_id, clean_tag)
+	return {"ok": true, "error": "", "account": account_admin_view(account)}
+
+
+## Grants `item_ids` (same grant_reward/"admin" mechanism admin_grant_item and
+## a tournament payout use) to every account currently carrying `tag`. Safe
+## to re-run — grant_reward is itself idempotent per item id (skips ids an
+## account already owns), so granting the same tag+item twice (e.g. after
+## tagging a few stragglers by hand) never double-grants anyone.
+func admin_grant_to_tag(tag: String, item_ids: Array, admin_username: String) -> Dictionary:
+	var clean_tag := tag.strip_edges()
+	if clean_tag == "":
+		return {"ok": false, "error": "bad_tag", "granted_usernames": []}
+	var granted_usernames := []
+	for account in _accounts:
+		if clean_tag not in (account.get("tags", []) as Array):
+			continue
+		var res := grant_reward(account, 0, item_ids, "admin")
+		if not (res.granted as Array).is_empty():
+			granted_usernames.append(str(account.get("username", "")))
+	_log_admin_action(admin_username, "grant_to_tag", 0,
+		"'%s' -> items %s -> %d account(s): %s" % [
+			clean_tag, str(item_ids), granted_usernames.size(), ", ".join(granted_usernames),
+		])
+	return {"ok": true, "error": "", "granted_usernames": granted_usernames}
 
 
 ## Every tournament this account has ever participated in, most recent first

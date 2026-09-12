@@ -70,6 +70,10 @@ func _ready() -> void:
 	%SetEloButton.pressed.connect(_on_set_elo_pressed)
 	%AdjustPointsButton.pressed.connect(_on_adjust_points_pressed)
 	%GrantItemButton.pressed.connect(_on_grant_item_pressed)
+	%TagWindowButton.pressed.connect(_on_tag_window_pressed)
+	%AddTagButton.pressed.connect(_on_add_tag_pressed)
+	%RemoveTagButton.pressed.connect(_on_remove_tag_pressed)
+	%GrantToTagButton.pressed.connect(_on_grant_to_tag_pressed)
 
 	%RefreshOnlineButton.pressed.connect(func(): Net.admin_list_online())
 	%RefreshLogButton.pressed.connect(func(): Net.admin_recent_actions(100))
@@ -234,6 +238,7 @@ func _on_admin_account_detail(account: Dictionary) -> void:
 		],
 		"Points: %d" % int(account.get("points", 0)),
 		"Admin: %s" % ("yes" if bool(account.get("is_admin", false)) else "no"),
+		"Tags: %s" % (", ".join(account.get("tags", []) as Array) if not (account.get("tags", []) as Array).is_empty() else "(none)"),
 	]
 	if bool(account.get("banned", false)):
 		lines.append("BANNED — reason: %s" % str(account.get("ban_reason", "")))
@@ -348,6 +353,68 @@ func _on_grant_item_pressed() -> void:
 	Net.admin_grant_item(_selected_account_id, item_id)
 
 
+# --- cohorts (beta/playtest tagging) ---------------------------------------
+
+const _DATETIME_PATTERN := "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+
+
+func _parse_utc_datetime(text: String) -> int:
+	var re := RegEx.new()
+	re.compile(_DATETIME_PATTERN)
+	if re.search(text) == null:
+		return -1
+	return int(Time.get_unix_time_from_datetime_string(text))
+
+
+func _on_tag_window_pressed() -> void:
+	var tag: String = %CohortTagField.text.strip_edges()
+	if tag == "":
+		%StatusLabel.text = "Enter a tag name."
+		return
+	var start_ts := _parse_utc_datetime(%CohortStartField.text.strip_edges())
+	var end_ts := _parse_utc_datetime(%CohortEndField.text.strip_edges())
+	if start_ts < 0 or end_ts < 0:
+		%StatusLabel.text = "Dates must look like 2026-09-01 00:00:00 (UTC)."
+		return
+	if end_ts < start_ts:
+		%StatusLabel.text = "The 'To' date is before the 'From' date."
+		return
+	Net.admin_tag_by_login_window(start_ts, end_ts, tag)
+
+
+func _on_add_tag_pressed() -> void:
+	if _selected_account_id == 0:
+		%StatusLabel.text = "Select an account on the Accounts tab first."
+		return
+	var tag: String = %ManualTagField.text.strip_edges()
+	if tag == "":
+		%StatusLabel.text = "Enter a tag name."
+		return
+	Net.admin_add_tag(_selected_account_id, tag)
+
+
+func _on_remove_tag_pressed() -> void:
+	if _selected_account_id == 0:
+		%StatusLabel.text = "Select an account on the Accounts tab first."
+		return
+	var tag: String = %ManualTagField.text.strip_edges()
+	if tag == "":
+		%StatusLabel.text = "Enter a tag name."
+		return
+	Net.admin_remove_tag(_selected_account_id, tag)
+
+
+func _on_grant_to_tag_pressed() -> void:
+	var tag: String = %GrantToTagTagField.text.strip_edges()
+	var item_ids := (%GrantToTagItemField.text as String).split(",", false)
+	for i in range(item_ids.size()):
+		item_ids[i] = item_ids[i].strip_edges()
+	if tag == "" or item_ids.is_empty():
+		%StatusLabel.text = "Enter a tag and at least one item id."
+		return
+	Net.admin_grant_to_tag(tag, item_ids)
+
+
 func _on_admin_action_result(result: Dictionary) -> void:
 	var action: String = result.get("action", "")
 	if not bool(result.get("ok", false)):
@@ -388,6 +455,24 @@ func _on_admin_action_result(result: Dictionary) -> void:
 			Net.admin_list_templates()
 		"grant_item":
 			%StatusLabel.text = "Item granted."
+		"add_tag", "remove_tag":
+			%ManualTagField.text = ""
+		"tag_by_login_window":
+			var tagged: Array = result.get("tagged_usernames", [])
+			%StatusLabel.text = "Tagged %d account(s)." % tagged.size()
+			%CohortResultList.clear()
+			if tagged.is_empty():
+				%CohortResultList.add_item("(nobody logged in during that window)")
+			for username in tagged:
+				%CohortResultList.add_item(str(username))
+		"grant_to_tag":
+			var granted: Array = result.get("granted_usernames", [])
+			%StatusLabel.text = "Granted to %d account(s)." % granted.size()
+			%CohortResultList.clear()
+			if granted.is_empty():
+				%CohortResultList.add_item("(nobody with that tag needed it — already owned, or no accounts have that tag)")
+			for username in granted:
+				%CohortResultList.add_item(str(username))
 
 
 # --- online / log ------------------------------------------------------------

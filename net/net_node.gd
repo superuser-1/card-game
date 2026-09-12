@@ -438,6 +438,32 @@ func admin_grant_item(account_id: int, item_id: String) -> void:
 	_rpc_admin_grant_item.rpc_id(1, account_id, item_id)
 
 
+## Tags every account with a login_log entry inside [start_ts, end_ts] with
+## `tag` — the "make sure I got everybody" way to mark a beta/playtest
+## cohort after the fact. Reply on `admin_action_result` (action
+## "tag_by_login_window", with "tagged_usernames").
+func admin_tag_by_login_window(start_ts: int, end_ts: int, tag: String) -> void:
+	_rpc_admin_tag_by_login_window.rpc_id(1, start_ts, end_ts, tag)
+
+
+## Manual single-account tag add/remove, for fixing up anyone the login-
+## window sweep missed (or over-caught). Reply on `admin_action_result`
+## (action "add_tag"/"remove_tag").
+func admin_add_tag(account_id: int, tag: String) -> void:
+	_rpc_admin_add_tag.rpc_id(1, account_id, tag)
+
+
+func admin_remove_tag(account_id: int, tag: String) -> void:
+	_rpc_admin_remove_tag.rpc_id(1, account_id, tag)
+
+
+## Grants `item_ids` to every account currently carrying `tag` — the one-
+## click "thank the whole cohort" action. Reply on `admin_action_result`
+## (action "grant_to_tag", with "granted_usernames").
+func admin_grant_to_tag(tag: String, item_ids: Array) -> void:
+	_rpc_admin_grant_to_tag.rpc_id(1, tag, item_ids)
+
+
 func admin_list_online() -> void:
 	_rpc_admin_list_online.rpc_id(1)
 
@@ -2044,6 +2070,64 @@ func _rpc_admin_grant_item(account_id: int, item_id: String) -> void:
 
 
 @rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_tag_by_login_window(start_ts: int, end_ts: int, tag: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "tag_by_login_window", "account": {}})
+		return
+	var res := _store.admin_tag_accounts_by_login_window(start_ts, end_ts, tag, str(admin.get("username", "")))
+	res["action"] = "tag_by_login_window"
+	res["account"] = {}
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_add_tag(account_id: int, tag: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "add_tag", "account": {}})
+		return
+	var res := _store.admin_add_tag(account_id, tag, str(admin.get("username", "")))
+	res["action"] = "add_tag"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_remove_tag(account_id: int, tag: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "remove_tag", "account": {}})
+		return
+	var res := _store.admin_remove_tag(account_id, tag, str(admin.get("username", "")))
+	res["action"] = "remove_tag"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_grant_to_tag(tag: String, item_ids: Array) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "grant_to_tag", "account": {}})
+		return
+	var res := _store.admin_grant_to_tag(tag, item_ids, str(admin.get("username", "")))
+	res["action"] = "grant_to_tag"
+	res["account"] = {}
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+
+
+@rpc("any_peer", "call_remote", "reliable")
 func _rpc_admin_list_online() -> void:
 	if not is_server or is_solo:
 		return
@@ -2583,6 +2667,7 @@ func _rpc_auth_register(username: String, password: String) -> void:
 		_rpc_auth_result.rpc_id(peer_id, {"ok": false, "error": res.error, "token": "", "account": {}})
 		return
 	var token := _bind_session(peer_id, int(res.account.id))
+	_store.record_login(int(res.account.id))
 	_rpc_auth_result.rpc_id(peer_id, {
 		"ok": true, "error": "", "token": token,
 		"account": _store.account_snapshot(res.account),
@@ -2602,6 +2687,7 @@ func _rpc_auth_login(username: String, password: String) -> void:
 		_rpc_auth_result.rpc_id(peer_id, {"ok": false, "error": res.error, "token": "", "account": {}, "extra": extra})
 		return
 	var token := _bind_session(peer_id, int(res.account.id))
+	_store.record_login(int(res.account.id))
 	_rpc_auth_result.rpc_id(peer_id, {
 		"ok": true, "error": "", "token": token,
 		"account": _store.account_snapshot(res.account),

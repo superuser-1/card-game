@@ -804,6 +804,122 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
+[node name="Cohorts" type="VBoxContainer" parent="MainPanel/Tabs"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CohortsInfoLabel" type="Label" parent="MainPanel/Tabs/Cohorts"]
+layout_mode = 2
+text = "Tag every account that logged in during a date/time window — the reliable way to mark a beta/playtest cohort without missing anyone, reusable for any future round (just pick a new tag name). Times are UTC. Then grant an item to everyone carrying a tag in one click."
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+modulate = Color(1, 1, 1, 0.7)
+
+[node name="TagWindowNameRow" type="HBoxContainer" parent="MainPanel/Tabs/Cohorts"]
+layout_mode = 2
+
+[node name="TagWindowNameLabel" type="Label" parent="MainPanel/Tabs/Cohorts/TagWindowNameRow"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Tag name:"
+
+[node name="CohortTagField" type="LineEdit" parent="MainPanel/Tabs/Cohorts/TagWindowNameRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "e.g. beta_1"
+
+[node name="TagWindowRangeRow" type="HBoxContainer" parent="MainPanel/Tabs/Cohorts"]
+layout_mode = 2
+
+[node name="TagWindowFromLabel" type="Label" parent="MainPanel/Tabs/Cohorts/TagWindowRangeRow"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "From (UTC):"
+
+[node name="CohortStartField" type="LineEdit" parent="MainPanel/Tabs/Cohorts/TagWindowRangeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "YYYY-MM-DD HH:MM:SS"
+
+[node name="TagWindowToLabel" type="Label" parent="MainPanel/Tabs/Cohorts/TagWindowRangeRow"]
+layout_mode = 2
+text = "To (UTC):"
+
+[node name="CohortEndField" type="LineEdit" parent="MainPanel/Tabs/Cohorts/TagWindowRangeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "YYYY-MM-DD HH:MM:SS"
+
+[node name="TagWindowButton" type="Button" parent="MainPanel/Tabs/Cohorts"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Tag Everyone Who Logged In During This Window"
+
+[node name="CohortsSeparator" type="HSeparator" parent="MainPanel/Tabs/Cohorts"]
+layout_mode = 2
+
+[node name="ManualTagLabel" type="Label" parent="MainPanel/Tabs/Cohorts"]
+layout_mode = 2
+text = "Fix up one account by hand (select it on the Accounts tab first):"
+theme_override_font_sizes/font_size = 12
+modulate = Color(1, 1, 1, 0.7)
+
+[node name="ManualTagRow" type="HBoxContainer" parent="MainPanel/Tabs/Cohorts"]
+layout_mode = 2
+
+[node name="ManualTagField" type="LineEdit" parent="MainPanel/Tabs/Cohorts/ManualTagRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "tag name"
+
+[node name="AddTagButton" type="Button" parent="MainPanel/Tabs/Cohorts/ManualTagRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Add Tag"
+
+[node name="RemoveTagButton" type="Button" parent="MainPanel/Tabs/Cohorts/ManualTagRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Remove Tag"
+
+[node name="CohortsSeparator2" type="HSeparator" parent="MainPanel/Tabs/Cohorts"]
+layout_mode = 2
+
+[node name="GrantToTagLabel" type="Label" parent="MainPanel/Tabs/Cohorts"]
+layout_mode = 2
+text = "Grant an item to everyone carrying a tag (safe to re-run — never double-grants):"
+theme_override_font_sizes/font_size = 12
+modulate = Color(1, 1, 1, 0.7)
+
+[node name="GrantToTagRow" type="HBoxContainer" parent="MainPanel/Tabs/Cohorts"]
+layout_mode = 2
+
+[node name="GrantToTagTagField" type="LineEdit" parent="MainPanel/Tabs/Cohorts/GrantToTagRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "tag name"
+
+[node name="GrantToTagItemField" type="LineEdit" parent="MainPanel/Tabs/Cohorts/GrantToTagRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "item id"
+
+[node name="GrantToTagButton" type="Button" parent="MainPanel/Tabs/Cohorts/GrantToTagRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Grant to Tag"
+
+[node name="CohortResultList" type="ItemList" parent="MainPanel/Tabs/Cohorts"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
 [node name="ConfirmDialog" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true
 title = "Please confirm"
