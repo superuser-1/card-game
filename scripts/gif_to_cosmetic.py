@@ -622,9 +622,14 @@ def run_ui() -> int:
         else:
             final_col.pack_forget()
 
+    def _invalidate_final_cache() -> None:
+        n = len(state.get("preview_frames", []))
+        state["final_tk"] = [None] * n
+
     def reset_crop() -> None:
         state["crop"] = [0.0, 0.0, 1.0, 1.0]
         _update_crop_readout()
+        _invalidate_final_cache()
         draw_canvas()
 
     def reset_adjustments() -> None:
@@ -704,6 +709,7 @@ def run_ui() -> int:
         edited = [apply_edits(f, crop_box=None, **kwargs) for f in sel[:MAX_ANIM_FRAMES]]
         state["preview_frames"] = edited
         state["preview_tk"] = [None] * len(edited)
+        state["final_tk"] = [None] * len(edited)
         state["preview_i"] = 0
         draw_canvas()
 
@@ -721,7 +727,19 @@ def run_ui() -> int:
         card border's canvas, border composited on top — so corner-fit
         problems (art not reaching the rounded edge, or an off-center crop)
         are visible live while dragging the crop box, not just after
-        converting."""
+        converting.
+
+        Cached per frame index, same as the main preview canvas already is —
+        this used to redo the crop + cover-resize + border composite from
+        scratch on every single tick, uncached, which is real avoidable
+        per-frame CPU cost that can show up as uneven/choppy playback
+        (worth ruling out explicitly if a "pause at the loop" is ever
+        reported again: does unchecking "Bake card border" make it go away?
+        that would confirm this path was the cause rather than something in
+        the animation timer itself). The cache is invalidated by resetting
+        state["final_tk"] to a fresh all-None list whenever the crop box or
+        the frame set changes (reset_crop, on_canvas_drag, and
+        refresh_preview_frames all do this)."""
         if not card_border_var.get():
             return
         frames = state["preview_frames"]
@@ -730,17 +748,21 @@ def run_ui() -> int:
             final_canvas.create_text(_PREVIEW_BOX // 2, _PREVIEW_BOX // 2, text="(final)", fill="#888")
             return
         i = state["preview_i"] % len(frames)
-        frame = frames[i]
-        l, t, r, b = state["crop"]
-        w, h = frame.size
-        box = (round(l * w), round(t * h), round(r * w), round(b * h))
-        cropped = frame.crop(box) if box[2] > box[0] and box[3] > box[1] else frame
-        final = composite_card_border(cropped)
-        x0, y0, x1, y1 = _fit_box(*final.size)
-        disp = final.resize((max(1, x1 - x0), max(1, y1 - y0)), Image.LANCZOS)
-        tk_img = ImageTk.PhotoImage(disp)
-        state["final_tk_current"] = tk_img  # keep a reference so tkinter doesn't garbage-collect it
-        final_canvas.create_image(x0, y0, anchor="nw", image=tk_img)
+        cache = state.setdefault("final_tk", [None] * len(frames))
+        if len(cache) != len(frames):  # frame set changed size without going through refresh_preview_frames
+            cache = state["final_tk"] = [None] * len(frames)
+        if cache[i] is None:
+            frame = frames[i]
+            l, t, r, b = state["crop"]
+            w, h = frame.size
+            box = (round(l * w), round(t * h), round(r * w), round(b * h))
+            cropped = frame.crop(box) if box[2] > box[0] and box[3] > box[1] else frame
+            final = composite_card_border(cropped)
+            x0, y0, x1, y1 = _fit_box(*final.size)
+            disp = final.resize((max(1, x1 - x0), max(1, y1 - y0)), Image.LANCZOS)
+            cache[i] = ImageTk.PhotoImage(disp)
+        x0, y0, _, _ = _fit_box(*SLEEVE_CANVAS_SIZE)
+        final_canvas.create_image(x0, y0, anchor="nw", image=cache[i])
 
     def draw_canvas() -> None:
         canvas.delete("all")
@@ -855,6 +877,7 @@ def run_ui() -> int:
 
         state["crop"] = [l, t, r, b]
         _update_crop_readout()
+        _invalidate_final_cache()
         draw_canvas()
 
     def on_canvas_release(_event) -> None:
