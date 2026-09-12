@@ -9,12 +9,7 @@ content_margin_left = 10.0
 content_margin_top = 12.0
 content_margin_right = 10.0
 content_margin_bottom = 12.0
-bg_color = Color(0, 0, 0, 0)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(1, 1, 1, 0)
+bg_color = Color(0, 0, 0, 0.55)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -65,22 +60,41 @@ offset_bottom = -256.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="StatusLabel" type="Label" parent="VBox" unique_id=1465797420]
+[node name="CenterInfoPanel" type="PanelContainer" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_last_round_backplate")
+
+[node name="CenterInfoMargin" type="MarginContainer" parent="VBox/CenterInfoPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="CenterInfoBox" type="VBoxContainer" parent="VBox/CenterInfoPanel/CenterInfoMargin"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="StatusLabel" type="Label" parent="VBox/CenterInfoPanel/CenterInfoMargin/CenterInfoBox" unique_id=1465797420]
 unique_name_in_owner = true
 layout_mode = 2
+horizontal_alignment = 1
 text = "Connecting..."
 
-[node name="ScoreLabel" type="Label" parent="VBox" unique_id=646255350]
+[node name="ScoreLabel" type="Label" parent="VBox/CenterInfoPanel/CenterInfoMargin/CenterInfoBox" unique_id=646255350]
 unique_name_in_owner = true
 layout_mode = 2
 horizontal_alignment = 1
 
-[node name="TurnTimerLabel" type="Label" parent="VBox" unique_id=1487860578]
+[node name="TurnTimerLabel" type="Label" parent="VBox/CenterInfoPanel/CenterInfoMargin/CenterInfoBox" unique_id=1487860578]
 unique_name_in_owner = true
 layout_mode = 2
 horizontal_alignment = 1
 
-[node name="RoundCapLabel" type="Label" parent="VBox" unique_id=1487860579]
+[node name="RoundCapLabel" type="Label" parent="VBox/CenterInfoPanel/CenterInfoMargin/CenterInfoBox" unique_id=1487860579]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -192,6 +206,14 @@ theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 autowrap_mode = 2
 
+[node name="LeftTitle" type="Label" parent="LeftPlayerPanel/LeftPlayerBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1.0, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+autowrap_mode = 2
+
 [node name="LeftElo" type="Label" parent="LeftPlayerPanel/LeftPlayerBox" unique_id=899368921]
 unique_name_in_owner = true
 layout_mode = 2
@@ -286,6 +308,14 @@ flip_h = true
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="RightTitle" type="Label" parent="RightPlayerPanel/RightPlayerBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1.0, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
 autowrap_mode = 2
 

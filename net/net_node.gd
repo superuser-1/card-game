@@ -542,6 +542,7 @@ func start_singleplayer(reveal := false) -> void:
 		"opponent_frame": m["bot_identity"]["frame"],
 		"opponent_background": m["bot_identity"]["background"],
 		"opponent_elo": ServerStore.START_ELO,
+		"opponent_title": "",
 		"is_bot_match": true,
 	})
 	_broadcast_match(m)
@@ -3061,15 +3062,17 @@ func _seat_identity(m: Dictionary, seat: int) -> Dictionary:
 		if not m.has("bot_identity"):
 			m["bot_identity"] = Avatars.bot_identity()
 		var bi: Dictionary = m["bot_identity"]
-		return {"name": "Bot", "avatar": str(bi["avatar"]), "frame": str(bi["frame"]), "background": str(bi["background"]), "sleeve": "", "elo": ServerStore.START_ELO, "is_bot": true}
+		return {"name": "Bot", "avatar": str(bi["avatar"]), "frame": str(bi["frame"]), "background": str(bi["background"]), "sleeve": "", "elo": ServerStore.START_ELO, "title": "", "is_bot": true}
 	var acc := _store.get_account(acc_id)
+	var elo := int(acc.get("elo", ServerStore.START_ELO))
 	return {
 		"name": str(acc.get("display_name", "Player")),
 		"avatar": str(acc.get("avatar", "")),
 		"frame": str(acc.get("frame", "")),
 		"background": str(acc.get("background", "")),
 		"sleeve": str(acc.get("sleeve", "")),
-		"elo": int(acc.get("elo", ServerStore.START_ELO)),
+		"elo": elo,
+		"title": TitleSystem.display_name(str(acc.get("title", "")), elo),
 		"is_bot": false,
 	}
 
@@ -3089,12 +3092,14 @@ func _send_match_found(m: Dictionary, seat: int) -> void:
 		"your_background": me.background,
 		"your_sleeve": me.sleeve,
 		"your_elo": me.elo,
+		"your_title": me.title,
 		"opponent_name": opp.name,
 		"opponent_avatar": opp.avatar,
 		"opponent_frame": opp.frame,
 		"opponent_background": opp.background,
 		"opponent_sleeve": opp.sleeve,
 		"opponent_elo": opp.elo,
+		"opponent_title": opp.title,
 		"is_bot_match": opp.is_bot,
 		"tournament_ctx": m.get("tournament_ctx", {}),
 	})

@@ -24,12 +24,14 @@ extends Control
 @onready var _left_frame: TextureRect = %LeftFrame
 @onready var _left_bg: TextureRect = %LeftBg
 @onready var _left_name: Label = %LeftName
+@onready var _left_title: Label = %LeftTitle
 @onready var _left_elo: Label = %LeftElo
 @onready var _left_stars: Label = %LeftStars
 @onready var _right_avatar: TextureRect = %RightAvatar
 @onready var _right_frame: TextureRect = %RightFrame
 @onready var _right_bg: TextureRect = %RightBg
 @onready var _right_name: Label = %RightName
+@onready var _right_title: Label = %RightTitle
 @onready var _right_elo: Label = %RightElo
 @onready var _right_stars: Label = %RightStars
 
@@ -262,8 +264,14 @@ func _apply_match_info(info: Dictionary) -> void:
 	var my_sleeve: String = str(acc.get("sleeve", ""))
 	if my_sleeve == "" and not acc.has("sleeve"):
 		my_sleeve = str(info.get("your_sleeve", ""))
+	# Computed live from Session.account (same source main_menu.gd uses) so it
+	# always tracks the current elo tier, not a possibly-stale server payload
+	# — falls back to the match_found payload only for the no-login edge case
+	# (e.g. the --solo CLI role, where Session.account is empty).
+	var my_title: String = TitleSystem.display_name(str(acc.get("title", "")), my_elo) if acc.has("title") else str(info.get("your_title", ""))
 
 	_left_name.text = my_name
+	_left_title.text = my_title
 	_left_elo.text = "Elo %d" % my_elo if my_elo > 0 else ""
 	_left_avatar.texture = Avatars.texture_for(my_avatar)
 	_left_frame.texture = Frames.texture_for(my_frame)
@@ -275,6 +283,7 @@ func _apply_match_info(info: Dictionary) -> void:
 
 	if info.is_empty():
 		_right_name.text = ""
+		_right_title.text = ""
 		_right_elo.text = ""
 		_right_avatar.texture = Avatars.texture_for(Avatars.DEFAULT_ID)
 		_right_frame.texture = null
@@ -286,6 +295,7 @@ func _apply_match_info(info: Dictionary) -> void:
 		_right_table_card.set_sleeve(_opp_sleeve)
 
 	_right_name.text = str(info.get("opponent_name", "Opponent"))
+	_right_title.text = str(info.get("opponent_title", ""))
 	var opp_elo: int = int(info.get("opponent_elo", 0))
 	_right_elo.text = "Elo %d" % opp_elo if opp_elo > 0 else ""
 	_right_avatar.texture = Avatars.texture_for(str(info.get("opponent_avatar", "")))
