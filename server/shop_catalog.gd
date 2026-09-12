@@ -50,6 +50,7 @@ const CATALOG: Array = [
 	{"id": "card_back_10", "type": "sleeve", "name": "Card Back 10", "price": 5, "source": "shop"},
 	{"id": "card_back_11", "type": "sleeve", "name": "Card Back 11", "price": 5, "source": "shop"},
 	{"id": "card_back_12", "type": "sleeve", "name": "Card Back 12", "price": 5, "source": "shop"},
+	{"id": "test_tree_card_back_1", "type": "sleeve", "name": "Test Tree", "price": 5, "source": "shop"},
 	# --- admin-only: never auto-granted, awarded by hand or as a tournament
 	# prize via the admin tool. card_back_5/8/9 flagged this way on request;
 	# frame_champion/avatar_champion/title_champion are placeholders that were

@@ -9,7 +9,10 @@ extends RefCounted
 ## cosmetic — an id with no catalog entry is free for everyone.
 
 const DIR := "res://assets/avatars/card_backs/"
-const EXTENSIONS: Array[String] = ["png", "jpg", "jpeg", "webp"]
+# ".tres" first so an animated AnimatedTexture (scripts/gif_to_cosmetic.py)
+# wins over a still <id>.png of the same id in path_for() — same convention
+# as Backgrounds/Frames/TableBackgrounds.
+const EXTENSIONS: Array[String] = ["tres", "png", "jpg", "jpeg", "webp"]
 const NONE_ID := "classic"
 
 

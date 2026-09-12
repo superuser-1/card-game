@@ -41,11 +41,13 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 
 # Mirrors the DIR consts in client/{frames,backgrounds,avatars}.gd
 OUT_DIRS = {
-    "frame":      "assets/avatars/avatar_frame",
-    "background": "assets/avatars/avatar_bg",
-    "avatar":     "assets/avatars",
+    "frame":            "assets/avatars/avatar_frame",
+    "background":       "assets/avatars/avatar_bg",
+    "avatar":           "assets/avatars",
+    "sleeve":           "assets/avatars/card_backs",
+    "table_background": "assets/tables",
 }
-DEFAULTS = {"frame": 22, "background": 24, "avatar": 20}
+DEFAULTS = {"frame": 22, "background": 24, "avatar": 20, "sleeve": 24, "table_background": 24}
 MAX_ANIM_FRAMES = 256  # AnimatedTexture hard cap
 
 
@@ -311,8 +313,8 @@ def run_ui() -> int:
     ttk.Label(opts, text="Type").grid(row=row, column=0, sticky="w", pady=(4, 0))
     row += 1
     type_var = tk.StringVar(value="background")
-    for t in ("background", "frame", "avatar"):
-        ttk.Radiobutton(opts, text=t.capitalize(), value=t, variable=type_var,
+    for t in OUT_DIRS:
+        ttk.Radiobutton(opts, text=t.replace("_", " ").capitalize(), value=t, variable=type_var,
                         command=lambda: on_type()).grid(row=row, column=0, sticky="w")
         row += 1
 
