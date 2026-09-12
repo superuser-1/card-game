@@ -437,9 +437,10 @@ def run_ui() -> int:
         return row
 
     _section("Output")
-    ttk.Label(opts, text="Type").grid(row=row, column=0, sticky="w", pady=(4, 0))
+    ttk.Label(opts, text="Type — pick one (nothing is pre-selected on\npurpose, so a converted file can't silently land\nin the wrong folder if you forget to choose)",
+              font=("", 8), foreground="#888").grid(row=row, column=0, columnspan=2, sticky="w", pady=(4, 0))
     row += 1
-    type_var = tk.StringVar(value="background")
+    type_var = tk.StringVar(value="")  # deliberately no default — see label above
     for t in OUT_DIRS:
         ttk.Radiobutton(opts, text=t.replace("_", " ").capitalize(), value=t, variable=type_var,
                         command=lambda: on_type()).grid(row=row, column=0, sticky="w")
@@ -562,7 +563,8 @@ def run_ui() -> int:
     ttk.Button(opts, text="Reset adjustments", command=lambda: reset_adjustments()).grid(row=row, column=0, sticky="w", pady=(4, 0))
     row += 1
 
-    ttk.Button(opts, text="Convert", command=lambda: do_convert()).grid(row=row, column=0, columnspan=2, sticky="we", pady=16)
+    convert_button = ttk.Button(opts, text="Convert", command=lambda: do_convert(), state="disabled")
+    convert_button.grid(row=row, column=0, columnspan=2, sticky="we", pady=16)
     row += 1
 
     # --- right: preview canvas(es) + log ------------------------------------
@@ -598,9 +600,14 @@ def run_ui() -> int:
     # --- helpers -----------------------------------------------------------
 
     def on_type() -> None:
-        frames_var.set(DEFAULTS[type_var.get()])
-        size_var.set(256 if type_var.get() == "frame" else 512)
-        card_border_var.set(type_var.get() == "sleeve")
+        t = type_var.get()
+        if t not in OUT_DIRS:  # startup, before anything is picked yet
+            convert_button.configure(state="disabled")
+            return
+        convert_button.configure(state="normal")
+        frames_var.set(DEFAULTS[t])
+        size_var.set(256 if t == "frame" else 512)
+        card_border_var.set(t == "sleeve")
         _update_final_preview_visibility()
         refresh_preview_frames()
 
@@ -883,6 +890,9 @@ def run_ui() -> int:
         files_var.set("no files" if not n else Path(files[0]).name if n == 1 else f"{n} files")
 
     def do_convert() -> None:
+        if type_var.get() not in OUT_DIRS:  # the button should already be disabled, but just in case
+            messagebox.showwarning("Pick a type", "Choose an output Type above before converting.")
+            return
         files = state.get("files", [])
         if not files:
             messagebox.showwarning("Nothing to do", "Add at least one GIF.")
