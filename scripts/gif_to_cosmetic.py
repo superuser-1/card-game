@@ -142,11 +142,22 @@ def apply_edits(
 
 # Card backs (sleeves) render with no border overlay of their own in-game
 # (client/table_card_view.tscn's BackRect is a single flat texture — unlike
-# the face-up art view, which layers card_border1.png on top separately) so
-# every static card back has the frame hand-painted into the art itself. An
+# the face-up art view, which layers a border on top separately) so every
+# static card back has the frame hand-painted into the art itself. An
 # animated one needs the same border baked into every exported frame.
-CARD_BORDER_PATH = REPO_ROOT / "assets/cards/card_border1.png"
+#
+# card_border2.png (not card_border1.png — that one's a different, mismatched
+# aspect ratio, kept only for the front-face view that already uses it) is
+# authored at exactly 550x800, matching every existing static sleeve and the
+# in-game display ratio (both card_view.tscn and table_card_view.tscn show a
+# card at 240x340 with 10px margins all around, i.e. an effective ~220x320
+# art area — 0.6875, same ratio as 550:800). Since the source is already at
+# the right ratio, no stretching or cover-crop is needed to reconcile it —
+# SLEEVE_CANVAS_SIZE just IS its native size.
+CARD_BORDER_PATH = REPO_ROOT / "assets/cards/card_border2.png"
+SLEEVE_CANVAS_SIZE = (550, 800)
 _card_border_cache: Image.Image | None = None
+_card_border_sized_cache: dict[tuple[int, int], Image.Image] = {}
 
 
 def _card_border() -> Image.Image:
@@ -156,28 +167,44 @@ def _card_border() -> Image.Image:
     return _card_border_cache
 
 
-_card_shape_mask_cache: Image.Image | None = None
+def _card_border_at(size: tuple[int, int]) -> Image.Image:
+    """The border resized to `size` if it's ever asked for at something
+    other than its own native size — a no-op today (card_border2.png already
+    IS SLEEVE_CANVAS_SIZE) kept as a safety net. Deliberately a plain
+    (possibly non-uniform) resize, not cover-fit/cropped: cropping the
+    border shifts which pixels land at (0,0) — since the transparent
+    "outside the rounded corner" region is fairly shallow before it turns
+    opaque, a modest crop is enough to land back inside the opaque ring,
+    undoing the corner-clip fix in _card_shape_mask below entirely
+    (confirmed the hard way against the old, wrong-ratio card_border1.png).
+    A plain resize keeps every corner's alpha exactly where it was."""
+    if size not in _card_border_sized_cache:
+        _card_border_sized_cache[size] = _card_border().resize(size, Image.LANCZOS)
+    return _card_border_sized_cache[size]
+
+
+_card_shape_mask_cache: dict[tuple[int, int], Image.Image] = {}
 
 
 def _card_shape_mask(border: Image.Image) -> Image.Image:
     """1-channel "L" mask: 255 for the card's actual silhouette (the border's
     opaque ring, plus whatever it encloses — i.e. the hollow center meant to
     show art), 0 for the four corner triangles that are transparent in the
-    border art AND genuinely outside the rounded card (card_border1.png's
-    true (0,0) pixel is alpha=0, confirmed — those corners are NOT meant to
-    show anything, but plain alpha-compositing can't tell that apart from
-    the equally-transparent center, so a rectangular art layer pokes its
-    square corners out past the rounded frame there without this mask).
+    border art AND genuinely outside the rounded card (confirmed by
+    inspecting the file directly: its true (0,0) pixel is alpha=0) — those
+    corners are NOT meant to show anything, but plain alpha-compositing
+    can't tell that apart from the equally-transparent hollow center, so a
+    rectangular art layer pokes its square corners out past the rounded
+    frame there without this mask.
 
-    Derived once by flood-filling from the four image corners through
-    transparent pixels — whatever the fill can't reach (walled off by the
-    opaque ring) is the enclosed center, i.e. part of the card. Making no
-    assumption about exact corner-radius geometry means this keeps working
-    if card_border1.png is ever redrawn with a different shape.
+    Derived once per requested `border` size by flood-filling from the four
+    image corners through transparent pixels — whatever the fill can't
+    reach (walled off by the opaque ring) is the enclosed center, i.e. part
+    of the card. Making no assumption about exact corner-radius geometry
+    means this keeps working if the border art is ever redrawn differently.
     """
-    global _card_shape_mask_cache
-    if _card_shape_mask_cache is not None:
-        return _card_shape_mask_cache
+    if border.size in _card_shape_mask_cache:
+        return _card_shape_mask_cache[border.size]
     alpha = border.split()[3]
     # Binarize first: treat any meaningfully-transparent pixel as
     # "background" so a flood-fill has clean 0/255 territory to work with,
@@ -191,7 +218,7 @@ def _card_shape_mask(border: Image.Image) -> Image.Image:
     # Everything else — untouched background (the enclosed center) or the
     # ring itself (255) — is part of the card.
     mask = work.point(lambda v: 0 if v == 128 else 255)
-    _card_shape_mask_cache = mask
+    _card_shape_mask_cache[border.size] = mask
     return mask
 
 
@@ -211,13 +238,14 @@ def cover_resize(img: Image.Image, target_size: tuple[int, int]) -> Image.Image:
 
 
 def composite_card_border(frame: Image.Image) -> Image.Image:
-    """`frame` cover-fit to card_border1.png's canvas, clipped to the card's
-    actual rounded silhouette (see _card_shape_mask — otherwise the art's
-    square corners poke out past the frame's rounded ones, since the
-    border's own corners are transparent same as its hollow center), then
-    the border alpha-composited on top."""
-    border = _card_border()
-    base = cover_resize(frame, border.size).convert("RGBA")
+    """`frame` cover-fit to SLEEVE_CANVAS_SIZE (the actual in-game display
+    ratio — see SLEEVE_CANVAS_SIZE's comment), clipped to the card's actual
+    rounded silhouette (see
+    _card_shape_mask — otherwise the art's square corners poke out past the
+    frame's rounded ones, since the border's own corners are transparent
+    same as its hollow center), then the border alpha-composited on top."""
+    border = _card_border_at(SLEEVE_CANVAS_SIZE)
+    base = cover_resize(frame, SLEEVE_CANVAS_SIZE).convert("RGBA")
     r, g, b, a = base.split()
     clipped_alpha = ImageChops.multiply(a, _card_shape_mask(border))
     base.putalpha(clipped_alpha)
@@ -254,7 +282,7 @@ def convert_gif(
     a bad frame in the middle of an otherwise-good range).
     crop_box: (left, top, right, bottom), each 0..1, relative to the frame
     after rotate/flip. None = no crop.
-    card_border: bake assets/cards/card_border1.png on top of every frame
+    card_border: bake assets/cards/card_border2.png on top of every frame
     (see composite_card_border). None (default) = on automatically for
     type "sleeve" (card backs need it — they get no border overlay from the
     game itself, unlike face-up card art), off for every other type.
@@ -291,10 +319,11 @@ def convert_gif(
     ]
 
     idxs = _pick_indices(len(edited), frames)
-    # With a border, the OUTPUT canvas is the border's own aspect ratio (the
-    # art gets cover-fit into it, not the other way around) — Max Edge still
-    # controls final resolution, just scaling the border+art together.
-    w0, h0 = _card_border().size if card_border else edited[0].size
+    # With a border, the OUTPUT canvas is SLEEVE_CANVAS_SIZE — the actual
+    # in-game display ratio — the art gets cover-fit into it, not the other
+    # way around. Max Edge still controls final resolution, just scaling
+    # everything together.
+    w0, h0 = SLEEVE_CANVAS_SIZE if card_border else edited[0].size
     scale = min(1.0, max_edge / max(w0, h0))
     size = (max(1, round(w0 * scale)), max(1, round(h0 * scale)))
 
@@ -921,7 +950,7 @@ def main() -> int:
     ap.add_argument("--contrast", type=float, default=1.0)
     border_group = ap.add_mutually_exclusive_group()
     border_group.add_argument("--card-border", dest="card_border", action="store_true", default=None,
-                               help="bake assets/cards/card_border1.png on top (default: on for --type sleeve, off otherwise)")
+                               help="bake assets/cards/card_border2.png on top (default: on for --type sleeve, off otherwise)")
     border_group.add_argument("--no-card-border", dest="card_border", action="store_false")
     args = ap.parse_args()
 
