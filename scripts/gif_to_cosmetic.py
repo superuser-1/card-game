@@ -499,12 +499,21 @@ def run_ui() -> int:
 
     def refresh_preview_frames() -> None:
         """Rebuilds the (rotated/flipped/color-adjusted, NOT cropped) preview
-        frame set from the current controls and restarts the animation."""
+        frame set from the current controls and restarts the animation.
+        Previews the FULL selected range, not a truncated prefix — a partial
+        prefix would loop from some arbitrary mid-animation frame back to
+        frame 0 instead of from the actual last frame, breaking a GIF that's
+        genuinely designed to loop seamlessly (a real bug this had: capping
+        at 60 frames made a >60-frame source visibly jump on every loop, even
+        though the untouched source file looped perfectly everywhere else).
+        MAX_ANIM_FRAMES is just the same hard safety ceiling the actual
+        conversion is already limited to — not a performance shortcut.
+        """
         if not state["raw_frames"]:
             return
         sel = _selected_range_frames()
         kwargs = _current_edit_kwargs()
-        edited = [apply_edits(f, crop_box=None, **kwargs) for f in sel[:60]]  # cap for UI responsiveness
+        edited = [apply_edits(f, crop_box=None, **kwargs) for f in sel[:MAX_ANIM_FRAMES]]
         state["preview_frames"] = edited
         state["preview_tk"] = [None] * len(edited)
         state["preview_i"] = 0
