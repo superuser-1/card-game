@@ -446,6 +446,20 @@ func admin_tag_by_login_window(start_ts: int, end_ts: int, tag: String) -> void:
 	_rpc_admin_tag_by_login_window.rpc_id(1, start_ts, end_ts, tag)
 
 
+## Read-only: who WOULD be tagged by admin_tag_by_login_window with this
+## window, without actually tagging anyone yet. Reply on `admin_action_result`
+## (action "preview_login_window", with "accounts": [{id, username}, ...]).
+func admin_preview_login_window(start_ts: int, end_ts: int) -> void:
+	_rpc_admin_preview_login_window.rpc_id(1, start_ts, end_ts)
+
+
+## Reverses the most recent admin_tag_by_login_window call — removes that tag
+## from exactly the accounts it added it to. Reply on `admin_action_result`
+## (action "undo_tag_by_login_window", with "untagged_usernames").
+func admin_undo_last_tag_operation() -> void:
+	_rpc_admin_undo_last_tag_operation.rpc_id(1)
+
+
 ## Manual single-account tag add/remove, for fixing up anyone the login-
 ## window sweep missed (or over-caught). Reply on `admin_action_result`
 ## (action "add_tag"/"remove_tag").
@@ -2080,6 +2094,35 @@ func _rpc_admin_tag_by_login_window(start_ts: int, end_ts: int, tag: String) -> 
 		return
 	var res := _store.admin_tag_accounts_by_login_window(start_ts, end_ts, tag, str(admin.get("username", "")))
 	res["action"] = "tag_by_login_window"
+	res["account"] = {}
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_preview_login_window(start_ts: int, end_ts: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "preview_login_window", "account": {}})
+		return
+	var res := _store.admin_preview_login_window(start_ts, end_ts)
+	res["action"] = "preview_login_window"
+	res["account"] = {}
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_undo_last_tag_operation() -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "undo_tag_by_login_window", "account": {}})
+		return
+	var res := _store.admin_undo_last_tag_operation(str(admin.get("username", "")))
+	res["action"] = "undo_tag_by_login_window"
 	res["account"] = {}
 	_rpc_admin_action_result.rpc_id(peer_id, res)
 

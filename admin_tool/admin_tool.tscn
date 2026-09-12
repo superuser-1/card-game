@@ -853,10 +853,36 @@ layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "YYYY-MM-DD HH:MM:SS"
 
-[node name="TagWindowButton" type="Button" parent="MainPanel/Tabs/Cohorts"]
+[node name="TagWindowButtonRow" type="HBoxContainer" parent="MainPanel/Tabs/Cohorts"]
+layout_mode = 2
+
+[node name="LookUpButton" type="Button" parent="MainPanel/Tabs/Cohorts/TagWindowButtonRow"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Tag Everyone Who Logged In During This Window"
+text = "Look Up"
+
+[node name="ApplyTagButton" type="Button" parent="MainPanel/Tabs/Cohorts/TagWindowButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Apply Tag to This List"
+
+[node name="UndoTagButton" type="Button" parent="MainPanel/Tabs/Cohorts/TagWindowButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Undo Last Tag Operation"
+
+[node name="CohortResultLabel" type="Label" parent="MainPanel/Tabs/Cohorts"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Look up a window to see who's in it."
+theme_override_font_sizes/font_size = 12
+modulate = Color(1, 1, 1, 0.7)
+
+[node name="CohortResultList" type="ItemList" parent="MainPanel/Tabs/Cohorts"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
 
 [node name="CohortsSeparator" type="HSeparator" parent="MainPanel/Tabs/Cohorts"]
 layout_mode = 2
@@ -914,11 +940,6 @@ placeholder_text = "item id"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Grant to Tag"
-
-[node name="CohortResultList" type="ItemList" parent="MainPanel/Tabs/Cohorts"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 3
 
 [node name="ConfirmDialog" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true

@@ -70,7 +70,9 @@ func _ready() -> void:
 	%SetEloButton.pressed.connect(_on_set_elo_pressed)
 	%AdjustPointsButton.pressed.connect(_on_adjust_points_pressed)
 	%GrantItemButton.pressed.connect(_on_grant_item_pressed)
-	%TagWindowButton.pressed.connect(_on_tag_window_pressed)
+	%LookUpButton.pressed.connect(_on_look_up_pressed)
+	%ApplyTagButton.pressed.connect(_on_apply_tag_pressed)
+	%UndoTagButton.pressed.connect(_on_undo_tag_pressed)
 	%AddTagButton.pressed.connect(_on_add_tag_pressed)
 	%RemoveTagButton.pressed.connect(_on_remove_tag_pressed)
 	%GrantToTagButton.pressed.connect(_on_grant_to_tag_pressed)
@@ -366,20 +368,52 @@ func _parse_utc_datetime(text: String) -> int:
 	return int(Time.get_unix_time_from_datetime_string(text))
 
 
-func _on_tag_window_pressed() -> void:
+## Cached from the last successful Look Up, so Apply Tag targets exactly the
+## window (and tag) the admin actually previewed — re-reading the fields at
+## Apply time could silently apply a different window if they got edited
+## in between without looking up again.
+var _looked_up_window: Dictionary = {}  # {start_ts, end_ts, tag}
+
+
+## Shared validation for the tag-name + date-range fields; returns {} (and
+## sets %StatusLabel) on any problem, otherwise {start_ts, end_ts, tag}.
+func _read_window_fields() -> Dictionary:
 	var tag: String = %CohortTagField.text.strip_edges()
 	if tag == "":
 		%StatusLabel.text = "Enter a tag name."
-		return
+		return {}
 	var start_ts := _parse_utc_datetime(%CohortStartField.text.strip_edges())
 	var end_ts := _parse_utc_datetime(%CohortEndField.text.strip_edges())
 	if start_ts < 0 or end_ts < 0:
 		%StatusLabel.text = "Dates must look like 2026-09-01 00:00:00 (UTC)."
-		return
+		return {}
 	if end_ts < start_ts:
 		%StatusLabel.text = "The 'To' date is before the 'From' date."
+		return {}
+	return {"start_ts": start_ts, "end_ts": end_ts, "tag": tag}
+
+
+func _on_look_up_pressed() -> void:
+	var window := _read_window_fields()
+	if window.is_empty():
 		return
-	Net.admin_tag_by_login_window(start_ts, end_ts, tag)
+	_looked_up_window = window
+	%ApplyTagButton.disabled = true
+	Net.admin_preview_login_window(window.start_ts, window.end_ts)
+
+
+## Applies the tag to exactly the window that was last successfully looked
+## up — not whatever the fields currently say, in case they've been edited
+## since (see _looked_up_window).
+func _on_apply_tag_pressed() -> void:
+	if _looked_up_window.is_empty():
+		%StatusLabel.text = "Look up a window first."
+		return
+	Net.admin_tag_by_login_window(_looked_up_window.start_ts, _looked_up_window.end_ts, _looked_up_window.tag)
+
+
+func _on_undo_tag_pressed() -> void:
+	Net.admin_undo_last_tag_operation()
 
 
 func _on_add_tag_pressed() -> void:
@@ -457,17 +491,44 @@ func _on_admin_action_result(result: Dictionary) -> void:
 			%StatusLabel.text = "Item granted."
 		"add_tag", "remove_tag":
 			%ManualTagField.text = ""
+		"preview_login_window":
+			var accounts: Array = result.get("accounts", [])
+			%CohortResultLabel.text = "%d account(s) logged in during this window — review, then Apply Tag:" % accounts.size()
+			%StatusLabel.text = "Looked up %d account(s)." % accounts.size()
+			%CohortResultList.clear()
+			if accounts.is_empty():
+				%CohortResultList.add_item("(nobody logged in during that window)")
+			else:
+				%ApplyTagButton.disabled = false
+				for row in accounts:
+					%CohortResultList.add_item(str(row.get("username", "")))
 		"tag_by_login_window":
 			var tagged: Array = result.get("tagged_usernames", [])
 			%StatusLabel.text = "Tagged %d account(s)." % tagged.size()
+			%CohortResultLabel.text = "Tagged %d account(s) with '%s':" % [tagged.size(), _looked_up_window.get("tag", "")]
 			%CohortResultList.clear()
 			if tagged.is_empty():
-				%CohortResultList.add_item("(nobody logged in during that window)")
+				%CohortResultList.add_item("(nobody new to tag — everyone in the window already had it)")
 			for username in tagged:
+				%CohortResultList.add_item(str(username))
+			# Force a fresh Look Up before the next Apply — the window/tag
+			# fields may have changed since, and a stale re-apply would be
+			# a no-op anyway (already tagged) but silently confusing.
+			%ApplyTagButton.disabled = true
+			_looked_up_window = {}
+		"undo_tag_by_login_window":
+			var untagged: Array = result.get("untagged_usernames", [])
+			%StatusLabel.text = "Undid last tag: removed from %d account(s)." % untagged.size()
+			%CohortResultLabel.text = "Undo result:"
+			%CohortResultList.clear()
+			if untagged.is_empty():
+				%CohortResultList.add_item("(nothing was undone)")
+			for username in untagged:
 				%CohortResultList.add_item(str(username))
 		"grant_to_tag":
 			var granted: Array = result.get("granted_usernames", [])
 			%StatusLabel.text = "Granted to %d account(s)." % granted.size()
+			%CohortResultLabel.text = "Granted to %d account(s):" % granted.size()
 			%CohortResultList.clear()
 			if granted.is_empty():
 				%CohortResultList.add_item("(nobody with that tag needed it — already owned, or no accounts have that tag)")

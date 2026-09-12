@@ -35,6 +35,11 @@ var _admin_log: Array
 var _presence_samples: Array
 var _tournament_templates: Array
 var _next_account_id: int
+
+## Runtime-only (not persisted/saved) — the most recent tag_by_login_window
+## call, for a one-shot "undo that" in the admin tool. See
+## admin_undo_last_tag_operation().
+var _last_tag_operation: Dictionary = {}
 var _next_match_id: int
 var _next_tournament_id: int
 var _next_template_id: int
@@ -631,6 +636,46 @@ func admin_grant_item(account_id: int, item_id: String, admin_username: String) 
 ## this runs) could have its in-window entries evicted. Run this soon after
 ## the window closes to avoid that; for anyone missed, admin_add_tag() below
 ## covers it by hand.
+## Every account with at least one login_log entry in [start_ts, end_ts],
+## sorted by username. Shared by the preview step (admin sees the list before
+## committing to anything) and the actual tagging below.
+func _accounts_logged_in_during(start_ts: int, end_ts: int) -> Array:
+	var matches := []
+	for account in _accounts:
+		for entry in (account.get("login_log", []) as Array):
+			var ts := int((entry as Dictionary).get("ts", 0))
+			if ts >= start_ts and ts <= end_ts:
+				matches.append(account)
+				break
+	matches.sort_custom(func(a, b): return str(a.get("username", "")).to_lower() < str(b.get("username", "")).to_lower())
+	return matches
+
+
+## Read-only preview for the admin tool's two-step cohort flow: "who WOULD
+## get tagged" before actually committing to it. Nothing is modified.
+func admin_preview_login_window(start_ts: int, end_ts: int) -> Dictionary:
+	if end_ts < start_ts:
+		return {"ok": false, "error": "bad_window", "accounts": []}
+	var rows := []
+	for account in _accounts_logged_in_during(start_ts, end_ts):
+		rows.append({"id": int(account.get("id", 0)), "username": str(account.get("username", ""))})
+	return {"ok": true, "error": "", "accounts": rows}
+
+
+## Adds `tag` (any free-form string — "beta_1", "playtest_alpha", whatever
+## this cohort is called) to every account with at least one login_log entry
+## in [start_ts, end_ts] (inclusive) — same set admin_preview_login_window
+## above shows before this actually runs. Reusable for any future beta/
+## playtest round — just pick a new tag and a new window. Idempotent:
+## accounts that already carry the tag aren't double-added or re-counted.
+## Remembers exactly which accounts it newly tagged so
+## admin_undo_last_tag_operation() can cleanly reverse just this one call.
+##
+## CAVEAT: login_log is capped at ACCOUNT_LOG_MAX (100) entries per account —
+## an account that logged in more than 100 times *after* the window (before
+## this runs) could have its in-window entries evicted. Run this soon after
+## the window closes to avoid that; for anyone missed, admin_add_tag() below
+## covers it by hand.
 func admin_tag_accounts_by_login_window(start_ts: int, end_ts: int, tag: String, admin_username: String) -> Dictionary:
 	var clean_tag := tag.strip_edges()
 	if clean_tag == "" or clean_tag.length() > 40:
@@ -639,23 +684,18 @@ func admin_tag_accounts_by_login_window(start_ts: int, end_ts: int, tag: String,
 		return {"ok": false, "error": "bad_window", "tagged_usernames": []}
 
 	var tagged_usernames := []
-	for account in _accounts:
-		var logged_in_during_window := false
-		for entry in (account.get("login_log", []) as Array):
-			var ts := int((entry as Dictionary).get("ts", 0))
-			if ts >= start_ts and ts <= end_ts:
-				logged_in_during_window = true
-				break
-		if not logged_in_during_window:
-			continue
+	var tagged_account_ids := []
+	for account in _accounts_logged_in_during(start_ts, end_ts):
 		var tags: Array = (account.get("tags", []) as Array)
 		if clean_tag not in tags:
 			tags.append(clean_tag)
 			account["tags"] = tags
 			tagged_usernames.append(str(account.get("username", "")))
+			tagged_account_ids.append(int(account.get("id", 0)))
 
 	if not tagged_usernames.is_empty():
 		_save_accounts()
+	_last_tag_operation = {"tag": clean_tag, "account_ids": tagged_account_ids}
 	_log_admin_action(admin_username, "tag_by_login_window", 0,
 		"'%s' [%s .. %s] -> %d account(s): %s" % [
 			clean_tag,
@@ -664,6 +704,35 @@ func admin_tag_accounts_by_login_window(start_ts: int, end_ts: int, tag: String,
 			tagged_usernames.size(), ", ".join(tagged_usernames),
 		])
 	return {"ok": true, "error": "", "tagged_usernames": tagged_usernames}
+
+
+## Reverses exactly the most recent admin_tag_accounts_by_login_window() call
+## — removes that tag from exactly the accounts it added it to (not from
+## anyone who already had the tag some other way beforehand). One-shot: calling
+## this again with nothing new tagged since returns "nothing_to_undo". Runtime-
+## only (not persisted) — meant as an immediate "oops" undo, not a permanent
+## history; the admin log already records the original action forever.
+func admin_undo_last_tag_operation(admin_username: String) -> Dictionary:
+	if _last_tag_operation.is_empty():
+		return {"ok": false, "error": "nothing_to_undo", "untagged_usernames": []}
+	var tag: String = str(_last_tag_operation.get("tag", ""))
+	var account_ids: Array = _last_tag_operation.get("account_ids", [])
+	var untagged_usernames := []
+	for account_id in account_ids:
+		var account := get_account(int(account_id))
+		if account.is_empty():
+			continue
+		var tags: Array = (account.get("tags", []) as Array)
+		if tag in tags:
+			tags.erase(tag)
+			account["tags"] = tags
+			untagged_usernames.append(str(account.get("username", "")))
+	if not untagged_usernames.is_empty():
+		_save_accounts()
+	_log_admin_action(admin_username, "undo_tag_by_login_window", 0,
+		"'%s' -> removed from %d account(s): %s" % [tag, untagged_usernames.size(), ", ".join(untagged_usernames)])
+	_last_tag_operation = {}
+	return {"ok": true, "error": "", "untagged_usernames": untagged_usernames}
 
 
 ## Manual single-account tag add/remove — for fixing up anyone the login-
