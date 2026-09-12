@@ -53,12 +53,33 @@ out a starved 1GB import.
 
 ## Day-to-day
 
-Deploy an update:
-```bash
-cd ~/card-game && git pull
-bash deploy/provision_vm.sh   # idempotent — re-import assets, refresh units
-sudo systemctl restart flickbattle-server
+Deploy an update — one command, run from your own machine, no SSH session to sit in:
+```powershell
+.\deploy\deploy.ps1      # or bash deploy/deploy.sh
 ```
+Runs `git pull` + `provision_vm.sh` + a service restart on the VM in one
+non-interactive shot and streams the output back. Requires the
+[gcloud CLI](https://cloud.google.com/sdk/docs/install) (`gcloud init` once
+to log in and pick the project) — it manages the SSH key for you, no
+PuTTY/manual key upload needed.
+
+**Two Linux accounts exist on the VM** — worth knowing so this doesn't cause
+confusion again: your own gcloud/OS-Login identity maps to a Linux user
+(`tauru`) whose home directory has nothing in it; the actual game server and
+`~/card-game` checkout run under a separate account, `taurum_sc2` (see
+`ExecStart=`/`WorkingDirectory=` in `/etc/systemd/system/flickbattle-server.service`).
+`deploy.ps1` already accounts for this (it does the git/import work as
+`taurum_sc2` via `sudo`, and the restart as `tauru`, which has passwordless
+sudo) — you never need to think about it unless you're troubleshooting by
+hand.
+
+Only if you need to poke around interactively (reading logs live, manually
+inspecting files) — open a plain shell:
+```powershell
+.\deploy\ssh_server.ps1      # or ssh_server.bat / bash deploy/ssh_server.sh
+```
+then, once connected, `sudo su - taurum_sc2` to get into the account that
+actually owns the game files.
 
 Check on it:
 ```bash

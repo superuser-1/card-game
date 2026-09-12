@@ -4,7 +4,19 @@ Plain-language reference for running/maintaining the Flick Battle server.
 Written for someone new to SSH/Linux — add to this file yourself as you
 learn new things or hit new situations, and ask Claude to add to it too.
 
-## Connecting to the server (SSH)
+## Deploying an update — do this first, skip the SSH stuff below
+
+For pulling down new code and restarting the server, you don't need SSH at
+all. From your own PC, in the project folder:
+```powershell
+.\deploy\deploy.ps1
+```
+One command, does everything (pull + reimport + restart), and prints the
+result right there in your own terminal. This is the only thing most updates
+need — read on only if you actually need to poke around on the server itself
+(check logs live, inspect files, etc).
+
+## Connecting to the server (SSH) — only for manual poking around
 
 The server runs on a Google Cloud VM called `flickbattle-server`. To run
 any command below, you need a terminal *on that VM*, not on your PC.
@@ -15,12 +27,19 @@ Easiest way (no setup, works from any browser):
 3. Click the **SSH** button next to it. A terminal opens in your browser,
    already logged in.
 
-Everything below is typed into that terminal.
+**Important:** the account you land in this way is NOT the one the game
+server actually runs under, and has no access to the project files. Your very
+first line in that terminal should always be:
+```bash
+sudo su - taurum_sc2
+```
+No password needed — it just works. Everything below assumes you've done
+this and your prompt now shows `taurum_sc2@flickbattle-server`.
 
 ## The absolute basics
 
 - `cd ~/card-game` — go into the project folder (most commands below assume
-  you're already there).
+  you're already there; only works after `sudo su - taurum_sc2` above).
 - Commands starting with `sudo` need admin rights on the VM — it'll just
   work, no extra password needed (GCP handles that).
 - `Ctrl+C` stops whatever's currently running/printing in the terminal.
@@ -52,13 +71,10 @@ sudo systemctl restart flickbattle-server
 ## Deploy an update (push new code from your PC to the live server)
 
 Whenever Claude commits+pushes changes on your PC, they don't reach the
-live server automatically — you have to pull them down and restart.
-
-```bash
-cd ~/card-game
-git pull
-bash deploy/provision_vm.sh
-sudo systemctl restart flickbattle-server
+live server automatically — you have to pull them down and restart. Just run,
+from your own PC (see the top of this file):
+```powershell
+.\deploy\deploy.ps1
 ```
 
 **If this pull includes a lot of new art/assets** (ask Claude if unsure),
@@ -66,10 +82,9 @@ the import step can overwhelm the VM's small amount of memory. Do this
 instead:
 1. In the GCP Console: select the VM → **Stop** → **Edit** → change
    *Machine type* to `e2-medium` → **Save** → **Start**.
-2. SSH back in and run the deploy commands above.
-3. Once `provision_vm.sh` finishes: **Stop** the VM again → **Edit** → set
-   *Machine type* back to `e2-micro` → **Save** → **Start**.
-4. `sudo systemctl restart flickbattle-server`
+2. Run `.\deploy\deploy.ps1` from your PC as usual.
+3. Once it finishes: **Stop** the VM again → **Edit** → set *Machine type*
+   back to `e2-micro` → **Save** → **Start**.
 
 (Running as `e2-medium` costs real money per hour — `e2-micro` is free.
 Only stay on `e2-medium` for the few minutes the import needs.)
@@ -95,6 +110,10 @@ your PC**, not in the SSH terminal):
 ```powershell
 .\deploy\pull_backup.ps1 -VmHost you@<static-ip>
 ```
+**Not verified working yet** — this script does a plain `ssh`/`scp`
+(bypassing gcloud's automatic key management), and the backups actually live
+under `taurum_sc2`'s home directory, not yours. It may need updating the same
+way `deploy.ps1` was — ask Claude to check/fix it before relying on this one.
 
 Restore a backup (careful — this overwrites live data; server must be
 stopped first):
