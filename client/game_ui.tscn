@@ -9,11 +9,18 @@ content_margin_left = 10.0
 content_margin_top = 12.0
 content_margin_right = 10.0
 content_margin_bottom = 12.0
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_info_backplate"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
 bg_color = Color(0, 0, 0, 0.55)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_frame_overlay"]
 shader = ExtResource("3_frame_shader")
@@ -199,27 +206,38 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="LeftName" type="Label" parent="LeftPlayerPanel/LeftPlayerBox" unique_id=1149921768]
+[node name="LeftInfoPanel" type="PanelContainer" parent="LeftPlayerPanel/LeftPlayerBox"]
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_info_backplate")
+
+[node name="LeftInfoBox" type="VBoxContainer" parent="LeftPlayerPanel/LeftPlayerBox/LeftInfoPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="LeftName" type="Label" parent="LeftPlayerPanel/LeftPlayerBox/LeftInfoPanel/LeftInfoBox" unique_id=1149921768]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 0
 autowrap_mode = 2
 
-[node name="LeftTitle" type="Label" parent="LeftPlayerPanel/LeftPlayerBox"]
+[node name="LeftTitle" type="Label" parent="LeftPlayerPanel/LeftPlayerBox/LeftInfoPanel/LeftInfoBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1.0, 0.85, 0.4, 1)
-theme_override_font_sizes/font_size = 13
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+horizontal_alignment = 0
 autowrap_mode = 2
 
-[node name="LeftElo" type="Label" parent="LeftPlayerPanel/LeftPlayerBox" unique_id=899368921]
+[node name="LeftElo" type="Label" parent="LeftPlayerPanel/LeftPlayerBox/LeftInfoPanel/LeftInfoBox" unique_id=899368921]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
-theme_override_font_sizes/font_size = 16
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 0
 
 [node name="LeftStars" type="Label" parent="LeftPlayerPanel/LeftPlayerBox"]
 unique_name_in_owner = true
@@ -304,27 +322,38 @@ expand_mode = 1
 stretch_mode = 5
 flip_h = true
 
-[node name="RightName" type="Label" parent="RightPlayerPanel/RightPlayerBox" unique_id=1860825040]
+[node name="RightInfoPanel" type="PanelContainer" parent="RightPlayerPanel/RightPlayerBox"]
+layout_mode = 2
+size_flags_horizontal = 8
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_info_backplate")
+
+[node name="RightInfoBox" type="VBoxContainer" parent="RightPlayerPanel/RightPlayerBox/RightInfoPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="RightName" type="Label" parent="RightPlayerPanel/RightPlayerBox/RightInfoPanel/RightInfoBox" unique_id=1860825040]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
 autowrap_mode = 2
 
-[node name="RightTitle" type="Label" parent="RightPlayerPanel/RightPlayerBox"]
+[node name="RightTitle" type="Label" parent="RightPlayerPanel/RightPlayerBox/RightInfoPanel/RightInfoBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1.0, 0.85, 0.4, 1)
-theme_override_font_sizes/font_size = 13
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+horizontal_alignment = 2
 autowrap_mode = 2
 
-[node name="RightElo" type="Label" parent="RightPlayerPanel/RightPlayerBox" unique_id=2072326500]
+[node name="RightElo" type="Label" parent="RightPlayerPanel/RightPlayerBox/RightInfoPanel/RightInfoBox" unique_id=2072326500]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
-theme_override_font_sizes/font_size = 16
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 2
 
 [node name="RightStars" type="Label" parent="RightPlayerPanel/RightPlayerBox"]
 unique_name_in_owner = true
