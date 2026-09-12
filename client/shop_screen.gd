@@ -86,12 +86,15 @@ func _show_tab(tab_index: int) -> void:
 		c.queue_free()
 
 	var type_name := types[tab_index]
-	# Only items actually for sale — achievement-reward cosmetics are equipped
-	# from the avatar picker once earned, not shown here.
-	var item_ids := ShopCatalog.buyable_ids_of_type(type_name)
+	# Only items actually for sale AND not already owned — once bought, an item
+	# drops out of the shop entirely; it's equipped from the avatar picker from
+	# then on, same as an achievement-reward cosmetic always was.
+	var owned: Array = Session.account.get("owned_rewards", [])
+	var all_buyable := ShopCatalog.buyable_ids_of_type(type_name)
+	var item_ids := all_buyable.filter(func(id): return id not in owned)
 	if item_ids.is_empty():
 		var empty := Label.new()
-		empty.text = "Nothing here yet."
+		empty.text = "You own everything here!" if not all_buyable.is_empty() else "Nothing here yet."
 		empty.add_theme_color_override("font_color", COL_MUTED)
 		%ItemsGrid.add_child(empty)
 		return
@@ -170,28 +173,19 @@ func _add_item_tile(item_id: String, def: Dictionary, type_name: String) -> void
 	box.add_child(info)
 
 	# --- action button ---
-	var owned: Array = Session.account.get("owned_rewards", [])
-	var equipped_id := _get_equipped_id(item_id, type_name)
-	var is_owned := item_id in owned
-	var is_equipped := equipped_id == item_id
+	# _show_tab already filters to buyable-and-not-yet-owned items, so this
+	# tile is always something the player could still buy — just Buy or Need.
 	var points := int(Session.account.get("points", 0))
 
 	var btn := Button.new()
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
-	if is_equipped:
-		_style_button(btn, "Equipped", COL_EQUIPPED, true)
-	elif is_owned:
-		_style_button(btn, "Equip", COL_BUY, false)
-		btn.pressed.connect(_equip_item.bind(item_id, type_name))
-	elif source == "shop" and points >= price:
+	if points >= price:
 		_style_button(btn, "Buy  ◈%d" % price, COL_BUY, false)
 		btn.pressed.connect(_purchase_item.bind(item_id))
-	elif source == "shop":
-		_style_button(btn, "Need ◈%d" % price, COL_OWNED, true)
 	else:
-		_style_button(btn, "Locked", COL_OWNED, true)
+		_style_button(btn, "Need ◈%d" % price, COL_OWNED, true)
 
 	box.add_child(btn)
 	%ItemsGrid.add_child(card)
@@ -227,27 +221,6 @@ func _get_preview_texture(item_id: String, type_name: String) -> Texture2D:
 		"table_background": return TableBackgrounds.texture_for(item_id)
 		"sleeve": return Sleeves.texture_for(item_id)
 	return null
-
-
-func _get_equipped_id(item_id: String, type_name: String) -> String:
-	match type_name:
-		"avatar": return str(Session.account.get("avatar", ""))
-		"frame": return str(Session.account.get("frame", ""))
-		"background": return str(Session.account.get("background", ""))
-		"table_background": return str(Session.account.get("table_background", ""))
-		"sleeve": return str(Session.account.get("sleeve", ""))
-		"title": return str(Session.account.get("title", ""))
-	return ""
-
-
-func _equip_item(item_id: String, type_name: String) -> void:
-	match type_name:
-		"avatar": Net.set_avatar(item_id)
-		"frame": Net.set_frame(item_id)
-		"background": Net.set_background(item_id)
-		"table_background": Net.set_table_background(item_id)
-		"sleeve": Net.set_sleeve(item_id)
-		"title": Net.set_title(item_id)
 
 
 func _purchase_item(item_id: String) -> void:
