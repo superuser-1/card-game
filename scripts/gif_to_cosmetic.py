@@ -140,6 +140,47 @@ def apply_edits(
     return frame
 
 
+# Card backs (sleeves) render with no border overlay of their own in-game
+# (client/table_card_view.tscn's BackRect is a single flat texture — unlike
+# the face-up art view, which layers card_border1.png on top separately) so
+# every static card back has the frame hand-painted into the art itself. An
+# animated one needs the same border baked into every exported frame.
+CARD_BORDER_PATH = REPO_ROOT / "assets/cards/card_border1.png"
+_card_border_cache: Image.Image | None = None
+
+
+def _card_border() -> Image.Image:
+    global _card_border_cache
+    if _card_border_cache is None:
+        _card_border_cache = Image.open(CARD_BORDER_PATH).convert("RGBA")
+    return _card_border_cache
+
+
+def cover_resize(img: Image.Image, target_size: tuple[int, int]) -> Image.Image:
+    """Scale `img` up/down (uniformly, no stretching) and center-crop it to
+    exactly fill `target_size` — same semantics as CSS `background-size:
+    cover` / Godot's STRETCH_KEEP_ASPECT_COVERED. Used to fit the art to the
+    border's canvas without leaving gaps at the rounded corners (any excess
+    is cropped from the center rather than the art being squashed to fit)."""
+    tw, th = target_size
+    sw, sh = img.size
+    scale = max(tw / sw, th / sh)
+    nw, nh = max(1, round(sw * scale)), max(1, round(sh * scale))
+    resized = img.resize((nw, nh), Image.LANCZOS)
+    left, top = (nw - tw) // 2, (nh - th) // 2
+    return resized.crop((left, top, left + tw, top + th))
+
+
+def composite_card_border(frame: Image.Image) -> Image.Image:
+    """`frame` cover-fit to card_border1.png's canvas, with the border
+    alpha-composited on top — so the art fills the frame's opening with no
+    gap at the corners regardless of the source's own aspect ratio."""
+    border = _card_border()
+    base = cover_resize(frame, border.size).convert("RGBA")
+    base.alpha_composite(border)
+    return base
+
+
 def convert_gif(
     gif_path: Path,
     cosmetic_type: str,
@@ -158,6 +199,7 @@ def convert_gif(
     brightness: float = 1.0,
     color: float = 1.0,
     contrast: float = 1.0,
+    card_border: bool | None = None,
     log=print,
 ) -> Path:
     """Returns the written .tres path.
@@ -168,10 +210,16 @@ def convert_gif(
     a bad frame in the middle of an otherwise-good range).
     crop_box: (left, top, right, bottom), each 0..1, relative to the frame
     after rotate/flip. None = no crop.
+    card_border: bake assets/cards/card_border1.png on top of every frame
+    (see composite_card_border). None (default) = on automatically for
+    type "sleeve" (card backs need it — they get no border overlay from the
+    game itself, unlike face-up card art), off for every other type.
     """
     if cosmetic_type not in OUT_DIRS:
         raise ValueError(f"type must be one of {list(OUT_DIRS)}")
     frames = max(2, min(int(frames), MAX_ANIM_FRAMES))
+    if card_border is None:
+        card_border = cosmetic_type == "sleeve"
 
     cid = sanitize_id(cosmetic_id or gif_path.stem)
     out_dir = REPO_ROOT / OUT_DIRS[cosmetic_type]
@@ -199,7 +247,10 @@ def convert_gif(
     ]
 
     idxs = _pick_indices(len(edited), frames)
-    w0, h0 = edited[0].size
+    # With a border, the OUTPUT canvas is the border's own aspect ratio (the
+    # art gets cover-fit into it, not the other way around) — Max Edge still
+    # controls final resolution, just scaling the border+art together.
+    w0, h0 = _card_border().size if card_border else edited[0].size
     scale = min(1.0, max_edge / max(w0, h0))
     size = (max(1, round(w0 * scale)), max(1, round(h0 * scale)))
 
@@ -209,7 +260,10 @@ def convert_gif(
 
     written = []
     for out_i, s_i in enumerate(idxs):
-        fr = edited[s_i].resize(size, Image.LANCZOS)
+        fr = edited[s_i]
+        if card_border:
+            fr = composite_card_border(fr)
+        fr = fr.resize(size, Image.LANCZOS)
         p = frames_dir / f"frame_{out_i:02d}.png"
         fr.save(p, optimize=True)
         written.append(p)
@@ -317,6 +371,13 @@ def run_ui() -> int:
         ttk.Radiobutton(opts, text=t.replace("_", " ").capitalize(), value=t, variable=type_var,
                         command=lambda: on_type()).grid(row=row, column=0, sticky="w")
         row += 1
+
+    card_border_var = tk.BooleanVar(value=False)
+    ttk.Checkbutton(opts, text="Bake card border on top (sleeves need this —\nsee the 'with border' preview to the right)",
+                    variable=card_border_var,
+                    command=lambda: (_update_final_preview_visibility(), refresh_preview_frames())
+                    ).grid(row=row, column=0, columnspan=2, sticky="w", pady=(4, 0))
+    row += 1
 
     ttk.Label(opts, text="ID (blank = filename)").grid(row=row, column=0, sticky="w", pady=(6, 0))
     row += 1
@@ -431,11 +492,28 @@ def run_ui() -> int:
     ttk.Button(opts, text="Convert", command=lambda: do_convert()).grid(row=row, column=0, columnspan=2, sticky="we", pady=16)
     row += 1
 
-    # --- right: preview canvas + log --------------------------------------
+    # --- right: preview canvas(es) + log ------------------------------------
     right = ttk.Frame(body)
     right.pack(side="left", fill="both", expand=True, padx=(14, 0))
-    canvas = tk.Canvas(right, width=_PREVIEW_BOX, height=_PREVIEW_BOX, background="#202020", highlightthickness=1, highlightbackground="#555")
-    canvas.pack(pady=(6, 6))
+    previews_row = ttk.Frame(right)
+    previews_row.pack(pady=(6, 6))
+
+    preview_col = ttk.Frame(previews_row)
+    preview_col.pack(side="left")
+    ttk.Label(preview_col, text="Edit (drag the crop box)", font=("", 8)).pack()
+    canvas = tk.Canvas(preview_col, width=_PREVIEW_BOX, height=_PREVIEW_BOX, background="#202020", highlightthickness=1, highlightbackground="#555")
+    canvas.pack()
+
+    # Shown only for sleeves (or whenever "Bake card border" is checked) —
+    # the actual final result, border included, so corner-fit problems are
+    # visible live while dragging the crop box above instead of only after
+    # converting.
+    final_col = ttk.Frame(previews_row)
+    final_label = ttk.Label(final_col, text="Final (with border)", font=("", 8))
+    final_label.pack()
+    final_canvas = tk.Canvas(final_col, width=_PREVIEW_BOX, height=_PREVIEW_BOX, background="#202020", highlightthickness=1, highlightbackground="#555")
+    final_canvas.pack()
+
     log_box = tk.Text(right, height=10, wrap="word")
     log_box.pack(fill="both", expand=True)
 
@@ -449,6 +527,15 @@ def run_ui() -> int:
     def on_type() -> None:
         frames_var.set(DEFAULTS[type_var.get()])
         size_var.set(256 if type_var.get() == "frame" else 512)
+        card_border_var.set(type_var.get() == "sleeve")
+        _update_final_preview_visibility()
+        refresh_preview_frames()
+
+    def _update_final_preview_visibility() -> None:
+        if card_border_var.get():
+            final_col.pack(side="left", padx=(10, 0))
+        else:
+            final_col.pack_forget()
 
     def reset_crop() -> None:
         state["crop"] = [0.0, 0.0, 1.0, 1.0]
@@ -530,6 +617,32 @@ def run_ui() -> int:
         y0 = (_PREVIEW_BOX - dh) // 2
         return x0, y0, x0 + dw, y0 + dh
 
+    def draw_final_preview() -> None:
+        """The actual final result — current crop applied, cover-fit to the
+        card border's canvas, border composited on top — so corner-fit
+        problems (art not reaching the rounded edge, or an off-center crop)
+        are visible live while dragging the crop box, not just after
+        converting."""
+        if not card_border_var.get():
+            return
+        frames = state["preview_frames"]
+        final_canvas.delete("all")
+        if not frames:
+            final_canvas.create_text(_PREVIEW_BOX // 2, _PREVIEW_BOX // 2, text="(final)", fill="#888")
+            return
+        i = state["preview_i"] % len(frames)
+        frame = frames[i]
+        l, t, r, b = state["crop"]
+        w, h = frame.size
+        box = (round(l * w), round(t * h), round(r * w), round(b * h))
+        cropped = frame.crop(box) if box[2] > box[0] and box[3] > box[1] else frame
+        final = composite_card_border(cropped)
+        x0, y0, x1, y1 = _fit_box(*final.size)
+        disp = final.resize((max(1, x1 - x0), max(1, y1 - y0)), Image.LANCZOS)
+        tk_img = ImageTk.PhotoImage(disp)
+        state["final_tk_current"] = tk_img  # keep a reference so tkinter doesn't garbage-collect it
+        final_canvas.create_image(x0, y0, anchor="nw", image=tk_img)
+
     def draw_canvas() -> None:
         canvas.delete("all")
         frames = state["preview_frames"]
@@ -561,6 +674,8 @@ def run_ui() -> int:
                        ((bx0 + bx1) / 2, by0), ((bx0 + bx1) / 2, by1),
                        (bx0, (by0 + by1) / 2), (bx1, (by0 + by1) / 2)):
             canvas.create_rectangle(hx - hs, hy - hs, hx + hs, hy + hs, fill="#39d353", outline="")
+
+        draw_final_preview()
 
         def tick() -> None:
             if not state["preview_frames"]:
@@ -716,6 +831,7 @@ def run_ui() -> int:
                     rotate_deg=rotate_var.get(), flip_h=flip_h_var.get(), flip_v=flip_v_var.get(),
                     crop_box=crop_arg,
                     brightness=brightness_var.get(), color=color_var.get(), contrast=contrast_var.get(),
+                    card_border=card_border_var.get(),
                     log=log,
                 )
                 ok += 1
@@ -759,6 +875,10 @@ def main() -> int:
     ap.add_argument("--brightness", type=float, default=1.0)
     ap.add_argument("--color", dest="color_", type=float, default=1.0)
     ap.add_argument("--contrast", type=float, default=1.0)
+    border_group = ap.add_mutually_exclusive_group()
+    border_group.add_argument("--card-border", dest="card_border", action="store_true", default=None,
+                               help="bake assets/cards/card_border1.png on top (default: on for --type sleeve, off otherwise)")
+    border_group.add_argument("--no-card-border", dest="card_border", action="store_false")
     args = ap.parse_args()
 
     if not args.cli and not args.gifs:
@@ -777,6 +897,7 @@ def main() -> int:
             rotate_deg=args.rotate, flip_h=args.flip_h, flip_v=args.flip_v,
             crop_box=crop_box,
             brightness=args.brightness, color=args.color_, contrast=args.contrast,
+            card_border=args.card_border,
         )
     print("done. now run:  godot --headless --import")
     return 0
