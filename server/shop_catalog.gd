@@ -51,6 +51,8 @@ const CATALOG: Array = [
 	{"id": "card_back_11", "type": "sleeve", "name": "Card Back 11", "price": 5, "source": "shop"},
 	{"id": "card_back_12", "type": "sleeve", "name": "Card Back 12", "price": 5, "source": "shop"},
 	{"id": "test_tree_card_back_1", "type": "sleeve", "name": "Test Tree", "price": 5, "source": "shop"},
+	{"id": "nay3920_A_spiral_galaxy_in_all_its_colors_and_glory__Animate__fa4650b7-7b52-4133-bd9d-a83c10de61b9_3", "type": "sleeve", "name": "Spiral Galaxy", "price": 5, "source": "shop"},
+	{"id": "nay3920_Purple_Galaxy_spiraling_smoothly_and_having_some_gas__9633d83a-4a40-4750-afc8-50b7c97531ae_3", "type": "sleeve", "name": "Purple Galaxy", "price": 5, "source": "shop"},
 	# --- admin-only: never auto-granted, awarded by hand or as a tournament
 	# prize via the admin tool. card_back_5/8/9 flagged this way on request;
 	# frame_champion/avatar_champion/title_champion are placeholders that were
