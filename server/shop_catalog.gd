@@ -22,8 +22,20 @@ const CATALOG: Array = [
 	{"id": "frame_neon",       "type": "frame",           "name": "Neon",          "price": 5, "source": "shop"},
 	{"id": "bg_starfield",     "type": "background",      "name": "Starfield",     "price": 5, "source": "shop"},
 	{"id": "sleeve_noir",      "type": "sleeve",          "name": "Noir",          "price": 5, "source": "shop"},
-	{"id": "table_starfield",  "type": "table_background", "name": "Starfield Table", "price": 5, "source": "shop"},
 	{"id": "title_night_owl",  "type": "title",           "name": "Night Owl",     "price": 5, "source": "shop"},
+	# --- table backgrounds (art: res://assets/tables/<id>.png|jpg) ---
+	# table_game_canvas_1 (default, free) / _2 / _3 are free for everyone —
+	# not in this catalog at all, same as any other non-premium cosmetic.
+	# _4 through _12 are shop-buyable.
+	{"id": "table_game_canvas_4",  "type": "table_background", "name": "Table 4",  "price": 5, "source": "shop"},
+	{"id": "table_game_canvas_5",  "type": "table_background", "name": "Table 5",  "price": 5, "source": "shop"},
+	{"id": "table_game_canvas_6",  "type": "table_background", "name": "Table 6",  "price": 5, "source": "shop"},
+	{"id": "table_game_canvas_7",  "type": "table_background", "name": "Table 7",  "price": 5, "source": "shop"},
+	{"id": "table_game_canvas_8",  "type": "table_background", "name": "Table 8",  "price": 5, "source": "shop"},
+	{"id": "table_game_canvas_9",  "type": "table_background", "name": "Table 9",  "price": 5, "source": "shop"},
+	{"id": "table_game_canvas_10", "type": "table_background", "name": "Table 10", "price": 5, "source": "shop"},
+	{"id": "table_game_canvas_11", "type": "table_background", "name": "Table 11", "price": 5, "source": "shop"},
+	{"id": "table_game_canvas_12", "type": "table_background", "name": "Table 12", "price": 5, "source": "shop"},
 	# --- achievement-only (see PLAN_achievements.md §1); not buyable ---
 	{"id": "frame_champion",   "type": "frame",      "name": "Champion",      "price": 0, "source": "achievement"},
 	{"id": "frame_veteran",    "type": "frame",      "name": "Veteran",       "price": 0, "source": "achievement"},
