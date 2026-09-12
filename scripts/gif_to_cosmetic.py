@@ -27,7 +27,7 @@ import sys
 from pathlib import Path
 
 try:
-    from PIL import Image, ImageSequence, ImageEnhance
+    from PIL import Image, ImageSequence, ImageEnhance, ImageChops, ImageDraw
 except ImportError:
     _msg = "Pillow is required. Install it with:\n\n    pip install Pillow"
     try:  # double-clicked (no console) -> show a dialog instead of a dead stderr
@@ -156,6 +156,45 @@ def _card_border() -> Image.Image:
     return _card_border_cache
 
 
+_card_shape_mask_cache: Image.Image | None = None
+
+
+def _card_shape_mask(border: Image.Image) -> Image.Image:
+    """1-channel "L" mask: 255 for the card's actual silhouette (the border's
+    opaque ring, plus whatever it encloses — i.e. the hollow center meant to
+    show art), 0 for the four corner triangles that are transparent in the
+    border art AND genuinely outside the rounded card (card_border1.png's
+    true (0,0) pixel is alpha=0, confirmed — those corners are NOT meant to
+    show anything, but plain alpha-compositing can't tell that apart from
+    the equally-transparent center, so a rectangular art layer pokes its
+    square corners out past the rounded frame there without this mask).
+
+    Derived once by flood-filling from the four image corners through
+    transparent pixels — whatever the fill can't reach (walled off by the
+    opaque ring) is the enclosed center, i.e. part of the card. Making no
+    assumption about exact corner-radius geometry means this keeps working
+    if card_border1.png is ever redrawn with a different shape.
+    """
+    global _card_shape_mask_cache
+    if _card_shape_mask_cache is not None:
+        return _card_shape_mask_cache
+    alpha = border.split()[3]
+    # Binarize first: treat any meaningfully-transparent pixel as
+    # "background" so a flood-fill has clean 0/255 territory to work with,
+    # instead of tripping over antialiased edge pixels.
+    work = alpha.point(lambda a: 0 if a < 16 else 255).convert("L")
+    w, h = work.size
+    for seed in ((0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)):
+        if work.getpixel(seed) == 0:
+            ImageDraw.floodfill(work, seed, 128)
+    # Reached by the corner flood-fill (now 128) => truly outside the card.
+    # Everything else — untouched background (the enclosed center) or the
+    # ring itself (255) — is part of the card.
+    mask = work.point(lambda v: 0 if v == 128 else 255)
+    _card_shape_mask_cache = mask
+    return mask
+
+
 def cover_resize(img: Image.Image, target_size: tuple[int, int]) -> Image.Image:
     """Scale `img` up/down (uniformly, no stretching) and center-crop it to
     exactly fill `target_size` — same semantics as CSS `background-size:
@@ -172,11 +211,16 @@ def cover_resize(img: Image.Image, target_size: tuple[int, int]) -> Image.Image:
 
 
 def composite_card_border(frame: Image.Image) -> Image.Image:
-    """`frame` cover-fit to card_border1.png's canvas, with the border
-    alpha-composited on top — so the art fills the frame's opening with no
-    gap at the corners regardless of the source's own aspect ratio."""
+    """`frame` cover-fit to card_border1.png's canvas, clipped to the card's
+    actual rounded silhouette (see _card_shape_mask — otherwise the art's
+    square corners poke out past the frame's rounded ones, since the
+    border's own corners are transparent same as its hollow center), then
+    the border alpha-composited on top."""
     border = _card_border()
     base = cover_resize(frame, border.size).convert("RGBA")
+    r, g, b, a = base.split()
+    clipped_alpha = ImageChops.multiply(a, _card_shape_mask(border))
+    base.putalpha(clipped_alpha)
     base.alpha_composite(border)
     return base
 
