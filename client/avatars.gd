@@ -9,10 +9,11 @@ const DIR := "res://assets/avatars/"
 const DEFAULT_ID := "default"
 const BOT_ID := "bot"
 
-# Every bot wears the same frame + background (only the portrait varies,
-# drawn from bot_pool()). See bot_identity().
+# Every bot wears the same frame + background + card back (only the portrait
+# varies, drawn from bot_pool()). See bot_identity().
 const BOT_FRAME := "frame1"
 const BOT_BACKGROUND := "avatar_bg_grainy_field_3"
+const BOT_SLEEVE := "card_back_1"
 
 
 ## All selectable avatar ids (everything in DIR except the reserved
@@ -94,7 +95,7 @@ static func random_bot_id() -> String:
 ## fixed bot frame + background. Callers should compute this once per match
 ## and reuse it so the look stays stable.
 static func bot_identity() -> Dictionary:
-	return {"avatar": random_bot_id(), "frame": BOT_FRAME, "background": BOT_BACKGROUND}
+	return {"avatar": random_bot_id(), "frame": BOT_FRAME, "background": BOT_BACKGROUND, "sleeve": BOT_SLEEVE}
 
 
 ## True when an account still needs to pick an avatar: no id stored, or a

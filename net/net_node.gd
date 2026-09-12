@@ -581,6 +581,7 @@ func start_singleplayer(reveal := false) -> void:
 		"opponent_avatar": m["bot_identity"]["avatar"],
 		"opponent_frame": m["bot_identity"]["frame"],
 		"opponent_background": m["bot_identity"]["background"],
+		"opponent_sleeve": m["bot_identity"]["sleeve"],
 		"opponent_elo": ServerStore.START_ELO,
 		"opponent_title": "",
 		"is_bot_match": true,
@@ -3191,7 +3192,7 @@ func _seat_identity(m: Dictionary, seat: int) -> Dictionary:
 		if not m.has("bot_identity"):
 			m["bot_identity"] = Avatars.bot_identity()
 		var bi: Dictionary = m["bot_identity"]
-		return {"name": "Bot", "avatar": str(bi["avatar"]), "frame": str(bi["frame"]), "background": str(bi["background"]), "sleeve": "", "elo": ServerStore.START_ELO, "title": "", "is_bot": true}
+		return {"name": "Bot", "avatar": str(bi["avatar"]), "frame": str(bi["frame"]), "background": str(bi["background"]), "sleeve": str(bi["sleeve"]), "elo": ServerStore.START_ELO, "title": "", "is_bot": true}
 	var acc := _store.get_account(acc_id)
 	var elo := int(acc.get("elo", ServerStore.START_ELO))
 	return {
