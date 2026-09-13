@@ -69,13 +69,14 @@ text = ""
 [node name="MetaPanel" type="PanelContainer" parent="MarginContainer/Root"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 0
 
 [node name="MetaMargin" type="MarginContainer" parent="MarginContainer/Root/MetaPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 12
+theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_bottom = 8
 
 [node name="MetaRow" type="HBoxContainer" parent="MarginContainer/Root/MetaPanel/MetaMargin"]
 unique_name_in_owner = true
