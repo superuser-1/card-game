@@ -145,3 +145,27 @@ static func ids_of_type(t: String) -> Array:
 ## never listed in the shop.
 static func buyable_ids_of_type(t: String) -> Array:
 	return ids_of_type(t).filter(func(id): return is_buyable(id))
+
+
+## Human-readable label for any cosmetic id, for display in the shop and the
+## avatar picker. Catalog items (shop/achievement/admin) use the `name` set
+## above; free/default items (never added to CATALOG) have no name field, so
+## this derives a readable placeholder from the filename instead — rename
+## specific ones by adding a CATALOG entry with price 0 and source "default".
+static func display_name_for(id: String, type: String) -> String:
+	var def := def_for(id)
+	if not def.is_empty():
+		return str(def.name)
+	return _humanize(id, type)
+
+
+static func _humanize(id: String, type: String) -> String:
+	var s := id
+	if type == "background" and s.begins_with("avatar_bg_"):
+		s = s.substr("avatar_bg_".length())
+	elif type == "table_background" and s.begins_with("table_game_canvas_"):
+		return "Table " + s.substr("table_game_canvas_".length())
+	var re := RegEx.new()
+	re.compile("([a-zA-Z])([0-9])")
+	s = re.sub(s, "$1 $2", true)
+	return s.capitalize()

@@ -6,10 +6,24 @@ extends Control
 const CARD_W := 190
 const ART := 166
 
+## Art box size per item type, matched to each cosmetic's real aspect ratio
+## (avatars/frames/backgrounds are square, card backs are card-shaped, table
+## backgrounds are widescreen) so the art is shown uncropped instead of
+## force-fit into a square. Longest side is capped at ART so cards stay a
+## consistent size within a tab (every card in a tab is the same item type,
+## so this never has to reconcile two ratios in one grid).
+const ART_SIZE := {
+	"avatar": Vector2(166, 166),
+	"frame": Vector2(166, 166),
+	"background": Vector2(166, 166),
+	"sleeve": Vector2(114, 166),
+	"table_background": Vector2(166, 93),
+	"title": Vector2(166, 166),
+}
+
 const COL_CARD_BG := Color(0.129, 0.129, 0.176)
 const COL_CARD_BORDER := Color(1, 1, 1, 0.075)
 const COL_ART_BG := Color(0.09, 0.09, 0.125)
-const COL_GOLD := Color(1, 0.843, 0.4)
 const COL_MUTED := Color(0.56, 0.56, 0.63)
 const COL_BUY := Color(0.192, 0.573, 0.353)
 const COL_EQUIPPED := Color(0.243, 0.435, 0.678)
@@ -123,9 +137,11 @@ func _add_item_tile(item_id: String, def: Dictionary, type_name: String) -> void
 	box.add_theme_constant_override("separation", 9)
 	card.add_child(box)
 
-	# --- art (square, cropped not stretched) ---
+	# --- art (sized to this type's real aspect ratio, shown uncropped) ---
+	var art_size: Vector2 = ART_SIZE.get(type_name, Vector2(ART, ART))
 	var art_frame := PanelContainer.new()
-	art_frame.custom_minimum_size = Vector2(ART, ART)
+	art_frame.custom_minimum_size = art_size
+	art_frame.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	art_frame.clip_contents = true
 	var art_bg := StyleBoxFlat.new()
 	art_bg.bg_color = COL_ART_BG
@@ -138,8 +154,8 @@ func _add_item_tile(item_id: String, def: Dictionary, type_name: String) -> void
 		var art := TextureRect.new()
 		art.texture = tex
 		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		art.custom_minimum_size = Vector2(ART, ART)
+		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		art.custom_minimum_size = art_size
 		art_frame.add_child(art)
 	else:
 		var ph := Label.new()
@@ -152,25 +168,13 @@ func _add_item_tile(item_id: String, def: Dictionary, type_name: String) -> void
 
 	# --- name ---
 	var name_label := Label.new()
-	name_label.text = str(def.get("name", item_id))
+	name_label.text = ShopCatalog.display_name_for(item_id, type_name)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_label.clip_text = true
 	name_label.add_theme_font_size_override("font_size", 15)
 	box.add_child(name_label)
 
-	# --- price / source line ---
-	var source := str(def.get("source", ""))
 	var price := int(def.get("price", 0))
-	var info := Label.new()
-	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	info.add_theme_font_size_override("font_size", 13)
-	if source == "shop":
-		info.text = "◈ %d" % price
-		info.add_theme_color_override("font_color", COL_GOLD)
-	else:
-		info.text = "Achievement reward"
-		info.add_theme_color_override("font_color", COL_MUTED)
-	box.add_child(info)
 
 	# --- action button ---
 	# _show_tab already filters to buyable-and-not-yet-owned items, so this

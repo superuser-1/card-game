@@ -16,6 +16,16 @@ var _refresh_accum := 0.0
 const CARD_W := 500
 const CARD_BG := "res://assets/tournament.png"
 
+const DAY_SECONDS := 86400
+## Index 0 = Sunday. Unix epoch (1970-01-01) was a Thursday, so
+## `(days_since_epoch + 4) % 7` gives the weekday for any UTC day boundary.
+const WEEKDAY_NAMES := ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+
+## Day filter for the Public/Private lists: -1 = All, else how many whole
+## days from today (UTC, matching the "Starts …" timestamps already shown on
+## each card) a tournament's start falls on — 0 = today, 1 = tomorrow, …, 6.
+var _day_filter := -1
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
@@ -33,8 +43,60 @@ func _ready() -> void:
 	Net.tournament_withdrawn.connect(_on_tournament_withdrawn)
 	Net.tournament_checked_in.connect(_on_tournament_checked_in)
 	Net.my_tournament_status.connect(func(_t): _on_tournament_list_stale_check())
+	_build_day_filter_bar()
 	Net.request_my_tournament()
 	Net.list_tournaments()
+
+
+## "All" plus the next 7 days (Today, Tomorrow, then weekday names) — computed
+## fresh each time the screen loads so it's always correct for "today".
+func _build_day_filter_bar() -> void:
+	for c in %DayFilterBar.get_children():
+		c.queue_free()
+
+	var group := ButtonGroup.new()
+	_add_day_chip("All", -1, group)
+	var now := int(Time.get_unix_time_from_system())
+	var today_start := now - (now % DAY_SECONDS)
+	for i in range(7):
+		var label := "Today" if i == 0 else ("Tomorrow" if i == 1 else _weekday_name(today_start + i * DAY_SECONDS))
+		_add_day_chip(label, i, group)
+
+
+func _weekday_name(ts: int) -> String:
+	var days_since_epoch := int(ts / DAY_SECONDS)
+	var weekday := (days_since_epoch + 4) % 7
+	return WEEKDAY_NAMES[weekday]
+
+
+func _add_day_chip(label: String, day_offset: int, group: ButtonGroup) -> void:
+	var btn := Button.new()
+	btn.text = label
+	btn.toggle_mode = true
+	btn.button_group = group
+	btn.button_pressed = day_offset == _day_filter
+	btn.pressed.connect(_on_day_filter_pressed.bind(day_offset))
+	%DayFilterBar.add_child(btn)
+
+
+func _on_day_filter_pressed(day_offset: int) -> void:
+	_day_filter = day_offset
+	_on_tournament_list_stale_check()
+
+
+## Whole days between now (UTC) and `ts`: 0 = today, 1 = tomorrow, etc. Matches
+## the "Starts …" timestamp already shown on each card (also UTC).
+func _day_offset_for_ts(ts: int) -> int:
+	var now := int(Time.get_unix_time_from_system())
+	var today_start := now - (now % DAY_SECONDS)
+	return int(floor(float(ts - today_start) / float(DAY_SECONDS)))
+
+
+func _matches_day_filter(row: Dictionary) -> bool:
+	if _day_filter < 0:
+		return true
+	var start_ts := int(row.get("start_ts", 0))
+	return start_ts > 0 and _day_offset_for_ts(start_ts) == _day_filter
 
 
 func _process(delta: float) -> void:
@@ -129,21 +191,26 @@ func _render_rows(rows: Array) -> void:
 	var private_rows := []
 	var finished_rows := []
 	for row in rows:
+		# The day filter only narrows down "when does it start" lists — a
+		# finished tournament's start is in the past, so it's exempt.
 		if str(row.get("status", "")) in ["completed", "cancelled"]:
 			finished_rows.append(row)
+		elif not _matches_day_filter(row):
+			continue
 		elif bool(row.get("is_private_now", false)):
 			private_rows.append(row)
 		else:
 			public_rows.append(row)
 
+	var day_suffix := "" if _day_filter < 0 else " starting that day"
 	if public_rows.is_empty():
-		%RowsBox.add_child(_make_label("No tournaments available.", 0.0))
+		%RowsBox.add_child(_make_label("No tournaments available%s." % day_suffix, 0.0))
 	else:
 		for row in public_rows:
 			_add_tournament_row(row, %RowsBox, false, false)
 
 	if private_rows.is_empty():
-		%PrivateRowsBox.add_child(_make_label("No private tournaments open for sign-up.", 0.0))
+		%PrivateRowsBox.add_child(_make_label("No private tournaments open for sign-up%s." % day_suffix, 0.0))
 	else:
 		for row in private_rows:
 			_add_tournament_row(row, %PrivateRowsBox, false, true)

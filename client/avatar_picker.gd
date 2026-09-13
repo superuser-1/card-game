@@ -1,12 +1,16 @@
 extends Control
 ## Modal avatar/frame/background/table/title grid. Click a tile to highlight
-## it, then press Select to confirm — `chosen(id)` / `frame_chosen(id)` /
+## it, then press Save to confirm — `chosen(id)` / `frame_chosen(id)` /
 ## `background_chosen(id)` / `table_background_chosen(id)` / `title_chosen(id)`
-## are emitted only on Select, never on the first click.
+## are emitted only on Save, never on the first click.
+##
+## Picks on every tab are remembered while the modal is open, and Save commits
+## all of them at once (one signal per tab that was actually touched) — you
+## can flip between Avatar/Frame/Background/etc, change several, and confirm
+## with a single press instead of saving one tab at a time.
 ##
 ## Dismissable mode (default): shows the category tabs, and frees itself right
-## after a Select — or on Cancel / ui_cancel (no signal). Select commits
-## whichever tab is currently active.
+## after a Save — or on Cancel / ui_cancel (no signal).
 ## Mandatory mode (`configure(false)`): no category tabs (avatar only, since
 ## this is the first-login onboarding prompt), no Cancel button, ui_cancel is
 ## ignored, and it stays up after `chosen` until the caller calls `close()` —
@@ -19,7 +23,32 @@ signal sleeve_chosen(id: String)
 signal table_background_chosen(id: String)
 signal title_chosen(id: String)
 
-const TILE := Vector2(92, 92)
+const TILE := Vector2(84, 84)
+
+## Per-category art size, matched to each cosmetic's natural aspect ratio
+## (avatars/frames/backgrounds are square; card backs are card-shaped;
+## tables are widescreen). Falls back to TILE for anything not listed.
+const TILE_SIZE := {
+	"avatar": Vector2(84, 84),
+	"frame": Vector2(84, 84),
+	"background": Vector2(84, 84),
+	"sleeve": Vector2(76, 106),
+	"table_background": Vector2(160, 92),
+	"title": Vector2(140, 64),
+}
+
+## Grid columns per category — wider tiles (table/title) need fewer columns
+## to stay inside the modal's fixed width.
+const GRID_COLUMNS := {
+	"table_background": 3,
+	"title": 3,
+}
+
+## Height reserved below the art for the item's name label (art tiles only —
+## the "None" tile and Title options already show their own label as the
+## button text and don't get a second one).
+const NAME_BAND := 16
+
 const ACCENT := Color(0.38, 0.68, 1.0)
 const HEART_SIZE := Vector2(24, 24)
 const FAVORITE_COLOR := Color(0.3, 0.9, 0.45)
@@ -156,18 +185,32 @@ func _texture_for(cat: String, id: String) -> Texture2D:
 	return Backgrounds.texture_for(id)
 
 
-## (Re)populates the grid for the active category and restores the Select
-## button's enabled state to match whatever was already picked on that tab.
+## Whether Save has anything to commit across ANY tab, not just the active
+## one — Save is a single "commit everything I changed" action, not "commit
+## the tab I'm looking at".
+func _any_pending() -> bool:
+	if _selected_avatar_id != "":
+		return true
+	for touched: bool in _touched.values():
+		if touched:
+			return true
+	return false
+
+
+## (Re)populates the grid for the active category and restores the Save
+## button's enabled state to reflect every tab's pending picks, not just this
+## one (see _any_pending).
 func _build_grid() -> void:
 	for child in _grid.get_children():
 		_grid.remove_child(child)
 		child.free()
 	_tiles.clear()
 
+	_grid.columns = int(GRID_COLUMNS.get(_category, 4))
+
 	if _category == CAT_AVATAR:
 		for id: String in _available(Avatars.list_ids()):
-			_add_tile(id, Avatars.texture_for(id))
-		_select.disabled = _selected_avatar_id == ""
+			_add_tile(id, Avatars.texture_for(id), ShopCatalog.display_name_for(id, CAT_AVATAR))
 		if _tiles.has(_selected_avatar_id):
 			_tiles[_selected_avatar_id].add_theme_stylebox_override("panel", _frame_style(true))
 	else:
@@ -184,44 +227,69 @@ func _build_grid() -> void:
 			_add_tile(TableBackgrounds.RANDOM_ID, null, "🎲 Random Table")
 			_add_tile(TableBackgrounds.RANDOM_FAVORITE_ID, null, "💚 Random Favorite")
 			for id: String in _available(_list_ids(CAT_TABLE)):
-				_add_tile(id, _texture_for(CAT_TABLE, id), "", true)
+				_add_tile(id, _texture_for(CAT_TABLE, id), ShopCatalog.display_name_for(id, CAT_TABLE), true)
 		else:
 			for id: String in _available(_list_ids(_category)):
-				_add_tile(id, _texture_for(_category, id))
+				_add_tile(id, _texture_for(_category, id), ShopCatalog.display_name_for(id, _category))
 		var touched: bool = _touched[_category]
-		_select.disabled = not touched
 		var sel: String = _selected[_category]
 		var key: String = sel if sel != "" else NONE_TILE
 		if touched and _tiles.has(key):
 			_tiles[key].add_theme_stylebox_override("panel", _frame_style(true))
 
+	_select.disabled = not _any_pending()
 
-## `label_text` only matters when `tex` is null: defaults to "None" (the
-## frame/background/sleeve "no cosmetic" tile), but callers with an actual
-## textless option to show — e.g. a Title's name — pass it explicitly.
+
+## `label_text` means different things depending on `tex`:
+## - `tex == null`: it's the button's own text (defaults to "None" — the
+##   frame/background/sleeve "no cosmetic" tile — but callers with an actual
+##   textless option to show, e.g. a Title's name, pass it explicitly).
+## - `tex != null`: it's the item's display name, shown in a name band below
+##   the art so players can tell "frame1" from "Champion" at a glance.
 ## `show_heart` adds a favorite-toggle button in the top-right corner (Table
 ## tiles only, for narrowing the "Random Favorite Table" pool) — the tile is
 ## built from a plain Control rather than a PanelContainer so the heart can
 ## sit anchored in a corner instead of being stretched to fill like a
 ## PanelContainer forces on every child.
 func _add_tile(id: String, tex: Texture2D, label_text := "", show_heart := false) -> void:
+	var art_size: Vector2 = TILE_SIZE.get(_category, TILE)
+	var has_name_band := tex != null
 	var frame := Control.new()
-	frame.custom_minimum_size = TILE
+	frame.custom_minimum_size = Vector2(art_size.x, art_size.y + (NAME_BAND if has_name_band else 0))
 
+	# Built now but added to the tree last (see bottom of this function) so its
+	# border/fill draws on top of the art/button instead of being hidden
+	# underneath it — mouse_filter IGNORE means it still doesn't block clicks
+	# on whatever is stacked below it.
 	var bg := Panel.new()
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bg.add_theme_stylebox_override("panel", _frame_style(false))
-	frame.add_child(bg)
 
 	if tex != null:
 		var btn := TextureButton.new()
 		btn.texture_normal = tex
 		btn.ignore_texture_size = true
 		btn.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-		btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		btn.anchor_right = 1.0
+		btn.offset_bottom = art_size.y
 		frame.add_child(btn)
 		btn.pressed.connect(_on_tile_pressed.bind(id))
+
+		var name_label := Label.new()
+		name_label.text = label_text
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		name_label.clip_text = true
+		name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		name_label.add_theme_font_size_override("font_size", 10)
+		name_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.75))
+		name_label.anchor_top = 0.0
+		name_label.anchor_right = 1.0
+		name_label.anchor_bottom = 0.0
+		name_label.offset_top = art_size.y
+		name_label.offset_bottom = art_size.y + NAME_BAND
+		frame.add_child(name_label)
 	else:
 		var btn := Button.new()
 		btn.text = label_text if label_text != "" else "None"
@@ -234,6 +302,7 @@ func _add_tile(id: String, tex: Texture2D, label_text := "", show_heart := false
 	if show_heart:
 		_add_heart_button(frame, id)
 
+	frame.add_child(bg)
 	_grid.add_child(frame)
 	_tiles[id] = bg
 
@@ -305,49 +374,42 @@ func _on_tile_pressed(id: String) -> void:
 	_select.disabled = false
 
 
+## Commits every tab's pending pick at once — not just whichever tab is
+## currently active — so switching tabs before pressing Save never loses an
+## earlier pick on another tab.
 func _on_select_pressed() -> void:
-	if _category == CAT_AVATAR:
-		if _selected_avatar_id == "":
-			return
+	if _selected_avatar_id != "":
 		chosen.emit(_selected_avatar_id)
-	elif _category == CAT_FRAME:
-		if not _touched[CAT_FRAME]:
-			return
+	if _touched[CAT_FRAME]:
 		frame_chosen.emit(_selected[CAT_FRAME])
-	elif _category == CAT_SLEEVE:
-		if not _touched[CAT_SLEEVE]:
-			return
-		sleeve_chosen.emit(_selected[CAT_SLEEVE])
-	elif _category == CAT_TABLE:
-		if not _touched[CAT_TABLE]:
-			return
-		table_background_chosen.emit(_selected[CAT_TABLE])
-	elif _category == CAT_TITLE:
-		if not _touched[CAT_TITLE]:
-			return
-		title_chosen.emit(_selected[CAT_TITLE])
-	else:
-		if not _touched[CAT_BACKGROUND]:
-			return
+	if _touched[CAT_BACKGROUND]:
 		background_chosen.emit(_selected[CAT_BACKGROUND])
+	if _touched[CAT_SLEEVE]:
+		sleeve_chosen.emit(_selected[CAT_SLEEVE])
+	if _touched[CAT_TABLE]:
+		table_background_chosen.emit(_selected[CAT_TABLE])
+	if _touched[CAT_TITLE]:
+		title_chosen.emit(_selected[CAT_TITLE])
 
 	if _dismissable:
 		_close()
 
 
 ## Border width and content margin are constant so selecting a tile never
-## reflows the grid — only the colours change.
+## reflows the grid — only the colours change. Rest state is now a faint
+## visible card (not fully transparent) so tiles read as distinct slots
+## instead of bare art floating on the modal background.
 func _frame_style(selected: bool) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
-	s.set_corner_radius_all(6)
+	s.set_corner_radius_all(8)
 	s.set_content_margin_all(4)
-	s.set_border_width_all(3)
+	s.set_border_width_all(2)
 	if selected:
-		s.bg_color = Color(ACCENT.r, ACCENT.g, ACCENT.b, 0.15)
+		s.bg_color = Color(ACCENT.r, ACCENT.g, ACCENT.b, 0.18)
 		s.border_color = ACCENT
 	else:
-		s.bg_color = Color(0, 0, 0, 0)
-		s.border_color = Color(0, 0, 0, 0)
+		s.bg_color = Color(1, 1, 1, 0.06)
+		s.border_color = Color(1, 1, 1, 0.14)
 	return s
 
 
