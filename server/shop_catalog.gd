@@ -42,9 +42,11 @@ const CATALOG: Array = [
 	{"id": "avatar_bg_oil_paint_1",    "type": "background", "name": "Oil Paint 1",    "price": 5, "source": "shop"},
 	{"id": "avatar_bg_oil_paint_2",    "type": "background", "name": "Oil Paint 2",    "price": 5, "source": "shop"},
 	# --- table backgrounds (art: res://assets/tables/<id>.png|jpg) ---
-	# table_game_canvas_1 (default, free) / _2 / _3 are free for everyone —
+	# table_game_canvas_1 (default) is the only one still free for everyone —
 	# not in this catalog at all, same as any other non-premium cosmetic.
-	# _4 through _12 are shop-buyable.
+	# _2 through _12 are shop-buyable.
+	{"id": "table_game_canvas_2",  "type": "table_background", "name": "Table 2",  "price": 5, "source": "shop"},
+	{"id": "table_game_canvas_3",  "type": "table_background", "name": "Table 3",  "price": 5, "source": "shop"},
 	{"id": "table_game_canvas_4",  "type": "table_background", "name": "Table 4",  "price": 5, "source": "shop"},
 	{"id": "table_game_canvas_5",  "type": "table_background", "name": "Table 5",  "price": 5, "source": "shop"},
 	{"id": "table_game_canvas_6",  "type": "table_background", "name": "Table 6",  "price": 5, "source": "shop"},
@@ -55,10 +57,8 @@ const CATALOG: Array = [
 	{"id": "table_game_canvas_11", "type": "table_background", "name": "Table 11", "price": 5, "source": "shop"},
 	{"id": "table_game_canvas_12", "type": "table_background", "name": "Table 12", "price": 5, "source": "shop"},
 	# --- card backs (art: res://assets/avatars/card_backs/<id>.png) ---
-	# card_back_1 is the only one still free for everyone. 2/3/4/6/7/10/11/12
-	# are shop-buyable; 5/8/9 are admin-only (see below).
-	{"id": "card_back_2",  "type": "sleeve", "name": "Card Back 2",  "price": 5, "source": "shop"},
-	{"id": "card_back_3",  "type": "sleeve", "name": "Card Back 3",  "price": 5, "source": "shop"},
+	# card_back_1/2/3 are free for everyone — not in this catalog at all.
+	# card_back_4/6/7/10/11/12 are shop-buyable; 5/8/9 are admin-only (below).
 	{"id": "card_back_4",  "type": "sleeve", "name": "Card Back 4",  "price": 5, "source": "shop"},
 	{"id": "card_back_6",  "type": "sleeve", "name": "Card Back 6",  "price": 5, "source": "shop"},
 	{"id": "card_back_7",  "type": "sleeve", "name": "Card Back 7",  "price": 5, "source": "shop"},
