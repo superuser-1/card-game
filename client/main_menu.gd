@@ -521,11 +521,6 @@ func _on_tournament_check_in_pressed(tournament_id: int, btn: Button) -> void:
 	Net.tournament_check_in(tournament_id)
 
 
-func _on_tournament_cancel_pressed(tournament_id: int, btn: Button) -> void:
-	btn.disabled = true
-	Net.withdraw_tournament(tournament_id)
-
-
 ## Clicking a card (anywhere but its Check In button, which consumes its own
 ## click first) jumps to the bracket/tree screen for that tournament — works
 ## at any stage (signup/check-in/in-progress) since the bracket screen falls
@@ -679,14 +674,8 @@ func _make_tournament_card(t: Dictionary, my_id: int) -> PanelContainer:
 		btn.pressed.connect(_on_tournament_check_in_pressed.bind(tid, btn))
 		vbox.add_child(btn)
 
-	# Cancel only ever shows up (and only ever works) pre-check-in — same
-	# reasoning as the tournament list screen's Cancel button.
-	if status in ["signup", "signup_private"]:
-		var cancel_btn := Button.new()
-		cancel_btn.text = "Cancel"
-		cancel_btn.add_theme_font_size_override("font_size", 12)
-		cancel_btn.pressed.connect(_on_tournament_cancel_pressed.bind(tid, cancel_btn))
-		vbox.add_child(cancel_btn)
+	# Cancel/withdraw moved to the tournament detail screen (opened by
+	# clicking this card) — this card only ever shows a status summary now.
 
 	if status == "cancelled":
 		var dismiss_btn := Button.new()

@@ -55,6 +55,7 @@ func _ready() -> void:
 
 	Net.tournament_updated.connect(_on_tournament_updated)
 	Net.match_found.connect(_on_match_found)
+	Net.tournament_withdrawn.connect(_on_tournament_withdrawn)
 	Net.request_tournament(_tournament_id)
 
 
@@ -121,6 +122,24 @@ func _on_match_found(info: Dictionary) -> void:
 
 	Session.last_match_info = info
 	Session.goto("res://client/game_ui.tscn")
+
+
+## Withdrawing removes us from the participant list, so the server's own
+## broadcast of the updated tournament (_broadcast_tournament) never reaches
+## us — this screen relies on the direct RPC reply instead, which still
+## carries a fresh snapshot in `result.tournament`.
+func _on_tournament_withdrawn(result: Dictionary) -> void:
+	var t: Dictionary = result.get("tournament", {})
+	if t.is_empty() or int(t.get("id", 0)) != _tournament_id:
+		return
+	if bool(result.get("ok", false)):
+		_tournament = t
+		_render_bracket()
+
+
+func _on_cancel_pressed(btn: Button) -> void:
+	btn.disabled = true
+	Net.withdraw_tournament(_tournament_id)
 
 
 func _render_bracket() -> void:
@@ -239,6 +258,18 @@ func _render_meta_row() -> void:
 		_phase_label.text = "%s%s" % [_phase_prefix, _fmt_clock_or_soon(_phase_target_ts - int(Time.get_unix_time_from_system()))]
 
 	info.add_child(_meta_label("Starts %s" % Time.get_datetime_string_from_unix_time(int(_tournament.get("start_ts", 0)), true).replace("T", " "), Color(1, 1, 1, 0.45), 11))
+
+	# Withdraw only ever shows up (and only ever works) pre-check-in, and only
+	# for a tournament we're actually signed up for — moved here from the main
+	# menu card, which now only ever shows a status summary.
+	var status := str(_tournament.get("status", ""))
+	if status in ["signup", "signup_private"] and (Session.my_tournaments as Dictionary).has(_tournament_id):
+		var cancel_btn := Button.new()
+		cancel_btn.text = "Cancel"
+		cancel_btn.add_theme_font_size_override("font_size", 12)
+		cancel_btn.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		cancel_btn.pressed.connect(_on_cancel_pressed.bind(cancel_btn))
+		info.add_child(cancel_btn)
 
 	%MetaRow.add_child(info)
 
