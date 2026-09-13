@@ -149,11 +149,6 @@ func _render_account() -> void:
 		rank_text = str(_rank)
 
 	%StatsLabel.text = "Elo %d · Rank #%s" % [int(a.get("elo", 0)), rank_text]
-	%RecordLabel.text = "%d W – %d L · %d pts" % [
-		int(a.get("wins", 0)),
-		int(a.get("losses", 0)),
-		int(a.get("points", 0)),
-	]
 
 
 func _on_profile(data: Dictionary) -> void:
