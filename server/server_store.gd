@@ -2025,6 +2025,14 @@ func tournament_public_view(t: Dictionary) -> Dictionary:
 	v.erase("pw_hash")
 	v.erase("pw_iterations")
 	v["has_password"] = str(t.get("pw_hash", "")) != ""
+	# Denormalized the same way list_tournaments() already does — the bracket
+	# screen only ever gets `created_by_account_id` from the raw record
+	# otherwise, and has no other way to show who made it.
+	var creator := get_account(int(t.get("created_by_account_id", 0)))
+	v["creator_name"] = str(creator.get("display_name", "—"))
+	v["creator_avatar"] = str(creator.get("avatar", ""))
+	v["creator_frame"] = str(creator.get("frame", ""))
+	v["creator_background"] = str(creator.get("background", ""))
 	return v
 
 

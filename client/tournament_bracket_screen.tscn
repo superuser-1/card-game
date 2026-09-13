@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://g2h3i4j5k6l7m8n9"]
+[gd_scene load_steps=3 format=3 uid="uid://g2h3i4j5k6l7m8n9"]
 
 [ext_resource type="Script" path="res://client/tournament_bracket_screen.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://7qsulcuykn64" path="res://assets/background_menu.png" id="2_bg"]
 
 [node name="TournamentBracketScreen" type="Control"]
 layout_mode = 3
@@ -9,12 +10,22 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_script")
 
-[node name="BackgroundRect" type="ColorRect" parent="."]
+[node name="BackgroundRect" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.1, 0.1, 0.15, 1)
+mouse_filter = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Scrim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.078, 0.078, 0.114, 0.85)
 mouse_filter = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -54,6 +65,22 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 text = ""
+
+[node name="MetaPanel" type="PanelContainer" parent="MarginContainer/Root"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MetaMargin" type="MarginContainer" parent="MarginContainer/Root/MetaPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="MetaRow" type="HBoxContainer" parent="MarginContainer/Root/MetaPanel/MetaMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 14
 
 [node name="PrizeBox" type="CenterContainer" parent="MarginContainer/Root"]
 unique_name_in_owner = true

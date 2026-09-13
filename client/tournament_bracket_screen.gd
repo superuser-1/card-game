@@ -2,9 +2,20 @@ extends Control
 
 const BracketCanvasScript := preload("res://client/bracket_canvas.gd")
 
+const COL_MUTED := Color(1, 1, 1, 0.6)
+const COL_GOOD := Color(0.35, 0.85, 0.45)
+const COL_WARN := Color(0.95, 0.85, 0.35)
+const COL_GOLD := Color(1, 0.86, 0.5)
+
 var _tournament_id := 0
 var _tournament: Dictionary = {}
 var _bracket_canvas: Control = null
+
+## Live "starts in Xh Ym" style countdown for the meta row's phase line —
+## ticked from _process alongside the round clock/intermission countdowns.
+var _phase_label: Label = null
+var _phase_prefix := ""
+var _phase_target_ts := 0
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -15,6 +26,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _ready() -> void:
 	%BackButton.pressed.connect(func(): Session.goto("res://client/main_menu.tscn"))
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.129, 0.129, 0.176)
+	sb.border_color = Color(1, 1, 1, 0.075)
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(12)
+	%MetaPanel.add_theme_stylebox_override("panel", sb)
 
 	# An explicit "View Bracket" click always wins over whichever tournament we
 	# happen to be actively checked into — otherwise, with a live check-in,
@@ -74,10 +91,27 @@ func _process(_delta: float) -> void:
 		%IntermissionLabel.visible = false
 		%RoundClockLabel.visible = false
 
+	if is_instance_valid(_phase_label):
+		_phase_label.text = "%s%s" % [_phase_prefix, _fmt_clock_or_soon(_phase_target_ts - now)]
+
 
 func _fmt_clock(secs: int) -> String:
 	secs = max(secs, 0)
 	return "%d:%02d" % [secs / 60, secs % 60]
+
+
+## Same "Xh Ym" / "Xm Ys" style as the tournament list screen's countdowns.
+func _fmt_clock_or_soon(secs: int) -> String:
+	if secs <= 0:
+		return "any moment"
+	var h := secs / 3600
+	var m := (secs % 3600) / 60
+	var s := secs % 60
+	if h > 0:
+		return "%dh %dm" % [h, m]
+	if m > 0:
+		return "%dm %ds" % [m, s]
+	return "%ds" % s
 
 
 func _on_match_found(info: Dictionary) -> void:
@@ -101,6 +135,8 @@ func _render_bracket() -> void:
 		header_text += " — Winner: %s" % winner_name
 
 	%HeaderLabel.text = header_text
+
+	_render_meta_row()
 
 	var prizes: Dictionary = _tournament.get("prizes", {})
 	for c in %PrizeBox.get_children():
@@ -147,6 +183,81 @@ func _render_bracket() -> void:
 			%WaitingLabel.visible = true
 
 
+## {prefix, target} for the countdown to this tournament's next phase, or {}
+## if there's nothing to count down to (in progress / completed / cancelled)
+## — same phase→field mapping as the tournament list screen's _next_phase.
+func _next_phase_info() -> Dictionary:
+	match str(_tournament.get("status", "")):
+		"signup_private":
+			if str(_tournament.get("availability", "")) == "semi_private":
+				return {"prefix": "Opens to all in ", "target": int(_tournament.get("private_signup_close_ts", 0))}
+			return {"prefix": "Check-in in ", "target": int(_tournament.get("check_in_open_ts", 0))}
+		"signup":
+			return {"prefix": "Sign-up closes in ", "target": int(_tournament.get("signup_close_ts", 0))}
+		"pre_check_in":
+			return {"prefix": "Check-in opens in ", "target": int(_tournament.get("check_in_open_ts", 0))}
+		"check_in":
+			return {"prefix": "Starts in ", "target": int(_tournament.get("start_ts", 0))}
+	return {}
+
+
+## Creator portrait + name, signed-up/min-players count, format, cube vs
+## original catalogue, and a live countdown to whatever phase comes next —
+## the same information the tournament list card shows, so opening a
+## tournament from either place lands on a consistent picture of it.
+func _render_meta_row() -> void:
+	for c in %MetaRow.get_children():
+		c.queue_free()
+	_phase_label = null
+
+	var portrait := AvatarStack.make(
+		str(_tournament.get("creator_avatar", "")), str(_tournament.get("creator_frame", "")),
+		str(_tournament.get("creator_background", "")), 48.0)
+	portrait.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	%MetaRow.add_child(portrait)
+
+	var info := VBoxContainer.new()
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info.add_theme_constant_override("separation", 2)
+
+	info.add_child(_meta_label("by %s" % str(_tournament.get("creator_name", "—")), COL_MUTED))
+
+	var bracket_size := int(_tournament.get("bracket_size", 0))
+	var participant_count := (_tournament.get("participants", []) as Array).size()
+	var match_format := int(_tournament.get("match_format", 1))
+	var min_players := TournamentSystem.MIN_TOURNAMENT_PLAYERS
+	var enough := participant_count >= min_players
+	var count_row := HBoxContainer.new()
+	count_row.add_theme_constant_override("separation", 0)
+	count_row.add_child(_meta_label("%d (%d)" % [participant_count, min_players], COL_GOOD if enough else COL_WARN))
+	count_row.add_child(_meta_label(" / %d signed up  ·  Best of %d" % [bracket_size, match_format], COL_MUTED))
+	info.add_child(count_row)
+
+	var has_cube := (_tournament.get("cube_ids", []) as Array).size() > 0
+	info.add_child(_meta_label("Custom cube" if has_cube else "Original catalogue",
+		Color(0.55, 0.8, 1.0) if has_cube else COL_MUTED))
+
+	var phase := _next_phase_info()
+	if not phase.is_empty() and int(phase.target) > 0:
+		_phase_prefix = str(phase.prefix)
+		_phase_target_ts = int(phase.target)
+		_phase_label = _meta_label("", COL_GOLD, 13)
+		info.add_child(_phase_label)
+		_phase_label.text = "%s%s" % [_phase_prefix, _fmt_clock_or_soon(_phase_target_ts - int(Time.get_unix_time_from_system()))]
+
+	info.add_child(_meta_label("Starts %s" % Time.get_datetime_string_from_unix_time(int(_tournament.get("start_ts", 0)), true).replace("T", " "), Color(1, 1, 1, 0.45), 11))
+
+	%MetaRow.add_child(info)
+
+
+func _meta_label(text: String, col: Color, sz := 13) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", sz)
+	l.add_theme_color_override("font_color", col)
+	return l
+
+
 func _render_participants_list(participants: Array) -> void:
 	%ParticipantsList.visible = true
 
@@ -159,7 +270,20 @@ func _render_participants_list(participants: Array) -> void:
 	%ParticipantsList.add_child(title)
 
 	for p in participants:
+		var row := PanelContainer.new()
+		var row_sb := StyleBoxFlat.new()
+		row_sb.bg_color = Color(1, 1, 1, 0.04)
+		row_sb.set_corner_radius_all(8)
+		row_sb.set_content_margin_all(8)
+		row.add_theme_stylebox_override("panel", row_sb)
+
 		var p_hbox := HBoxContainer.new()
+		p_hbox.add_theme_constant_override("separation", 10)
+		row.add_child(p_hbox)
+
+		var portrait := AvatarStack.make(
+			str(p.get("avatar", "")), str(p.get("frame", "")), str(p.get("background", "")), 32.0)
+		p_hbox.add_child(portrait)
 
 		var name_label := Label.new()
 		name_label.text = str(p.get("display_name", "Unknown"))
@@ -172,7 +296,7 @@ func _render_participants_list(participants: Array) -> void:
 		status_label.modulate = Color(0.4, 0.9, 0.45) if checked_in else Color(1, 1, 1, 0.6)
 		p_hbox.add_child(status_label)
 
-		%ParticipantsList.add_child(p_hbox)
+		%ParticipantsList.add_child(row)
 
 
 func _get_winner_name() -> String:
