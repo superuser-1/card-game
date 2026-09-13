@@ -482,20 +482,25 @@ func _update_tournament_countdowns() -> void:
 	for c in _tournament_countdowns:
 		if not is_instance_valid(c.label):
 			continue
-		c.label.text = "%s%s" % [c.prefix, _format_time_until(int(c.target_ts))]
+		c.label.text = "%s%s" % [c.prefix, _format_time_until(int(c.target_ts), bool(c.get("force_countdown", false)))]
 
 
-func _register_countdown(label: Label, target_ts: int, prefix: String) -> void:
-	label.text = "%s%s" % [prefix, _format_time_until(target_ts)]
-	_tournament_countdowns.append({"label": label, "target_ts": target_ts, "prefix": prefix})
+## `force_countdown` is for the check-in-open phase (counting down to start)
+## — players need to see that one ticking regardless of how far out it is.
+func _register_countdown(label: Label, target_ts: int, prefix: String, force_countdown := false) -> void:
+	label.text = "%s%s" % [prefix, _format_time_until(target_ts, force_countdown)]
+	_tournament_countdowns.append({"label": label, "target_ts": target_ts, "prefix": prefix, "force_countdown": force_countdown})
 
 
-## Always a live-ticking "Xh Ym" / "Xm Ys" countdown, however far out the
-## target is — same as the tournament list screen's countdowns (_fmt_delta),
-## which never fall back to an absolute date/time either.
-func _format_time_until(target_ts: int) -> String:
+## Absolute date/time by default; switches to a live "Xh Ym"/"Xm Ys" countdown
+## once the target is under an hour away, or immediately when
+## `force_countdown` is set.
+func _format_time_until(target_ts: int, force_countdown := false) -> String:
 	var now := int(Time.get_unix_time_from_system())
-	return _format_countdown(target_ts - now)
+	var diff := target_ts - now
+	if force_countdown or diff <= 3600:
+		return _format_countdown(diff)
+	return Time.get_datetime_string_from_unix_time(target_ts, true).replace("T", " ")
 
 
 func _format_countdown(seconds_left: int) -> String:
@@ -629,7 +634,7 @@ func _make_tournament_card(t: Dictionary, my_id: int) -> PanelContainer:
 			else:
 				status_label.text = "Signed up"
 				status_label.add_theme_color_override("font_color", YELLOW)
-			_register_countdown(time_label, int(t.get("start_ts", 0)), "Starts ")
+			_register_countdown(time_label, int(t.get("start_ts", 0)), "Starts ", true)
 		"in_progress":
 			status_label.text = "Round %d in progress" % int(t.get("current_round", 0))
 			status_label.add_theme_color_override("font_color", NEUTRAL)
