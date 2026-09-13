@@ -243,6 +243,24 @@ func _info_label(text: String, col: Color, sz := 12) -> Label:
 	return l
 
 
+## "0 (32) / 512 signed up · Best of 1" — the signed-up count and the
+## required minimum are colored red/green depending on whether the tournament
+## has enough check-ins to actually fire (see
+## TournamentSystem.MIN_TOURNAMENT_PLAYERS); the rest of the line stays
+## neutral. Two Labels in a row rather than one, since a single Label can't
+## mix font colors within its own text.
+func _signup_count_row(participant_count: int, bracket_size: int, match_format: int) -> HBoxContainer:
+	var min_players := TournamentSystem.MIN_TOURNAMENT_PLAYERS
+	var enough := participant_count >= min_players
+	var count_col := Color(0.35, 0.85, 0.45) if enough else Color(0.95, 0.4, 0.4)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 0)
+	row.add_child(_info_label("%d (%d)" % [participant_count, min_players], count_col))
+	row.add_child(_info_label(" / %d signed up  ·  Best of %d" % [bracket_size, match_format], Color(1, 1, 1, 0.7)))
+	return row
+
+
 func _add_tournament_row(tournament: Dictionary, target_box: Container, is_finished: bool, is_private: bool) -> void:
 	var tid := int(tournament.get("id", 0))
 	var name := str(tournament.get("name", ""))
@@ -312,7 +330,7 @@ func _add_tournament_row(tournament: Dictionary, target_box: Container, is_finis
 	if status_text != "":
 		info.add_child(_info_label(status_text, Color(1, 1, 1, 0.7)))
 
-	info.add_child(_info_label("%d / %d signed up  ·  Best of %d" % [participant_count, bracket_size, match_format], Color(1, 1, 1, 0.7)))
+	info.add_child(_signup_count_row(participant_count, bracket_size, match_format))
 	info.add_child(_info_label("Custom cube" if has_cube else "Original catalogue",
 		Color(0.55, 0.8, 1.0) if has_cube else Color(1, 1, 1, 0.6)))
 
