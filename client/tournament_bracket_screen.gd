@@ -138,13 +138,6 @@ func _render_bracket() -> void:
 
 	_render_meta_row()
 
-	var prizes: Dictionary = _tournament.get("prizes", {})
-	for c in %PrizeBox.get_children():
-		c.queue_free()
-	%PrizeBox.visible = not prizes.is_empty()
-	if not prizes.is_empty():
-		%PrizeBox.add_child(PrizeView.summary_row(prizes, 24.0))
-
 	var rounds = _tournament.get("rounds", [])
 	var participants = _tournament.get("participants", [])
 
@@ -248,6 +241,10 @@ func _render_meta_row() -> void:
 	info.add_child(_meta_label("Starts %s" % Time.get_datetime_string_from_unix_time(int(_tournament.get("start_ts", 0)), true).replace("T", " "), Color(1, 1, 1, 0.45), 11))
 
 	%MetaRow.add_child(info)
+
+	var prizes: Dictionary = _tournament.get("prizes", {})
+	if not prizes.is_empty():
+		%MetaRow.add_child(PrizeView.column(prizes, 22.0))
 
 
 func _meta_label(text: String, col: Color, sz := 13) -> Label:
