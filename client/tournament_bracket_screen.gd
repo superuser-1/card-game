@@ -276,7 +276,7 @@ func _render_participants_list(participants: Array) -> void:
 
 	for p in participants:
 		var row := PanelContainer.new()
-		row.custom_minimum_size = Vector2(320, 0)
+		row.custom_minimum_size = Vector2(340, 0)
 		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var row_sb := StyleBoxFlat.new()
 		row_sb.bg_color = Color(1, 1, 1, 0.04)
@@ -289,20 +289,40 @@ func _render_participants_list(participants: Array) -> void:
 		row.add_child(p_hbox)
 
 		var portrait := AvatarStack.make(
-			str(p.get("avatar", "")), str(p.get("frame", "")), str(p.get("background", "")), 32.0)
+			str(p.get("avatar", "")), str(p.get("frame", "")), str(p.get("background", "")), 40.0)
 		p_hbox.add_child(portrait)
+
+		var elo := int(p.get("elo", 0))
+		var text_col := VBoxContainer.new()
+		text_col.add_theme_constant_override("separation", 0)
+		text_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+		var title_label := Label.new()
+		title_label.text = TitleSystem.display_name(str(p.get("title", "")), elo)
+		title_label.clip_text = true
+		title_label.add_theme_font_size_override("font_size", 11)
+		title_label.add_theme_color_override("font_color", Color(1.0, 0.85, 0.4, 1))
+		text_col.add_child(title_label)
 
 		var name_label := Label.new()
 		name_label.text = str(p.get("display_name", "Unknown"))
 		name_label.clip_text = true
-		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		p_hbox.add_child(name_label)
+		text_col.add_child(name_label)
+
+		var elo_label := Label.new()
+		elo_label.text = "Elo %d" % elo
+		elo_label.add_theme_font_size_override("font_size", 11)
+		elo_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.55))
+		text_col.add_child(elo_label)
+
+		p_hbox.add_child(text_col)
 
 		var checked_in := bool(p.get("checked_in", false))
 		var status_label := Label.new()
 		status_label.text = "✓ Checked in" if checked_in else "Awaiting check-in"
 		status_label.modulate = Color(0.4, 0.9, 0.45) if checked_in else Color(1, 1, 1, 0.6)
 		status_label.add_theme_font_size_override("font_size", 12)
+		status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		p_hbox.add_child(status_label)
 
 		grid.add_child(row)

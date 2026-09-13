@@ -2081,6 +2081,7 @@ func _new_participant(account: Dictionary, account_id: int, checked_in: bool) ->
 		"avatar": str(account.get("avatar", "")),
 		"frame": str(account.get("frame", "")),
 		"background": str(account.get("background", "")),
+		"title": str(account.get("title", "")),
 		"elo": int(account.get("elo", START_ELO)),
 		"signed_up_ts": int(Time.get_unix_time_from_system()),
 		"checked_in": checked_in,
