@@ -650,11 +650,24 @@ func _make_tournament_card(t: Dictionary, my_id: int) -> PanelContainer:
 	if show_time_label:
 		vbox.add_child(time_label)
 
-	var info_label := Label.new()
-	info_label.text = "%d / %d players" % [participants.size(), bracket_size]
-	info_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8, 1))
-	info_label.add_theme_font_size_override("font_size", 11)
-	vbox.add_child(info_label)
+	# Count colored green/yellow depending on whether enough players have
+	# signed up to actually run (TournamentSystem.MIN_TOURNAMENT_PLAYERS) —
+	# same treatment as the tournament list screen's signed-up count.
+	var min_players := TournamentSystem.MIN_TOURNAMENT_PLAYERS
+	var enough_players := participants.size() >= min_players
+	var info_row := HBoxContainer.new()
+	info_row.add_theme_constant_override("separation", 0)
+	var count_label := Label.new()
+	count_label.text = "%d (%d)" % [participants.size(), min_players]
+	count_label.add_theme_color_override("font_color", GREEN if enough_players else YELLOW)
+	count_label.add_theme_font_size_override("font_size", 11)
+	info_row.add_child(count_label)
+	var rest_label := Label.new()
+	rest_label.text = " / %d players" % bracket_size
+	rest_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8, 1))
+	rest_label.add_theme_font_size_override("font_size", 11)
+	info_row.add_child(rest_label)
+	vbox.add_child(info_row)
 
 	if status == "check_in" and not checked_in:
 		var btn := Button.new()

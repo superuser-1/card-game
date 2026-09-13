@@ -244,15 +244,15 @@ func _info_label(text: String, col: Color, sz := 12) -> Label:
 
 
 ## "0 (32) / 512 signed up · Best of 1" — the signed-up count and the
-## required minimum are colored red/green depending on whether the tournament
-## has enough check-ins to actually fire (see
+## required minimum are colored yellow/green depending on whether the
+## tournament has enough check-ins to actually fire (see
 ## TournamentSystem.MIN_TOURNAMENT_PLAYERS); the rest of the line stays
 ## neutral. Two Labels in a row rather than one, since a single Label can't
 ## mix font colors within its own text.
 func _signup_count_row(participant_count: int, bracket_size: int, match_format: int) -> HBoxContainer:
 	var min_players := TournamentSystem.MIN_TOURNAMENT_PLAYERS
 	var enough := participant_count >= min_players
-	var count_col := Color(0.35, 0.85, 0.45) if enough else Color(0.95, 0.4, 0.4)
+	var count_col := Color(0.35, 0.85, 0.45) if enough else Color(0.95, 0.85, 0.35)
 
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 0)
