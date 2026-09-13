@@ -2,6 +2,13 @@ extends Control
 ## Cosmetics shop. Server is authoritative on price + ownership (see
 ## ServerStore.purchase / the equip-gate); this screen only renders the
 ## catalog and fires Net.shop_purchase / Net.set_<type>.
+##
+## Purchases go through a cart (right-hand panel) instead of buying instantly:
+## clicking an item's action button adds/removes it from `_cart`, and "Buy
+## All" checks it out one item at a time (`_checkout_queue`) since
+## Net.shop_purchase is a single-item RPC — there's no batch-purchase call on
+## the wire, so this just walks the cart sequentially, waiting for each
+## result/error before sending the next.
 
 const CARD_W := 190
 const ART := 166
@@ -28,20 +35,40 @@ const COL_MUTED := Color(0.56, 0.56, 0.63)
 const COL_BUY := Color(0.192, 0.573, 0.353)
 const COL_EQUIPPED := Color(0.243, 0.435, 0.678)
 const COL_OWNED := Color(0.27, 0.27, 0.33)
+const COL_IN_CART := Color(0.55, 0.36, 0.75)
+
+const CART_THUMB := Vector2(32, 32)
 
 ## Which ShopCatalog.TYPES index is currently shown.
 var _active_tab := 0
+
+## item_id -> {"type": String, "price": int, "name": String}, insertion-ordered
+## (GDScript Dictionaries preserve insertion order) so the cart panel lists
+## items in the order they were added.
+var _cart: Dictionary = {}
+
+## Checkout walks this queue one id at a time — Net.shop_purchase is a
+## single-item RPC, so a "Buy All" press just fires them in sequence rather
+## than all at once, waiting for each result before sending the next.
+var _checkout_queue: Array = []
+var _checkout_current_id := ""
+var _checkout_failed: Array = []  # [{"name": String, "message": String}]
 
 
 func _ready() -> void:
 	%BackButton.pressed.connect(func(): Session.goto("res://client/main_menu.tscn"))
 	Net.shop_purchase_result.connect(_on_purchase_result)
+	Net.error_received.connect(_on_net_error)
 	Net.avatar_updated.connect(_on_account_updated)
 	Net.frame_updated.connect(_on_account_updated)
 	Net.background_updated.connect(_on_account_updated)
 	Net.sleeve_updated.connect(_on_account_updated)
 	Net.table_background_updated.connect(_on_account_updated)
 	Net.title_updated.connect(_on_account_updated)
+
+	%CartBuyButton.pressed.connect(_start_checkout)
+	%CartClearButton.pressed.connect(_clear_cart)
+	%CartPanel.add_theme_stylebox_override("panel", _card_style())
 
 	_render_tabs()
 	_show_tab(0)
@@ -111,9 +138,11 @@ func _show_tab(tab_index: int) -> void:
 		empty.text = "You own everything here!" if not all_buyable.is_empty() else "Nothing here yet."
 		empty.add_theme_color_override("font_color", COL_MUTED)
 		%ItemsGrid.add_child(empty)
-		return
-	for item_id in item_ids:
-		_add_item_tile(item_id, ShopCatalog.def_for(item_id), type_name)
+	else:
+		for item_id in item_ids:
+			_add_item_tile(item_id, ShopCatalog.def_for(item_id), type_name)
+
+	_refresh_cart_panel()
 
 
 # --- item card ----------------------------------------------------------
@@ -167,8 +196,9 @@ func _add_item_tile(item_id: String, def: Dictionary, type_name: String) -> void
 		art_frame.add_child(ph)
 
 	# --- name ---
+	var name := ShopCatalog.display_name_for(item_id, type_name)
 	var name_label := Label.new()
-	name_label.text = ShopCatalog.display_name_for(item_id, type_name)
+	name_label.text = name
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_label.clip_text = true
 	name_label.add_theme_font_size_override("font_size", 15)
@@ -176,20 +206,24 @@ func _add_item_tile(item_id: String, def: Dictionary, type_name: String) -> void
 
 	var price := int(def.get("price", 0))
 
-	# --- action button ---
-	# _show_tab already filters to buyable-and-not-yet-owned items, so this
-	# tile is always something the player could still buy — just Buy or Need.
-	var points := int(Session.account.get("points", 0))
-
+	# --- action button: adds/removes this item from the cart, never buys
+	# directly — _show_tab already filters to buyable-and-not-yet-owned items,
+	# so this tile is always something the player could still add.
 	var btn := Button.new()
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	btn.name = "ActionButton"
 
-	if points >= price:
-		_style_button(btn, "Buy  ◈%d" % price, COL_BUY, false)
-		btn.pressed.connect(_purchase_item.bind(item_id))
+	if _cart.has(item_id):
+		_style_button(btn, "In Cart ✕", COL_IN_CART, false)
+		btn.pressed.connect(_on_cart_remove_pressed.bind(item_id))
 	else:
-		_style_button(btn, "Need ◈%d" % price, COL_OWNED, true)
+		var affordable := price <= _points_available_for_cart()
+		if affordable:
+			_style_button(btn, "Add  ◈%d" % price, COL_BUY, false)
+			btn.pressed.connect(_on_cart_add_pressed.bind(item_id, type_name, price, name))
+		else:
+			_style_button(btn, "Need ◈%d" % price, COL_OWNED, true)
 
 	box.add_child(btn)
 	%ItemsGrid.add_child(card)
@@ -227,13 +261,158 @@ func _get_preview_texture(item_id: String, type_name: String) -> Texture2D:
 	return null
 
 
-func _purchase_item(item_id: String) -> void:
-	Net.shop_purchase(item_id)
+# --- cart ---------------------------------------------------------------
+
+## Points still free to spend on a NEW addition — the balance minus whatever
+## is already sitting in the cart, so adding several items in a row can never
+## build a cart total above what the player can actually afford.
+func _points_available_for_cart() -> int:
+	return int(Session.account.get("points", 0)) - _cart_total()
+
+
+func _cart_total() -> int:
+	var total := 0
+	for entry: Dictionary in _cart.values():
+		total += int(entry.price)
+	return total
+
+
+func _on_cart_add_pressed(item_id: String, type_name: String, price: int, name: String) -> void:
+	_cart[item_id] = {"type": type_name, "price": price, "name": name}
+	_show_tab(_active_tab)
+
+
+func _on_cart_remove_pressed(item_id: String) -> void:
+	_cart.erase(item_id)
+	_show_tab(_active_tab)
+
+
+func _clear_cart() -> void:
+	_cart.clear()
+	_show_tab(_active_tab)
+
+
+func _refresh_cart_panel() -> void:
+	for c in %CartItemsBox.get_children():
+		c.queue_free()
+
+	%CartEmptyLabel.visible = _cart.is_empty()
+	for item_id in _cart:
+		_add_cart_row(item_id, _cart[item_id])
+
+	var total := _cart_total()
+	%CartTotalLabel.text = "Total: ◈ %d" % total
+	var checking_out := not _checkout_queue.is_empty() or _checkout_current_id != ""
+	%CartBuyButton.disabled = checking_out or _cart.is_empty() or total > int(Session.account.get("points", 0))
+	%CartClearButton.disabled = checking_out or _cart.is_empty()
+
+
+func _add_cart_row(item_id: String, entry: Dictionary) -> void:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+
+	var thumb_frame := PanelContainer.new()
+	thumb_frame.custom_minimum_size = CART_THUMB
+	thumb_frame.clip_contents = true
+	var thumb_bg := StyleBoxFlat.new()
+	thumb_bg.bg_color = COL_ART_BG
+	thumb_bg.set_corner_radius_all(4)
+	thumb_frame.add_theme_stylebox_override("panel", thumb_bg)
+	var tex := _get_preview_texture(item_id, str(entry.type))
+	if tex != null:
+		var thumb := TextureRect.new()
+		thumb.texture = tex
+		thumb.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		thumb.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		thumb.custom_minimum_size = CART_THUMB
+		thumb_frame.add_child(thumb)
+	row.add_child(thumb_frame)
+
+	var name_label := Label.new()
+	name_label.text = str(entry.name)
+	name_label.clip_text = true
+	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_label.add_theme_font_size_override("font_size", 12)
+	row.add_child(name_label)
+
+	var price_label := Label.new()
+	price_label.text = "◈%d" % int(entry.price)
+	price_label.add_theme_font_size_override("font_size", 12)
+	price_label.add_theme_color_override("font_color", Color(1, 0.843, 0.4, 1))
+	row.add_child(price_label)
+
+	var remove_btn := Button.new()
+	remove_btn.text = "✕"
+	remove_btn.flat = true
+	remove_btn.focus_mode = Control.FOCUS_NONE
+	remove_btn.add_theme_font_size_override("font_size", 13)
+	remove_btn.pressed.connect(_on_cart_remove_pressed.bind(item_id))
+	row.add_child(remove_btn)
+
+	%CartItemsBox.add_child(row)
+
+
+## Buy All checks the cart out one item at a time (see the note at the top of
+## this file for why) — each Net.shop_purchase call waits for either
+## shop_purchase_result (success) or error_received (failure) before the next
+## one is sent.
+func _start_checkout() -> void:
+	if _cart.is_empty() or not _checkout_queue.is_empty():
+		return
+	_checkout_queue = _cart.keys()
+	_checkout_failed = []
+	_checkout_next()
+
+
+func _checkout_next() -> void:
+	if _checkout_queue.is_empty():
+		_finish_checkout()
+		return
+	_checkout_current_id = str(_checkout_queue.pop_front())
+	Net.shop_purchase(_checkout_current_id)
+
+
+func _finish_checkout() -> void:
+	_checkout_current_id = ""
+	var failed_count := _checkout_failed.size()
+	if failed_count == 0:
+		_toast("Purchase complete!")
+	else:
+		_toast("%d item(s) could not be purchased." % failed_count)
+	_checkout_failed = []
+	_show_tab(_active_tab)
+
+
+func _toast(msg: String) -> void:
+	var label := Label.new()
+	label.text = msg
+	label.add_theme_font_size_override("font_size", 13)
+	label.add_theme_color_override("font_color", Color(1, 0.843, 0.4, 1))
+	%CartBox.add_child(label)
+	%CartBox.move_child(label, 1)  # right under "Cart", not after the buttons
+	var tw := create_tween()
+	tw.tween_interval(2.0)
+	tw.tween_callback(label.queue_free)
 
 
 func _on_purchase_result(account: Dictionary) -> void:
 	Session.account = account
-	_show_tab(_active_tab)
+	if _checkout_current_id != "":
+		_cart.erase(_checkout_current_id)
+		_checkout_current_id = ""
+		_checkout_next()
+	else:
+		_show_tab(_active_tab)
+
+
+## Global error bus (Net.error_received) — only relevant to us mid-checkout;
+## anything else firing while this screen is up isn't ours to react to.
+func _on_net_error(message: String) -> void:
+	if _checkout_current_id == "":
+		return
+	_checkout_failed.append({"name": str(_cart.get(_checkout_current_id, {}).get("name", _checkout_current_id)), "message": message})
+	_checkout_current_id = ""
+	_checkout_next()
 
 
 func _on_account_updated(account: Dictionary) -> void:

@@ -73,19 +73,92 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/Root"]
+[node name="ContentRow" type="HBoxContainer" parent="MarginContainer/Root"]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/Root/ContentRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="GridWrap" type="HBoxContainer" parent="MarginContainer/Root/ScrollContainer"]
+[node name="GridWrap" type="HBoxContainer" parent="MarginContainer/Root/ContentRow/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ItemsGrid" type="GridContainer" parent="MarginContainer/Root/ScrollContainer/GridWrap"]
+[node name="ItemsGrid" type="GridContainer" parent="MarginContainer/Root/ContentRow/ScrollContainer/GridWrap"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/h_separation = 18
 theme_override_constants/v_separation = 18
 columns = 4
+
+[node name="CartPanel" type="PanelContainer" parent="MarginContainer/Root/ContentRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CartMargin" type="MarginContainer" parent="MarginContainer/Root/ContentRow/CartPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="CartBox" type="VBoxContainer" parent="MarginContainer/Root/ContentRow/CartPanel/CartMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CartTitle" type="Label" parent="MarginContainer/Root/ContentRow/CartPanel/CartMargin/CartBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Cart"
+
+[node name="CartEmptyLabel" type="Label" parent="MarginContainer/Root/ContentRow/CartPanel/CartMargin/CartBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Your cart is empty."
+autowrap_mode = 3
+
+[node name="CartScroll" type="ScrollContainer" parent="MarginContainer/Root/ContentRow/CartPanel/CartMargin/CartBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="CartItemsBox" type="VBoxContainer" parent="MarginContainer/Root/ContentRow/CartPanel/CartMargin/CartBox/CartScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="CartSeparator" type="HSeparator" parent="MarginContainer/Root/ContentRow/CartPanel/CartMargin/CartBox"]
+layout_mode = 2
+
+[node name="CartTotalLabel" type="Label" parent="MarginContainer/Root/ContentRow/CartPanel/CartMargin/CartBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Total: ◈ 0"
+
+[node name="CartButtonRow" type="HBoxContainer" parent="MarginContainer/Root/ContentRow/CartPanel/CartMargin/CartBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CartClearButton" type="Button" parent="MarginContainer/Root/ContentRow/CartPanel/CartMargin/CartBox/CartButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Clear"
+
+[node name="CartBuyButton" type="Button" parent="MarginContainer/Root/ContentRow/CartPanel/CartMargin/CartBox/CartButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Buy All"
