@@ -29,6 +29,18 @@ const CATALOG: Array = [
 	{"id": "bg_starfield",     "type": "background",      "name": "Starfield",     "price": 5, "source": "shop"},
 	{"id": "sleeve_noir",      "type": "sleeve",          "name": "Noir",          "price": 5, "source": "shop"},
 	{"id": "title_night_owl",  "type": "title",           "name": "Night Owl",     "price": 5, "source": "shop"},
+	# --- frames (art: res://assets/avatars/avatar_frame/<id>.png) ---
+	# frame1/2/3 are achievement-only now (see below); frame4/5 are shop-buyable.
+	# None are free anymore.
+	{"id": "frame4", "type": "frame", "name": "Frame 4", "price": 5, "source": "shop"},
+	{"id": "frame5", "type": "frame", "name": "Frame 5", "price": 5, "source": "shop"},
+	# --- avatar backgrounds (art: res://assets/avatars/avatar_bg/<id>.png) ---
+	# All shop-buyable — no free tier for backgrounds.
+	{"id": "avatar_bg_grainy_field_1", "type": "background", "name": "Grainy Field 1", "price": 5, "source": "shop"},
+	{"id": "avatar_bg_grainy_field_2", "type": "background", "name": "Grainy Field 2", "price": 5, "source": "shop"},
+	{"id": "avatar_bg_grainy_field_3", "type": "background", "name": "Grainy Field 3", "price": 5, "source": "shop"},
+	{"id": "avatar_bg_oil_paint_1",    "type": "background", "name": "Oil Paint 1",    "price": 5, "source": "shop"},
+	{"id": "avatar_bg_oil_paint_2",    "type": "background", "name": "Oil Paint 2",    "price": 5, "source": "shop"},
 	# --- table backgrounds (art: res://assets/tables/<id>.png|jpg) ---
 	# table_game_canvas_1 (default, free) / _2 / _3 are free for everyone —
 	# not in this catalog at all, same as any other non-premium cosmetic.
@@ -43,8 +55,11 @@ const CATALOG: Array = [
 	{"id": "table_game_canvas_11", "type": "table_background", "name": "Table 11", "price": 5, "source": "shop"},
 	{"id": "table_game_canvas_12", "type": "table_background", "name": "Table 12", "price": 5, "source": "shop"},
 	# --- card backs (art: res://assets/avatars/card_backs/<id>.png) ---
-	# card_back_1..4 are free for everyone — not in this catalog at all, same
-	# as table_game_canvas_1-3. card_back_6/7/10/11/12 are shop-buyable.
+	# card_back_1 is the only one still free for everyone. 2/3/4/6/7/10/11/12
+	# are shop-buyable; 5/8/9 are admin-only (see below).
+	{"id": "card_back_2",  "type": "sleeve", "name": "Card Back 2",  "price": 5, "source": "shop"},
+	{"id": "card_back_3",  "type": "sleeve", "name": "Card Back 3",  "price": 5, "source": "shop"},
+	{"id": "card_back_4",  "type": "sleeve", "name": "Card Back 4",  "price": 5, "source": "shop"},
 	{"id": "card_back_6",  "type": "sleeve", "name": "Card Back 6",  "price": 5, "source": "shop"},
 	{"id": "card_back_7",  "type": "sleeve", "name": "Card Back 7",  "price": 5, "source": "shop"},
 	{"id": "card_back_10", "type": "sleeve", "name": "Card Back 10", "price": 5, "source": "shop"},
@@ -68,6 +83,10 @@ const CATALOG: Array = [
 	# names it as a `reward` (see achievement_system.gd); not buyable ---
 	{"id": "frame_veteran",    "type": "frame",      "name": "Veteran",       "price": 0, "source": "achievement"},
 	{"id": "sleeve_flame",     "type": "sleeve",     "name": "Flame",         "price": 0, "source": "achievement"},
+	# Frame rewards for the low-end ranked-loss ladder (art: res://assets/avatars/avatar_frame/<id>.png).
+	{"id": "frame1", "type": "frame", "name": "First Ranked Loss", "price": 0, "source": "achievement"},
+	{"id": "frame3", "type": "frame", "name": "5 Ranked Losses",   "price": 0, "source": "achievement"},
+	{"id": "frame2", "type": "frame", "name": "10 Ranked Losses",  "price": 0, "source": "achievement"},
 	# Avatar rewards for the ranked-loss ladder (art: res://assets/avatars/<id>.png).
 	{"id": "30_ranked_losses_avatar",   "type": "avatar", "name": "30 Ranked Losses",   "price": 0, "source": "achievement"},
 	{"id": "50_ranked_losses_avatar",   "type": "avatar", "name": "50 Ranked Losses",   "price": 0, "source": "achievement"},

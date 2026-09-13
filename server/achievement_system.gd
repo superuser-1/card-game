@@ -60,9 +60,9 @@ const CATALOG: Array = [
 	{"id": "ranked_win_1000", "name": "1000 Ranked Wins",   "stat": "wins", "tiers": [{"threshold": 1000, "points": 2500, "reward": "1000_ranked_win"}]},
 
 	# Ranked losses — stat `losses` (same thresholds/points as wins, user's call)
-	{"id": "ranked_loss_1",    "name": "First Ranked Loss",  "stat": "losses", "tiers": [{"threshold": 1,    "points": 10,   "reward": ""}]},
-	{"id": "ranked_loss_5",    "name": "5 Ranked Losses",    "stat": "losses", "tiers": [{"threshold": 5,    "points": 25,   "reward": ""}]},
-	{"id": "ranked_loss_10",   "name": "10 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 10,   "points": 50,   "reward": ""}]},
+	{"id": "ranked_loss_1",    "name": "First Ranked Loss",  "stat": "losses", "tiers": [{"threshold": 1,    "points": 10,   "reward": "frame1"}]},
+	{"id": "ranked_loss_5",    "name": "5 Ranked Losses",    "stat": "losses", "tiers": [{"threshold": 5,    "points": 25,   "reward": "frame3"}]},
+	{"id": "ranked_loss_10",   "name": "10 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 10,   "points": 50,   "reward": "frame2"}]},
 	{"id": "ranked_loss_30",   "name": "30 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 30,   "points": 100,  "reward": "30_ranked_losses_avatar"}]},
 	{"id": "ranked_loss_50",   "name": "50 Ranked Losses",   "stat": "losses", "tiers": [{"threshold": 50,   "points": 150,  "reward": "50_ranked_losses_avatar"}]},
 	{"id": "ranked_loss_100",  "name": "100 Ranked Losses",  "stat": "losses", "tiers": [{"threshold": 100,  "points": 300,  "reward": "100_ranked_losses_avatar"}]},
