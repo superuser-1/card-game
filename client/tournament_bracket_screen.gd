@@ -266,8 +266,18 @@ func _render_participants_list(participants: Array) -> void:
 	title.add_theme_font_size_override("font_size", 14)
 	%ParticipantsList.add_child(title)
 
+	# 3 across, filling row by row — a participant entry doesn't need a full
+	# screen-width line to itself.
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", 10)
+	grid.add_theme_constant_override("v_separation", 8)
+	%ParticipantsList.add_child(grid)
+
 	for p in participants:
 		var row := PanelContainer.new()
+		row.custom_minimum_size = Vector2(320, 0)
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var row_sb := StyleBoxFlat.new()
 		row_sb.bg_color = Color(1, 1, 1, 0.04)
 		row_sb.set_corner_radius_all(8)
@@ -284,16 +294,18 @@ func _render_participants_list(participants: Array) -> void:
 
 		var name_label := Label.new()
 		name_label.text = str(p.get("display_name", "Unknown"))
-		name_label.custom_minimum_size = Vector2(200, 0)
+		name_label.clip_text = true
+		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		p_hbox.add_child(name_label)
 
 		var checked_in := bool(p.get("checked_in", false))
 		var status_label := Label.new()
 		status_label.text = "✓ Checked in" if checked_in else "Awaiting check-in"
 		status_label.modulate = Color(0.4, 0.9, 0.45) if checked_in else Color(1, 1, 1, 0.6)
+		status_label.add_theme_font_size_override("font_size", 12)
 		p_hbox.add_child(status_label)
 
-		%ParticipantsList.add_child(row)
+		grid.add_child(row)
 
 
 func _get_winner_name() -> String:
