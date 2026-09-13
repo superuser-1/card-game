@@ -490,14 +490,12 @@ func _register_countdown(label: Label, target_ts: int, prefix: String) -> void:
 	_tournament_countdowns.append({"label": label, "target_ts": target_ts, "prefix": prefix})
 
 
-## Within 10 minutes: a live-ticking "Xm Ys" countdown. Further out: the
-## absolute date/time, which doesn't need a live countdown to be useful.
+## Always a live-ticking "Xh Ym" / "Xm Ys" countdown, however far out the
+## target is — same as the tournament list screen's countdowns (_fmt_delta),
+## which never fall back to an absolute date/time either.
 func _format_time_until(target_ts: int) -> String:
 	var now := int(Time.get_unix_time_from_system())
-	var diff := target_ts - now
-	if diff <= 600:
-		return _format_countdown(diff)
-	return Time.get_datetime_string_from_unix_time(target_ts, true).replace("T", " ")
+	return _format_countdown(target_ts - now)
 
 
 func _format_countdown(seconds_left: int) -> String:
