@@ -8431,6 +8431,209 @@
       "director_age_at_release": 56,
       "streaming_release": false,
       "profit_cost_ratio_pct": 338
+    },
+    {
+      "id": "card_395",
+      "title": "Monty Python's Life of Brian",
+      "director": "Terry Jones",
+      "release_year": 1979,
+      "box_office_usd": 20700000,
+      "budget_usd": 4000000,
+      "runtime_minutes": 94,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy"
+      ],
+      "audience_score": 81,
+      "director_oscars_won": 0,
+      "director_birth_year": 1942,
+      "director_age_at_release": 37,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 418
+    },
+    {
+      "id": "card_396",
+      "title": "Monty Python's The Meaning of Life",
+      "director": "Terry Jones",
+      "release_year": 1983,
+      "box_office_usd": 42700000,
+      "budget_usd": 9000000,
+      "runtime_minutes": 90,
+      "oscars_won": 0,
+      "genres": [
+        "Musical",
+        "Comedy"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1942,
+      "director_age_at_release": 41,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 374
+    },
+    {
+      "id": "card_397",
+      "title": "And Now for Something Completely Different",
+      "director": "Ian MacNaughton",
+      "release_year": 1971,
+      "box_office_usd": 1000000,
+      "budget_usd": 220000,
+      "runtime_minutes": 88,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1925,
+      "director_age_at_release": 46,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 355
+    },
+    {
+      "id": "card_398",
+      "title": "The Martian",
+      "director": "Ridley Scott",
+      "release_year": 2015,
+      "box_office_usd": 630600000,
+      "budget_usd": 108000000,
+      "runtime_minutes": 142,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Drama",
+        "Action"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1937,
+      "director_age_at_release": 78,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 484
+    },
+    {
+      "id": "card_399",
+      "title": "Project Hail Mary",
+      "director": "Phil Lord and Christopher Miller",
+      "release_year": 2026,
+      "box_office_usd": 685000000,
+      "budget_usd": 200000000,
+      "runtime_minutes": 156,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Action"
+      ],
+      "audience_score": 84,
+      "director_oscars_won": 0,
+      "director_birth_year": 1975,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 242
+    },
+    {
+      "id": "card_400",
+      "title": "Asterix and Obelix vs. Caesar",
+      "director": "Claude Zidi",
+      "release_year": 1999,
+      "box_office_usd": 101600000,
+      "budget_usd": 48500000,
+      "runtime_minutes": 110,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Adventure"
+      ],
+      "audience_score": 60,
+      "director_oscars_won": 0,
+      "director_birth_year": 1934,
+      "director_age_at_release": 65,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 109
+    },
+    {
+      "id": "card_401",
+      "title": "Asterix & Obelix: Mission Cleopatra",
+      "director": "Alain Chabat",
+      "release_year": 2002,
+      "box_office_usd": 131000000,
+      "budget_usd": 54400000,
+      "runtime_minutes": 107,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Adventure"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1958,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 141
+    },
+    {
+      "id": "card_402",
+      "title": "Asterix at the Olympic Games",
+      "director": "Frederic Forestier and Thomas Langmann",
+      "release_year": 2008,
+      "box_office_usd": 133000000,
+      "budget_usd": 113500000,
+      "runtime_minutes": 117,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 54,
+      "director_oscars_won": 0,
+      "director_birth_year": 1970,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 17
+    },
+    {
+      "id": "card_403",
+      "title": "Asterix and Obelix: God Save Britannia",
+      "director": "Laurent Tirard",
+      "release_year": 2012,
+      "box_office_usd": 61319383,
+      "budget_usd": 78000000,
+      "runtime_minutes": 110,
+      "oscars_won": 0,
+      "genres": [
+        "Family",
+        "Comedy"
+      ],
+      "audience_score": 49,
+      "director_oscars_won": 0,
+      "director_birth_year": 1967,
+      "director_age_at_release": 45,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": -21
+    },
+    {
+      "id": "card_404",
+      "title": "Asterix & Obelix: The Middle Kingdom",
+      "director": "Guillaume Canet",
+      "release_year": 2023,
+      "box_office_usd": 46500000,
+      "budget_usd": 72400000,
+      "runtime_minutes": 111,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Adventure",
+        "Family"
+      ],
+      "audience_score": 45,
+      "director_oscars_won": 0,
+      "director_birth_year": 1973,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": -36
     }
   ]
 }
