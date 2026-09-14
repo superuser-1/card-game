@@ -11058,6 +11058,516 @@
       "director_age_at_release": 42,
       "streaming_release": false,
       "profit_cost_ratio_pct": 324
+    },
+    {
+      "id": "card_522",
+      "title": "Dr. No",
+      "director": "Terence Young",
+      "release_year": 1962,
+      "box_office_usd": 59500000,
+      "budget_usd": 1100000,
+      "runtime_minutes": 110,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Thriller"
+      ],
+      "audience_score": 71,
+      "director_oscars_won": 0,
+      "director_birth_year": 1915,
+      "director_age_at_release": 47,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 5309
+    },
+    {
+      "id": "card_523",
+      "title": "From Russia with Love",
+      "director": "Terence Young",
+      "release_year": 1963,
+      "box_office_usd": 79000000,
+      "budget_usd": 2000000,
+      "runtime_minutes": 115,
+      "oscars_won": 0,
+      "genres": [
+        "Action"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1915,
+      "director_age_at_release": 48,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 3850
+    },
+    {
+      "id": "card_524",
+      "title": "Goldfinger",
+      "director": "Guy Hamilton",
+      "release_year": 1964,
+      "box_office_usd": 124900000,
+      "budget_usd": 3000000,
+      "runtime_minutes": 110,
+      "oscars_won": 1,
+      "genres": [
+        "Action"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1922,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 4063
+    },
+    {
+      "id": "card_525",
+      "title": "Thunderball",
+      "director": "Terence Young",
+      "release_year": 1965,
+      "box_office_usd": 141200000,
+      "budget_usd": 9000000,
+      "runtime_minutes": 130,
+      "oscars_won": 1,
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1915,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1469
+    },
+    {
+      "id": "card_526",
+      "title": "You Only Live Twice",
+      "director": "Lewis Gilbert",
+      "release_year": 1967,
+      "box_office_usd": 111600000,
+      "budget_usd": 9500000,
+      "runtime_minutes": 117,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Thriller"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1920,
+      "director_age_at_release": 47,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1075
+    },
+    {
+      "id": "card_527",
+      "title": "On Her Majesty's Secret Service",
+      "director": "Peter R. Hunt",
+      "release_year": 1969,
+      "box_office_usd": 82000000,
+      "budget_usd": 7000000,
+      "runtime_minutes": 142,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Crime",
+        "Thriller"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1925,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1071
+    },
+    {
+      "id": "card_528",
+      "title": "Diamonds Are Forever",
+      "director": "Guy Hamilton",
+      "release_year": 1971,
+      "box_office_usd": 116000000,
+      "budget_usd": 7200000,
+      "runtime_minutes": 120,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Thriller"
+      ],
+      "audience_score": 57,
+      "director_oscars_won": 0,
+      "director_birth_year": 1922,
+      "director_age_at_release": 49,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1511
+    },
+    {
+      "id": "card_529",
+      "title": "Live and Let Die",
+      "director": "Guy Hamilton",
+      "release_year": 1973,
+      "box_office_usd": 161800000,
+      "budget_usd": 7000000,
+      "runtime_minutes": 121,
+      "oscars_won": 0,
+      "genres": [
+        "Action"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 0,
+      "director_birth_year": 1922,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 2211
+    },
+    {
+      "id": "card_530",
+      "title": "The Man with the Golden Gun",
+      "director": "Guy Hamilton",
+      "release_year": 1974,
+      "box_office_usd": 97600000,
+      "budget_usd": 7000000,
+      "runtime_minutes": 125,
+      "oscars_won": 0,
+      "genres": [
+        "Thriller",
+        "Adventure",
+        "Action"
+      ],
+      "audience_score": 61,
+      "director_oscars_won": 0,
+      "director_birth_year": 1922,
+      "director_age_at_release": 52,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1294
+    },
+    {
+      "id": "card_531",
+      "title": "The Spy Who Loved Me",
+      "director": "Lewis Gilbert",
+      "release_year": 1977,
+      "box_office_usd": 185400000,
+      "budget_usd": 13500000,
+      "runtime_minutes": 125,
+      "oscars_won": 0,
+      "genres": [
+        "Thriller",
+        "Adventure",
+        "Action"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1920,
+      "director_age_at_release": 57,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1273
+    },
+    {
+      "id": "card_532",
+      "title": "Moonraker",
+      "director": "Lewis Gilbert",
+      "release_year": 1979,
+      "box_office_usd": 210300000,
+      "budget_usd": 34000000,
+      "runtime_minutes": 126,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 59,
+      "director_oscars_won": 0,
+      "director_birth_year": 1920,
+      "director_age_at_release": 59,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 519
+    },
+    {
+      "id": "card_533",
+      "title": "For Your Eyes Only",
+      "director": "John Glen",
+      "release_year": 1981,
+      "box_office_usd": 202800000,
+      "budget_usd": 28000000,
+      "runtime_minutes": 127,
+      "oscars_won": 0,
+      "genres": [
+        "Thriller",
+        "Action"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1932,
+      "director_age_at_release": 49,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 624
+    },
+    {
+      "id": "card_534",
+      "title": "Octopussy",
+      "director": "John Glen",
+      "release_year": 1983,
+      "box_office_usd": 187500000,
+      "budget_usd": 27500000,
+      "runtime_minutes": 131,
+      "oscars_won": 0,
+      "genres": [
+        "Thriller",
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 61,
+      "director_oscars_won": 0,
+      "director_birth_year": 1932,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 582
+    },
+    {
+      "id": "card_535",
+      "title": "A View to a Kill",
+      "director": "John Glen",
+      "release_year": 1985,
+      "box_office_usd": 152400000,
+      "budget_usd": 30000000,
+      "runtime_minutes": 131,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller",
+        "Adventure"
+      ],
+      "audience_score": 57,
+      "director_oscars_won": 0,
+      "director_birth_year": 1932,
+      "director_age_at_release": 53,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 408
+    },
+    {
+      "id": "card_536",
+      "title": "The Living Daylights",
+      "director": "John Glen",
+      "release_year": 1987,
+      "box_office_usd": 191200000,
+      "budget_usd": 40000000,
+      "runtime_minutes": 131,
+      "oscars_won": 0,
+      "genres": [
+        "Thriller",
+        "Action"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 0,
+      "director_birth_year": 1932,
+      "director_age_at_release": 55,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 378
+    },
+    {
+      "id": "card_537",
+      "title": "Licence to Kill",
+      "director": "John Glen",
+      "release_year": 1989,
+      "box_office_usd": 156100000,
+      "budget_usd": 32000000,
+      "runtime_minutes": 133,
+      "oscars_won": 0,
+      "genres": [
+        "Action"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 0,
+      "director_birth_year": 1932,
+      "director_age_at_release": 57,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 388
+    },
+    {
+      "id": "card_538",
+      "title": "GoldenEye",
+      "director": "Martin Campbell",
+      "release_year": 1995,
+      "box_office_usd": 356400000,
+      "budget_usd": 60000000,
+      "runtime_minutes": 130,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 0,
+      "director_birth_year": 1943,
+      "director_age_at_release": 52,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 494
+    },
+    {
+      "id": "card_539",
+      "title": "Tomorrow Never Dies",
+      "director": "Roger Spottiswoode",
+      "release_year": 1997,
+      "box_office_usd": 339500000,
+      "budget_usd": 110000000,
+      "runtime_minutes": 119,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 65,
+      "director_oscars_won": 0,
+      "director_birth_year": 1945,
+      "director_age_at_release": 52,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 209
+    },
+    {
+      "id": "card_540",
+      "title": "The World Is Not Enough",
+      "director": "Michael Apted",
+      "release_year": 1999,
+      "box_office_usd": 361000000,
+      "budget_usd": 135000000,
+      "runtime_minutes": 128,
+      "oscars_won": 0,
+      "genres": [
+        "Action"
+      ],
+      "audience_score": 60,
+      "director_oscars_won": 0,
+      "director_birth_year": 1941,
+      "director_age_at_release": 58,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 167
+    },
+    {
+      "id": "card_541",
+      "title": "Die Another Day",
+      "director": "Lee Tamahori",
+      "release_year": 2002,
+      "box_office_usd": 432000000,
+      "budget_usd": 142000000,
+      "runtime_minutes": 133,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 53,
+      "director_oscars_won": 0,
+      "director_birth_year": 1950,
+      "director_age_at_release": 52,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 204
+    },
+    {
+      "id": "card_542",
+      "title": "Casino Royale",
+      "director": "Martin Campbell",
+      "release_year": 2006,
+      "box_office_usd": 606000000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 144,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Crime",
+        "Thriller"
+      ],
+      "audience_score": 82,
+      "director_oscars_won": 0,
+      "director_birth_year": 1943,
+      "director_age_at_release": 63,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 304
+    },
+    {
+      "id": "card_543",
+      "title": "Quantum of Solace",
+      "director": "Marc Forster",
+      "release_year": 2008,
+      "box_office_usd": 589600000,
+      "budget_usd": 230000000,
+      "runtime_minutes": 106,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Action"
+      ],
+      "audience_score": 60,
+      "director_oscars_won": 0,
+      "director_birth_year": 1969,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 156
+    },
+    {
+      "id": "card_544",
+      "title": "Skyfall",
+      "director": "Sam Mendes",
+      "release_year": 2012,
+      "box_office_usd": 1109000000,
+      "budget_usd": 200000000,
+      "runtime_minutes": 143,
+      "oscars_won": 2,
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 47,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 454
+    },
+    {
+      "id": "card_545",
+      "title": "Spectre",
+      "director": "Sam Mendes",
+      "release_year": 2015,
+      "box_office_usd": 880700000,
+      "budget_usd": 300000000,
+      "runtime_minutes": 148,
+      "oscars_won": 1,
+      "genres": [
+        "Thriller",
+        "Adventure",
+        "Action"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 194
+    },
+    {
+      "id": "card_546",
+      "title": "No Time to Die",
+      "director": "Cary Joji Fukunaga",
+      "release_year": 2021,
+      "box_office_usd": 774200000,
+      "budget_usd": 301000000,
+      "runtime_minutes": 163,
+      "oscars_won": 1,
+      "genres": [
+        "Action",
+        "Thriller",
+        "Adventure"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 0,
+      "director_birth_year": 1977,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 157
     }
   ]
 }
