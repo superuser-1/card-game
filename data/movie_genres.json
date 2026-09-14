@@ -8546,6 +8546,98 @@
         "adventure film"
       ],
       "source": "wikidata"
+    },
+    "card_547": {
+      "title": "Batman",
+      "genres": [
+        "Film-Noir",
+        "Action"
+      ],
+      "genres_raw": [
+        "neo-noir",
+        "action film",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_548": {
+      "title": "Batman Returns",
+      "genres": [
+        "Film-Noir",
+        "Action",
+        "Fantasy",
+        "Thriller",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "neo-noir",
+        "action film",
+        "superhero film",
+        "fantasy film",
+        "thriller film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_549": {
+      "title": "Batman Forever",
+      "genres": [
+        "Action",
+        "Film-Noir",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "superhero film",
+        "neo-noir",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_550": {
+      "title": "Batman & Robin",
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "superhero film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_551": {
+      "title": "Batman v Superman: Dawn of Justice",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Drama"
+      ],
+      "genres_raw": [
+        "crossover fiction",
+        "superhero film"
+      ],
+      "source": "wikidata"
+    },
+    "card_552": {
+      "title": "The Batman",
+      "genres": [
+        "Action",
+        "Drama",
+        "Mystery",
+        "Thriller",
+        "Crime"
+      ],
+      "genres_raw": [
+        "superhero film",
+        "action film",
+        "drama film",
+        "detective film",
+        "thriller film",
+        "crime film"
+      ],
+      "source": "wikidata"
     }
   }
 }

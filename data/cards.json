@@ -11568,6 +11568,134 @@
       "director_age_at_release": 44,
       "streaming_release": false,
       "profit_cost_ratio_pct": 157
+    },
+    {
+      "id": "card_547",
+      "title": "Batman",
+      "director": "Tim Burton",
+      "release_year": 1989,
+      "box_office_usd": 411600000,
+      "budget_usd": 48000000,
+      "runtime_minutes": 126,
+      "oscars_won": 1,
+      "genres": [
+        "Film-Noir",
+        "Action"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1958,
+      "director_age_at_release": 31,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 758
+    },
+    {
+      "id": "card_548",
+      "title": "Batman Returns",
+      "director": "Tim Burton",
+      "release_year": 1992,
+      "box_office_usd": 266800000,
+      "budget_usd": 55000000,
+      "runtime_minutes": 126,
+      "oscars_won": 0,
+      "genres": [
+        "Film-Noir",
+        "Action",
+        "Fantasy",
+        "Thriller",
+        "Sci-Fi"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1958,
+      "director_age_at_release": 34,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 385
+    },
+    {
+      "id": "card_549",
+      "title": "Batman Forever",
+      "director": "Joel Schumacher",
+      "release_year": 1995,
+      "box_office_usd": 336600000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 121,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Film-Noir",
+        "Fantasy"
+      ],
+      "audience_score": 52,
+      "director_oscars_won": 0,
+      "director_birth_year": 1939,
+      "director_age_at_release": 56,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 237
+    },
+    {
+      "id": "card_550",
+      "title": "Batman & Robin",
+      "director": "Joel Schumacher",
+      "release_year": 1997,
+      "box_office_usd": 238300000,
+      "budget_usd": 160000000,
+      "runtime_minutes": 125,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "audience_score": 35,
+      "director_oscars_won": 0,
+      "director_birth_year": 1939,
+      "director_age_at_release": 58,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 49
+    },
+    {
+      "id": "card_551",
+      "title": "Batman v Superman: Dawn of Justice",
+      "director": "Zack Snyder",
+      "release_year": 2016,
+      "box_office_usd": 874400000,
+      "budget_usd": 300000000,
+      "runtime_minutes": 151,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Drama"
+      ],
+      "audience_score": 60,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 191
+    },
+    {
+      "id": "card_552",
+      "title": "The Batman",
+      "director": "Matt Reeves",
+      "release_year": 2022,
+      "box_office_usd": 772300000,
+      "budget_usd": 200000000,
+      "runtime_minutes": 176,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Drama",
+        "Mystery",
+        "Thriller",
+        "Crime"
+      ],
+      "audience_score": 80,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 56,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 286
     }
   ]
 }
