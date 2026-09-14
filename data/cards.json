@@ -9950,6 +9950,193 @@
       "director_age_at_release": 41,
       "streaming_release": false,
       "profit_cost_ratio_pct": 765
+    },
+    {
+      "id": "card_468",
+      "title": "Planet of the Apes",
+      "director": "Franklin J. Schaffner",
+      "release_year": 1968,
+      "box_office_usd": 33300000,
+      "budget_usd": 5800000,
+      "runtime_minutes": 112,
+      "oscars_won": 1,
+      "genres": [
+        "Sci-Fi"
+      ],
+      "audience_score": 82,
+      "director_oscars_won": 1,
+      "director_birth_year": 1920,
+      "director_age_at_release": 48,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 474
+    },
+    {
+      "id": "card_469",
+      "title": "Beneath the Planet of the Apes",
+      "director": "Ted Post",
+      "release_year": 1970,
+      "box_office_usd": 19000000,
+      "budget_usd": 2500000,
+      "runtime_minutes": 95,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Mystery"
+      ],
+      "audience_score": 54,
+      "director_oscars_won": 0,
+      "director_birth_year": 1918,
+      "director_age_at_release": 52,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 660
+    },
+    {
+      "id": "card_470",
+      "title": "Escape from the Planet of the Apes",
+      "director": "Don Taylor",
+      "release_year": 1971,
+      "box_office_usd": 12300000,
+      "budget_usd": 2000000,
+      "runtime_minutes": 98,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Drama"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1920,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 515
+    },
+    {
+      "id": "card_471",
+      "title": "Conquest of the Planet of the Apes",
+      "director": "J. Lee Thompson",
+      "release_year": 1972,
+      "box_office_usd": 9700000,
+      "budget_usd": 1700000,
+      "runtime_minutes": 88,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 0,
+      "director_birth_year": 1914,
+      "director_age_at_release": 58,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 471
+    },
+    {
+      "id": "card_472",
+      "title": "Battle for the Planet of the Apes",
+      "director": "J. Lee Thompson",
+      "release_year": 1973,
+      "box_office_usd": 8800000,
+      "budget_usd": 1700000,
+      "runtime_minutes": 87,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action"
+      ],
+      "audience_score": 53,
+      "director_oscars_won": 0,
+      "director_birth_year": 1914,
+      "director_age_at_release": 59,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 418
+    },
+    {
+      "id": "card_473",
+      "title": "Rise of the Planet of the Apes",
+      "director": "Rupert Wyatt",
+      "release_year": 2011,
+      "box_office_usd": 481800000,
+      "budget_usd": 93000000,
+      "runtime_minutes": 105,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Drama"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1972,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 418
+    },
+    {
+      "id": "card_474",
+      "title": "Dawn of the Planet of the Apes",
+      "director": "Matt Reeves",
+      "release_year": 2014,
+      "box_office_usd": 710600000,
+      "budget_usd": 170000000,
+      "runtime_minutes": 130,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Drama",
+        "Thriller",
+        "Adventure"
+      ],
+      "audience_score": 80,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 48,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 318
+    },
+    {
+      "id": "card_475",
+      "title": "War for the Planet of the Apes",
+      "director": "Matt Reeves",
+      "release_year": 2017,
+      "box_office_usd": 490700000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 140,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Drama",
+        "Action",
+        "War"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 227
+    },
+    {
+      "id": "card_476",
+      "title": "Kingdom of the Planet of the Apes",
+      "director": "Wes Ball",
+      "release_year": 2024,
+      "box_office_usd": 397300000,
+      "budget_usd": 160000000,
+      "runtime_minutes": 145,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Drama",
+        "Action"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 0,
+      "director_birth_year": 1980,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 148
     }
   ]
 }
