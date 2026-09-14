@@ -5427,6 +5427,144 @@
         "buddy cop film"
       ],
       "source": "wikidata"
+    },
+    "card_337": {
+      "title": "King Kong",
+      "genres": [
+        "Adventure",
+        "Drama",
+        "Action",
+        "Romance"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "drama film",
+        "action film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_338": {
+      "title": "Heavenly Creatures",
+      "genres": [
+        "Drama",
+        "Crime",
+        "Biography",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "drama film",
+        "crime film",
+        "biographical film",
+        "thriller film",
+        "coming-of-age film",
+        "LGBTQ-related film"
+      ],
+      "source": "wikidata"
+    },
+    "card_339": {
+      "title": "The Frighteners",
+      "genres": [
+        "Comedy",
+        "Horror",
+        "Crime",
+        "Thriller",
+        "Mystery",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "comedy horror film",
+        "comedy film",
+        "horror film",
+        "ghost film",
+        "supernatural film",
+        "crime thriller film",
+        "crime film",
+        "drama film",
+        "thriller film",
+        "mystery film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_340": {
+      "title": "Braindead",
+      "genres": [
+        "Comedy",
+        "Horror",
+        "Sci-Fi",
+        "Action",
+        "Drama",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "comedy horror film",
+        "splatter film",
+        "zombie film",
+        "horror film",
+        "comedy film",
+        "science fiction film",
+        "action film",
+        "drama film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_341": {
+      "title": "Bad Taste",
+      "genres": [
+        "Sci-Fi",
+        "Comedy",
+        "Horror",
+        "Action"
+      ],
+      "genres_raw": [
+        "science fiction comedy",
+        "comedy horror",
+        "splatter film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_342": {
+      "title": "Meet the Feebles",
+      "genres": [
+        "Comedy",
+        "Musical",
+        "Crime",
+        "Action",
+        "Horror"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "musical film",
+        "black comedy film",
+        "crime film",
+        "action film",
+        "splatter film",
+        "horror film"
+      ],
+      "source": "wikidata"
+    },
+    "card_343": {
+      "title": "The Lovely Bones",
+      "genres": [
+        "Drama",
+        "Crime",
+        "Fantasy",
+        "Thriller",
+        "Horror"
+      ],
+      "genres_raw": [
+        "drama film",
+        "crime film",
+        "fantasy film",
+        "thriller film",
+        "ghost film",
+        "supernatural horror film",
+        "horror film"
+      ],
+      "source": "wikidata"
     }
   }
 }
