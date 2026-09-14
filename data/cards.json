@@ -8634,6 +8634,282 @@
       "director_age_at_release": 50,
       "streaming_release": false,
       "profit_cost_ratio_pct": -36
+    },
+    {
+      "id": "card_405",
+      "title": "The Matrix Reloaded",
+      "director": "Lana Wachowski and Lilly Wachowski",
+      "release_year": 2003,
+      "box_office_usd": 741800000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 138,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller",
+        "Sci-Fi"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 37,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 395
+    },
+    {
+      "id": "card_406",
+      "title": "The Matrix Revolutions",
+      "director": "Lana Wachowski and Lilly Wachowski",
+      "release_year": 2003,
+      "box_office_usd": 427300000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 129,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action"
+      ],
+      "audience_score": 65,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 37,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 185
+    },
+    {
+      "id": "card_407",
+      "title": "The Matrix Resurrections",
+      "director": "Lana Wachowski",
+      "release_year": 2021,
+      "box_office_usd": 160200000,
+      "budget_usd": 190000000,
+      "runtime_minutes": 148,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action"
+      ],
+      "audience_score": 46,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 56,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": -16
+    },
+    {
+      "id": "card_408",
+      "title": "Terminator 3: Rise of the Machines",
+      "director": "Jonathan Mostow",
+      "release_year": 2003,
+      "box_office_usd": 433400000,
+      "budget_usd": 187300000,
+      "runtime_minutes": 109,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Thriller",
+        "Adventure"
+      ],
+      "audience_score": 59,
+      "director_oscars_won": 0,
+      "director_birth_year": 1961,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 131
+    },
+    {
+      "id": "card_409",
+      "title": "Terminator Salvation",
+      "director": "McG",
+      "release_year": 2009,
+      "box_office_usd": 371400000,
+      "budget_usd": 200000000,
+      "runtime_minutes": 115,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Drama",
+        "Thriller",
+        "Adventure"
+      ],
+      "audience_score": 56,
+      "director_oscars_won": 0,
+      "director_birth_year": 1968,
+      "director_age_at_release": 41,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 86
+    },
+    {
+      "id": "card_410",
+      "title": "Terminator Genisys",
+      "director": "Alan Taylor",
+      "release_year": 2015,
+      "box_office_usd": 440600000,
+      "budget_usd": 155000000,
+      "runtime_minutes": 126,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Thriller",
+        "Adventure",
+        "Drama",
+        "Fantasy"
+      ],
+      "audience_score": 52,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 184
+    },
+    {
+      "id": "card_411",
+      "title": "Terminator: Dark Fate",
+      "director": "Tim Miller",
+      "release_year": 2019,
+      "box_office_usd": 261100000,
+      "budget_usd": 185000000,
+      "runtime_minutes": 128,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Thriller",
+        "Adventure",
+        "Drama"
+      ],
+      "audience_score": 46,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 55,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 41
+    },
+    {
+      "id": "card_412",
+      "title": "Back to the Future Part II",
+      "director": "Robert Zemeckis",
+      "release_year": 1989,
+      "box_office_usd": 333000000,
+      "budget_usd": 40000000,
+      "runtime_minutes": 108,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Comedy"
+      ],
+      "audience_score": 80,
+      "director_oscars_won": 1,
+      "director_birth_year": 1951,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 732
+    },
+    {
+      "id": "card_413",
+      "title": "Back to the Future Part III",
+      "director": "Robert Zemeckis",
+      "release_year": 1990,
+      "box_office_usd": 245100000,
+      "budget_usd": 40000000,
+      "runtime_minutes": 118,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Comedy",
+        "Western"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 1,
+      "director_birth_year": 1951,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 513
+    },
+    {
+      "id": "card_414",
+      "title": "Mad Max",
+      "director": "George Miller",
+      "release_year": 1979,
+      "box_office_usd": 100000000,
+      "budget_usd": 400000,
+      "runtime_minutes": 93,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 0,
+      "director_birth_year": 1945,
+      "director_age_at_release": 34,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 24900
+    },
+    {
+      "id": "card_415",
+      "title": "Mad Max 2",
+      "director": "George Miller",
+      "release_year": 1981,
+      "box_office_usd": 23700000,
+      "budget_usd": 3000000,
+      "runtime_minutes": 96,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Thriller"
+      ],
+      "audience_score": 80,
+      "director_oscars_won": 0,
+      "director_birth_year": 1945,
+      "director_age_at_release": 36,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 690
+    },
+    {
+      "id": "card_416",
+      "title": "Mad Max Beyond Thunderdome",
+      "director": "George Miller and George Ogilvie",
+      "release_year": 1985,
+      "box_office_usd": 36200000,
+      "budget_usd": 10000000,
+      "runtime_minutes": 107,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 61,
+      "director_oscars_won": 0,
+      "director_birth_year": 1938,
+      "director_age_at_release": 47,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 262
+    },
+    {
+      "id": "card_417",
+      "title": "Furiosa: A Mad Max Saga",
+      "director": "George Miller",
+      "release_year": 2024,
+      "box_office_usd": 174400000,
+      "budget_usd": 168000000,
+      "runtime_minutes": 148,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 0,
+      "director_birth_year": 1945,
+      "director_age_at_release": 79,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 4
     }
   ]
 }

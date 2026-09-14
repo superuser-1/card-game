@@ -6513,6 +6513,219 @@
         "family film"
       ],
       "source": "wikidata"
+    },
+    "card_405": {
+      "title": "The Matrix Reloaded",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "science fiction film",
+        "cyberpunk",
+        "dystopian film"
+      ],
+      "source": "wikidata"
+    },
+    "card_406": {
+      "title": "The Matrix Revolutions",
+      "genres": [
+        "Sci-Fi",
+        "Action"
+      ],
+      "genres_raw": [
+        "science fiction action film",
+        "cyberpunk",
+        "science fiction film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_407": {
+      "title": "The Matrix Resurrections",
+      "genres": [
+        "Sci-Fi",
+        "Action"
+      ],
+      "genres_raw": [
+        "cyberpunk",
+        "science fiction film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_408": {
+      "title": "Terminator 3: Rise of the Machines",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Thriller",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "time-travel film",
+        "dystopian film",
+        "techno-thriller",
+        "adventure film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_409": {
+      "title": "Terminator Salvation",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Drama",
+        "Thriller",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "post-apocalyptic film",
+        "drama film",
+        "techno-thriller",
+        "adventure film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_410": {
+      "title": "Terminator Genisys",
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Thriller",
+        "Adventure",
+        "Drama",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "action film",
+        "time-travel film",
+        "thriller film",
+        "adventure film",
+        "drama film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_411": {
+      "title": "Terminator: Dark Fate",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Thriller",
+        "Adventure",
+        "Drama"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "time-travel film",
+        "techno-thriller",
+        "adventure film",
+        "thriller film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_412": {
+      "title": "Back to the Future Part II",
+      "genres": [
+        "Sci-Fi",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "teen film",
+        "comedy film",
+        "time-travel film",
+        "dystopian film"
+      ],
+      "source": "wikidata"
+    },
+    "card_413": {
+      "title": "Back to the Future Part III",
+      "genres": [
+        "Sci-Fi",
+        "Comedy",
+        "Western"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "teen film",
+        "comedy film",
+        "Western film",
+        "time-travel film"
+      ],
+      "source": "wikidata"
+    },
+    "card_414": {
+      "title": "Mad Max",
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "vigilante film",
+        "dystopian film"
+      ],
+      "source": "wikidata"
+    },
+    "card_415": {
+      "title": "Mad Max 2",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "thriller film",
+        "road movie"
+      ],
+      "source": "wikidata"
+    },
+    "card_416": {
+      "title": "Mad Max Beyond Thunderdome",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "dystopian film",
+        "post-apocalyptic film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_417": {
+      "title": "Furiosa: A Mad Max Saga",
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "post-apocalyptic film",
+        "adventure film",
+        "dystopian film"
+      ],
+      "source": "wikidata"
     }
   }
 }
