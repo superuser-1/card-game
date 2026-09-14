@@ -9507,6 +9507,240 @@
         "comedy film"
       ],
       "source": "wikidata"
+    },
+    "card_614": {
+      "title": "One Hundred and One Dalmatians",
+      "genres": [
+        "Musical",
+        "Comedy",
+        "Adventure",
+        "Crime",
+        "Drama",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "musical film",
+        "comedy film",
+        "adventure film",
+        "crime film",
+        "drama film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_615": {
+      "title": "The Sword in the Stone",
+      "genres": [
+        "Fantasy",
+        "Musical"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "musical film",
+        "coming-of-age film",
+        "buddy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_616": {
+      "title": "The Jungle Book",
+      "genres": [
+        "Musical",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "musical film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_617": {
+      "title": "The Aristocats",
+      "genres": [
+        "Musical",
+        "Fantasy",
+        "Family",
+        "Romance",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "musical film",
+        "fantasy film",
+        "children's film",
+        "romantic comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_618": {
+      "title": "Robin Hood",
+      "genres": [
+        "Musical",
+        "Fantasy",
+        "Family",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "musical film",
+        "buddy film",
+        "fantasy film",
+        "family film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_619": {
+      "title": "The Many Adventures of Winnie the Pooh",
+      "genres": [
+        "Musical",
+        "Fantasy",
+        "Family",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "musical film",
+        "fantasy film",
+        "family film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_620": {
+      "title": "The Rescuers",
+      "genres": [
+        "Musical",
+        "Comedy",
+        "Drama",
+        "Fantasy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "musical film",
+        "comedy drama",
+        "fantasy film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_621": {
+      "title": "The Fox and the Hound",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Family"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "comedy drama",
+        "coming-of-age film",
+        "family film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_622": {
+      "title": "The Black Cauldron",
+      "genres": [
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "coming-of-age film",
+        "adventure film",
+        "fantasy film",
+        "dark fantasy"
+      ],
+      "source": "wikidata"
+    },
+    "card_623": {
+      "title": "The Great Mouse Detective",
+      "genres": [
+        "Musical",
+        "Mystery",
+        "Adventure",
+        "Family",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "musical film",
+        "mystery film",
+        "adventure film",
+        "family film",
+        "detective film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_624": {
+      "title": "Oliver & Company",
+      "genres": [
+        "Musical",
+        "Family",
+        "Comedy",
+        "Drama",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "musical film",
+        "children's film",
+        "comedy drama",
+        "family film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_625": {
+      "title": "The Little Mermaid",
+      "genres": [
+        "Romance",
+        "Musical",
+        "Fantasy",
+        "Family",
+        "Drama"
+      ],
+      "genres_raw": [
+        "romance film",
+        "musical film",
+        "fantasy film",
+        "children's film",
+        "melodrama"
+      ],
+      "source": "wikidata"
+    },
+    "card_626": {
+      "title": "The Rescuers Down Under",
+      "genres": [
+        "Crime",
+        "Comedy",
+        "Drama",
+        "Fantasy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "crime film",
+        "comedy drama",
+        "fantasy film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_627": {
+      "title": "Beauty and the Beast",
+      "genres": [
+        "Romance",
+        "Musical",
+        "Comedy",
+        "Drama",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "romance film",
+        "musical film",
+        "comedy drama",
+        "romantic fantasy"
+      ],
+      "source": "wikidata"
     }
   }
 }
