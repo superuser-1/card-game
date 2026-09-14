@@ -11924,6 +11924,230 @@
       "director_age_at_release": 41,
       "streaming_release": false,
       "profit_cost_ratio_pct": -38
+    },
+    {
+      "id": "card_564",
+      "title": "The Fast and the Furious",
+      "director": "Rob Cohen",
+      "release_year": 2001,
+      "box_office_usd": 207500000,
+      "budget_usd": 38000000,
+      "runtime_minutes": 106,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Crime",
+        "Thriller"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 0,
+      "director_birth_year": 1949,
+      "director_age_at_release": 52,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 446
+    },
+    {
+      "id": "card_565",
+      "title": "2 Fast 2 Furious",
+      "director": "John Singleton",
+      "release_year": 2003,
+      "box_office_usd": 236400000,
+      "budget_usd": 76000000,
+      "runtime_minutes": 107,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller",
+        "Crime"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 0,
+      "director_birth_year": 1968,
+      "director_age_at_release": 35,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 211
+    },
+    {
+      "id": "card_566",
+      "title": "The Fast and the Furious: Tokyo Drift",
+      "director": "Justin Lin",
+      "release_year": 2006,
+      "box_office_usd": 159000000,
+      "budget_usd": 85000000,
+      "runtime_minutes": 104,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Crime",
+        "Thriller"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 35,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 87
+    },
+    {
+      "id": "card_567",
+      "title": "Fast & Furious",
+      "director": "Justin Lin",
+      "release_year": 2009,
+      "box_office_usd": 360400000,
+      "budget_usd": 85000000,
+      "runtime_minutes": 107,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 324
+    },
+    {
+      "id": "card_568",
+      "title": "Fast Five",
+      "director": "Justin Lin",
+      "release_year": 2011,
+      "box_office_usd": 630000000,
+      "budget_usd": 125000000,
+      "runtime_minutes": 130,
+      "oscars_won": 0,
+      "genres": [
+        "Crime",
+        "Action"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 40,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 404
+    },
+    {
+      "id": "card_569",
+      "title": "Fast & Furious 6",
+      "director": "Justin Lin",
+      "release_year": 2013,
+      "box_office_usd": 788700000,
+      "budget_usd": 160000000,
+      "runtime_minutes": 130,
+      "oscars_won": 0,
+      "genres": [
+        "Crime",
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 393
+    },
+    {
+      "id": "card_570",
+      "title": "Furious 7",
+      "director": "James Wan",
+      "release_year": 2015,
+      "box_office_usd": 1515000000,
+      "budget_usd": 250000000,
+      "runtime_minutes": 137,
+      "oscars_won": 0,
+      "genres": [
+        "Thriller",
+        "Action",
+        "Comedy",
+        "Drama"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 0,
+      "director_birth_year": 1977,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 506
+    },
+    {
+      "id": "card_571",
+      "title": "The Fate of the Furious",
+      "director": "F. Gary Gray",
+      "release_year": 2017,
+      "box_office_usd": 1236000000,
+      "budget_usd": 250000000,
+      "runtime_minutes": 136,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Crime"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 0,
+      "director_birth_year": 1969,
+      "director_age_at_release": 48,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 394
+    },
+    {
+      "id": "card_572",
+      "title": "Fast & Furious Presents: Hobbs & Shaw",
+      "director": "David Leitch",
+      "release_year": 2019,
+      "box_office_usd": 760000000,
+      "budget_usd": 200000000,
+      "runtime_minutes": 137,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 59,
+      "director_oscars_won": 0,
+      "director_birth_year": 1975,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 280
+    },
+    {
+      "id": "card_573",
+      "title": "F9",
+      "director": "Justin Lin",
+      "release_year": 2021,
+      "box_office_usd": 726200000,
+      "budget_usd": 200000000,
+      "runtime_minutes": 143,
+      "oscars_won": 0,
+      "genres": [
+        "Action"
+      ],
+      "audience_score": 48,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 263
+    },
+    {
+      "id": "card_574",
+      "title": "Fast X",
+      "director": "Louis Leterrier",
+      "release_year": 2023,
+      "box_office_usd": 714400000,
+      "budget_usd": 340000000,
+      "runtime_minutes": 141,
+      "oscars_won": 0,
+      "genres": [
+        "Action"
+      ],
+      "audience_score": 49,
+      "director_oscars_won": 0,
+      "director_birth_year": 1973,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 110
     }
   ]
 }

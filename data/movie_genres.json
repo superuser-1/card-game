@@ -8796,6 +8796,147 @@
         "horror film"
       ],
       "source": "wikidata"
+    },
+    "card_564": {
+      "title": "The Fast and the Furious",
+      "genres": [
+        "Action",
+        "Crime",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "crime film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_565": {
+      "title": "2 Fast 2 Furious",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Crime"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_566": {
+      "title": "The Fast and the Furious: Tokyo Drift",
+      "genres": [
+        "Action",
+        "Crime",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "crime thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_567": {
+      "title": "Fast & Furious",
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_568": {
+      "title": "Fast Five",
+      "genres": [
+        "Crime",
+        "Action"
+      ],
+      "genres_raw": [
+        "crime film",
+        "action film",
+        "heist film"
+      ],
+      "source": "wikidata"
+    },
+    "card_569": {
+      "title": "Fast & Furious 6",
+      "genres": [
+        "Crime",
+        "Action",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "heist film",
+        "action film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_570": {
+      "title": "Furious 7",
+      "genres": [
+        "Thriller",
+        "Action",
+        "Comedy",
+        "Drama"
+      ],
+      "genres_raw": [
+        "thriller film",
+        "action film",
+        "comedy film",
+        "drama film",
+        "heist film"
+      ],
+      "source": "wikidata"
+    },
+    "card_571": {
+      "title": "The Fate of the Furious",
+      "genres": [
+        "Action",
+        "Crime"
+      ],
+      "genres_raw": [
+        "action film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_572": {
+      "title": "Fast & Furious Presents: Hobbs & Shaw",
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_573": {
+      "title": "F9",
+      "genres": [
+        "Action"
+      ],
+      "genres_raw": [
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_574": {
+      "title": "Fast X",
+      "genres": [
+        "Action"
+      ],
+      "genres_raw": [
+        "action film"
+      ],
+      "source": "wikidata"
     }
   }
 }
