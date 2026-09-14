@@ -7850,6 +7850,180 @@
         "slasher film"
       ],
       "source": "wikidata"
+    },
+    "card_499": {
+      "title": "Star Trek: The Motion Picture",
+      "genres": [
+        "Sci-Fi",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_500": {
+      "title": "Star Trek III: The Search for Spock",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_501": {
+      "title": "Star Trek IV: The Voyage Home",
+      "genres": [
+        "Sci-Fi",
+        "Comedy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "science fiction comedy",
+        "adventure film",
+        "time-travel film"
+      ],
+      "source": "wikidata"
+    },
+    "card_502": {
+      "title": "Star Trek V: The Final Frontier",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_503": {
+      "title": "Star Trek VI: The Undiscovered Country",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_504": {
+      "title": "Star Trek Generations",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "adventure film",
+        "time-travel film"
+      ],
+      "source": "wikidata"
+    },
+    "card_505": {
+      "title": "Star Trek: First Contact",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "adventure film",
+        "time-travel film"
+      ],
+      "source": "wikidata"
+    },
+    "card_506": {
+      "title": "Star Trek: Insurrection",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_507": {
+      "title": "Star Trek: Nemesis",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_508": {
+      "title": "Star Trek",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Adventure",
+        "Drama"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "adventure film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_509": {
+      "title": "Star Trek Into Darkness",
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Action"
+      ],
+      "genres_raw": [
+        "science fiction action film",
+        "science fiction film",
+        "adventure film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_510": {
+      "title": "Star Trek Beyond",
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Adventure",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "action film",
+        "adventure film",
+        "thriller film"
+      ],
+      "source": "wikidata"
     }
   }
 }
