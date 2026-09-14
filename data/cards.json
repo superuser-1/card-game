@@ -11696,6 +11696,234 @@
       "director_age_at_release": 56,
       "streaming_release": false,
       "profit_cost_ratio_pct": 286
+    },
+    {
+      "id": "card_553",
+      "title": "X-Men",
+      "director": "Bryan Singer",
+      "release_year": 2000,
+      "box_office_usd": 296300000,
+      "budget_usd": 75000000,
+      "runtime_minutes": 104,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Fantasy"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 35,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 295
+    },
+    {
+      "id": "card_554",
+      "title": "X2",
+      "director": "Bryan Singer",
+      "release_year": 2003,
+      "box_office_usd": 407700000,
+      "budget_usd": 110000000,
+      "runtime_minutes": 133,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Fantasy"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 271
+    },
+    {
+      "id": "card_555",
+      "title": "X-Men: The Last Stand",
+      "director": "Brett Ratner",
+      "release_year": 2006,
+      "box_office_usd": 460000000,
+      "budget_usd": 210000000,
+      "runtime_minutes": 104,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Fantasy"
+      ],
+      "audience_score": 56,
+      "director_oscars_won": 0,
+      "director_birth_year": 1969,
+      "director_age_at_release": 37,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 119
+    },
+    {
+      "id": "card_556",
+      "title": "X-Men Origins: Wolverine",
+      "director": "Gavin Hood",
+      "release_year": 2009,
+      "box_office_usd": 373000000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 107,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "audience_score": 53,
+      "director_oscars_won": 0,
+      "director_birth_year": 1963,
+      "director_age_at_release": 46,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 149
+    },
+    {
+      "id": "card_557",
+      "title": "X-Men: First Class",
+      "director": "Matthew Vaughn",
+      "release_year": 2011,
+      "box_office_usd": 353000000,
+      "budget_usd": 160000000,
+      "runtime_minutes": 132,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 40,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 121
+    },
+    {
+      "id": "card_558",
+      "title": "The Wolverine",
+      "director": "James Mangold",
+      "release_year": 2013,
+      "box_office_usd": 414800000,
+      "budget_usd": 120000000,
+      "runtime_minutes": 126,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Fantasy"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 0,
+      "director_birth_year": 1963,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 246
+    },
+    {
+      "id": "card_559",
+      "title": "X-Men: Days of Future Past",
+      "director": "Bryan Singer",
+      "release_year": 2014,
+      "box_office_usd": 747900000,
+      "budget_usd": 205000000,
+      "runtime_minutes": 131,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller",
+        "Sci-Fi"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 49,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 265
+    },
+    {
+      "id": "card_560",
+      "title": "X-Men: Apocalypse",
+      "director": "Bryan Singer",
+      "release_year": 2016,
+      "box_office_usd": 544000000,
+      "budget_usd": 178000000,
+      "runtime_minutes": 144,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Fantasy"
+      ],
+      "audience_score": 59,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 206
+    },
+    {
+      "id": "card_561",
+      "title": "Logan",
+      "director": "James Mangold",
+      "release_year": 2017,
+      "box_office_usd": 619200000,
+      "budget_usd": 97000000,
+      "runtime_minutes": 137,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Drama"
+      ],
+      "audience_score": 83,
+      "director_oscars_won": 0,
+      "director_birth_year": 1963,
+      "director_age_at_release": 54,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 538
+    },
+    {
+      "id": "card_562",
+      "title": "Dark Phoenix",
+      "director": "Simon Kinberg",
+      "release_year": 2019,
+      "box_office_usd": 252400000,
+      "budget_usd": 200000000,
+      "runtime_minutes": 114,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 46,
+      "director_oscars_won": 0,
+      "director_birth_year": 1973,
+      "director_age_at_release": 46,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 26
+    },
+    {
+      "id": "card_563",
+      "title": "The New Mutants",
+      "director": "Josh Boone",
+      "release_year": 2020,
+      "box_office_usd": 49200000,
+      "budget_usd": 80000000,
+      "runtime_minutes": 94,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Horror"
+      ],
+      "audience_score": 43,
+      "director_oscars_won": 0,
+      "director_birth_year": 1979,
+      "director_age_at_release": 41,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": -38
     }
   ]
 }

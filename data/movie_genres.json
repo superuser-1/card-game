@@ -8638,6 +8638,164 @@
         "crime film"
       ],
       "source": "wikidata"
+    },
+    "card_553": {
+      "title": "X-Men",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "superhero film",
+        "science fiction film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_554": {
+      "title": "X2",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "superhero film",
+        "science fiction film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_555": {
+      "title": "X-Men: The Last Stand",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "superhero film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_556": {
+      "title": "X-Men Origins: Wolverine",
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "superhero film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_557": {
+      "title": "X-Men: First Class",
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "fantasy film",
+        "superhero film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_558": {
+      "title": "The Wolverine",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "superhero film",
+        "science fiction film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_559": {
+      "title": "X-Men: Days of Future Past",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "superhero film",
+        "thriller film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_560": {
+      "title": "X-Men: Apocalypse",
+      "genres": [
+        "Sci-Fi",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "superhero film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_561": {
+      "title": "Logan",
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Drama"
+      ],
+      "genres_raw": [
+        "superhero film",
+        "science fiction film",
+        "action film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_562": {
+      "title": "Dark Phoenix",
+      "genres": [
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "superhero film",
+        "adventure film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_563": {
+      "title": "The New Mutants",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Horror"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "horror film"
+      ],
+      "source": "wikidata"
     }
   }
 }
