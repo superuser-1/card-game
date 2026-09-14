@@ -7708,6 +7708,148 @@
         "thriller film"
       ],
       "source": "wikidata"
+    },
+    "card_487": {
+      "title": "Halloween II (1981)",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film"
+      ],
+      "source": "wikidata"
+    },
+    "card_488": {
+      "title": "Halloween III: Season of the Witch",
+      "genres": [
+        "Horror",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "horror film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_489": {
+      "title": "Halloween 4: The Return of Michael Myers",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film"
+      ],
+      "source": "wikidata"
+    },
+    "card_490": {
+      "title": "Halloween 5: The Revenge of Michael Myers",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film"
+      ],
+      "source": "wikidata"
+    },
+    "card_491": {
+      "title": "Halloween: The Curse of Michael Myers",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film"
+      ],
+      "source": "wikidata"
+    },
+    "card_492": {
+      "title": "Halloween H20: 20 Years Later",
+      "genres": [
+        "Horror",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_493": {
+      "title": "Halloween: Resurrection",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film"
+      ],
+      "source": "wikidata"
+    },
+    "card_494": {
+      "title": "Halloween (2007)",
+      "genres": [
+        "Horror",
+        "Drama",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film",
+        "drama film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_495": {
+      "title": "Halloween II (2009)",
+      "genres": [
+        "Horror",
+        "Drama",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film",
+        "drama film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_496": {
+      "title": "Halloween (2018)",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "slasher film"
+      ],
+      "source": "wikidata"
+    },
+    "card_497": {
+      "title": "Halloween Kills",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film"
+      ],
+      "source": "wikidata"
+    },
+    "card_498": {
+      "title": "Halloween Ends",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film"
+      ],
+      "source": "wikidata"
     }
   }
 }
