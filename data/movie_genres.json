@@ -9270,6 +9270,114 @@
         "crime film"
       ],
       "source": "wikidata"
+    },
+    "card_598": {
+      "title": "The Hunt for Red October",
+      "genres": [
+        "Action",
+        "Drama",
+        "War",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "drama film",
+        "spy film",
+        "war film",
+        "submarine film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_599": {
+      "title": "The Untouchables",
+      "genres": [
+        "History",
+        "Action",
+        "Biography",
+        "Drama",
+        "Crime",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "gangster film",
+        "historical film",
+        "action film",
+        "biographical film",
+        "drama film",
+        "crime film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_600": {
+      "title": "The Rock",
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "buddy cop film",
+        "prison film"
+      ],
+      "source": "wikidata"
+    },
+    "card_601": {
+      "title": "Entrapment",
+      "genres": [
+        "Crime",
+        "Drama",
+        "Action",
+        "Romance"
+      ],
+      "genres_raw": [
+        "heist film",
+        "crime film",
+        "drama film",
+        "action film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_602": {
+      "title": "Finding Forrester",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film",
+        "coming-of-age film",
+        "white savior film"
+      ],
+      "source": "wikidata"
+    },
+    "card_603": {
+      "title": "The Man Who Would Be King",
+      "genres": [
+        "Adventure",
+        "Drama"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_604": {
+      "title": "Murder on the Orient Express",
+      "genres": [
+        "Crime",
+        "Mystery",
+        "Drama"
+      ],
+      "genres_raw": [
+        "crime film",
+        "mystery film",
+        "drama film"
+      ],
+      "source": "wikidata"
     }
   }
 }

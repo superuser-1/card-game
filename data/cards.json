@@ -12628,6 +12628,154 @@
       "director_age_at_release": 52,
       "streaming_release": false,
       "profit_cost_ratio_pct": -57
+    },
+    {
+      "id": "card_598",
+      "title": "The Hunt for Red October",
+      "director": "John McTiernan",
+      "release_year": 1990,
+      "box_office_usd": 200500000,
+      "budget_usd": 30000000,
+      "runtime_minutes": 135,
+      "oscars_won": 1,
+      "genres": [
+        "Action",
+        "Drama",
+        "War",
+        "Thriller"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1951,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 568
+    },
+    {
+      "id": "card_599",
+      "title": "The Untouchables",
+      "director": "Brian De Palma",
+      "release_year": 1987,
+      "box_office_usd": 187000000,
+      "budget_usd": 25000000,
+      "runtime_minutes": 119,
+      "oscars_won": 1,
+      "genres": [
+        "History",
+        "Action",
+        "Biography",
+        "Drama",
+        "Crime",
+        "Thriller"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 0,
+      "director_birth_year": 1940,
+      "director_age_at_release": 47,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 648
+    },
+    {
+      "id": "card_600",
+      "title": "The Rock",
+      "director": "Michael Bay",
+      "release_year": 1996,
+      "box_office_usd": 335600000,
+      "budget_usd": 75000000,
+      "runtime_minutes": 136,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 31,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 347
+    },
+    {
+      "id": "card_601",
+      "title": "Entrapment",
+      "director": "Jon Amiel",
+      "release_year": 1999,
+      "box_office_usd": 212000000,
+      "budget_usd": 66000000,
+      "runtime_minutes": 113,
+      "oscars_won": 0,
+      "genres": [
+        "Crime",
+        "Drama",
+        "Action",
+        "Romance"
+      ],
+      "audience_score": 61,
+      "director_oscars_won": 0,
+      "director_birth_year": 1948,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 221
+    },
+    {
+      "id": "card_602",
+      "title": "Finding Forrester",
+      "director": "Gus Van Sant",
+      "release_year": 2000,
+      "box_office_usd": 80000000,
+      "budget_usd": 43000000,
+      "runtime_minutes": 136,
+      "oscars_won": 0,
+      "genres": [
+        "Drama"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1952,
+      "director_age_at_release": 48,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 86
+    },
+    {
+      "id": "card_603",
+      "title": "The Man Who Would Be King",
+      "director": "John Huston",
+      "release_year": 1975,
+      "box_office_usd": 11000000,
+      "budget_usd": 8500000,
+      "runtime_minutes": 129,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Drama"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 0,
+      "director_birth_year": 1906,
+      "director_age_at_release": 69,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 29
+    },
+    {
+      "id": "card_604",
+      "title": "Murder on the Orient Express",
+      "director": "Sidney Lumet",
+      "release_year": 1974,
+      "box_office_usd": 37700000,
+      "budget_usd": 1400000,
+      "runtime_minutes": 128,
+      "oscars_won": 1,
+      "genres": [
+        "Crime",
+        "Mystery",
+        "Drama"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1924,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 2593
     }
   ]
 }
