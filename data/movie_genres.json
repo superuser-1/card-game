@@ -7588,6 +7588,126 @@
         "dystopian film"
       ],
       "source": "wikidata"
+    },
+    "card_477": {
+      "title": "Saw",
+      "genres": [
+        "Horror",
+        "Crime"
+      ],
+      "genres_raw": [
+        "gore film",
+        "horror film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_478": {
+      "title": "Saw II",
+      "genres": [
+        "Crime",
+        "Horror"
+      ],
+      "genres_raw": [
+        "splatter film",
+        "crime film",
+        "slasher film"
+      ],
+      "source": "wikidata"
+    },
+    "card_479": {
+      "title": "Saw III",
+      "genres": [
+        "Horror",
+        "Crime"
+      ],
+      "genres_raw": [
+        "horror film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_480": {
+      "title": "Saw IV",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "splatter film"
+      ],
+      "source": "wikidata"
+    },
+    "card_481": {
+      "title": "Saw V",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "splatter film"
+      ],
+      "source": "wikidata"
+    },
+    "card_482": {
+      "title": "Saw VI",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film"
+      ],
+      "source": "wikidata"
+    },
+    "card_483": {
+      "title": "Saw 3D",
+      "genres": [
+        "Horror",
+        "Crime"
+      ],
+      "genres_raw": [
+        "horror film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_484": {
+      "title": "Jigsaw",
+      "genres": [
+        "Horror",
+        "Crime"
+      ],
+      "genres_raw": [
+        "splatter film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_485": {
+      "title": "Spiral: From the Book of Saw",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film"
+      ],
+      "source": "wikidata"
+    },
+    "card_486": {
+      "title": "Saw X",
+      "genres": [
+        "Drama",
+        "Crime",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "drama film",
+        "crime film",
+        "horror film",
+        "mystery film",
+        "thriller film"
+      ],
+      "source": "wikidata"
     }
   }
 }

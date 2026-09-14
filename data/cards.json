@@ -10137,6 +10137,205 @@
       "director_age_at_release": 44,
       "streaming_release": false,
       "profit_cost_ratio_pct": 148
+    },
+    {
+      "id": "card_477",
+      "title": "Saw",
+      "director": "James Wan",
+      "release_year": 2004,
+      "box_office_usd": 104000000,
+      "budget_usd": 1200000,
+      "runtime_minutes": 103,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Crime"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1977,
+      "director_age_at_release": 27,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 8567
+    },
+    {
+      "id": "card_478",
+      "title": "Saw II",
+      "director": "Darren Lynn Bousman",
+      "release_year": 2005,
+      "box_office_usd": 152900000,
+      "budget_usd": 4000000,
+      "runtime_minutes": 93,
+      "oscars_won": 0,
+      "genres": [
+        "Crime",
+        "Horror"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 0,
+      "director_birth_year": 1979,
+      "director_age_at_release": 26,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 3722
+    },
+    {
+      "id": "card_479",
+      "title": "Saw III",
+      "director": "Darren Lynn Bousman",
+      "release_year": 2006,
+      "box_office_usd": 164900000,
+      "budget_usd": 10000000,
+      "runtime_minutes": 108,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Crime"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1979,
+      "director_age_at_release": 27,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1549
+    },
+    {
+      "id": "card_480",
+      "title": "Saw IV",
+      "director": "Darren Lynn Bousman",
+      "release_year": 2007,
+      "box_office_usd": 139400000,
+      "budget_usd": 10000000,
+      "runtime_minutes": 92,
+      "oscars_won": 0,
+      "genres": [
+        "Horror"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 0,
+      "director_birth_year": 1979,
+      "director_age_at_release": 28,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1294
+    },
+    {
+      "id": "card_481",
+      "title": "Saw V",
+      "director": "David Hackl",
+      "release_year": 2008,
+      "box_office_usd": 118200000,
+      "budget_usd": 10800000,
+      "runtime_minutes": 92,
+      "oscars_won": 0,
+      "genres": [
+        "Horror"
+      ],
+      "audience_score": 55,
+      "director_oscars_won": 0,
+      "director_birth_year": 1963,
+      "director_age_at_release": 45,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 994
+    },
+    {
+      "id": "card_482",
+      "title": "Saw VI",
+      "director": "Kevin Greutert",
+      "release_year": 2009,
+      "box_office_usd": 69800000,
+      "budget_usd": 11000000,
+      "runtime_minutes": 90,
+      "oscars_won": 0,
+      "genres": [
+        "Horror"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 535
+    },
+    {
+      "id": "card_483",
+      "title": "Saw 3D",
+      "director": "Kevin Greutert",
+      "release_year": 2010,
+      "box_office_usd": 136200000,
+      "budget_usd": 17000000,
+      "runtime_minutes": 90,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Crime"
+      ],
+      "audience_score": 50,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 45,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 701
+    },
+    {
+      "id": "card_484",
+      "title": "Jigsaw",
+      "director": "Michael Spierig and Peter Spierig",
+      "release_year": 2017,
+      "box_office_usd": 104200000,
+      "budget_usd": 10000000,
+      "runtime_minutes": 92,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Crime"
+      ],
+      "audience_score": 59,
+      "director_oscars_won": 0,
+      "director_birth_year": 1976,
+      "director_age_at_release": 41,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 942
+    },
+    {
+      "id": "card_485",
+      "title": "Spiral: From the Book of Saw",
+      "director": "Darren Lynn Bousman",
+      "release_year": 2021,
+      "box_office_usd": 40600000,
+      "budget_usd": 20000000,
+      "runtime_minutes": 93,
+      "oscars_won": 0,
+      "genres": [
+        "Horror"
+      ],
+      "audience_score": 46,
+      "director_oscars_won": 0,
+      "director_birth_year": 1979,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 103
+    },
+    {
+      "id": "card_486",
+      "title": "Saw X",
+      "director": "Kevin Greutert",
+      "release_year": 2023,
+      "box_office_usd": 125300000,
+      "budget_usd": 13000000,
+      "runtime_minutes": 118,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Crime",
+        "Horror",
+        "Mystery",
+        "Thriller"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 58,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 864
     }
   ]
 }
