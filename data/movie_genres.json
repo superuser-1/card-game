@@ -5883,6 +5883,507 @@
         "ghost film"
       ],
       "source": "wikidata"
+    },
+    "card_366": {
+      "title": "Taxi Driver",
+      "genres": [
+        "Crime",
+        "Film-Noir",
+        "Action",
+        "Drama",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "neo-noir",
+        "psychological drama film",
+        "crime film",
+        "film noir",
+        "action film",
+        "drama film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_367": {
+      "title": "The Departed",
+      "genres": [
+        "Crime",
+        "Thriller",
+        "Drama",
+        "Mystery",
+        "Film-Noir"
+      ],
+      "genres_raw": [
+        "crime thriller film",
+        "drama film",
+        "crime film",
+        "thriller film",
+        "mystery film",
+        "neo-noir"
+      ],
+      "source": "wikidata"
+    },
+    "card_368": {
+      "title": "Casino",
+      "genres": [
+        "Biography",
+        "Crime",
+        "Drama",
+        "Mystery",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "epic film",
+        "biographical film",
+        "crime film",
+        "crime thriller film",
+        "drama film",
+        "mystery film",
+        "gangster film"
+      ],
+      "source": "wikidata"
+    },
+    "card_369": {
+      "title": "The Wolf of Wall Street",
+      "genres": [
+        "Comedy",
+        "Biography",
+        "Crime",
+        "Drama"
+      ],
+      "genres_raw": [
+        "black comedy film",
+        "biographical film",
+        "crime film",
+        "drama film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_370": {
+      "title": "Shutter Island",
+      "genres": [
+        "Thriller",
+        "Drama",
+        "Crime",
+        "Horror",
+        "Mystery",
+        "Action"
+      ],
+      "genres_raw": [
+        "thriller film",
+        "drama film",
+        "crime thriller film",
+        "crime film",
+        "psychological horror film",
+        "mystery film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_371": {
+      "title": "Mean Streets",
+      "genres": [
+        "Drama",
+        "Crime",
+        "Thriller",
+        "Mystery",
+        "Romance"
+      ],
+      "genres_raw": [
+        "drama film",
+        "crime film",
+        "thriller film",
+        "mystery film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_372": {
+      "title": "The Last Temptation of Christ",
+      "genres": [
+        "Drama",
+        "History",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "drama film",
+        "historical film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_373": {
+      "title": "The Aviator",
+      "genres": [
+        "Biography",
+        "Drama",
+        "History",
+        "Thriller",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "biographical film",
+        "drama film",
+        "historical film",
+        "thriller film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_374": {
+      "title": "Cape Fear",
+      "genres": [
+        "Thriller",
+        "Horror",
+        "Drama",
+        "Crime",
+        "Film-Noir"
+      ],
+      "genres_raw": [
+        "thriller film",
+        "psychological horror film",
+        "drama film",
+        "crime drama film",
+        "neo-noir"
+      ],
+      "source": "wikidata"
+    },
+    "card_375": {
+      "title": "After Hours",
+      "genres": [
+        "Comedy"
+      ],
+      "genres_raw": [
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_376": {
+      "title": "A Fistful of Dollars",
+      "genres": [
+        "Western",
+        "Action"
+      ],
+      "genres_raw": [
+        "Spaghetti Western",
+        "Western film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_377": {
+      "title": "For a Few Dollars More",
+      "genres": [
+        "Western",
+        "Action"
+      ],
+      "genres_raw": [
+        "Spaghetti Western",
+        "Western film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_378": {
+      "title": "Once Upon a Time in America",
+      "genres": [
+        "Crime",
+        "Drama",
+        "History",
+        "Thriller",
+        "Action"
+      ],
+      "genres_raw": [
+        "crime film",
+        "drama film",
+        "gangster film",
+        "historical film",
+        "thriller film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_379": {
+      "title": "Duck, You Sucker!",
+      "genres": [
+        "Western",
+        "War"
+      ],
+      "genres_raw": [
+        "Spaghetti Western",
+        "buddy film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_380": {
+      "title": "Following",
+      "genres": [
+        "Crime",
+        "Thriller",
+        "Film-Noir",
+        "Drama"
+      ],
+      "genres_raw": [
+        "crime film",
+        "thriller film",
+        "neo-noir",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_381": {
+      "title": "Insomnia",
+      "genres": [
+        "Crime",
+        "Film-Noir",
+        "Thriller",
+        "Drama",
+        "Mystery"
+      ],
+      "genres_raw": [
+        "crime film",
+        "neo-noir",
+        "thriller film",
+        "drama film",
+        "mystery film"
+      ],
+      "source": "wikidata"
+    },
+    "card_382": {
+      "title": "Batman Begins",
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "crime film",
+        "drama film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_383": {
+      "title": "The Dark Knight Rises",
+      "genres": [
+        "Action",
+        "Crime",
+        "Thriller",
+        "Drama"
+      ],
+      "genres_raw": [
+        "action film",
+        "crime thriller film",
+        "thriller film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_384": {
+      "title": "Inception",
+      "genres": [
+        "Crime",
+        "Sci-Fi",
+        "Thriller",
+        "Adventure",
+        "Drama",
+        "Mystery"
+      ],
+      "genres_raw": [
+        "heist film",
+        "science fiction film",
+        "thriller film",
+        "adventure film",
+        "drama film",
+        "mystery film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_385": {
+      "title": "Dunkirk",
+      "genres": [
+        "Drama",
+        "War",
+        "History"
+      ],
+      "genres_raw": [
+        "drama film",
+        "war film",
+        "historical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_386": {
+      "title": "Tenet",
+      "genres": [
+        "Thriller",
+        "Sci-Fi",
+        "Action"
+      ],
+      "genres_raw": [
+        "spy film",
+        "thriller film",
+        "science fiction film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_387": {
+      "title": "Kill Bill: Volume 1",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Crime",
+        "Drama",
+        "Film-Noir"
+      ],
+      "genres_raw": [
+        "action thriller",
+        "martial arts film",
+        "crime film",
+        "action film",
+        "thriller film",
+        "drama film",
+        "neo-noir"
+      ],
+      "source": "wikidata"
+    },
+    "card_388": {
+      "title": "Kill Bill: Volume 2",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Drama",
+        "Crime"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "action thriller",
+        "drama film",
+        "crime thriller film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_389": {
+      "title": "Jackie Brown",
+      "genres": [
+        "Crime",
+        "Drama",
+        "Thriller",
+        "Film-Noir"
+      ],
+      "genres_raw": [
+        "heist film",
+        "blaxploitation film",
+        "crime film",
+        "drama film",
+        "thriller film",
+        "neo-noir"
+      ],
+      "source": "wikidata"
+    },
+    "card_390": {
+      "title": "Death Proof",
+      "genres": [
+        "Horror",
+        "Action",
+        "Thriller",
+        "Drama",
+        "Comedy",
+        "Crime"
+      ],
+      "genres_raw": [
+        "horror film",
+        "action film",
+        "slasher film",
+        "thriller film",
+        "drama film",
+        "comedy horror film",
+        "comedy film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_391": {
+      "title": "Inglourious Basterds",
+      "genres": [
+        "War",
+        "Drama",
+        "Adventure",
+        "Comedy",
+        "Action",
+        "History"
+      ],
+      "genres_raw": [
+        "war film",
+        "alternate history film",
+        "drama film",
+        "adventure film",
+        "comedy film",
+        "historical film",
+        "action film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_392": {
+      "title": "Django Unchained",
+      "genres": [
+        "Western",
+        "Action",
+        "History",
+        "Comedy",
+        "Drama"
+      ],
+      "genres_raw": [
+        "revisionist Western",
+        "Western film",
+        "action film",
+        "historical film",
+        "comedy drama",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_393": {
+      "title": "The Hateful Eight",
+      "genres": [
+        "Western",
+        "Mystery",
+        "Thriller",
+        "Action",
+        "Crime"
+      ],
+      "genres_raw": [
+        "Western film",
+        "mystery film",
+        "thriller film",
+        "action film",
+        "revisionist Western",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_394": {
+      "title": "Once Upon a Time in Hollywood",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Crime"
+      ],
+      "genres_raw": [
+        "comedy drama",
+        "drama film",
+        "crime film"
+      ],
+      "source": "wikidata"
     }
   }
 }
