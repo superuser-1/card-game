@@ -7331,6 +7331,462 @@
       "director_age_at_release": 48,
       "streaming_release": false,
       "profit_cost_ratio_pct": 44
+    },
+    {
+      "id": "card_344",
+      "title": "E.T. the Extra-Terrestrial",
+      "director": "Steven Spielberg",
+      "release_year": 1982,
+      "box_office_usd": 797300000,
+      "budget_usd": 10500000,
+      "runtime_minutes": 114,
+      "oscars_won": 4,
+      "genres": [
+        "Sci-Fi",
+        "Drama",
+        "Family"
+      ],
+      "audience_score": 80,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 36,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 7493
+    },
+    {
+      "id": "card_345",
+      "title": "Close Encounters of the Third Kind",
+      "director": "Steven Spielberg",
+      "release_year": 1977,
+      "box_office_usd": 306900000,
+      "budget_usd": 19400000,
+      "runtime_minutes": 135,
+      "oscars_won": 2,
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Drama",
+        "Thriller"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 31,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1482
+    },
+    {
+      "id": "card_346",
+      "title": "Indiana Jones and the Temple of Doom",
+      "director": "Steven Spielberg",
+      "release_year": 1984,
+      "box_office_usd": 333100000,
+      "budget_usd": 28000000,
+      "runtime_minutes": 117,
+      "oscars_won": 1,
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1090
+    },
+    {
+      "id": "card_347",
+      "title": "Indiana Jones and the Kingdom of the Crystal Skull",
+      "director": "Steven Spielberg",
+      "release_year": 2008,
+      "box_office_usd": 786600000,
+      "budget_usd": 185000000,
+      "runtime_minutes": 122,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 62,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 325
+    },
+    {
+      "id": "card_348",
+      "title": "The Lost World: Jurassic Park",
+      "director": "Steven Spielberg",
+      "release_year": 1997,
+      "box_office_usd": 618600000,
+      "budget_usd": 73000000,
+      "runtime_minutes": 129,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Action"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 747
+    },
+    {
+      "id": "card_349",
+      "title": "Catch Me If You Can",
+      "director": "Steven Spielberg",
+      "release_year": 2002,
+      "box_office_usd": 352100000,
+      "budget_usd": 52000000,
+      "runtime_minutes": 141,
+      "oscars_won": 0,
+      "genres": [
+        "Crime",
+        "Comedy",
+        "Drama",
+        "Biography"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 56,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 577
+    },
+    {
+      "id": "card_350",
+      "title": "Minority Report",
+      "director": "Steven Spielberg",
+      "release_year": 2002,
+      "box_office_usd": 358400000,
+      "budget_usd": 102000000,
+      "runtime_minutes": 145,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 56,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 251
+    },
+    {
+      "id": "card_351",
+      "title": "War of the Worlds",
+      "director": "Steven Spielberg",
+      "release_year": 2005,
+      "box_office_usd": 604000000,
+      "budget_usd": 132000000,
+      "runtime_minutes": 116,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Thriller",
+        "Adventure",
+        "Drama"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 59,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 358
+    },
+    {
+      "id": "card_352",
+      "title": "Munich",
+      "director": "Steven Spielberg",
+      "release_year": 2005,
+      "box_office_usd": 131000000,
+      "budget_usd": 70000000,
+      "runtime_minutes": 163,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Thriller"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 59,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 87
+    },
+    {
+      "id": "card_353",
+      "title": "Bridge of Spies",
+      "director": "Steven Spielberg",
+      "release_year": 2015,
+      "box_office_usd": 165500000,
+      "budget_usd": 40000000,
+      "runtime_minutes": 141,
+      "oscars_won": 1,
+      "genres": [
+        "War",
+        "Biography",
+        "History"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 69,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 314
+    },
+    {
+      "id": "card_354",
+      "title": "The Post",
+      "director": "Steven Spielberg",
+      "release_year": 2017,
+      "box_office_usd": 179800000,
+      "budget_usd": 50000000,
+      "runtime_minutes": 116,
+      "oscars_won": 0,
+      "genres": [
+        "Thriller",
+        "Drama",
+        "Biography",
+        "History"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 71,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 260
+    },
+    {
+      "id": "card_355",
+      "title": "Ready Player One",
+      "director": "Steven Spielberg",
+      "release_year": 2018,
+      "box_office_usd": 608000000,
+      "budget_usd": 175000000,
+      "runtime_minutes": 140,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Action"
+      ],
+      "audience_score": 71,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 72,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 247
+    },
+    {
+      "id": "card_356",
+      "title": "West Side Story",
+      "director": "Steven Spielberg",
+      "release_year": 2021,
+      "box_office_usd": 76000000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 156,
+      "oscars_won": 1,
+      "genres": [
+        "Romance",
+        "Musical"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 75,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": -24
+    },
+    {
+      "id": "card_357",
+      "title": "The Fabelmans",
+      "director": "Steven Spielberg",
+      "release_year": 2022,
+      "box_office_usd": 45600000,
+      "budget_usd": 40000000,
+      "runtime_minutes": 151,
+      "oscars_won": 0,
+      "genres": [
+        "Drama"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 76,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 14
+    },
+    {
+      "id": "card_358",
+      "title": "A.I. Artificial Intelligence",
+      "director": "Steven Spielberg",
+      "release_year": 2001,
+      "box_office_usd": 235900000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 145,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Drama"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 55,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 136
+    },
+    {
+      "id": "card_359",
+      "title": "Hook",
+      "director": "Steven Spielberg",
+      "release_year": 1991,
+      "box_office_usd": 300900000,
+      "budget_usd": 70000000,
+      "runtime_minutes": 142,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Action",
+        "Comedy",
+        "Adventure"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 45,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 330
+    },
+    {
+      "id": "card_360",
+      "title": "Empire of the Sun",
+      "director": "Steven Spielberg",
+      "release_year": 1987,
+      "box_office_usd": 66700000,
+      "budget_usd": 25000000,
+      "runtime_minutes": 154,
+      "oscars_won": 0,
+      "genres": [
+        "War",
+        "Drama"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 41,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 167
+    },
+    {
+      "id": "card_361",
+      "title": "The Color Purple",
+      "director": "Steven Spielberg",
+      "release_year": 1985,
+      "box_office_usd": 98400000,
+      "budget_usd": 15000000,
+      "runtime_minutes": 154,
+      "oscars_won": 0,
+      "genres": [
+        "Drama"
+      ],
+      "audience_score": 80,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 556
+    },
+    {
+      "id": "card_362",
+      "title": "Amistad",
+      "director": "Steven Spielberg",
+      "release_year": 1997,
+      "box_office_usd": 58300000,
+      "budget_usd": 39000000,
+      "runtime_minutes": 154,
+      "oscars_won": 0,
+      "genres": [
+        "Drama"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 49
+    },
+    {
+      "id": "card_363",
+      "title": "War Horse",
+      "director": "Steven Spielberg",
+      "release_year": 2011,
+      "box_office_usd": 177600000,
+      "budget_usd": 66000000,
+      "runtime_minutes": 146,
+      "oscars_won": 0,
+      "genres": [
+        "War",
+        "Drama"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 65,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 169
+    },
+    {
+      "id": "card_364",
+      "title": "The BFG",
+      "director": "Steven Spielberg",
+      "release_year": 2016,
+      "box_office_usd": 195200000,
+      "budget_usd": 140000000,
+      "runtime_minutes": 118,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Family",
+        "Fantasy"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 70,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 39
+    },
+    {
+      "id": "card_365",
+      "title": "Always",
+      "director": "Steven Spielberg",
+      "release_year": 1989,
+      "box_office_usd": 74100000,
+      "budget_usd": 31000000,
+      "runtime_minutes": 123,
+      "oscars_won": 0,
+      "genres": [
+        "Romance",
+        "Fantasy",
+        "Drama",
+        "Comedy"
+      ],
+      "audience_score": 61,
+      "director_oscars_won": 3,
+      "director_birth_year": 1946,
+      "director_age_at_release": 43,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 139
     }
   ]
 }

@@ -5565,6 +5565,324 @@
         "horror film"
       ],
       "source": "wikidata"
+    },
+    "card_344": {
+      "title": "E.T. the Extra-Terrestrial",
+      "genres": [
+        "Sci-Fi",
+        "Drama",
+        "Family"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "drama film",
+        "children's film",
+        "family film"
+      ],
+      "source": "wikidata"
+    },
+    "card_345": {
+      "title": "Close Encounters of the Third Kind",
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Drama",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "adventure film",
+        "drama film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_346": {
+      "title": "Indiana Jones and the Temple of Doom",
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "treasure hunt film"
+      ],
+      "source": "wikidata"
+    },
+    "card_347": {
+      "title": "Indiana Jones and the Kingdom of the Crystal Skull",
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "treasure hunt film"
+      ],
+      "source": "wikidata"
+    },
+    "card_348": {
+      "title": "The Lost World: Jurassic Park",
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Action"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "adventure film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_349": {
+      "title": "Catch Me If You Can",
+      "genres": [
+        "Crime",
+        "Comedy",
+        "Drama",
+        "Biography"
+      ],
+      "genres_raw": [
+        "heist film",
+        "crime film",
+        "comedy film",
+        "drama film",
+        "biographical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_350": {
+      "title": "Minority Report",
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "action film",
+        "dystopian film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_351": {
+      "title": "War of the Worlds",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Thriller",
+        "Adventure",
+        "Drama"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "thriller film",
+        "alien invasion",
+        "disaster film",
+        "adventure film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_352": {
+      "title": "Munich",
+      "genres": [
+        "Drama",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "spy film",
+        "drama film",
+        "political thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_353": {
+      "title": "Bridge of Spies",
+      "genres": [
+        "War",
+        "Biography",
+        "History"
+      ],
+      "genres_raw": [
+        "war film",
+        "trial film",
+        "biographical film",
+        "historical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_354": {
+      "title": "The Post",
+      "genres": [
+        "Thriller",
+        "Drama",
+        "Biography",
+        "History"
+      ],
+      "genres_raw": [
+        "thriller film",
+        "drama film",
+        "biographical film",
+        "historical film",
+        "political thriller"
+      ],
+      "source": "wikidata"
+    },
+    "card_355": {
+      "title": "Ready Player One",
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Action"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "adventure film",
+        "dystopian film",
+        "action film",
+        "cyberpunk"
+      ],
+      "source": "wikidata"
+    },
+    "card_356": {
+      "title": "West Side Story",
+      "genres": [
+        "Romance",
+        "Musical"
+      ],
+      "genres_raw": [
+        "romance film",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_357": {
+      "title": "The Fabelmans",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film",
+        "coming-of-age film"
+      ],
+      "source": "wikidata"
+    },
+    "card_358": {
+      "title": "A.I. Artificial Intelligence",
+      "genres": [
+        "Sci-Fi",
+        "Drama"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "post-apocalyptic film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_359": {
+      "title": "Hook",
+      "genres": [
+        "Fantasy",
+        "Action",
+        "Comedy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "action film",
+        "comedy film",
+        "pirate film",
+        "swashbuckler film"
+      ],
+      "source": "wikidata"
+    },
+    "card_360": {
+      "title": "Empire of the Sun",
+      "genres": [
+        "War",
+        "Drama"
+      ],
+      "genres_raw": [
+        "war film",
+        "coming-of-age film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_361": {
+      "title": "The Color Purple",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film",
+        "LGBTQ-related film",
+        "epic film"
+      ],
+      "source": "wikidata"
+    },
+    "card_362": {
+      "title": "Amistad",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "drama film",
+        "trial film",
+        "white savior film"
+      ],
+      "source": "wikidata"
+    },
+    "card_363": {
+      "title": "War Horse",
+      "genres": [
+        "War",
+        "Drama"
+      ],
+      "genres_raw": [
+        "war film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_364": {
+      "title": "The BFG",
+      "genres": [
+        "Adventure",
+        "Family",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "family film",
+        "fantasy film",
+        "teen film"
+      ],
+      "source": "wikidata"
+    },
+    "card_365": {
+      "title": "Always",
+      "genres": [
+        "Romance",
+        "Fantasy",
+        "Drama",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "romance film",
+        "fantasy film",
+        "drama film",
+        "romantic comedy",
+        "ghost film"
+      ],
+      "source": "wikidata"
     }
   }
 }
