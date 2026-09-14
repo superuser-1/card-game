@@ -9018,6 +9018,172 @@
         "comedy film"
       ],
       "source": "wikidata"
+    },
+    "card_580": {
+      "title": "Conan the Barbarian",
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "fantasy film",
+        "adventure film",
+        "sword-and-sandal film",
+        "sword and sorcery film"
+      ],
+      "source": "wikidata"
+    },
+    "card_581": {
+      "title": "Commando",
+      "genres": [
+        "Action",
+        "Thriller",
+        "War"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_582": {
+      "title": "The Running Man",
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "dystopian film"
+      ],
+      "source": "wikidata"
+    },
+    "card_583": {
+      "title": "Twins",
+      "genres": [
+        "Sci-Fi",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "science fiction film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_584": {
+      "title": "Total Recall",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "dystopian film",
+        "adventure film",
+        "science fiction film",
+        "cyberpunk"
+      ],
+      "source": "wikidata"
+    },
+    "card_585": {
+      "title": "Kindergarten Cop",
+      "genres": [
+        "Comedy",
+        "Thriller",
+        "Action"
+      ],
+      "genres_raw": [
+        "comedy thriller",
+        "buddy cop film",
+        "action film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_586": {
+      "title": "True Lies",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Romance",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "action film",
+        "spy film",
+        "thriller film",
+        "romantic comedy film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_587": {
+      "title": "Last Action Hero",
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "action film",
+        "buddy cop film",
+        "fantasy film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_588": {
+      "title": "Eraser",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Drama"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_589": {
+      "title": "The 6th Day",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "science fiction film",
+        "cyberpunk"
+      ],
+      "source": "wikidata"
+    },
+    "card_590": {
+      "title": "End of Days",
+      "genres": [
+        "Action",
+        "Horror",
+        "Thriller",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "horror film",
+        "thriller film",
+        "fantasy film",
+        "dystopian film",
+        "satanic film"
+      ],
+      "source": "wikidata"
     }
   }
 }

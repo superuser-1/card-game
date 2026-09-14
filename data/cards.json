@@ -12256,6 +12256,237 @@
       "director_age_at_release": 49,
       "streaming_release": false,
       "profit_cost_ratio_pct": 339
+    },
+    {
+      "id": "card_580",
+      "title": "Conan the Barbarian",
+      "director": "John Milius",
+      "release_year": 1982,
+      "box_office_usd": 79100000,
+      "budget_usd": 20000000,
+      "runtime_minutes": 129,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Adventure"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 0,
+      "director_birth_year": 1944,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 296
+    },
+    {
+      "id": "card_581",
+      "title": "Commando",
+      "director": "Mark L. Lester",
+      "release_year": 1985,
+      "box_office_usd": 57500000,
+      "budget_usd": 10000000,
+      "runtime_minutes": 90,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller",
+        "War"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1946,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 475
+    },
+    {
+      "id": "card_582",
+      "title": "The Running Man",
+      "director": "Paul Michael Glaser",
+      "release_year": 1987,
+      "box_office_usd": 38100000,
+      "budget_usd": 27000000,
+      "runtime_minutes": 101,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1943,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 41
+    },
+    {
+      "id": "card_583",
+      "title": "Twins",
+      "director": "Ivan Reitman",
+      "release_year": 1988,
+      "box_office_usd": 216600000,
+      "budget_usd": 18000000,
+      "runtime_minutes": 107,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Comedy"
+      ],
+      "audience_score": 65,
+      "director_oscars_won": 0,
+      "director_birth_year": 1946,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1103
+    },
+    {
+      "id": "card_584",
+      "title": "Total Recall",
+      "director": "Paul Verhoeven",
+      "release_year": 1990,
+      "box_office_usd": 261400000,
+      "budget_usd": 65000000,
+      "runtime_minutes": 113,
+      "oscars_won": 1,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 0,
+      "director_birth_year": 1938,
+      "director_age_at_release": 52,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 302
+    },
+    {
+      "id": "card_585",
+      "title": "Kindergarten Cop",
+      "director": "Ivan Reitman",
+      "release_year": 1990,
+      "box_office_usd": 202000000,
+      "budget_usd": 26000000,
+      "runtime_minutes": 111,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Thriller",
+        "Action"
+      ],
+      "audience_score": 65,
+      "director_oscars_won": 0,
+      "director_birth_year": 1946,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 677
+    },
+    {
+      "id": "card_586",
+      "title": "True Lies",
+      "director": "James Cameron",
+      "release_year": 1994,
+      "box_office_usd": 378900000,
+      "budget_usd": 110000000,
+      "runtime_minutes": 141,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller",
+        "Romance",
+        "Comedy"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 3,
+      "director_birth_year": 1954,
+      "director_age_at_release": 40,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 244
+    },
+    {
+      "id": "card_587",
+      "title": "Last Action Hero",
+      "director": "John McTiernan",
+      "release_year": 1993,
+      "box_office_usd": 137300000,
+      "budget_usd": 85000000,
+      "runtime_minutes": 131,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Comedy"
+      ],
+      "audience_score": 71,
+      "director_oscars_won": 0,
+      "director_birth_year": 1951,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 62
+    },
+    {
+      "id": "card_588",
+      "title": "Eraser",
+      "director": "Chuck Russell",
+      "release_year": 1996,
+      "box_office_usd": 242000000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 114,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller",
+        "Drama"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 0,
+      "director_birth_year": 1952,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 142
+    },
+    {
+      "id": "card_589",
+      "title": "The 6th Day",
+      "director": "Roger Spottiswoode",
+      "release_year": 2000,
+      "box_office_usd": 96000000,
+      "budget_usd": 82000000,
+      "runtime_minutes": 124,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller",
+        "Sci-Fi"
+      ],
+      "audience_score": 59,
+      "director_oscars_won": 0,
+      "director_birth_year": 1945,
+      "director_age_at_release": 55,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 17
+    },
+    {
+      "id": "card_590",
+      "title": "End of Days",
+      "director": "Peter Hyams",
+      "release_year": 1999,
+      "box_office_usd": 212000000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 122,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Horror",
+        "Thriller",
+        "Fantasy"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 0,
+      "director_birth_year": 1943,
+      "director_age_at_release": 56,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 112
     }
   ]
 }
