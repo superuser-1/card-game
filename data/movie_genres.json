@@ -8937,6 +8937,87 @@
         "action film"
       ],
       "source": "wikidata"
+    },
+    "card_575": {
+      "title": "Spider-Man",
+      "genres": [
+        "Sci-Fi",
+        "Drama",
+        "Action"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "drama film",
+        "superhero film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_576": {
+      "title": "Spider-Man 3",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Sci-Fi",
+        "Drama"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "superhero film",
+        "science fiction film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_577": {
+      "title": "The Amazing Spider-Man",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "superhero film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_578": {
+      "title": "The Amazing Spider-Man 2",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "superhero film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_579": {
+      "title": "Spider-Man: Into the Spider-Verse",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi",
+        "Drama",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film",
+        "superhero film",
+        "drama film",
+        "comedy film"
+      ],
+      "source": "wikidata"
     }
   }
 }
