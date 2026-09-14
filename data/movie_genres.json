@@ -5094,6 +5094,339 @@
         "adventure film"
       ],
       "source": "wikidata"
+    },
+    "card_316": {
+      "title": "Warcraft",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Action"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "adventure film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_317": {
+      "title": "Ocean's Eleven",
+      "genres": [
+        "Crime",
+        "Comedy",
+        "Mystery",
+        "Adventure",
+        "Action"
+      ],
+      "genres_raw": [
+        "heist film",
+        "comedy film",
+        "mystery film",
+        "adventure film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_318": {
+      "title": "Ocean's Twelve",
+      "genres": [
+        "Crime",
+        "Comedy",
+        "Mystery",
+        "Action"
+      ],
+      "genres_raw": [
+        "heist film",
+        "comedy film",
+        "mystery film",
+        "action film",
+        "detective film"
+      ],
+      "source": "wikidata"
+    },
+    "card_319": {
+      "title": "Ocean's Thirteen",
+      "genres": [
+        "Crime",
+        "Comedy",
+        "Action"
+      ],
+      "genres_raw": [
+        "heist film",
+        "comedy film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_320": {
+      "title": "Highlander",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Thriller",
+        "Action"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "adventure film",
+        "thriller film",
+        "action film",
+        "swashbuckler film"
+      ],
+      "source": "wikidata"
+    },
+    "card_321": {
+      "title": "Highlander II: The Quickening",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "fantasy film",
+        "dystopian film",
+        "cyberpunk"
+      ],
+      "source": "wikidata"
+    },
+    "card_322": {
+      "title": "Highlander III: The Sorcerer",
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "fantasy film",
+        "adventure film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_323": {
+      "title": "Highlander: Endgame",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Action"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "adventure film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_324": {
+      "title": "Twilight",
+      "genres": [
+        "Romance",
+        "Drama",
+        "Action",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "romance film",
+        "teen film",
+        "vampire film",
+        "drama film",
+        "action film",
+        "melodrama",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_325": {
+      "title": "The Twilight Saga: New Moon",
+      "genres": [
+        "Romance",
+        "Horror",
+        "Drama",
+        "Fantasy",
+        "Action"
+      ],
+      "genres_raw": [
+        "romance film",
+        "teen film",
+        "vampire film",
+        "horror film",
+        "drama film",
+        "fantasy film",
+        "action film",
+        "werewolf film"
+      ],
+      "source": "wikidata"
+    },
+    "card_326": {
+      "title": "The Twilight Saga: Eclipse",
+      "genres": [
+        "Romance",
+        "Fantasy",
+        "Drama"
+      ],
+      "genres_raw": [
+        "romance film",
+        "fantasy film",
+        "teen film",
+        "vampire film",
+        "drama film",
+        "werewolf film"
+      ],
+      "source": "wikidata"
+    },
+    "card_327": {
+      "title": "The Twilight Saga: Breaking Dawn - Part 1",
+      "genres": [
+        "Romance",
+        "Fantasy",
+        "Drama"
+      ],
+      "genres_raw": [
+        "romance film",
+        "fantasy film",
+        "teen film",
+        "vampire film",
+        "drama film",
+        "werewolf film"
+      ],
+      "source": "wikidata"
+    },
+    "card_328": {
+      "title": "The Twilight Saga: Breaking Dawn - Part 2",
+      "genres": [
+        "Romance",
+        "Fantasy",
+        "Drama"
+      ],
+      "genres_raw": [
+        "romance film",
+        "fantasy film",
+        "teen film",
+        "vampire film",
+        "drama film",
+        "werewolf film",
+        "melodrama"
+      ],
+      "source": "wikidata"
+    },
+    "card_329": {
+      "title": "Fifty Shades of Grey",
+      "genres": [
+        "Romance",
+        "Drama"
+      ],
+      "genres_raw": [
+        "romance film",
+        "drama film",
+        "erotic film",
+        "BDSM-themed film"
+      ],
+      "source": "wikidata"
+    },
+    "card_330": {
+      "title": "Fifty Shades Darker",
+      "genres": [
+        "Drama",
+        "Romance"
+      ],
+      "genres_raw": [
+        "drama film",
+        "erotic film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_331": {
+      "title": "Fifty Shades Freed",
+      "genres": [
+        "Drama",
+        "Romance"
+      ],
+      "genres_raw": [
+        "erotic film",
+        "drama film",
+        "romance film",
+        "BDSM-themed film"
+      ],
+      "source": "wikidata"
+    },
+    "card_332": {
+      "title": "Die Hard",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Crime"
+      ],
+      "genres_raw": [
+        "action film",
+        "action thriller",
+        "Christmas film",
+        "heist film"
+      ],
+      "source": "wikidata"
+    },
+    "card_333": {
+      "title": "Die Hard 2",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Crime"
+      ],
+      "genres_raw": [
+        "action thriller",
+        "action film",
+        "thriller film",
+        "Christmas film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_334": {
+      "title": "Die Hard with a Vengeance",
+      "genres": [
+        "Crime",
+        "Action",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "heist film",
+        "action film",
+        "action thriller",
+        "buddy film",
+        "buddy cop film"
+      ],
+      "source": "wikidata"
+    },
+    "card_335": {
+      "title": "Live Free or Die Hard",
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "action thriller",
+        "buddy film",
+        "buddy cop film"
+      ],
+      "source": "wikidata"
+    },
+    "card_336": {
+      "title": "A Good Day to Die Hard",
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "action thriller",
+        "buddy cop film"
+      ],
+      "source": "wikidata"
     }
   }
 }
