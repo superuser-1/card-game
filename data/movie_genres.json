@@ -10026,6 +10026,89 @@
         "romantic comedy film"
       ],
       "source": "wikidata"
+    },
+    "card_645": {
+      "title": "Tangled",
+      "genres": [
+        "Musical",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "musical film",
+        "cinematic fairy tale",
+        "comedy film",
+        "coming-of-age film"
+      ],
+      "source": "wikidata"
+    },
+    "card_646": {
+      "title": "Winnie the Pooh",
+      "genres": [
+        "Musical",
+        "Fantasy",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "musical film",
+        "fantasy film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_647": {
+      "title": "Wreck-It Ralph",
+      "genres": [
+        "Fantasy",
+        "Comedy",
+        "Sci-Fi",
+        "Family",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "comedy film",
+        "crossover fiction",
+        "comedy drama",
+        "science fiction film",
+        "family film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_648": {
+      "title": "Frozen",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Musical",
+        "Fantasy",
+        "Family"
+      ],
+      "genres_raw": [
+        "comedy drama",
+        "musical film",
+        "comedy film",
+        "coming-of-age film",
+        "fantasy film",
+        "family film"
+      ],
+      "source": "wikidata"
+    },
+    "card_649": {
+      "title": "Big Hero 6",
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Action"
+      ],
+      "genres_raw": [
+        "teen film",
+        "science fiction film",
+        "fantasy film",
+        "buddy film",
+        "action film"
+      ],
+      "source": "wikidata"
     }
   }
 }

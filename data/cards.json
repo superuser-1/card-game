@@ -13647,6 +13647,114 @@
       "director_age_at_release": 56,
       "streaming_release": false,
       "profit_cost_ratio_pct": 158
+    },
+    {
+      "id": "card_645",
+      "title": "Tangled",
+      "director": "Nathan Greno and Byron Howard",
+      "release_year": 2010,
+      "box_office_usd": 592500000,
+      "budget_usd": 260000000,
+      "runtime_minutes": 100,
+      "oscars_won": 0,
+      "genres": [
+        "Musical",
+        "Comedy"
+      ],
+      "audience_score": 81,
+      "director_oscars_won": 0,
+      "director_birth_year": 1972,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 128
+    },
+    {
+      "id": "card_646",
+      "title": "Winnie the Pooh",
+      "director": "Stephen Anderson and Don Hall",
+      "release_year": 2011,
+      "box_office_usd": 50100000,
+      "budget_usd": 30000000,
+      "runtime_minutes": 63,
+      "oscars_won": 0,
+      "genres": [
+        "Musical",
+        "Fantasy",
+        "Comedy"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1970,
+      "director_age_at_release": 41,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 67
+    },
+    {
+      "id": "card_647",
+      "title": "Wreck-It Ralph",
+      "director": "Rich Moore",
+      "release_year": 2012,
+      "box_office_usd": 496500000,
+      "budget_usd": 165000000,
+      "runtime_minutes": 101,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Comedy",
+        "Sci-Fi",
+        "Family",
+        "Adventure"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1963,
+      "director_age_at_release": 49,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 201
+    },
+    {
+      "id": "card_648",
+      "title": "Frozen",
+      "director": "Chris Buck and Jennifer Lee",
+      "release_year": 2013,
+      "box_office_usd": 1280000000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 102,
+      "oscars_won": 2,
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Musical",
+        "Fantasy",
+        "Family"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 49,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 753
+    },
+    {
+      "id": "card_649",
+      "title": "Big Hero 6",
+      "director": "Don Hall and Chris Williams",
+      "release_year": 2014,
+      "box_office_usd": 657800000,
+      "budget_usd": 165000000,
+      "runtime_minutes": 102,
+      "oscars_won": 1,
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Action"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1968,
+      "director_age_at_release": 46,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 299
     }
   ]
 }
