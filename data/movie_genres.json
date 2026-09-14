@@ -6726,6 +6726,112 @@
         "dystopian film"
       ],
       "source": "wikidata"
+    },
+    "card_418": {
+      "title": "Rocky II",
+      "genres": [
+        "Drama",
+        "Action",
+        "Sport"
+      ],
+      "genres_raw": [
+        "drama film",
+        "action film",
+        "boxing film"
+      ],
+      "source": "wikidata"
+    },
+    "card_419": {
+      "title": "Rocky III",
+      "genres": [
+        "Drama",
+        "Action",
+        "Sport"
+      ],
+      "genres_raw": [
+        "drama film",
+        "action film",
+        "boxing film"
+      ],
+      "source": "wikidata"
+    },
+    "card_420": {
+      "title": "Rocky IV",
+      "genres": [
+        "Action",
+        "Drama",
+        "Sport"
+      ],
+      "genres_raw": [
+        "action film",
+        "drama film",
+        "boxing film"
+      ],
+      "source": "wikidata"
+    },
+    "card_421": {
+      "title": "Rocky V",
+      "genres": [
+        "Drama",
+        "Action",
+        "Sport"
+      ],
+      "genres_raw": [
+        "drama film",
+        "action film",
+        "boxing film"
+      ],
+      "source": "wikidata"
+    },
+    "card_422": {
+      "title": "Rocky Balboa",
+      "genres": [
+        "Drama",
+        "Action",
+        "Sport"
+      ],
+      "genres_raw": [
+        "drama film",
+        "action film",
+        "boxing film"
+      ],
+      "source": "wikidata"
+    },
+    "card_423": {
+      "title": "Creed",
+      "genres": [
+        "Drama",
+        "Sport"
+      ],
+      "genres_raw": [
+        "drama film",
+        "boxing film"
+      ],
+      "source": "wikidata"
+    },
+    "card_424": {
+      "title": "Creed II",
+      "genres": [
+        "Drama",
+        "Sport"
+      ],
+      "genres_raw": [
+        "drama film",
+        "boxing film"
+      ],
+      "source": "wikidata"
+    },
+    "card_425": {
+      "title": "Creed III",
+      "genres": [
+        "Sport",
+        "Drama"
+      ],
+      "genres_raw": [
+        "boxing film",
+        "drama film"
+      ],
+      "source": "wikidata"
     }
   }
 }

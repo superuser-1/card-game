@@ -8910,6 +8910,171 @@
       "director_age_at_release": 79,
       "streaming_release": false,
       "profit_cost_ratio_pct": 4
+    },
+    {
+      "id": "card_418",
+      "title": "Rocky II",
+      "director": "Sylvester Stallone",
+      "release_year": 1979,
+      "box_office_usd": 200100000,
+      "budget_usd": 7000000,
+      "runtime_minutes": 119,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Action",
+        "Sport"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 0,
+      "director_birth_year": 1946,
+      "director_age_at_release": 33,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 2759
+    },
+    {
+      "id": "card_419",
+      "title": "Rocky III",
+      "director": "Sylvester Stallone",
+      "release_year": 1982,
+      "box_office_usd": 270000000,
+      "budget_usd": 17000000,
+      "runtime_minutes": 100,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Action",
+        "Sport"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 0,
+      "director_birth_year": 1946,
+      "director_age_at_release": 36,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1488
+    },
+    {
+      "id": "card_420",
+      "title": "Rocky IV",
+      "director": "Sylvester Stallone",
+      "release_year": 1985,
+      "box_office_usd": 300500000,
+      "budget_usd": 28000000,
+      "runtime_minutes": 91,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Drama",
+        "Sport"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 0,
+      "director_birth_year": 1946,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 973
+    },
+    {
+      "id": "card_421",
+      "title": "Rocky V",
+      "director": "John G. Avildsen",
+      "release_year": 1990,
+      "box_office_usd": 119900000,
+      "budget_usd": 36000000,
+      "runtime_minutes": 104,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Action",
+        "Sport"
+      ],
+      "audience_score": 54,
+      "director_oscars_won": 0,
+      "director_birth_year": 1935,
+      "director_age_at_release": 55,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 233
+    },
+    {
+      "id": "card_422",
+      "title": "Rocky Balboa",
+      "director": "Sylvester Stallone",
+      "release_year": 2006,
+      "box_office_usd": 156000000,
+      "budget_usd": 24000000,
+      "runtime_minutes": 102,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Action",
+        "Sport"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1946,
+      "director_age_at_release": 60,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 550
+    },
+    {
+      "id": "card_423",
+      "title": "Creed",
+      "director": "Ryan Coogler",
+      "release_year": 2015,
+      "box_office_usd": 174100000,
+      "budget_usd": 37000000,
+      "runtime_minutes": 133,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Sport"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1986,
+      "director_age_at_release": 29,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 371
+    },
+    {
+      "id": "card_424",
+      "title": "Creed II",
+      "director": "Steven Caple Jr.",
+      "release_year": 2018,
+      "box_office_usd": 214200000,
+      "budget_usd": 50000000,
+      "runtime_minutes": 130,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Sport"
+      ],
+      "audience_score": 71,
+      "director_oscars_won": 0,
+      "director_birth_year": 1988,
+      "director_age_at_release": 30,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 328
+    },
+    {
+      "id": "card_425",
+      "title": "Creed III",
+      "director": "Michael B. Jordan",
+      "release_year": 2023,
+      "box_office_usd": 276100000,
+      "budget_usd": 75000000,
+      "runtime_minutes": 116,
+      "oscars_won": 0,
+      "genres": [
+        "Sport",
+        "Drama"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 0,
+      "director_birth_year": 1987,
+      "director_age_at_release": 36,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 268
     }
   ]
 }
