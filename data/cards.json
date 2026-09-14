@@ -9849,6 +9849,107 @@
       "director_age_at_release": 43,
       "streaming_release": false,
       "profit_cost_ratio_pct": 377
+    },
+    {
+      "id": "card_463",
+      "title": "The Evil Dead",
+      "director": "Sam Raimi",
+      "release_year": 1981,
+      "box_office_usd": 29400000,
+      "budget_usd": 375000,
+      "runtime_minutes": 85,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Drama",
+        "Fantasy"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1959,
+      "director_age_at_release": 22,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 7740
+    },
+    {
+      "id": "card_464",
+      "title": "Evil Dead II",
+      "director": "Sam Raimi",
+      "release_year": 1987,
+      "box_office_usd": 5900000,
+      "budget_usd": 3500000,
+      "runtime_minutes": 84,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Horror"
+      ],
+      "audience_score": 81,
+      "director_oscars_won": 0,
+      "director_birth_year": 1959,
+      "director_age_at_release": 28,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 69
+    },
+    {
+      "id": "card_465",
+      "title": "Army of Darkness",
+      "director": "Sam Raimi",
+      "release_year": 1992,
+      "box_office_usd": 21500000,
+      "budget_usd": 11000000,
+      "runtime_minutes": 81,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Comedy",
+        "Horror",
+        "Adventure"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 0,
+      "director_birth_year": 1959,
+      "director_age_at_release": 33,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 95
+    },
+    {
+      "id": "card_466",
+      "title": "Evil Dead",
+      "director": "Fede Alvarez",
+      "release_year": 2013,
+      "box_office_usd": 97500000,
+      "budget_usd": 17000000,
+      "runtime_minutes": 92,
+      "oscars_won": 0,
+      "genres": [
+        "Horror"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1978,
+      "director_age_at_release": 35,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 474
+    },
+    {
+      "id": "card_467",
+      "title": "Evil Dead Rise",
+      "director": "Lee Cronin",
+      "release_year": 2023,
+      "box_office_usd": 147000000,
+      "budget_usd": 17000000,
+      "runtime_minutes": 96,
+      "oscars_won": 0,
+      "genres": [
+        "Horror"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1982,
+      "director_age_at_release": 41,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 765
     }
   ]
 }

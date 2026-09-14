@@ -7382,6 +7382,78 @@
         "comedy horror film"
       ],
       "source": "wikidata"
+    },
+    "card_463": {
+      "title": "The Evil Dead",
+      "genres": [
+        "Horror",
+        "Drama",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "supernatural horror film",
+        "zombie film",
+        "drama film",
+        "fantasy film",
+        "splatter film"
+      ],
+      "source": "wikidata"
+    },
+    "card_464": {
+      "title": "Evil Dead II",
+      "genres": [
+        "Comedy",
+        "Horror"
+      ],
+      "genres_raw": [
+        "comedy horror",
+        "zombie film",
+        "splatter film",
+        "parody film"
+      ],
+      "source": "wikidata"
+    },
+    "card_465": {
+      "title": "Army of Darkness",
+      "genres": [
+        "Fantasy",
+        "Comedy",
+        "Horror",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "comedy horror",
+        "adventure film",
+        "zombie film",
+        "horror film",
+        "comedy film",
+        "time-travel film"
+      ],
+      "source": "wikidata"
+    },
+    "card_466": {
+      "title": "Evil Dead",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film",
+        "zombie film"
+      ],
+      "source": "wikidata"
+    },
+    "card_467": {
+      "title": "Evil Dead Rise",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film",
+        "speculative fiction film",
+        "supernatural horror film"
+      ],
+      "source": "wikidata"
     }
   }
 }
