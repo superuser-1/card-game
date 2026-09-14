@@ -9184,6 +9184,92 @@
         "satanic film"
       ],
       "source": "wikidata"
+    },
+    "card_591": {
+      "title": "Police Academy",
+      "genres": [
+        "Comedy",
+        "Crime"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_592": {
+      "title": "Police Academy 2: Their First Assignment",
+      "genres": [
+        "Comedy",
+        "Crime"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_593": {
+      "title": "Police Academy 3: Back in Training",
+      "genres": [
+        "Comedy",
+        "Crime",
+        "Action"
+      ],
+      "genres_raw": [
+        "crime comedy film",
+        "action film",
+        "slapstick"
+      ],
+      "source": "wikidata"
+    },
+    "card_594": {
+      "title": "Police Academy 4: Citizens on Patrol",
+      "genres": [
+        "Comedy",
+        "Crime"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_595": {
+      "title": "Police Academy 5: Assignment: Miami Beach",
+      "genres": [
+        "Comedy",
+        "Crime"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_596": {
+      "title": "Police Academy 6: City Under Siege",
+      "genres": [
+        "Comedy",
+        "Crime"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "crime film"
+      ],
+      "source": "wikidata"
+    },
+    "card_597": {
+      "title": "Police Academy: Mission to Moscow",
+      "genres": [
+        "Comedy",
+        "Crime"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "crime film"
+      ],
+      "source": "wikidata"
     }
   }
 }
