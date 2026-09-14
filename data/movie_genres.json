@@ -7216,6 +7216,88 @@
         "spy film"
       ],
       "source": "wikidata"
+    },
+    "card_452": {
+      "title": "The Hunger Games",
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Thriller",
+        "Drama",
+        "Action",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "adventure film",
+        "psychological thriller film",
+        "drama film",
+        "action film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_453": {
+      "title": "The Hunger Games: Catching Fire",
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Drama",
+        "Action"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "adventure film",
+        "drama film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_454": {
+      "title": "The Hunger Games: Mockingjay - Part 1",
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Drama",
+        "War"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "action film",
+        "drama film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_455": {
+      "title": "The Hunger Games: Mockingjay - Part 2",
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Drama",
+        "War"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "action film",
+        "drama film",
+        "war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_456": {
+      "title": "The Hunger Games: The Ballad of Songbirds and Snakes",
+      "genres": [
+        "Drama",
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "drama film",
+        "action film",
+        "adventure film"
+      ],
+      "source": "wikidata"
     }
   }
 }

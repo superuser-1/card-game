@@ -9616,6 +9616,117 @@
       "director_age_at_release": 57,
       "streaming_release": false,
       "profit_cost_ratio_pct": 71
+    },
+    {
+      "id": "card_452",
+      "title": "The Hunger Games",
+      "director": "Gary Ross",
+      "release_year": 2012,
+      "box_office_usd": 695200000,
+      "budget_usd": 78000000,
+      "runtime_minutes": 142,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Thriller",
+        "Drama",
+        "Action",
+        "Fantasy"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 0,
+      "director_birth_year": 1956,
+      "director_age_at_release": 56,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 791
+    },
+    {
+      "id": "card_453",
+      "title": "The Hunger Games: Catching Fire",
+      "director": "Francis Lawrence",
+      "release_year": 2013,
+      "box_office_usd": 865000000,
+      "budget_usd": 130000000,
+      "runtime_minutes": 146,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Adventure",
+        "Drama",
+        "Action"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 565
+    },
+    {
+      "id": "card_454",
+      "title": "The Hunger Games: Mockingjay - Part 1",
+      "director": "Francis Lawrence",
+      "release_year": 2014,
+      "box_office_usd": 755400000,
+      "budget_usd": 125000000,
+      "runtime_minutes": 123,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Drama",
+        "War"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 43,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 504
+    },
+    {
+      "id": "card_455",
+      "title": "The Hunger Games: Mockingjay - Part 2",
+      "director": "Francis Lawrence",
+      "release_year": 2015,
+      "box_office_usd": 661400000,
+      "budget_usd": 160000000,
+      "runtime_minutes": 137,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Drama",
+        "War"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 313
+    },
+    {
+      "id": "card_456",
+      "title": "The Hunger Games: The Ballad of Songbirds and Snakes",
+      "director": "Francis Lawrence",
+      "release_year": 2023,
+      "box_office_usd": 361800000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 157,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 52,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 262
     }
   ]
 }
