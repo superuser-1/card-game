@@ -6584,6 +6584,149 @@
       "director_age_at_release": 87,
       "profit_cost_ratio_pct": 85,
       "streaming_release": false
+    },
+    {
+      "id": "card_309",
+      "title": "Harry Potter and the Philosopher's Stone",
+      "director": "Chris Columbus",
+      "release_year": 2001,
+      "box_office_usd": 1029000000,
+      "budget_usd": 125000000,
+      "runtime_minutes": 152,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Family"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1958,
+      "director_age_at_release": 43,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 723
+    },
+    {
+      "id": "card_310",
+      "title": "Harry Potter and the Chamber of Secrets",
+      "director": "Chris Columbus",
+      "release_year": 2002,
+      "box_office_usd": 883400000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 161,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Family"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1958,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 783
+    },
+    {
+      "id": "card_311",
+      "title": "Harry Potter and the Goblet of Fire",
+      "director": "Mike Newell",
+      "release_year": 2005,
+      "box_office_usd": 900400000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 157,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Family"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 0,
+      "director_birth_year": 1942,
+      "director_age_at_release": 63,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 500
+    },
+    {
+      "id": "card_312",
+      "title": "Harry Potter and the Order of the Phoenix",
+      "director": "David Yates",
+      "release_year": 2007,
+      "box_office_usd": 942900000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 138,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Family"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1963,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 529
+    },
+    {
+      "id": "card_313",
+      "title": "Harry Potter and the Half-Blood Prince",
+      "director": "David Yates",
+      "release_year": 2009,
+      "box_office_usd": 941100000,
+      "budget_usd": 250000000,
+      "runtime_minutes": 153,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1963,
+      "director_age_at_release": 46,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 276
+    },
+    {
+      "id": "card_314",
+      "title": "Harry Potter and the Deathly Hallows: Part 1",
+      "director": "David Yates",
+      "release_year": 2010,
+      "box_office_usd": 991200000,
+      "budget_usd": 125000000,
+      "runtime_minutes": 146,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Action"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1963,
+      "director_age_at_release": 47,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 693
+    },
+    {
+      "id": "card_315",
+      "title": "Harry Potter and the Deathly Hallows: Part 2",
+      "director": "David Yates",
+      "release_year": 2011,
+      "box_office_usd": 1380000000,
+      "budget_usd": 125000000,
+      "runtime_minutes": 130,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Adventure"
+      ],
+      "audience_score": 82,
+      "director_oscars_won": 0,
+      "director_birth_year": 1963,
+      "director_age_at_release": 48,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1004
     }
   ]
 }

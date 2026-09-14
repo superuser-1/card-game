@@ -5003,6 +5003,97 @@
         "sword-and-sandal film"
       ],
       "source": "wikidata"
+    },
+    "card_309": {
+      "title": "Harry Potter and the Philosopher's Stone",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Family"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "adventure film",
+        "speculative fiction film",
+        "children's film"
+      ],
+      "source": "wikidata"
+    },
+    "card_310": {
+      "title": "Harry Potter and the Chamber of Secrets",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Family"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "adventure film",
+        "children's film"
+      ],
+      "source": "wikidata"
+    },
+    "card_311": {
+      "title": "Harry Potter and the Goblet of Fire",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Family"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "children's film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_312": {
+      "title": "Harry Potter and the Order of the Phoenix",
+      "genres": [
+        "Fantasy",
+        "Family"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "family film"
+      ],
+      "source": "wikidata"
+    },
+    "card_313": {
+      "title": "Harry Potter and the Half-Blood Prince",
+      "genres": [
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_314": {
+      "title": "Harry Potter and the Deathly Hallows: Part 1",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Action"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "adventure film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_315": {
+      "title": "Harry Potter and the Deathly Hallows: Part 2",
+      "genres": [
+        "Fantasy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "adventure film"
+      ],
+      "source": "wikidata"
     }
   }
 }
