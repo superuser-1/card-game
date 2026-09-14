@@ -9741,6 +9741,152 @@
         "romantic fantasy"
       ],
       "source": "wikidata"
+    },
+    "card_628": {
+      "title": "Pocahontas",
+      "genres": [
+        "Romance",
+        "Biography",
+        "Musical",
+        "Fantasy",
+        "Family",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "romance film",
+        "biographical film",
+        "musical film",
+        "comedy drama",
+        "fantasy film",
+        "family film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_629": {
+      "title": "The Hunchback of Notre Dame",
+      "genres": [
+        "Musical",
+        "Comedy",
+        "Drama",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "musical film",
+        "comedy drama",
+        "fantasy film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_630": {
+      "title": "Hercules",
+      "genres": [
+        "Fantasy",
+        "Comedy",
+        "Musical",
+        "Family"
+      ],
+      "genres_raw": [
+        "fantasy comedy",
+        "musical film",
+        "children's film",
+        "sword-and-sandal film"
+      ],
+      "source": "wikidata"
+    },
+    "card_631": {
+      "title": "Mulan",
+      "genres": [
+        "Musical",
+        "Fantasy",
+        "Adventure",
+        "Comedy",
+        "Drama",
+        "Family"
+      ],
+      "genres_raw": [
+        "musical film",
+        "fantasy film",
+        "adventure film",
+        "martial arts film",
+        "comedy drama",
+        "family film"
+      ],
+      "source": "wikidata"
+    },
+    "card_632": {
+      "title": "Tarzan",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Musical",
+        "Adventure",
+        "Family"
+      ],
+      "genres_raw": [
+        "comedy drama",
+        "musical film",
+        "adventure film",
+        "family film"
+      ],
+      "source": "wikidata"
+    },
+    "card_633": {
+      "title": "Fantasia 2000",
+      "genres": [
+        "Musical",
+        "Fantasy",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "musical film",
+        "fantasy film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_634": {
+      "title": "Dinosaur",
+      "genres": [
+        "Adventure"
+      ],
+      "genres_raw": [
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_635": {
+      "title": "The Emperor's New Groove",
+      "genres": [
+        "Musical",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "musical film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_636": {
+      "title": "Atlantis: The Lost Empire",
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Adventure",
+        "Drama",
+        "Action"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "fantasy film",
+        "adventure film",
+        "drama film",
+        "action film"
+      ],
+      "source": "wikidata"
     }
   }
 }

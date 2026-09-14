@@ -13271,6 +13271,204 @@
       "director_age_at_release": 29,
       "streaming_release": false,
       "profit_cost_ratio_pct": 1705
+    },
+    {
+      "id": "card_628",
+      "title": "Pocahontas",
+      "director": "Mike Gabriel and Eric Goldberg",
+      "release_year": 1995,
+      "box_office_usd": 346100000,
+      "budget_usd": 55000000,
+      "runtime_minutes": 81,
+      "oscars_won": 2,
+      "genres": [
+        "Romance",
+        "Biography",
+        "Musical",
+        "Fantasy",
+        "Family",
+        "Adventure"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1954,
+      "director_age_at_release": 41,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 529
+    },
+    {
+      "id": "card_629",
+      "title": "The Hunchback of Notre Dame",
+      "director": "Gary Trousdale and Kirk Wise",
+      "release_year": 1996,
+      "box_office_usd": 325000000,
+      "budget_usd": 70000000,
+      "runtime_minutes": 91,
+      "oscars_won": 0,
+      "genres": [
+        "Musical",
+        "Comedy",
+        "Drama",
+        "Fantasy"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1962,
+      "director_age_at_release": 34,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 364
+    },
+    {
+      "id": "card_630",
+      "title": "Hercules",
+      "director": "John Musker and Ron Clements",
+      "release_year": 1997,
+      "box_office_usd": 252700000,
+      "budget_usd": 85000000,
+      "runtime_minutes": 93,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Comedy",
+        "Musical",
+        "Family"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 0,
+      "director_birth_year": 1953,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 197
+    },
+    {
+      "id": "card_631",
+      "title": "Mulan",
+      "director": "Barry Cook and Tony Bancroft",
+      "release_year": 1998,
+      "box_office_usd": 304000000,
+      "budget_usd": 90000000,
+      "runtime_minutes": 88,
+      "oscars_won": 0,
+      "genres": [
+        "Musical",
+        "Fantasy",
+        "Adventure",
+        "Comedy",
+        "Drama",
+        "Family"
+      ],
+      "audience_score": 83,
+      "director_oscars_won": 0,
+      "director_birth_year": 1962,
+      "director_age_at_release": 36,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 238
+    },
+    {
+      "id": "card_632",
+      "title": "Tarzan",
+      "director": "Kevin Lima and Chris Buck",
+      "release_year": 1999,
+      "box_office_usd": 448200000,
+      "budget_usd": 130000000,
+      "runtime_minutes": 88,
+      "oscars_won": 1,
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Musical",
+        "Adventure",
+        "Family"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1960,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 245
+    },
+    {
+      "id": "card_633",
+      "title": "Fantasia 2000",
+      "director": "Pixote Hunt, Hendel Butoy and Eric Goldberg",
+      "release_year": 1999,
+      "box_office_usd": 90900000,
+      "budget_usd": 80000000,
+      "runtime_minutes": 75,
+      "oscars_won": 0,
+      "genres": [
+        "Musical",
+        "Fantasy",
+        "Comedy"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 0,
+      "director_birth_year": 1957,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 14
+    },
+    {
+      "id": "card_634",
+      "title": "Dinosaur",
+      "director": "Ralph Zondag and Eric Leighton",
+      "release_year": 2000,
+      "box_office_usd": 349800000,
+      "budget_usd": 127500000,
+      "runtime_minutes": 82,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 0,
+      "director_birth_year": null,
+      "director_age_at_release": null,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 174
+    },
+    {
+      "id": "card_635",
+      "title": "The Emperor's New Groove",
+      "director": "Mark Dindal",
+      "release_year": 2000,
+      "box_office_usd": 169700000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 78,
+      "oscars_won": 0,
+      "genres": [
+        "Musical",
+        "Comedy"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 0,
+      "director_birth_year": 1960,
+      "director_age_at_release": 40,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 70
+    },
+    {
+      "id": "card_636",
+      "title": "Atlantis: The Lost Empire",
+      "director": "Gary Trousdale and Kirk Wise",
+      "release_year": 2001,
+      "box_office_usd": 186100000,
+      "budget_usd": 100000000,
+      "runtime_minutes": 96,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Adventure",
+        "Drama",
+        "Action"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 0,
+      "director_birth_year": 1962,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 86
     }
   ]
 }
