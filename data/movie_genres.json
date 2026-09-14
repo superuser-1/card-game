@@ -9378,6 +9378,135 @@
         "drama film"
       ],
       "source": "wikidata"
+    },
+    "card_605": {
+      "title": "Nosferatu",
+      "genres": [
+        "Horror",
+        "Drama"
+      ],
+      "genres_raw": [
+        "silent film",
+        "horror film",
+        "drama film",
+        "vampire film"
+      ],
+      "source": "wikidata"
+    },
+    "card_606": {
+      "title": "Dracula",
+      "genres": [
+        "Horror",
+        "Drama"
+      ],
+      "genres_raw": [
+        "horror film",
+        "vampire film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_607": {
+      "title": "Dracula (1958)",
+      "genres": [
+        "Horror"
+      ],
+      "genres_raw": [
+        "horror film",
+        "vampire film"
+      ],
+      "source": "wikidata"
+    },
+    "card_608": {
+      "title": "Bram Stoker's Dracula",
+      "genres": [
+        "Horror",
+        "Drama",
+        "Romance",
+        "Thriller",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "horror film",
+        "vampire film",
+        "period drama film",
+        "drama film",
+        "Gothic romance film",
+        "thriller film",
+        "gothic horror film",
+        "fantasy film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_609": {
+      "title": "Frankenstein",
+      "genres": [
+        "Horror",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "horror film",
+        "science fiction film",
+        "monster film"
+      ],
+      "source": "wikidata"
+    },
+    "card_610": {
+      "title": "Bride of Frankenstein",
+      "genres": [
+        "Horror",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "horror film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_611": {
+      "title": "Young Frankenstein",
+      "genres": [
+        "Comedy",
+        "Horror",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "comedy horror",
+        "horror film",
+        "science fiction film",
+        "parody film"
+      ],
+      "source": "wikidata"
+    },
+    "card_612": {
+      "title": "The Mummy",
+      "genres": [
+        "Horror",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "horror film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_613": {
+      "title": "The Mummy (1999)",
+      "genres": [
+        "Horror",
+        "Fantasy",
+        "Action",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "horror film",
+        "fantasy film",
+        "treasure hunt film",
+        "action film",
+        "comedy film"
+      ],
+      "source": "wikidata"
     }
   }
 }

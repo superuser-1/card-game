@@ -12776,6 +12776,191 @@
       "director_age_at_release": 50,
       "streaming_release": false,
       "profit_cost_ratio_pct": 2593
+    },
+    {
+      "id": "card_605",
+      "title": "Nosferatu",
+      "director": "F. W. Murnau",
+      "release_year": 1922,
+      "box_office_usd": 1000000,
+      "budget_usd": 100000,
+      "runtime_minutes": 94,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Drama"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1888,
+      "director_age_at_release": 34,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 900
+    },
+    {
+      "id": "card_606",
+      "title": "Dracula",
+      "director": "Tod Browning",
+      "release_year": 1931,
+      "box_office_usd": 700000,
+      "budget_usd": 341191,
+      "runtime_minutes": 74,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Drama"
+      ],
+      "audience_score": 71,
+      "director_oscars_won": 0,
+      "director_birth_year": 1880,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 105
+    },
+    {
+      "id": "card_607",
+      "title": "Dracula (1958)",
+      "director": "Terence Fisher",
+      "release_year": 1958,
+      "box_office_usd": 3500000,
+      "budget_usd": 228000,
+      "runtime_minutes": 82,
+      "oscars_won": 0,
+      "genres": [
+        "Horror"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 0,
+      "director_birth_year": 1904,
+      "director_age_at_release": 54,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1435
+    },
+    {
+      "id": "card_608",
+      "title": "Bram Stoker's Dracula",
+      "director": "Francis Ford Coppola",
+      "release_year": 1992,
+      "box_office_usd": 215900000,
+      "budget_usd": 40000000,
+      "runtime_minutes": 128,
+      "oscars_won": 3,
+      "genres": [
+        "Horror",
+        "Drama",
+        "Romance",
+        "Thriller",
+        "Fantasy"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 5,
+      "director_birth_year": 1939,
+      "director_age_at_release": 53,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 440
+    },
+    {
+      "id": "card_609",
+      "title": "Frankenstein",
+      "director": "James Whale",
+      "release_year": 1931,
+      "box_office_usd": 12000000,
+      "budget_usd": 262007,
+      "runtime_minutes": 70,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Sci-Fi"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1889,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 4480
+    },
+    {
+      "id": "card_610",
+      "title": "Bride of Frankenstein",
+      "director": "James Whale",
+      "release_year": 1935,
+      "box_office_usd": 2000000,
+      "budget_usd": 397000,
+      "runtime_minutes": 75,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Sci-Fi"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 0,
+      "director_birth_year": 1889,
+      "director_age_at_release": 46,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 404
+    },
+    {
+      "id": "card_611",
+      "title": "Young Frankenstein",
+      "director": "Mel Brooks",
+      "release_year": 1974,
+      "box_office_usd": 86200000,
+      "budget_usd": 2780000,
+      "runtime_minutes": 105,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Horror",
+        "Sci-Fi"
+      ],
+      "audience_score": 81,
+      "director_oscars_won": 0,
+      "director_birth_year": 1926,
+      "director_age_at_release": 48,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 3001
+    },
+    {
+      "id": "card_612",
+      "title": "The Mummy",
+      "director": "Karl Freund",
+      "release_year": 1932,
+      "box_office_usd": 1000000,
+      "budget_usd": 196000,
+      "runtime_minutes": 73,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Fantasy"
+      ],
+      "audience_score": 65,
+      "director_oscars_won": 0,
+      "director_birth_year": 1890,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 410
+    },
+    {
+      "id": "card_613",
+      "title": "The Mummy (1999)",
+      "director": "Stephen Sommers",
+      "release_year": 1999,
+      "box_office_usd": 422500000,
+      "budget_usd": 80000000,
+      "runtime_minutes": 125,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Fantasy",
+        "Action",
+        "Comedy"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 0,
+      "director_birth_year": 1962,
+      "director_age_at_release": 37,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 428
     }
   ]
 }
