@@ -7022,6 +7022,95 @@
         "mystery film"
       ],
       "source": "wikidata"
+    },
+    "card_439": {
+      "title": "Pirates of the Caribbean: The Curse of the Black Pearl",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Comedy",
+        "Action"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "swashbuckler film",
+        "comedy film",
+        "action film",
+        "adventure film",
+        "pirate film"
+      ],
+      "source": "wikidata"
+    },
+    "card_440": {
+      "title": "Pirates of the Caribbean: Dead Man's Chest",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Comedy",
+        "Action"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "swashbuckler film",
+        "comedy film",
+        "action film",
+        "adventure film",
+        "pirate film"
+      ],
+      "source": "wikidata"
+    },
+    "card_441": {
+      "title": "Pirates of the Caribbean: At World's End",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Comedy",
+        "Action"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "swashbuckler film",
+        "comedy film",
+        "action film",
+        "adventure film",
+        "pirate film"
+      ],
+      "source": "wikidata"
+    },
+    "card_442": {
+      "title": "Pirates of the Caribbean: On Stranger Tides",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Comedy",
+        "Action"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "swashbuckler film",
+        "zombie film",
+        "comedy film",
+        "action film",
+        "adventure film",
+        "pirate film"
+      ],
+      "source": "wikidata"
+    },
+    "card_443": {
+      "title": "Pirates of the Caribbean: Dead Men Tell No Tales",
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "treasure hunt film",
+        "fantasy film",
+        "swashbuckler film",
+        "pirate film",
+        "comedy film"
+      ],
+      "source": "wikidata"
     }
   }
 }

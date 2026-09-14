@@ -9346,6 +9346,115 @@
       "director_age_at_release": 61,
       "streaming_release": false,
       "profit_cost_ratio_pct": 247
+    },
+    {
+      "id": "card_439",
+      "title": "Pirates of the Caribbean: The Curse of the Black Pearl",
+      "director": "Gore Verbinski",
+      "release_year": 2003,
+      "box_office_usd": 654300000,
+      "budget_usd": 140000000,
+      "runtime_minutes": 143,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Comedy",
+        "Action"
+      ],
+      "audience_score": 82,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 367
+    },
+    {
+      "id": "card_440",
+      "title": "Pirates of the Caribbean: Dead Man's Chest",
+      "director": "Gore Verbinski",
+      "release_year": 2006,
+      "box_office_usd": 1066000000,
+      "budget_usd": 225000000,
+      "runtime_minutes": 150,
+      "oscars_won": 1,
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Comedy",
+        "Action"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 374
+    },
+    {
+      "id": "card_441",
+      "title": "Pirates of the Caribbean: At World's End",
+      "director": "Gore Verbinski",
+      "release_year": 2007,
+      "box_office_usd": 963400000,
+      "budget_usd": 300000000,
+      "runtime_minutes": 168,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Comedy",
+        "Action"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 43,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 221
+    },
+    {
+      "id": "card_442",
+      "title": "Pirates of the Caribbean: On Stranger Tides",
+      "director": "Rob Marshall",
+      "release_year": 2011,
+      "box_office_usd": 1046000000,
+      "budget_usd": 378500000,
+      "runtime_minutes": 136,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Comedy",
+        "Action"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 0,
+      "director_birth_year": 1960,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 176
+    },
+    {
+      "id": "card_443",
+      "title": "Pirates of the Caribbean: Dead Men Tell No Tales",
+      "director": "Joachim Ronning and Espen Sandberg",
+      "release_year": 2017,
+      "box_office_usd": 795900000,
+      "budget_usd": 230000000,
+      "runtime_minutes": 129,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Adventure",
+        "Comedy"
+      ],
+      "audience_score": 59,
+      "director_oscars_won": 0,
+      "director_birth_year": 1972,
+      "director_age_at_release": 45,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 246
     }
   ]
 }
