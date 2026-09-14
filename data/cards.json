@@ -10823,6 +10823,241 @@
       "director_age_at_release": 45,
       "streaming_release": false,
       "profit_cost_ratio_pct": 86
+    },
+    {
+      "id": "card_511",
+      "title": "Godzilla",
+      "director": "Ishiro Honda",
+      "release_year": 1954,
+      "box_office_usd": 2250000,
+      "budget_usd": 900000,
+      "runtime_minutes": 96,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Sci-Fi",
+        "Action"
+      ],
+      "audience_score": 82,
+      "director_oscars_won": 0,
+      "director_birth_year": 1911,
+      "director_age_at_release": 43,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 150
+    },
+    {
+      "id": "card_512",
+      "title": "Mothra vs. Godzilla",
+      "director": "Ishiro Honda",
+      "release_year": 1964,
+      "box_office_usd": 3500000,
+      "budget_usd": 400000,
+      "runtime_minutes": 88,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Horror",
+        "Adventure"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1911,
+      "director_age_at_release": 53,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 775
+    },
+    {
+      "id": "card_513",
+      "title": "Ghidorah, the Three-Headed Monster",
+      "director": "Ishiro Honda",
+      "release_year": 1964,
+      "box_office_usd": 2300000,
+      "budget_usd": 370000,
+      "runtime_minutes": 93,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Horror",
+        "Drama"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 0,
+      "director_birth_year": 1911,
+      "director_age_at_release": 53,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 522
+    },
+    {
+      "id": "card_514",
+      "title": "Godzilla vs. Mechagodzilla",
+      "director": "Jun Fukuda",
+      "release_year": 1974,
+      "box_office_usd": 17100000,
+      "budget_usd": 380000,
+      "runtime_minutes": 84,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Horror"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1923,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 4400
+    },
+    {
+      "id": "card_515",
+      "title": "The Return of Godzilla",
+      "director": "Koji Hashimoto",
+      "release_year": 1984,
+      "box_office_usd": 14000000,
+      "budget_usd": 6250000,
+      "runtime_minutes": 103,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Thriller"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1936,
+      "director_age_at_release": 48,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 124
+    },
+    {
+      "id": "card_516",
+      "title": "Godzilla (1998)",
+      "director": "Roland Emmerich",
+      "release_year": 1998,
+      "box_office_usd": 379000000,
+      "budget_usd": 140000000,
+      "runtime_minutes": 139,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Thriller",
+        "Horror",
+        "Action"
+      ],
+      "audience_score": 48,
+      "director_oscars_won": 0,
+      "director_birth_year": 1955,
+      "director_age_at_release": 43,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 171
+    },
+    {
+      "id": "card_517",
+      "title": "Shin Godzilla",
+      "director": "Hideaki Anno and Shinji Higuchi",
+      "release_year": 2016,
+      "box_office_usd": 83300000,
+      "budget_usd": 12600000,
+      "runtime_minutes": 120,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Drama",
+        "Horror",
+        "Adventure"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1962,
+      "director_age_at_release": 54,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 561
+    },
+    {
+      "id": "card_518",
+      "title": "Godzilla (2014)",
+      "director": "Gareth Edwards",
+      "release_year": 2014,
+      "box_office_usd": 529100000,
+      "budget_usd": 160000000,
+      "runtime_minutes": 123,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Action"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1975,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 231
+    },
+    {
+      "id": "card_519",
+      "title": "Godzilla: King of the Monsters",
+      "director": "Michael Dougherty",
+      "release_year": 2019,
+      "box_office_usd": 387300000,
+      "budget_usd": 185000000,
+      "runtime_minutes": 131,
+      "oscars_won": 0,
+      "genres": [
+        "Thriller",
+        "Action",
+        "Sci-Fi"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1974,
+      "director_age_at_release": 45,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 109
+    },
+    {
+      "id": "card_520",
+      "title": "Godzilla vs. Kong",
+      "director": "Adam Wingard",
+      "release_year": 2021,
+      "box_office_usd": 470000000,
+      "budget_usd": 155000000,
+      "runtime_minutes": 113,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Adventure",
+        "Thriller"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 0,
+      "director_birth_year": 1982,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 203
+    },
+    {
+      "id": "card_521",
+      "title": "Godzilla x Kong: The New Empire",
+      "director": "Adam Wingard",
+      "release_year": 2024,
+      "box_office_usd": 572500000,
+      "budget_usd": 135000000,
+      "runtime_minutes": 115,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 0,
+      "director_birth_year": 1982,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 324
     }
   ]
 }

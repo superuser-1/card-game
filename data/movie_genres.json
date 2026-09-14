@@ -8024,6 +8024,182 @@
         "thriller film"
       ],
       "source": "wikidata"
+    },
+    "card_511": {
+      "title": "Godzilla",
+      "genres": [
+        "Horror",
+        "Sci-Fi",
+        "Action"
+      ],
+      "genres_raw": [
+        "horror film",
+        "science fiction film",
+        "action film",
+        "kaiju"
+      ],
+      "source": "wikidata"
+    },
+    "card_512": {
+      "title": "Mothra vs. Godzilla",
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Horror",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "fantasy film",
+        "kaiju",
+        "horror film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_513": {
+      "title": "Ghidorah, the Three-Headed Monster",
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Horror",
+        "Drama"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "fantasy film",
+        "kaiju",
+        "horror film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_514": {
+      "title": "Godzilla vs. Mechagodzilla",
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Horror"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "fantasy film",
+        "alien invasion",
+        "kaiju",
+        "horror film",
+        "mecha"
+      ],
+      "source": "wikidata"
+    },
+    "card_515": {
+      "title": "The Return of Godzilla",
+      "genres": [
+        "Sci-Fi",
+        "Fantasy",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "fantasy film",
+        "kaiju",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_516": {
+      "title": "Godzilla (1998)",
+      "genres": [
+        "Sci-Fi",
+        "Thriller",
+        "Horror",
+        "Action"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "monster film",
+        "thriller film",
+        "horror film",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_517": {
+      "title": "Shin Godzilla",
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Drama",
+        "Horror",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "action film",
+        "drama film",
+        "kaiju",
+        "horror film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_518": {
+      "title": "Godzilla (2014)",
+      "genres": [
+        "Sci-Fi",
+        "Action"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "kaiju",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_519": {
+      "title": "Godzilla: King of the Monsters",
+      "genres": [
+        "Thriller",
+        "Action",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "thriller film",
+        "action film",
+        "science fiction film",
+        "kaiju"
+      ],
+      "source": "wikidata"
+    },
+    "card_520": {
+      "title": "Godzilla vs. Kong",
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Adventure",
+        "Thriller"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "adventure film",
+        "monster film",
+        "thriller film"
+      ],
+      "source": "wikidata"
+    },
+    "card_521": {
+      "title": "Godzilla x Kong: The New Empire",
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "adventure film",
+        "monster film"
+      ],
+      "source": "wikidata"
     }
   }
 }
