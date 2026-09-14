@@ -9455,6 +9455,167 @@
       "director_age_at_release": 45,
       "streaming_release": false,
       "profit_cost_ratio_pct": 246
+    },
+    {
+      "id": "card_444",
+      "title": "Mission: Impossible",
+      "director": "Brian De Palma",
+      "release_year": 1996,
+      "box_office_usd": 457700000,
+      "budget_usd": 80000000,
+      "runtime_minutes": 110,
+      "oscars_won": 0,
+      "genres": [
+        "Crime",
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1940,
+      "director_age_at_release": 56,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 472
+    },
+    {
+      "id": "card_445",
+      "title": "Mission: Impossible 2",
+      "director": "John Woo",
+      "release_year": 2000,
+      "box_office_usd": 546400000,
+      "budget_usd": 125000000,
+      "runtime_minutes": 124,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 56,
+      "director_oscars_won": 0,
+      "director_birth_year": 1946,
+      "director_age_at_release": 54,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 337
+    },
+    {
+      "id": "card_446",
+      "title": "Mission: Impossible III",
+      "director": "J.J. Abrams",
+      "release_year": 2006,
+      "box_office_usd": 398500000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 126,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller",
+        "Adventure"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 40,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 166
+    },
+    {
+      "id": "card_447",
+      "title": "Mission: Impossible - Ghost Protocol",
+      "director": "Brad Bird",
+      "release_year": 2011,
+      "box_office_usd": 694700000,
+      "budget_usd": 145000000,
+      "runtime_minutes": 133,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 2,
+      "director_birth_year": 1957,
+      "director_age_at_release": 54,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 379
+    },
+    {
+      "id": "card_448",
+      "title": "Mission: Impossible - Rogue Nation",
+      "director": "Christopher McQuarrie",
+      "release_year": 2015,
+      "box_office_usd": 710900000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 131,
+      "oscars_won": 0,
+      "genres": [
+        "Thriller",
+        "Action"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 0,
+      "director_birth_year": 1968,
+      "director_age_at_release": 47,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 374
+    },
+    {
+      "id": "card_449",
+      "title": "Mission: Impossible - Fallout",
+      "director": "Christopher McQuarrie",
+      "release_year": 2018,
+      "box_office_usd": 791100000,
+      "budget_usd": 178000000,
+      "runtime_minutes": 147,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Thriller",
+        "Adventure"
+      ],
+      "audience_score": 82,
+      "director_oscars_won": 0,
+      "director_birth_year": 1968,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 344
+    },
+    {
+      "id": "card_450",
+      "title": "Mission: Impossible - Dead Reckoning Part One",
+      "director": "Christopher McQuarrie",
+      "release_year": 2023,
+      "box_office_usd": 571100000,
+      "budget_usd": 291000000,
+      "runtime_minutes": 163,
+      "oscars_won": 0,
+      "genres": [
+        "Action"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1968,
+      "director_age_at_release": 55,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 96
+    },
+    {
+      "id": "card_451",
+      "title": "Mission: Impossible - The Final Reckoning",
+      "director": "Christopher McQuarrie",
+      "release_year": 2025,
+      "box_office_usd": 598800000,
+      "budget_usd": 350000000,
+      "runtime_minutes": 170,
+      "oscars_won": 0,
+      "genres": [
+        "Action"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1968,
+      "director_age_at_release": 57,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 71
     }
   ]
 }
