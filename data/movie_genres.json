@@ -9887,6 +9887,145 @@
         "action film"
       ],
       "source": "wikidata"
+    },
+    "card_637": {
+      "title": "Lilo & Stitch",
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "comedy drama",
+        "science fiction film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_638": {
+      "title": "Treasure Planet",
+      "genres": [
+        "Sci-Fi",
+        "Family",
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "treasure hunt film",
+        "children's film",
+        "space opera",
+        "pirate film",
+        "action film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_639": {
+      "title": "Brother Bear",
+      "genres": [
+        "Fantasy",
+        "Family",
+        "Comedy",
+        "Drama",
+        "Musical"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "buddy film",
+        "children's film",
+        "comedy film",
+        "drama film",
+        "family film",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_640": {
+      "title": "Home on the Range",
+      "genres": [
+        "Musical",
+        "Comedy",
+        "Western",
+        "Family"
+      ],
+      "genres_raw": [
+        "musical film",
+        "comedy film",
+        "Western film",
+        "family film"
+      ],
+      "source": "wikidata"
+    },
+    "card_641": {
+      "title": "Chicken Little",
+      "genres": [
+        "Comedy",
+        "Family",
+        "Sci-Fi",
+        "Musical",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "disaster film",
+        "comedy film",
+        "children's film",
+        "science fiction film",
+        "musical film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_642": {
+      "title": "Meet the Robinsons",
+      "genres": [
+        "Adventure",
+        "Fantasy",
+        "Comedy",
+        "Family",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "fantasy film",
+        "comedy film",
+        "children's film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_643": {
+      "title": "Bolt",
+      "genres": [
+        "Family",
+        "Comedy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "children's film",
+        "comedy film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_644": {
+      "title": "The Princess and the Frog",
+      "genres": [
+        "Musical",
+        "Comedy",
+        "Drama",
+        "Fantasy",
+        "Romance"
+      ],
+      "genres_raw": [
+        "buddy film",
+        "musical film",
+        "comedy drama",
+        "fantasy film",
+        "romantic comedy film"
+      ],
+      "source": "wikidata"
     }
   }
 }

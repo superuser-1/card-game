@@ -13469,6 +13469,184 @@
       "director_age_at_release": 39,
       "streaming_release": false,
       "profit_cost_ratio_pct": 86
+    },
+    {
+      "id": "card_637",
+      "title": "Lilo & Stitch",
+      "director": "Chris Sanders and Dean DeBlois",
+      "release_year": 2002,
+      "box_office_usd": 273100000,
+      "budget_usd": 80000000,
+      "runtime_minutes": 85,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Sci-Fi"
+      ],
+      "audience_score": 81,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 36,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 241
+    },
+    {
+      "id": "card_638",
+      "title": "Treasure Planet",
+      "director": "John Musker and Ron Clements",
+      "release_year": 2002,
+      "box_office_usd": 109600000,
+      "budget_usd": 140000000,
+      "runtime_minutes": 95,
+      "oscars_won": 0,
+      "genres": [
+        "Sci-Fi",
+        "Family",
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 80,
+      "director_oscars_won": 0,
+      "director_birth_year": 1953,
+      "director_age_at_release": 49,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": -22
+    },
+    {
+      "id": "card_639",
+      "title": "Brother Bear",
+      "director": "Aaron Blaise and Robert Walker",
+      "release_year": 2003,
+      "box_office_usd": 250400000,
+      "budget_usd": 46000000,
+      "runtime_minutes": 85,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Family",
+        "Comedy",
+        "Drama",
+        "Musical"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 39,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 444
+    },
+    {
+      "id": "card_640",
+      "title": "Home on the Range",
+      "director": "Will Finn and John Sanford",
+      "release_year": 2004,
+      "box_office_usd": 145300000,
+      "budget_usd": 110000000,
+      "runtime_minutes": 76,
+      "oscars_won": 0,
+      "genres": [
+        "Musical",
+        "Comedy",
+        "Western",
+        "Family"
+      ],
+      "audience_score": 53,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 40,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 32
+    },
+    {
+      "id": "card_641",
+      "title": "Chicken Little",
+      "director": "Mark Dindal",
+      "release_year": 2005,
+      "box_office_usd": 314400000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 81,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Family",
+        "Sci-Fi",
+        "Musical",
+        "Fantasy"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 0,
+      "director_birth_year": 1960,
+      "director_age_at_release": 45,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 110
+    },
+    {
+      "id": "card_642",
+      "title": "Meet the Robinsons",
+      "director": "Stephen Anderson",
+      "release_year": 2007,
+      "box_office_usd": 170500000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 95,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Fantasy",
+        "Comedy",
+        "Family",
+        "Sci-Fi"
+      ],
+      "audience_score": 71,
+      "director_oscars_won": 0,
+      "director_birth_year": 1970,
+      "director_age_at_release": 37,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 14
+    },
+    {
+      "id": "card_643",
+      "title": "Bolt",
+      "director": "Chris Williams and Byron Howard",
+      "release_year": 2008,
+      "box_office_usd": 310000000,
+      "budget_usd": 150000000,
+      "runtime_minutes": 96,
+      "oscars_won": 0,
+      "genres": [
+        "Family",
+        "Comedy",
+        "Adventure"
+      ],
+      "audience_score": 68,
+      "director_oscars_won": 0,
+      "director_birth_year": 1968,
+      "director_age_at_release": 40,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 107
+    },
+    {
+      "id": "card_644",
+      "title": "The Princess and the Frog",
+      "director": "John Musker and Ron Clements",
+      "release_year": 2009,
+      "box_office_usd": 271000000,
+      "budget_usd": 105000000,
+      "runtime_minutes": 97,
+      "oscars_won": 0,
+      "genres": [
+        "Musical",
+        "Comedy",
+        "Drama",
+        "Fantasy",
+        "Romance"
+      ],
+      "audience_score": 77,
+      "director_oscars_won": 0,
+      "director_birth_year": 1953,
+      "director_age_at_release": 56,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 158
     }
   ]
 }
