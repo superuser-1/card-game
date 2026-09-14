@@ -7298,6 +7298,90 @@
         "adventure film"
       ],
       "source": "wikidata"
+    },
+    "card_457": {
+      "title": "Scream",
+      "genres": [
+        "Horror",
+        "Comedy",
+        "Mystery"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film",
+        "teen film",
+        "comedy film",
+        "mystery film"
+      ],
+      "source": "wikidata"
+    },
+    "card_458": {
+      "title": "Scream 2",
+      "genres": [
+        "Mystery",
+        "Horror"
+      ],
+      "genres_raw": [
+        "slasher film",
+        "mystery film",
+        "horror film"
+      ],
+      "source": "wikidata"
+    },
+    "card_459": {
+      "title": "Scream 3",
+      "genres": [
+        "Horror",
+        "Mystery"
+      ],
+      "genres_raw": [
+        "horror film",
+        "slasher film",
+        "mystery film"
+      ],
+      "source": "wikidata"
+    },
+    "card_460": {
+      "title": "Scream 4",
+      "genres": [
+        "Horror",
+        "Mystery",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "slasher film",
+        "teen film",
+        "horror film",
+        "mystery film",
+        "comedy horror film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_461": {
+      "title": "Scream (2022)",
+      "genres": [
+        "Comedy",
+        "Horror"
+      ],
+      "genres_raw": [
+        "slasher film",
+        "metafiction",
+        "comedy horror film"
+      ],
+      "source": "wikidata"
+    },
+    "card_462": {
+      "title": "Scream VI",
+      "genres": [
+        "Comedy",
+        "Horror"
+      ],
+      "genres_raw": [
+        "slasher film",
+        "comedy horror film"
+      ],
+      "source": "wikidata"
     }
   }
 }

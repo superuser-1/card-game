@@ -9727,6 +9727,128 @@
       "director_age_at_release": 52,
       "streaming_release": false,
       "profit_cost_ratio_pct": 262
+    },
+    {
+      "id": "card_457",
+      "title": "Scream",
+      "director": "Wes Craven",
+      "release_year": 1996,
+      "box_office_usd": 173000000,
+      "budget_usd": 14000000,
+      "runtime_minutes": 111,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Comedy",
+        "Mystery"
+      ],
+      "audience_score": 82,
+      "director_oscars_won": 0,
+      "director_birth_year": 1939,
+      "director_age_at_release": 57,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1136
+    },
+    {
+      "id": "card_458",
+      "title": "Scream 2",
+      "director": "Wes Craven",
+      "release_year": 1997,
+      "box_office_usd": 172000000,
+      "budget_usd": 24000000,
+      "runtime_minutes": 120,
+      "oscars_won": 0,
+      "genres": [
+        "Mystery",
+        "Horror"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1939,
+      "director_age_at_release": 58,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 617
+    },
+    {
+      "id": "card_459",
+      "title": "Scream 3",
+      "director": "Wes Craven",
+      "release_year": 2000,
+      "box_office_usd": 162000000,
+      "budget_usd": 40000000,
+      "runtime_minutes": 117,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Mystery"
+      ],
+      "audience_score": 61,
+      "director_oscars_won": 0,
+      "director_birth_year": 1939,
+      "director_age_at_release": 61,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 305
+    },
+    {
+      "id": "card_460",
+      "title": "Scream 4",
+      "director": "Wes Craven",
+      "release_year": 2011,
+      "box_office_usd": 97000000,
+      "budget_usd": 40000000,
+      "runtime_minutes": 111,
+      "oscars_won": 0,
+      "genres": [
+        "Horror",
+        "Mystery",
+        "Comedy"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1939,
+      "director_age_at_release": 72,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 142
+    },
+    {
+      "id": "card_461",
+      "title": "Scream (2022)",
+      "director": "Matt Bettinelli-Olpin and Tyler Gillett",
+      "release_year": 2022,
+      "box_office_usd": 138000000,
+      "budget_usd": 24000000,
+      "runtime_minutes": 114,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Horror"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1980,
+      "director_age_at_release": 42,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 475
+    },
+    {
+      "id": "card_462",
+      "title": "Scream VI",
+      "director": "Matt Bettinelli-Olpin and Tyler Gillett",
+      "release_year": 2023,
+      "box_office_usd": 167000000,
+      "budget_usd": 35000000,
+      "runtime_minutes": 122,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Horror"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 0,
+      "director_birth_year": 1980,
+      "director_age_at_release": 43,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 377
     }
   ]
 }
