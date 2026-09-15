@@ -135,6 +135,7 @@ func _ready() -> void:
 	%CatalogueNameField.text_changed.connect(_on_catalogue_name_changed)
 	%CatalogueSearchField.text_changed.connect(func(_t): _apply_catalogue_filter())
 	%CatalogueGenreOption.item_selected.connect(func(_i): _apply_catalogue_filter())
+	%CatalogueSortOption.item_selected.connect(func(_i): _apply_catalogue_sort())
 	%CatalogueClearButton.pressed.connect(func():
 		%CatalogueSearchField.text = ""
 		%CatalogueGenreOption.select(0)
@@ -1138,6 +1139,41 @@ func _apply_catalogue_filter() -> void:
 		if ok:
 			shown += 1
 	%CatalogueResultCount.text = "showing %d of %d" % [shown, _all_cards.size()]
+
+
+## null-safe numeric read for budget/box office (a couple of streaming-only
+## titles have no box office figure) — treated as the lowest possible value so
+## they sink to the bottom of a high-to-low sort instead of erroring.
+func _catalogue_num_or_min(v) -> float:
+	return float(v) if v != null else -1.0
+
+
+## Reorders %CatalogueGrid's children in place to match the chosen sort;
+## doesn't touch which cards are visible (_apply_catalogue_filter's job) —
+## GridContainer already skips hidden children when laying out, so the two
+## are independent.
+func _apply_catalogue_sort() -> void:
+	var grid: GridContainer = %CatalogueGrid
+	var mode: int = %CatalogueSortOption.selected
+	var indexed := []
+	for i in _all_cards.size():
+		indexed.append({"card": _all_cards[i], "orig": i})
+	match mode:
+		1:
+			indexed.sort_custom(func(a, b): return float(a["card"].get("audience_score", 0)) > float(b["card"].get("audience_score", 0)))
+		2:
+			indexed.sort_custom(func(a, b): return int(a["card"].get("release_year", 0)) > int(b["card"].get("release_year", 0)))
+		3:
+			indexed.sort_custom(func(a, b): return int(a["card"].get("release_year", 0)) < int(b["card"].get("release_year", 0)))
+		4:
+			indexed.sort_custom(func(a, b): return _catalogue_num_or_min(a["card"].get("budget_usd")) > _catalogue_num_or_min(b["card"].get("budget_usd")))
+		5:
+			indexed.sort_custom(func(a, b): return _catalogue_num_or_min(a["card"].get("box_office_usd")) > _catalogue_num_or_min(b["card"].get("box_office_usd")))
+		_:
+			indexed.sort_custom(func(a, b): return int(a["orig"]) < int(b["orig"]))
+	for i in indexed.size():
+		var id := str(indexed[i]["card"]["id"])
+		grid.move_child(_catalogue_wrappers[id]["wrapper"], i)
 
 
 func _active_catalogue() -> Dictionary:

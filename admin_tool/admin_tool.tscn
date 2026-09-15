@@ -1037,6 +1037,24 @@ clear_button_enabled = true
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="CatalogueSortOption" type="OptionButton" parent="MainPanel/Tabs/Catalogues/CatalogueCenterVBox/CatalogueFilterBar"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 6
+selected = 0
+popup/item_0/text = "Card order"
+popup/item_0/id = 0
+popup/item_1/text = "Audience rating, high → low"
+popup/item_1/id = 1
+popup/item_2/text = "Released, newest first"
+popup/item_2/id = 2
+popup/item_3/text = "Released, oldest first"
+popup/item_3/id = 3
+popup/item_4/text = "Budget, high → low"
+popup/item_4/id = 4
+popup/item_5/text = "Box office, high → low"
+popup/item_5/id = 5
+
 [node name="CatalogueClearButton" type="Button" parent="MainPanel/Tabs/Catalogues/CatalogueCenterVBox/CatalogueFilterBar"]
 unique_name_in_owner = true
 layout_mode = 2
