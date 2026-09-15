@@ -10421,6 +10421,183 @@
         "adventure film"
       ],
       "source": "wikidata"
+    },
+    "card_672": {
+      "title": "One Piece: The Movie",
+      "genres": [
+        "Adventure",
+        "Action",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "adventure anime and manga",
+        "action anime and manga",
+        "fantasy anime and manga"
+      ],
+      "source": "wikidata"
+    },
+    "card_673": {
+      "title": "One Piece: Clockwork Island Adventure",
+      "genres": [
+        "Adventure",
+        "Action",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "action film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_674": {
+      "title": "One Piece: Chopper's Kingdom on the Island of Strange Animals",
+      "genres": [
+        "Adventure",
+        "Action",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "action film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_675": {
+      "title": "One Piece: Dead End Adventure",
+      "genres": [
+        "Adventure",
+        "Action",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "action film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_676": {
+      "title": "One Piece: The Cursed Holy Sword",
+      "genres": [
+        "Adventure",
+        "Action",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "action film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_677": {
+      "title": "One Piece: Baron Omatsuri and the Secret Island",
+      "genres": [
+        "Adventure",
+        "Action",
+        "Comedy",
+        "Thriller",
+        "Horror"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "action film",
+        "comedy film",
+        "thriller film",
+        "horror film"
+      ],
+      "source": "wikidata"
+    },
+    "card_678": {
+      "title": "One Piece: The Giant Mechanical Soldier of Karakuri Castle",
+      "genres": [
+        "Comedy",
+        "Action",
+        "Fantasy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "action film",
+        "fantasy film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_679": {
+      "title": "One Piece Film: Strong World",
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "fantasy film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_680": {
+      "title": "One Piece Film: Z",
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "fantasy film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_681": {
+      "title": "One Piece Film: Gold",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_682": {
+      "title": "One Piece: Stampede",
+      "genres": [
+        "Fantasy",
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "anime film",
+        "fantasy film",
+        "action film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_683": {
+      "title": "One Piece Film: Red",
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Action",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "comedy film",
+        "action film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
     }
   }
 }

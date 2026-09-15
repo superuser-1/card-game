@@ -14218,6 +14218,262 @@
       "director_age_at_release": null,
       "streaming_release": false,
       "profit_cost_ratio_pct": 83
+    },
+    {
+      "id": "card_672",
+      "title": "One Piece: The Movie",
+      "director": "Junji Shimizu",
+      "release_year": 2000,
+      "box_office_usd": 20000000,
+      "budget_usd": 5000000,
+      "runtime_minutes": 51,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Action",
+        "Fantasy"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": null,
+      "director_age_at_release": null,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 300
+    },
+    {
+      "id": "card_673",
+      "title": "One Piece: Clockwork Island Adventure",
+      "director": "Junji Shimizu",
+      "release_year": 2001,
+      "box_office_usd": 24800000,
+      "budget_usd": 5000000,
+      "runtime_minutes": 60,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Action",
+        "Comedy"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 0,
+      "director_birth_year": null,
+      "director_age_at_release": null,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 396
+    },
+    {
+      "id": "card_674",
+      "title": "One Piece: Chopper's Kingdom on the Island of Strange Animals",
+      "director": "Junji Shimizu",
+      "release_year": 2002,
+      "box_office_usd": 16000000,
+      "budget_usd": 5000000,
+      "runtime_minutes": 56,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Action",
+        "Comedy"
+      ],
+      "audience_score": 56,
+      "director_oscars_won": 0,
+      "director_birth_year": null,
+      "director_age_at_release": null,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 220
+    },
+    {
+      "id": "card_675",
+      "title": "One Piece: Dead End Adventure",
+      "director": "Konosuke Uda",
+      "release_year": 2003,
+      "box_office_usd": 17200000,
+      "budget_usd": 6000000,
+      "runtime_minutes": 95,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Action",
+        "Comedy"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 37,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 187
+    },
+    {
+      "id": "card_676",
+      "title": "One Piece: The Cursed Holy Sword",
+      "director": "Kazuhisa Takenouchi",
+      "release_year": 2004,
+      "box_office_usd": 16700000,
+      "budget_usd": 6000000,
+      "runtime_minutes": 95,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Action",
+        "Comedy"
+      ],
+      "audience_score": 58,
+      "director_oscars_won": 0,
+      "director_birth_year": null,
+      "director_age_at_release": null,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 178
+    },
+    {
+      "id": "card_677",
+      "title": "One Piece: Baron Omatsuri and the Secret Island",
+      "director": "Mamoru Hosoda",
+      "release_year": 2005,
+      "box_office_usd": 10500000,
+      "budget_usd": 6000000,
+      "runtime_minutes": 91,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Action",
+        "Comedy",
+        "Thriller",
+        "Horror"
+      ],
+      "audience_score": 82,
+      "director_oscars_won": 0,
+      "director_birth_year": 1967,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 75
+    },
+    {
+      "id": "card_678",
+      "title": "One Piece: The Giant Mechanical Soldier of Karakuri Castle",
+      "director": "Konosuke Uda",
+      "release_year": 2006,
+      "box_office_usd": 8500000,
+      "budget_usd": 6500000,
+      "runtime_minutes": 94,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Action",
+        "Fantasy",
+        "Adventure"
+      ],
+      "audience_score": 57,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 40,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 31
+    },
+    {
+      "id": "card_679",
+      "title": "One Piece Film: Strong World",
+      "director": "Munehisa Sakai",
+      "release_year": 2009,
+      "box_office_usd": 61200000,
+      "budget_usd": 15000000,
+      "runtime_minutes": 115,
+      "oscars_won": 1,
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Adventure"
+      ],
+      "audience_score": 71,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 308
+    },
+    {
+      "id": "card_680",
+      "title": "One Piece Film: Z",
+      "director": "Tatsuya Nagamine",
+      "release_year": 2012,
+      "box_office_usd": 85000000,
+      "budget_usd": 16000000,
+      "runtime_minutes": 107,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Adventure"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1971,
+      "director_age_at_release": 41,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 431
+    },
+    {
+      "id": "card_681",
+      "title": "One Piece Film: Gold",
+      "director": "Hiroaki Miyamoto",
+      "release_year": 2016,
+      "box_office_usd": 70800000,
+      "budget_usd": 18000000,
+      "runtime_minutes": 120,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": null,
+      "director_age_at_release": null,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 293
+    },
+    {
+      "id": "card_682",
+      "title": "One Piece: Stampede",
+      "director": "Takashi Otsuka",
+      "release_year": 2019,
+      "box_office_usd": 94700000,
+      "budget_usd": 20000000,
+      "runtime_minutes": 120,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 72,
+      "director_oscars_won": 0,
+      "director_birth_year": 1981,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 374
+    },
+    {
+      "id": "card_683",
+      "title": "One Piece Film: Red",
+      "director": "Goro Taniguchi",
+      "release_year": 2022,
+      "box_office_usd": 246500000,
+      "budget_usd": 20000000,
+      "runtime_minutes": 115,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Comedy",
+        "Action",
+        "Fantasy"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 0,
+      "director_birth_year": 1966,
+      "director_age_at_release": 56,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1132
     }
   ]
 }
