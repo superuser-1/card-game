@@ -504,6 +504,21 @@ layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Password (semi-private/private only)"
 
+[node name="CatalogueRowLabel" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox"]
+layout_mode = 2
+text = "Card pool — build/edit catalogues on the Catalogues tab"
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 11
+modulate = Color(1, 1, 1, 0.6)
+
+[node name="PlanCatalogueOption" type="OptionButton" parent="MainPanel/Tabs/PlanTournaments/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 1
+selected = 0
+popup/item_0/text = "Full collection"
+popup/item_0/id = 0
+
 [node name="Row3Label" type="Label" parent="MainPanel/Tabs/PlanTournaments/VBox"]
 layout_mode = 2
 text = "Scheduling windows, counted backward from the tournament's start time"
@@ -940,6 +955,111 @@ placeholder_text = "item id"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Grant to Tag"
+
+[node name="Catalogues" type="HBoxContainer" parent="MainPanel/Tabs"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="CatalogueLeftPanel" type="PanelContainer" parent="MainPanel/Tabs/Catalogues"]
+layout_mode = 2
+custom_minimum_size = Vector2(240, 0)
+
+[node name="CatalogueLeftVBox" type="VBoxContainer" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CatalogueInfoLabel" type="Label" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+layout_mode = 2
+text = "Named card pools for tournaments — pick one from the Plan Tournaments tab instead of the full collection."
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+modulate = Color(1, 1, 1, 0.7)
+
+[node name="CatalogueList" type="ItemList" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+allow_reselect = true
+
+[node name="CatalogueNewButton" type="Button" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "＋ New Catalogue"
+
+[node name="CatalogueNameField" type="LineEdit" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+editable = false
+placeholder_text = "Catalogue name"
+
+[node name="CatalogueButtonRow" type="HBoxContainer" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CatalogueSaveButton" type="Button" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox/CatalogueButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Save"
+
+[node name="CatalogueDeleteButton" type="Button" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox/CatalogueButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Delete"
+
+[node name="CatalogueStatusLabel" type="Label" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "No catalogue selected"
+
+[node name="CatalogueCenterVBox" type="VBoxContainer" parent="MainPanel/Tabs/Catalogues"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="CatalogueFilterBar" type="HBoxContainer" parent="MainPanel/Tabs/Catalogues/CatalogueCenterVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CatalogueSearchField" type="LineEdit" parent="MainPanel/Tabs/Catalogues/CatalogueCenterVBox/CatalogueFilterBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search title or director…"
+clear_button_enabled = true
+
+[node name="CatalogueGenreOption" type="OptionButton" parent="MainPanel/Tabs/Catalogues/CatalogueCenterVBox/CatalogueFilterBar"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CatalogueClearButton" type="Button" parent="MainPanel/Tabs/Catalogues/CatalogueCenterVBox/CatalogueFilterBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Clear"
+
+[node name="CatalogueResultCount" type="Label" parent="MainPanel/Tabs/Catalogues/CatalogueCenterVBox/CatalogueFilterBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = ""
+
+[node name="CatalogueGridScroll" type="ScrollContainer" parent="MainPanel/Tabs/Catalogues/CatalogueCenterVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CatalogueGrid" type="GridContainer" parent="MainPanel/Tabs/Catalogues/CatalogueCenterVBox/CatalogueGridScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 5
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
 
 [node name="ConfirmDialog" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true

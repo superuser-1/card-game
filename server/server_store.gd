@@ -34,6 +34,7 @@ var _tournaments: Array
 var _admin_log: Array
 var _presence_samples: Array
 var _tournament_templates: Array
+var _catalogues: Array
 var _next_account_id: int
 
 ## Runtime-only (not persisted/saved) — the most recent tag_by_login_window
@@ -43,6 +44,7 @@ var _last_tag_operation: Dictionary = {}
 var _next_match_id: int
 var _next_tournament_id: int
 var _next_template_id: int
+var _next_catalogue_id: int
 
 ## Admin audit log kept on disk stays capped at this many most-recent entries —
 ## it's an incident-review trail, not a permanent ledger.
@@ -64,10 +66,12 @@ func open(dir := "user://flickbattle/") -> void:
 	_admin_log = []
 	_presence_samples = []
 	_tournament_templates = []
+	_catalogues = []
 	_next_account_id = 1
 	_next_match_id = 1
 	_next_tournament_id = 1
 	_next_template_id = 1
+	_next_catalogue_id = 1
 
 	if not DirAccess.dir_exists_absolute(dir):
 		DirAccess.make_dir_recursive_absolute(dir)
@@ -155,6 +159,17 @@ func open(dir := "user://flickbattle/") -> void:
 				for t in _tournament_templates:
 					if int(t.get("id", 0)) >= _next_template_id:
 						_next_template_id = int(t["id"]) + 1
+
+	var catalogues_path := dir + "catalogues.json"
+	if FileAccess.file_exists(catalogues_path):
+		var file := FileAccess.open(catalogues_path, FileAccess.READ)
+		if file != null:
+			var parsed = JSON.parse_string(file.get_as_text())
+			if parsed is Dictionary and parsed.has("catalogues"):
+				_catalogues = parsed["catalogues"]
+				for c in _catalogues:
+					if int(c.get("id", 0)) >= _next_catalogue_id:
+						_next_catalogue_id = int(c["id"]) + 1
 
 
 # --- auth ------------------------------------------------------------------
@@ -1858,6 +1873,66 @@ func set_tournament_template_active(template_id: int, active: bool) -> Dictionar
 	return {"ok": true, "error": "", "template": t}
 
 
+# --- admin: named catalogues -------------------------------------------------
+# A "catalogue" is a server-persisted, named cube (see CubeRules / cube_ids
+# elsewhere): admins build these in the admin tool so a tournament (one-off or
+# recurring) can run on something other than the full card collection.
+# card_ids passed in here are trusted — the caller (net_node.gd's admin RPCs)
+# has already run them through CubeRules.sanitize() against the real card set,
+# same as every other cube_ids entry point.
+
+func create_catalogue(admin_account_id: int, name: String, card_ids: Array) -> Dictionary:
+	var clean_name := name.strip_edges()
+	if clean_name.length() < 1 or clean_name.length() > 60:
+		return {"ok": false, "error": "bad_name", "catalogue": {}}
+	var catalogue := {
+		"id": _next_catalogue_id,
+		"name": clean_name,
+		"card_ids": card_ids,
+		"created_by_account_id": admin_account_id,
+		"created_ts": int(Time.get_unix_time_from_system()),
+		"updated_ts": int(Time.get_unix_time_from_system()),
+	}
+	_catalogues.append(catalogue)
+	_next_catalogue_id += 1
+	_save_catalogues()
+	return {"ok": true, "error": "", "catalogue": catalogue}
+
+
+func update_catalogue(catalogue_id: int, name: String, card_ids: Array) -> Dictionary:
+	var clean_name := name.strip_edges()
+	if clean_name.length() < 1 or clean_name.length() > 60:
+		return {"ok": false, "error": "bad_name", "catalogue": {}}
+	var c := get_catalogue(catalogue_id)
+	if c.is_empty():
+		return {"ok": false, "error": "no_such_catalogue", "catalogue": {}}
+	c["name"] = clean_name
+	c["card_ids"] = card_ids
+	c["updated_ts"] = int(Time.get_unix_time_from_system())
+	_save_catalogues()
+	return {"ok": true, "error": "", "catalogue": c}
+
+
+func list_catalogues() -> Array:
+	return _catalogues
+
+
+func get_catalogue(catalogue_id: int) -> Dictionary:
+	for c in _catalogues:
+		if int(c.get("id", -1)) == catalogue_id:
+			return c
+	return {}
+
+
+func delete_catalogue(catalogue_id: int) -> bool:
+	for i in range(_catalogues.size()):
+		if int(_catalogues[i].get("id", -1)) == catalogue_id:
+			_catalogues.remove_at(i)
+			_save_catalogues()
+			return true
+	return false
+
+
 ## Next unix-second timestamp matching one of `weekdays` at
 ## `time_of_day_minutes`, strictly after `after_ts`. Scans forward day by day;
 ## 8 days always covers a full week even when `after_ts` falls later in the
@@ -2200,6 +2275,12 @@ func _save_tournament_templates() -> void:
 	var file := FileAccess.open(_dir + "tournament_templates.json", FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify({"templates": _tournament_templates}, "\t"))
+
+
+func _save_catalogues() -> void:
+	var file := FileAccess.open(_dir + "catalogues.json", FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify({"catalogues": _catalogues}, "\t"))
 
 
 ## Called by net_node.gd's presence timer every PRESENCE_SAMPLE_SECONDS.

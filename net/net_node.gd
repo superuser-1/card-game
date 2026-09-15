@@ -91,6 +91,7 @@ signal admin_custom_games_list(data: Dictionary)       # {lobbies: [...], in_pro
 signal admin_presence_stats(rows: Array)
 signal admin_template_list(rows: Array)
 signal admin_prize_catalog(rows: Array)   # every catalog cosmetic: {id, type, name, source}
+signal admin_catalogue_list(rows: Array)   # every saved card catalogue: {id, name, card_ids, ...}
 
 const BOT_THINK_SECONDS := 0.7
 const BOT_FILL_SECONDS := 15.0
@@ -544,6 +545,22 @@ func admin_set_template_active(template_id: int, active: bool) -> void:
 
 func admin_list_prize_catalog() -> void:
 	_rpc_admin_list_prize_catalog.rpc_id(1)
+
+
+func admin_list_catalogues() -> void:
+	_rpc_admin_list_catalogues.rpc_id(1)
+
+
+func admin_create_catalogue(catalogue_name: String, card_ids: PackedStringArray) -> void:
+	_rpc_admin_create_catalogue.rpc_id(1, catalogue_name, card_ids)
+
+
+func admin_update_catalogue(catalogue_id: int, catalogue_name: String, card_ids: PackedStringArray) -> void:
+	_rpc_admin_update_catalogue.rpc_id(1, catalogue_id, catalogue_name, card_ids)
+
+
+func admin_delete_catalogue(catalogue_id: int) -> void:
+	_rpc_admin_delete_catalogue.rpc_id(1, catalogue_id)
 
 
 ## Singleplayer: no networking, a local GameEngine with player 1 as the human
@@ -2477,6 +2494,14 @@ func _rpc_admin_create_tournament_now(spec: Dictionary) -> void:
 	if admin.is_empty():
 		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "create_tournament", "account": {}})
 		return
+	# spec.cube_ids comes from the admin tool's catalogue picker — re-derive a
+	# clean, legal id list here same as the player tournament-creation path
+	# (empty is legal and means "full collection").
+	var cube := CubeRules.sanitize(spec.get("cube_ids", []), _known_card_ids())
+	if not bool(cube.ok):
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": cube.error, "action": "create_tournament", "account": {}})
+		return
+	spec["cube_ids"] = cube.ids
 	var res := _store.admin_create_tournament(int(admin.id), spec)
 	res["action"] = "create_tournament"
 	_rpc_admin_action_result.rpc_id(peer_id, res)
@@ -2491,6 +2516,11 @@ func _rpc_admin_create_template(spec: Dictionary) -> void:
 	if admin.is_empty():
 		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "create_template", "account": {}})
 		return
+	var cube := CubeRules.sanitize(spec.get("cube_ids", []), _known_card_ids())
+	if not bool(cube.ok):
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": cube.error, "action": "create_template", "account": {}})
+		return
+	spec["cube_ids"] = cube.ids
 	var res := _store.create_tournament_template(int(admin.id), spec)
 	res["action"] = "create_template"
 	_rpc_admin_action_result.rpc_id(peer_id, res)
@@ -2570,6 +2600,87 @@ func _rpc_admin_list_prize_catalog() -> void:
 			if not ShopCatalog.is_premium(id):
 				rows.append({"id": id, "type": type_name, "name": id, "source": "free"})
 	_rpc_admin_prize_catalog_result.rpc_id(peer_id, rows)
+
+
+# --- admin: named catalogues (custom card pools for tournaments) -----------
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_list_catalogues() -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "list_catalogues", "account": {}})
+		return
+	_rpc_admin_catalogue_list_result.rpc_id(peer_id, _store.list_catalogues())
+
+
+## Validates `card_ids` the same way a player's cube gets validated for a
+## match: CubeRules.sanitize() against the real card set. Unlike a match
+## cube, an empty result isn't "use everything" here — a saved catalogue with
+## no cards is meaningless, so it's rejected same as a too-small one.
+func _sanitize_catalogue_ids(card_ids) -> Dictionary:
+	var cube := CubeRules.sanitize(card_ids, _known_card_ids())
+	if bool(cube.ok) and (cube.ids as Array).is_empty():
+		return {"ok": false, "error": "cube_too_small", "ids": []}
+	return cube
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_create_catalogue(catalogue_name: String, card_ids: PackedStringArray) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "create_catalogue", "account": {}})
+		return
+	var cube := _sanitize_catalogue_ids(card_ids)
+	if not bool(cube.ok):
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": cube.error, "action": "create_catalogue", "account": {}})
+		return
+	var res := _store.create_catalogue(int(admin.id), catalogue_name, cube.ids)
+	res["action"] = "create_catalogue"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_update_catalogue(catalogue_id: int, catalogue_name: String, card_ids: PackedStringArray) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "update_catalogue", "account": {}})
+		return
+	var cube := _sanitize_catalogue_ids(card_ids)
+	if not bool(cube.ok):
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": cube.error, "action": "update_catalogue", "account": {}})
+		return
+	var res := _store.update_catalogue(catalogue_id, catalogue_name, cube.ids)
+	res["action"] = "update_catalogue"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_delete_catalogue(catalogue_id: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "delete_catalogue", "account": {}})
+		return
+	var ok := _store.delete_catalogue(catalogue_id)
+	_store.log_admin_action(str(admin.get("username", "")), "delete_catalogue", "catalogue #%d" % catalogue_id)
+	_rpc_admin_action_result.rpc_id(peer_id, {"ok": ok, "error": "" if ok else "no_such_catalogue", "action": "delete_catalogue", "account": {}})
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_catalogue_list_result(rows: Array) -> void:
+	if is_server:
+		return
+	admin_catalogue_list.emit(rows)
 
 
 @rpc("authority", "call_remote", "reliable")

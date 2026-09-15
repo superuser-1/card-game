@@ -186,10 +186,24 @@ tool unlocks automatically.
   clicking one copies it to your clipboard to paste into a prize field.
   Admin-created tournaments don't charge your own points wallet for the
   prize pool. Existing recurring templates are listed with pause/delete
-  controls.
+  controls. A **card pool** dropdown ("Full collection" or a saved
+  catalogue from the Catalogues tab) picks which movies the tournament is
+  played with — same idea as a player's cube, just built here instead of
+  in-game and named so it's reusable. A one-time tournament and a
+  recurring template both freeze a snapshot of the catalogue's cards at
+  creation time — editing the catalogue later doesn't change tournaments
+  already created from it.
+- **Catalogues** — build a named, reusable card pool for Plan Tournaments to
+  use, the same way the in-game Cube Builder does: search/filter the full
+  card grid, click cards to toggle them in, needs at least 100 cards to be
+  legal. **New Catalogue** starts a draft (only lives in this window until
+  you press **Save**); **Delete** removes a saved one everywhere (existing
+  tournaments already created from it are unaffected).
 - **Log** — every admin action ever taken (ban, unban, elo/points
   corrections, tournament rollbacks, force-ended matches, template
-  create/delete), who did it, and when.
+  delete, catalogue delete), who did it, and when. (Creating a tournament,
+  template, or catalogue isn't logged here yet — a pre-existing gap, not
+  specific to catalogues.)
 
 ## Point your local game client at the live server (instead of localhost)
 

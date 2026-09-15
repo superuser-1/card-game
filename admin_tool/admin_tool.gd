@@ -35,6 +35,24 @@ var _prize_catalog_rows: Array = []  # unfiltered — every row the server sent
 var _visible_prize_rows: Array = []  # currently shown, after the Show: filter — indices match %PlanPrizeCatalogList
 var _selected_template_id := 0
 
+# --- catalogues (custom card pools for tournaments) -------------------------
+# A catalogue is a server-persisted, named cube (see rules/cube_rules.gd) —
+# built here the same way the in-game deckbuilder builds a player cube (grid
+# of cards, search + genre filter, click to toggle), but saved server-side
+# under a name so PlanTournaments can attach it to one-off or recurring
+# tournaments instead of always using the full collection.
+const _CATALOGUE_CARD_SCENE := preload("res://client/card_view.tscn")
+const _CATALOGUE_CARD_SCALE := 0.5
+var _catalogue_grid_built := false
+var _all_cards: Array = []
+var _catalogue_wrappers: Dictionary = {}   # card_id -> {wrapper, view, sel, tick}
+var _catalogue_genre_choices: Array = []
+## Each row: {id: int (0 = never saved), name: String, card_ids: Array}.
+## id==0 rows exist only in this window until Save is pressed.
+var _catalogue_rows: Array = []
+var _active_catalogue_idx := -1
+const _CATALOGUE_SEL_BORDER := Color(0.36, 0.78, 0.45, 1.0)
+
 
 func _ready() -> void:
 	DisplayServer.window_set_title("Flick Battle — Admin Tool")
@@ -60,6 +78,7 @@ func _ready() -> void:
 	Net.admin_presence_stats.connect(_on_admin_presence_stats)
 	Net.admin_template_list.connect(_on_admin_template_list)
 	Net.admin_prize_catalog.connect(_on_admin_prize_catalog)
+	Net.admin_catalogue_list.connect(_on_admin_catalogue_list)
 	Net.kicked.connect(_on_kicked)
 	Net.force_logout.connect(_on_force_logout)
 
@@ -108,6 +127,19 @@ func _ready() -> void:
 	%PlanPrizeCatalogList.item_selected.connect(_on_plan_catalog_item_selected)
 	for check: CheckBox in [%FilterShopCheck, %FilterFreeCheck, %FilterAchievementCheck, %FilterAdminCheck]:
 		check.toggled.connect(func(_pressed): _render_prize_catalog_list())
+
+	%CatalogueList.item_selected.connect(_on_catalogue_selected)
+	%CatalogueNewButton.pressed.connect(_on_catalogue_new_pressed)
+	%CatalogueSaveButton.pressed.connect(_on_catalogue_save_pressed)
+	%CatalogueDeleteButton.pressed.connect(_on_catalogue_delete_pressed)
+	%CatalogueNameField.text_changed.connect(_on_catalogue_name_changed)
+	%CatalogueSearchField.text_changed.connect(func(_t): _apply_catalogue_filter())
+	%CatalogueGenreOption.item_selected.connect(func(_i): _apply_catalogue_filter())
+	%CatalogueClearButton.pressed.connect(func():
+		%CatalogueSearchField.text = ""
+		%CatalogueGenreOption.select(0)
+		_apply_catalogue_filter()
+	)
 
 	%Range24hButton.pressed.connect(func(): _set_stats_range(24, %Range24hButton))
 	%Range7dButton.pressed.connect(func(): _set_stats_range(24 * 7, %Range7dButton))
@@ -494,6 +526,20 @@ func _on_admin_action_result(result: Dictionary) -> void:
 			Net.admin_list_tournaments(int(%TournamentDaysField.text.strip_edges()) if %TournamentDaysField.text.strip_edges().is_valid_int() else 30)
 		"create_template", "delete_template", "set_template_active":
 			Net.admin_list_templates()
+		"create_catalogue", "update_catalogue":
+			# Backfill the newly-assigned server id onto the still-selected draft
+			# in place, so the refresh below (which matches rows by id) keeps it
+			# selected instead of landing on "no selection".
+			if action == "create_catalogue":
+				var cat: Dictionary = result.get("catalogue", {})
+				var row := _active_catalogue()
+				if not row.is_empty() and int(row.get("id", 0)) == 0 and not cat.is_empty():
+					row["id"] = int(cat.get("id", 0))
+			%StatusLabel.text = "Catalogue saved."
+			Net.admin_list_catalogues()
+		"delete_catalogue":
+			%StatusLabel.text = "Catalogue deleted."
+			Net.admin_list_catalogues()
 		"grant_item":
 			%StatusLabel.text = "Item granted."
 		"add_tag", "remove_tag":
@@ -845,6 +891,7 @@ func _on_plan_create_now_pressed() -> void:
 		"check_in_open_ts": check_in_open_ts,
 		"start_ts": start_ts,
 		"prize_spec": _gather_prize_spec(),
+		"cube_ids": _selected_plan_catalogue_ids(),
 	})
 
 
@@ -877,6 +924,7 @@ func _on_plan_save_template_pressed() -> void:
 		"signup_window_hours": int(signup_text) if signup_text.is_valid_int() else 24,
 		"check_in_window_minutes": int(check_in_text) if check_in_text.is_valid_int() else 30,
 		"prize_spec": _gather_prize_spec(),
+		"cube_ids": _selected_plan_catalogue_ids(),
 	})
 
 
@@ -972,6 +1020,307 @@ func _on_plan_catalog_item_selected(index: int) -> void:
 	%StatusLabel.text = "Copied '%s' to clipboard — paste it into a prize items field or the Grant Item field." % id
 
 
+## card_ids for whichever catalogue is picked in PlanTournaments' %PlanCatalogueOption
+## ("Full collection" at index 0 means []). The server re-validates regardless
+## (see net_node.gd's _rpc_admin_create_tournament_now/_rpc_admin_create_template).
+func _selected_plan_catalogue_ids() -> Array:
+	var i: int = %PlanCatalogueOption.selected
+	if i <= 0:
+		return []
+	var saved := _catalogue_rows.filter(func(c): return int(c.get("id", 0)) != 0)
+	if i - 1 >= saved.size():
+		return []
+	return saved[i - 1]["card_ids"]
+
+
+func _populate_plan_catalogue_option() -> void:
+	var keep_id := 0
+	var saved := _catalogue_rows.filter(func(c): return int(c.get("id", 0)) != 0)
+	if %PlanCatalogueOption.selected > 0 and %PlanCatalogueOption.selected - 1 < saved.size():
+		keep_id = int(saved[%PlanCatalogueOption.selected - 1]["id"])
+	%PlanCatalogueOption.clear()
+	%PlanCatalogueOption.add_item("Full collection")
+	var reselect := 0
+	for i in saved.size():
+		%PlanCatalogueOption.add_item("%s (%d)" % [str(saved[i]["name"]), (saved[i]["card_ids"] as Array).size()])
+		if int(saved[i]["id"]) == keep_id:
+			reselect = i + 1
+	%PlanCatalogueOption.select(reselect)
+
+
+# --- catalogues (custom card pools for tournaments) -------------------------
+
+func _ensure_catalogue_grid_built() -> void:
+	if _catalogue_grid_built:
+		return
+	_catalogue_grid_built = true
+	_all_cards = CardLoader.load_cards("res://data/cards.json")
+	_build_catalogue_genre_options()
+	_build_catalogue_grid()
+	_hydrate_catalogue_art()
+
+
+func _build_catalogue_genre_options() -> void:
+	var seen := {}
+	for c in _all_cards:
+		for g in (c.get("genres", []) as Array):
+			seen[str(g)] = true
+	_catalogue_genre_choices = seen.keys()
+	_catalogue_genre_choices.sort()
+	%CatalogueGenreOption.clear()
+	%CatalogueGenreOption.add_item("All genres")
+	for g in _catalogue_genre_choices:
+		%CatalogueGenreOption.add_item(g)
+
+
+func _build_catalogue_grid() -> void:
+	var grid: GridContainer = %CatalogueGrid
+	for c: Dictionary in _all_cards:
+		var id := str(c["id"])
+		var wrapper := Control.new()
+		wrapper.custom_minimum_size = CardView.CARD_SIZE * _CATALOGUE_CARD_SCALE
+
+		var view: CardView = _CATALOGUE_CARD_SCENE.instantiate()
+		wrapper.add_child(view)
+		grid.add_child(wrapper)
+		view.use_as_static_thumbnail(_CATALOGUE_CARD_SCALE)
+		view.set_card(c, false)
+		view.pressed.connect(_on_catalogue_card_pressed.bind(id))
+
+		var sel := Panel.new()
+		sel.set_anchors_preset(Control.PRESET_FULL_RECT)
+		sel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		sel.visible = false
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(0.36, 0.78, 0.45, 0.14)
+		sb.set_border_width_all(3)
+		sb.border_color = _CATALOGUE_SEL_BORDER
+		sb.set_corner_radius_all(8)
+		sel.add_theme_stylebox_override("panel", sb)
+		wrapper.add_child(sel)
+
+		var tick := Label.new()
+		tick.text = "✓"
+		tick.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+		tick.add_theme_font_size_override("font_size", 18)
+		tick.position = Vector2(6, 2)
+		tick.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tick.visible = false
+		wrapper.add_child(tick)
+
+		_catalogue_wrappers[id] = {"wrapper": wrapper, "view": view, "sel": sel, "tick": tick}
+
+
+func _hydrate_catalogue_art() -> void:
+	const PER_FRAME := 12
+	var n := 0
+	for id in _catalogue_wrappers:
+		_catalogue_wrappers[id]["view"].apply_art()
+		n += 1
+		if n % PER_FRAME == 0:
+			await get_tree().process_frame
+			if not is_inside_tree():
+				return
+
+
+func _apply_catalogue_filter() -> void:
+	var needle: String = %CatalogueSearchField.text.strip_edges().to_lower()
+	var gi: int = %CatalogueGenreOption.selected
+	var genre := "" if gi <= 0 else str(_catalogue_genre_choices[gi - 1])
+	var shown := 0
+	for c: Dictionary in _all_cards:
+		var ok := true
+		if needle != "" and not str(c["title"]).to_lower().contains(needle) and not str(c.get("director", "")).to_lower().contains(needle):
+			ok = false
+		if ok and genre != "" and genre not in (c.get("genres", []) as Array):
+			ok = false
+		_catalogue_wrappers[str(c["id"])]["wrapper"].visible = ok
+		if ok:
+			shown += 1
+	%CatalogueResultCount.text = "showing %d of %d" % [shown, _all_cards.size()]
+
+
+func _active_catalogue() -> Dictionary:
+	return _catalogue_rows[_active_catalogue_idx] if _active_catalogue_idx >= 0 and _active_catalogue_idx < _catalogue_rows.size() else {}
+
+
+func _on_catalogue_card_pressed(card_id: String) -> void:
+	var row := _active_catalogue()
+	if row.is_empty():
+		%StatusLabel.text = "Create or pick a catalogue first."
+		return
+	var ids: Array = row["card_ids"]
+	if card_id in ids:
+		ids.erase(card_id)
+	else:
+		ids.append(card_id)
+	_refresh_catalogue_badge(card_id)
+	_update_catalogue_status()
+	_refresh_catalogue_list_labels()
+
+
+func _refresh_catalogue_badge(card_id: String) -> void:
+	var w = _catalogue_wrappers.get(card_id)
+	if w == null:
+		return
+	var inside: bool = (not _active_catalogue().is_empty()) and card_id in _active_catalogue()["card_ids"]
+	w["sel"].visible = inside
+	w["tick"].visible = inside
+
+
+func _refresh_all_catalogue_badges() -> void:
+	for id in _catalogue_wrappers:
+		_refresh_catalogue_badge(id)
+
+
+func _catalogue_list_label(row: Dictionary) -> String:
+	var n := (row["card_ids"] as Array).size()
+	var mark := "" if n >= CubeRules.MIN_SIZE else "  ⚠"
+	var unsaved := "" if int(row.get("id", 0)) != 0 else "  [unsaved]"
+	return "%s  (%d)%s%s" % [row["name"], n, mark, unsaved]
+
+
+func _refresh_catalogue_list() -> void:
+	%CatalogueList.clear()
+	for row in _catalogue_rows:
+		%CatalogueList.add_item(_catalogue_list_label(row))
+	if _active_catalogue_idx >= 0 and _active_catalogue_idx < _catalogue_rows.size():
+		%CatalogueList.select(_active_catalogue_idx)
+	_update_catalogue_buttons()
+
+
+func _refresh_catalogue_list_labels() -> void:
+	for i in _catalogue_rows.size():
+		if i < %CatalogueList.item_count:
+			%CatalogueList.set_item_text(i, _catalogue_list_label(_catalogue_rows[i]))
+
+
+func _on_catalogue_selected(idx: int) -> void:
+	_select_catalogue(idx)
+
+
+func _select_catalogue(idx: int) -> void:
+	_active_catalogue_idx = idx
+	if idx >= 0 and idx < %CatalogueList.item_count:
+		%CatalogueList.select(idx)
+	%CatalogueNameField.text = str(_active_catalogue().get("name", ""))
+	_refresh_all_catalogue_badges()
+	_update_catalogue_status()
+	_update_catalogue_buttons()
+
+
+func _update_catalogue_buttons() -> void:
+	var has := not _active_catalogue().is_empty()
+	%CatalogueNameField.editable = has
+	%CatalogueSaveButton.disabled = not has
+	%CatalogueDeleteButton.disabled = not has
+
+
+func _update_catalogue_status() -> void:
+	var row := _active_catalogue()
+	if row.is_empty():
+		%CatalogueStatusLabel.text = "No catalogue selected"
+		return
+	var n := (row["card_ids"] as Array).size()
+	if n >= CubeRules.MIN_SIZE:
+		%CatalogueStatusLabel.text = "%d cards · legal ✓" % n
+	else:
+		%CatalogueStatusLabel.text = "%d / %d cards  (need %d more)" % [n, CubeRules.MIN_SIZE, CubeRules.MIN_SIZE - n]
+
+
+func _unique_catalogue_name(base: String) -> String:
+	var taken := {}
+	for row in _catalogue_rows:
+		taken[str(row["name"])] = true
+	if not taken.has(base):
+		return base
+	var i := 2
+	while taken.has("%s %d" % [base, i]):
+		i += 1
+	return "%s %d" % [base, i]
+
+
+func _on_catalogue_new_pressed() -> void:
+	_ensure_catalogue_grid_built()
+	_catalogue_rows.append({"id": 0, "name": _unique_catalogue_name("New Catalogue"), "card_ids": []})
+	_refresh_catalogue_list()
+	_select_catalogue(_catalogue_rows.size() - 1)
+
+
+func _on_catalogue_name_changed(new_text: String) -> void:
+	var row := _active_catalogue()
+	if row.is_empty():
+		return
+	row["name"] = new_text
+	_refresh_catalogue_list_labels()
+
+
+func _on_catalogue_save_pressed() -> void:
+	var row := _active_catalogue()
+	if row.is_empty():
+		return
+	var clean_name: String = str(row["name"]).strip_edges()
+	if clean_name == "":
+		%StatusLabel.text = "Enter a catalogue name."
+		return
+	var ids: Array = row["card_ids"]
+	if ids.size() < CubeRules.MIN_SIZE:
+		%StatusLabel.text = "Need at least %d cards (have %d)." % [CubeRules.MIN_SIZE, ids.size()]
+		return
+	var packed := PackedStringArray(ids)
+	if int(row.get("id", 0)) == 0:
+		Net.admin_create_catalogue(clean_name, packed)
+	else:
+		Net.admin_update_catalogue(int(row["id"]), clean_name, packed)
+
+
+func _on_catalogue_delete_pressed() -> void:
+	var row := _active_catalogue()
+	if row.is_empty():
+		return
+	var idx := _active_catalogue_idx
+	if int(row.get("id", 0)) == 0:
+		# Never saved server-side — just drop it locally, no RPC needed.
+		_catalogue_rows.remove_at(idx)
+		_active_catalogue_idx = clampi(idx, 0, _catalogue_rows.size() - 1) if not _catalogue_rows.is_empty() else -1
+		_refresh_catalogue_list()
+		if _active_catalogue_idx >= 0:
+			_select_catalogue(_active_catalogue_idx)
+		else:
+			%CatalogueNameField.text = ""
+			_refresh_all_catalogue_badges()
+			_update_catalogue_status()
+			_update_catalogue_buttons()
+		return
+	var cid := int(row["id"])
+	_confirm("Delete catalogue \"%s\"? Tournaments already created from it are unaffected." % row["name"], func():
+		Net.admin_delete_catalogue(cid)
+	)
+
+
+## Merges fresh server rows into _catalogue_rows without discarding any
+## not-yet-saved (id==0) drafts the admin is mid-edit on — this fires every
+## time PlanTournaments is opened too (for its picker), not just this tab.
+func _on_admin_catalogue_list(rows: Array) -> void:
+	var active_id := int(_active_catalogue().get("id", 0))
+	var drafts := _catalogue_rows.filter(func(r): return int(r.get("id", 0)) == 0)
+	var merged := []
+	for r in rows:
+		merged.append({"id": int(r.get("id", 0)), "name": str(r.get("name", "")), "card_ids": (r.get("card_ids", []) as Array).duplicate()})
+	merged.append_array(drafts)
+	_catalogue_rows = merged
+
+	_active_catalogue_idx = -1
+	for i in _catalogue_rows.size():
+		if int(_catalogue_rows[i].get("id", 0)) == active_id and active_id != 0:
+			_active_catalogue_idx = i
+			break
+	_refresh_catalogue_list()
+	if _active_catalogue_idx >= 0:
+		_select_catalogue(_active_catalogue_idx)
+	_populate_plan_catalogue_option()
+
+
 # --- confirmation dialog ----------------------------------------------------
 
 func _confirm(message: String, on_confirmed: Callable) -> void:
@@ -1010,6 +1359,11 @@ func _on_tab_changed(_tab: int) -> void:
 			%LiveRefreshTimer.stop()
 			Net.admin_list_prize_catalog()
 			Net.admin_list_templates()
+			Net.admin_list_catalogues()
+		"Catalogues":
+			%LiveRefreshTimer.stop()
+			_ensure_catalogue_grid_built()
+			Net.admin_list_catalogues()
 		_:
 			%LiveRefreshTimer.stop()
 
