@@ -10641,6 +10641,99 @@
         "science fiction film"
       ],
       "source": "wikidata"
+    },
+    "card_687": {
+      "title": "Transformers",
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film",
+        "alien invasion"
+      ],
+      "source": "wikidata"
+    },
+    "card_688": {
+      "title": "Transformers: Revenge of the Fallen",
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
+    },
+    "card_689": {
+      "title": "Transformers: Dark of the Moon",
+      "genres": [
+        "Action",
+        "Thriller",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "thriller film",
+        "science fiction film",
+        "alien invasion"
+      ],
+      "source": "wikidata"
+    },
+    "card_690": {
+      "title": "Transformers: Age of Extinction",
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "action film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_691": {
+      "title": "Transformers: The Last Knight",
+      "genres": [
+        "Sci-Fi",
+        "Action"
+      ],
+      "genres_raw": [
+        "science fiction action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_692": {
+      "title": "Bumblebee",
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "action film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_693": {
+      "title": "Transformers: Rise of the Beasts",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
     }
   }
 }
