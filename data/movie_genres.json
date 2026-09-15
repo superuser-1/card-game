@@ -10342,48 +10342,6 @@
       ],
       "source": "wikidata"
     },
-    "card_666": {
-      "title": "Naruto Shippuden the Movie: The Will of Fire",
-      "genres": [
-        "Action",
-        "Adventure",
-        "Fantasy"
-      ],
-      "genres_raw": [
-        "action film",
-        "adventure film",
-        "fantasy film"
-      ],
-      "source": "wikidata"
-    },
-    "card_667": {
-      "title": "Naruto Shippuden the Movie: The Lost Tower",
-      "genres": [
-        "Action",
-        "Adventure",
-        "Fantasy"
-      ],
-      "genres_raw": [
-        "action film",
-        "adventure film",
-        "fantasy film"
-      ],
-      "source": "wikidata"
-    },
-    "card_668": {
-      "title": "Naruto Shippuden the Movie: Blood Prison",
-      "genres": [
-        "Action",
-        "Adventure",
-        "Fantasy"
-      ],
-      "genres_raw": [
-        "action film",
-        "adventure film",
-        "fantasy film"
-      ],
-      "source": "wikidata"
-    },
     "card_669": {
       "title": "Road to Ninja: Naruto the Movie",
       "genres": [
@@ -10407,18 +10365,6 @@
         "adventure film",
         "action film",
         "romance film"
-      ],
-      "source": "wikidata"
-    },
-    "card_671": {
-      "title": "Boruto: Naruto the Movie",
-      "genres": [
-        "Action",
-        "Adventure"
-      ],
-      "genres_raw": [
-        "action film",
-        "adventure film"
       ],
       "source": "wikidata"
     },
@@ -10466,20 +10412,6 @@
     },
     "card_675": {
       "title": "One Piece: Dead End Adventure",
-      "genres": [
-        "Adventure",
-        "Action",
-        "Comedy"
-      ],
-      "genres_raw": [
-        "adventure film",
-        "action film",
-        "comedy film"
-      ],
-      "source": "wikidata"
-    },
-    "card_676": {
-      "title": "One Piece: The Cursed Holy Sword",
       "genres": [
         "Adventure",
         "Action",

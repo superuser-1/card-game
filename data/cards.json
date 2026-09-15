@@ -13422,8 +13422,8 @@
       ],
       "audience_score": 63,
       "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
+      "director_birth_year": 1962,
+      "director_age_at_release": 38,
       "streaming_release": false,
       "profit_cost_ratio_pct": 174
     },
@@ -13903,8 +13903,8 @@
       ],
       "audience_score": 43,
       "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
+      "director_birth_year": 1970,
+      "director_age_at_release": 53,
       "streaming_release": false,
       "profit_cost_ratio_pct": 28
     },
@@ -14049,8 +14049,8 @@
       ],
       "audience_score": 59,
       "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
+      "director_birth_year": 1966,
+      "director_age_at_release": 40,
       "streaming_release": false,
       "profit_cost_ratio_pct": -19
     },
@@ -14096,69 +14096,6 @@
       "profit_cost_ratio_pct": 136
     },
     {
-      "id": "card_666",
-      "title": "Naruto Shippuden the Movie: The Will of Fire",
-      "director": "Masahiko Murata",
-      "release_year": 2009,
-      "box_office_usd": 8100000,
-      "budget_usd": 4500000,
-      "runtime_minutes": 96,
-      "oscars_won": 0,
-      "genres": [
-        "Action",
-        "Adventure",
-        "Fantasy"
-      ],
-      "audience_score": 64,
-      "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
-      "streaming_release": false,
-      "profit_cost_ratio_pct": 80
-    },
-    {
-      "id": "card_667",
-      "title": "Naruto Shippuden the Movie: The Lost Tower",
-      "director": "Masahiko Murata",
-      "release_year": 2010,
-      "box_office_usd": 8500000,
-      "budget_usd": 4500000,
-      "runtime_minutes": 85,
-      "oscars_won": 0,
-      "genres": [
-        "Action",
-        "Adventure",
-        "Fantasy"
-      ],
-      "audience_score": 62,
-      "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
-      "streaming_release": false,
-      "profit_cost_ratio_pct": 89
-    },
-    {
-      "id": "card_668",
-      "title": "Naruto Shippuden the Movie: Blood Prison",
-      "director": "Masahiko Murata",
-      "release_year": 2011,
-      "box_office_usd": 9100000,
-      "budget_usd": 4500000,
-      "runtime_minutes": 103,
-      "oscars_won": 0,
-      "genres": [
-        "Action",
-        "Adventure",
-        "Fantasy"
-      ],
-      "audience_score": 64,
-      "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
-      "streaming_release": false,
-      "profit_cost_ratio_pct": 102
-    },
-    {
       "id": "card_669",
       "title": "Road to Ninja: Naruto the Movie",
       "director": "Hayato Date",
@@ -14200,26 +14137,6 @@
       "profit_cost_ratio_pct": 1864
     },
     {
-      "id": "card_671",
-      "title": "Boruto: Naruto the Movie",
-      "director": "Hiroyuki Yamashita",
-      "release_year": 2015,
-      "box_office_usd": 38500000,
-      "budget_usd": 21000000,
-      "runtime_minutes": 96,
-      "oscars_won": 0,
-      "genres": [
-        "Action",
-        "Adventure"
-      ],
-      "audience_score": 64,
-      "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
-      "streaming_release": false,
-      "profit_cost_ratio_pct": 83
-    },
-    {
       "id": "card_672",
       "title": "One Piece: The Movie",
       "director": "Junji Shimizu",
@@ -14235,8 +14152,8 @@
       ],
       "audience_score": 66,
       "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
+      "director_birth_year": 1960,
+      "director_age_at_release": 40,
       "streaming_release": false,
       "profit_cost_ratio_pct": 300
     },
@@ -14256,8 +14173,8 @@
       ],
       "audience_score": 62,
       "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
+      "director_birth_year": 1960,
+      "director_age_at_release": 41,
       "streaming_release": false,
       "profit_cost_ratio_pct": 396
     },
@@ -14277,8 +14194,8 @@
       ],
       "audience_score": 56,
       "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
+      "director_birth_year": 1960,
+      "director_age_at_release": 42,
       "streaming_release": false,
       "profit_cost_ratio_pct": 220
     },
@@ -14302,27 +14219,6 @@
       "director_age_at_release": 37,
       "streaming_release": false,
       "profit_cost_ratio_pct": 187
-    },
-    {
-      "id": "card_676",
-      "title": "One Piece: The Cursed Holy Sword",
-      "director": "Kazuhisa Takenouchi",
-      "release_year": 2004,
-      "box_office_usd": 16700000,
-      "budget_usd": 6000000,
-      "runtime_minutes": 95,
-      "oscars_won": 0,
-      "genres": [
-        "Adventure",
-        "Action",
-        "Comedy"
-      ],
-      "audience_score": 58,
-      "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
-      "streaming_release": false,
-      "profit_cost_ratio_pct": 178
     },
     {
       "id": "card_677",
@@ -14427,8 +14323,8 @@
       ],
       "audience_score": 70,
       "director_oscars_won": 0,
-      "director_birth_year": null,
-      "director_age_at_release": null,
+      "director_birth_year": 1981,
+      "director_age_at_release": 35,
       "streaming_release": false,
       "profit_cost_ratio_pct": 293
     },
