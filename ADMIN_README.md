@@ -198,7 +198,19 @@ tool unlocks automatically.
   card grid, click cards to toggle them in, needs at least 100 cards to be
   legal. **New Catalogue** starts a draft (only lives in this window until
   you press **Save**); **Delete** removes a saved one everywhere (existing
-  tournaments already created from it are unaffected).
+  tournaments already created from it are unaffected). A **Sort** dropdown
+  next to the genre filter reorders the grid by audience rating, release
+  year (oldest/newest), budget, or box office.
+  **Ranked Ladder Pool** (left panel, below your catalogues): which card pool
+  the ranked queue itself deals from — every ranked match, everyone, not
+  just tournaments. Pick "Full collection" (the normal default) or any
+  saved catalogue, optionally with "ends in N hours" for a time-boxed
+  special ranked week that reverts itself automatically (checked every 5s,
+  same as everything else on that timer) — leave it blank for an
+  indefinite swap. **Revert Now** snaps straight back to the full
+  collection. If you delete a catalogue that's still active for ranked, it
+  silently falls back to the full collection rather than breaking
+  matchmaking.
 - **Log** — every admin action ever taken (ban, unban, elo/points
   corrections, tournament rollbacks, force-ended matches, template
   delete, catalogue delete), who did it, and when. (Creating a tournament,

@@ -35,6 +35,10 @@ var _admin_log: Array
 var _presence_samples: Array
 var _tournament_templates: Array
 var _catalogues: Array
+## {catalogue_id: int (0 = full collection/default), ends_ts: int (0 = no
+## expiry), set_by_account_id: int, set_ts: int}. Applies to every ranked
+## queue match server-wide — see net_node.gd's _ranked_pool().
+var _ranked_catalogue: Dictionary
 var _next_account_id: int
 
 ## Runtime-only (not persisted/saved) — the most recent tag_by_login_window
@@ -67,6 +71,7 @@ func open(dir := "user://flickbattle/") -> void:
 	_presence_samples = []
 	_tournament_templates = []
 	_catalogues = []
+	_ranked_catalogue = {"catalogue_id": 0, "ends_ts": 0, "set_by_account_id": 0, "set_ts": 0}
 	_next_account_id = 1
 	_next_match_id = 1
 	_next_tournament_id = 1
@@ -170,6 +175,14 @@ func open(dir := "user://flickbattle/") -> void:
 				for c in _catalogues:
 					if int(c.get("id", 0)) >= _next_catalogue_id:
 						_next_catalogue_id = int(c["id"]) + 1
+
+	var ranked_catalogue_path := dir + "ranked_catalogue.json"
+	if FileAccess.file_exists(ranked_catalogue_path):
+		var file := FileAccess.open(ranked_catalogue_path, FileAccess.READ)
+		if file != null:
+			var parsed = JSON.parse_string(file.get_as_text())
+			if parsed is Dictionary and parsed.has("catalogue_id"):
+				_ranked_catalogue = parsed
 
 
 # --- auth ------------------------------------------------------------------
@@ -1933,6 +1946,45 @@ func delete_catalogue(catalogue_id: int) -> bool:
 	return false
 
 
+# --- admin: ranked ladder catalogue -----------------------------------------
+# A single server-wide setting: which catalogue (if any) the ranked queue
+# deals from. Lets an admin either swap the standing default or run a
+# time-boxed "special ranked week" that reverts on its own (tick_ranked_
+# catalogue(), called from net_node.gd's existing 5s tournament timer).
+
+## catalogue_id 0 means "full collection" (the historical default).
+## ends_ts 0 means no expiry — stays until changed again.
+func set_ranked_catalogue(catalogue_id: int, ends_ts: int, admin_account_id: int) -> Dictionary:
+	if catalogue_id != 0 and get_catalogue(catalogue_id).is_empty():
+		return {"ok": false, "error": "no_such_catalogue", "setting": {}}
+	_ranked_catalogue = {
+		"catalogue_id": catalogue_id,
+		"ends_ts": maxi(0, ends_ts),
+		"set_by_account_id": admin_account_id,
+		"set_ts": int(Time.get_unix_time_from_system()),
+	}
+	_save_ranked_catalogue()
+	return {"ok": true, "error": "", "setting": _ranked_catalogue}
+
+
+func active_ranked_catalogue() -> Dictionary:
+	return _ranked_catalogue
+
+
+## Called every tournament-timer tick; reverts to the full collection once
+## ends_ts has passed. Returns true if it just reverted (net_node.gd can use
+## this to log/broadcast the change if it ever wants to).
+func tick_ranked_catalogue(now := -1) -> bool:
+	if now < 0:
+		now = int(Time.get_unix_time_from_system())
+	var ends := int(_ranked_catalogue.get("ends_ts", 0))
+	if ends <= 0 or now < ends or int(_ranked_catalogue.get("catalogue_id", 0)) == 0:
+		return false
+	_ranked_catalogue = {"catalogue_id": 0, "ends_ts": 0, "set_by_account_id": 0, "set_ts": now}
+	_save_ranked_catalogue()
+	return true
+
+
 ## Next unix-second timestamp matching one of `weekdays` at
 ## `time_of_day_minutes`, strictly after `after_ts`. Scans forward day by day;
 ## 8 days always covers a full week even when `after_ts` falls later in the
@@ -2281,6 +2333,12 @@ func _save_catalogues() -> void:
 	var file := FileAccess.open(_dir + "catalogues.json", FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify({"catalogues": _catalogues}, "\t"))
+
+
+func _save_ranked_catalogue() -> void:
+	var file := FileAccess.open(_dir + "ranked_catalogue.json", FileAccess.WRITE)
+	if file != null:
+		file.store_string(JSON.stringify(_ranked_catalogue, "\t"))
 
 
 ## Called by net_node.gd's presence timer every PRESENCE_SAMPLE_SECONDS.

@@ -1016,6 +1016,50 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 13
 text = "No catalogue selected"
 
+[node name="RankedSeparator" type="HSeparator" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+layout_mode = 2
+
+[node name="RankedLabel" type="Label" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+layout_mode = 2
+text = "Ranked Ladder Pool"
+theme_override_font_sizes/font_size = 14
+
+[node name="RankedCatalogueStatusLabel" type="Label" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Currently: full collection"
+
+[node name="RankedCatalogueOption" type="OptionButton" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 1
+selected = 0
+popup/item_0/text = "Full collection"
+popup/item_0/id = 0
+
+[node name="RankedCatalogueDurationField" type="LineEdit" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Ends in N hours (blank = indefinite)"
+
+[node name="RankedCatalogueButtonRow" type="HBoxContainer" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="RankedCatalogueApplyButton" type="Button" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox/RankedCatalogueButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Apply"
+
+[node name="RankedCatalogueRevertButton" type="Button" parent="MainPanel/Tabs/Catalogues/CatalogueLeftPanel/CatalogueLeftVBox/RankedCatalogueButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Revert Now"
+
 [node name="CatalogueCenterVBox" type="VBoxContainer" parent="MainPanel/Tabs/Catalogues"]
 layout_mode = 2
 size_flags_horizontal = 3

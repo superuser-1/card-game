@@ -52,6 +52,9 @@ var _catalogue_genre_choices: Array = []
 var _catalogue_rows: Array = []
 var _active_catalogue_idx := -1
 const _CATALOGUE_SEL_BORDER := Color(0.36, 0.78, 0.45, 1.0)
+## Last setting the server reported for the ranked queue's pool. {} until the
+## first admin_get_ranked_catalogue() reply arrives.
+var _ranked_catalogue_setting: Dictionary = {}
 
 
 func _ready() -> void:
@@ -79,6 +82,7 @@ func _ready() -> void:
 	Net.admin_template_list.connect(_on_admin_template_list)
 	Net.admin_prize_catalog.connect(_on_admin_prize_catalog)
 	Net.admin_catalogue_list.connect(_on_admin_catalogue_list)
+	Net.admin_ranked_catalogue.connect(_on_admin_ranked_catalogue)
 	Net.kicked.connect(_on_kicked)
 	Net.force_logout.connect(_on_force_logout)
 
@@ -140,6 +144,12 @@ func _ready() -> void:
 		%CatalogueSearchField.text = ""
 		%CatalogueGenreOption.select(0)
 		_apply_catalogue_filter()
+	)
+	%RankedCatalogueApplyButton.pressed.connect(_on_ranked_catalogue_apply_pressed)
+	%RankedCatalogueRevertButton.pressed.connect(func():
+		_confirm("Revert the ranked ladder to the full collection right now?", func():
+			Net.admin_set_ranked_catalogue(0, 0)
+		)
 	)
 
 	%Range24hButton.pressed.connect(func(): _set_stats_range(24, %Range24hButton))
@@ -541,6 +551,9 @@ func _on_admin_action_result(result: Dictionary) -> void:
 		"delete_catalogue":
 			%StatusLabel.text = "Catalogue deleted."
 			Net.admin_list_catalogues()
+		"set_ranked_catalogue":
+			%StatusLabel.text = "Ranked ladder pool updated."
+			%RankedCatalogueDurationField.text = ""
 		"grant_item":
 			%StatusLabel.text = "Item granted."
 		"add_tag", "remove_tag":
@@ -1034,19 +1047,82 @@ func _selected_plan_catalogue_ids() -> Array:
 	return saved[i - 1]["card_ids"]
 
 
-func _populate_plan_catalogue_option() -> void:
+## Shared by any OptionButton that picks "Full collection or one saved
+## catalogue" (Plan Tournaments' pool picker, the ranked-ladder picker).
+## Rebuilds `option`'s items from _catalogue_rows and tries to keep whichever
+## catalogue was selected before still selected after the rebuild.
+func _populate_catalogue_option(option: OptionButton) -> void:
 	var keep_id := 0
 	var saved := _catalogue_rows.filter(func(c): return int(c.get("id", 0)) != 0)
-	if %PlanCatalogueOption.selected > 0 and %PlanCatalogueOption.selected - 1 < saved.size():
-		keep_id = int(saved[%PlanCatalogueOption.selected - 1]["id"])
-	%PlanCatalogueOption.clear()
-	%PlanCatalogueOption.add_item("Full collection")
+	if option.selected > 0 and option.selected - 1 < saved.size():
+		keep_id = int(saved[option.selected - 1]["id"])
+	option.clear()
+	option.add_item("Full collection")
 	var reselect := 0
 	for i in saved.size():
-		%PlanCatalogueOption.add_item("%s (%d)" % [str(saved[i]["name"]), (saved[i]["card_ids"] as Array).size()])
+		option.add_item("%s (%d)" % [str(saved[i]["name"]), (saved[i]["card_ids"] as Array).size()])
 		if int(saved[i]["id"]) == keep_id:
 			reselect = i + 1
-	%PlanCatalogueOption.select(reselect)
+	option.select(reselect)
+
+
+func _populate_plan_catalogue_option() -> void:
+	_populate_catalogue_option(%PlanCatalogueOption)
+
+
+func _populate_ranked_catalogue_option() -> void:
+	_populate_catalogue_option(%RankedCatalogueOption)
+	# The rebuild above defaults to "Full collection" unless the *previous*
+	# selection matched a catalogue — re-apply the server's actual current
+	# setting on top so it doesn't drift from what the label says.
+	_reselect_ranked_catalogue_option()
+
+
+func _reselect_ranked_catalogue_option() -> void:
+	if _ranked_catalogue_setting.is_empty():
+		return
+	var cid := int(_ranked_catalogue_setting.get("catalogue_id", 0))
+	if cid == 0:
+		%RankedCatalogueOption.select(0)
+		return
+	var saved := _catalogue_rows.filter(func(c): return int(c.get("id", 0)) != 0)
+	for i in saved.size():
+		if int(saved[i]["id"]) == cid:
+			%RankedCatalogueOption.select(i + 1)
+			return
+
+
+func _on_ranked_catalogue_apply_pressed() -> void:
+	var i: int = %RankedCatalogueOption.selected
+	var catalogue_id := 0
+	if i > 0:
+		var saved := _catalogue_rows.filter(func(c): return int(c.get("id", 0)) != 0)
+		if i - 1 < saved.size():
+			catalogue_id = int(saved[i - 1]["id"])
+	var duration_text: String = %RankedCatalogueDurationField.text.strip_edges()
+	var ends_ts := 0
+	if duration_text != "":
+		if not duration_text.is_valid_float():
+			%StatusLabel.text = "Enter a whole/decimal number of hours for the ranked pool's duration, or leave it blank for indefinite."
+			return
+		ends_ts = int(Time.get_unix_time_from_system()) + int(float(duration_text) * 3600.0)
+	Net.admin_set_ranked_catalogue(catalogue_id, ends_ts)
+
+
+func _on_admin_ranked_catalogue(setting: Dictionary) -> void:
+	_ranked_catalogue_setting = setting
+	var cid := int(setting.get("catalogue_id", 0))
+	if cid == 0:
+		%RankedCatalogueStatusLabel.text = "Currently: full collection"
+	else:
+		var cat := _catalogue_rows.filter(func(c): return int(c.get("id", 0)) == cid)
+		var name := str(cat[0]["name"]) if not cat.is_empty() else "catalogue #%d" % cid
+		var ends := int(setting.get("ends_ts", 0))
+		if ends > 0:
+			%RankedCatalogueStatusLabel.text = "Currently: %s — reverts %s UTC" % [name, Time.get_datetime_string_from_unix_time(ends, true)]
+		else:
+			%RankedCatalogueStatusLabel.text = "Currently: %s — no expiry" % name
+	_reselect_ranked_catalogue_option()
 
 
 # --- catalogues (custom card pools for tournaments) -------------------------
@@ -1355,6 +1431,7 @@ func _on_admin_catalogue_list(rows: Array) -> void:
 	if _active_catalogue_idx >= 0:
 		_select_catalogue(_active_catalogue_idx)
 	_populate_plan_catalogue_option()
+	_populate_ranked_catalogue_option()
 
 
 # --- confirmation dialog ----------------------------------------------------
@@ -1400,6 +1477,7 @@ func _on_tab_changed(_tab: int) -> void:
 			%LiveRefreshTimer.stop()
 			_ensure_catalogue_grid_built()
 			Net.admin_list_catalogues()
+			Net.admin_get_ranked_catalogue()
 		_:
 			%LiveRefreshTimer.stop()
 

@@ -92,6 +92,7 @@ signal admin_presence_stats(rows: Array)
 signal admin_template_list(rows: Array)
 signal admin_prize_catalog(rows: Array)   # every catalog cosmetic: {id, type, name, source}
 signal admin_catalogue_list(rows: Array)   # every saved card catalogue: {id, name, card_ids, ...}
+signal admin_ranked_catalogue(setting: Dictionary)   # {catalogue_id, ends_ts, set_by_account_id, set_ts}
 
 const BOT_THINK_SECONDS := 0.7
 const BOT_FILL_SECONDS := 15.0
@@ -561,6 +562,16 @@ func admin_update_catalogue(catalogue_id: int, catalogue_name: String, card_ids:
 
 func admin_delete_catalogue(catalogue_id: int) -> void:
 	_rpc_admin_delete_catalogue.rpc_id(1, catalogue_id)
+
+
+func admin_get_ranked_catalogue() -> void:
+	_rpc_admin_get_ranked_catalogue.rpc_id(1)
+
+
+## catalogue_id 0 = full collection. ends_ts 0 = no expiry (stays until
+## changed again); otherwise a unix timestamp the server auto-reverts at.
+func admin_set_ranked_catalogue(catalogue_id: int, ends_ts: int) -> void:
+	_rpc_admin_set_ranked_catalogue.rpc_id(1, catalogue_id, ends_ts)
 
 
 ## Singleplayer: no networking, a local GameEngine with player 1 as the human
@@ -1328,6 +1339,10 @@ func _tick_tournaments() -> void:
 	# opened. Cheap no-op most ticks (only fires every few days/weeks per
 	# template) so sharing this 5s timer rather than a dedicated one is fine.
 	_store.tick_tournament_templates()
+	# Special-ranked-week auto-revert: cheap no-op most ticks (only fires once,
+	# when a time-boxed ranked catalogue's ends_ts passes), so sharing this 5s
+	# timer rather than a dedicated one is fine, same reasoning as above.
+	_store.tick_ranked_catalogue()
 	var now := int(Time.get_unix_time_from_system())
 	for t in _store.all_tournaments():
 		match str(t.status):
@@ -1616,6 +1631,22 @@ func _known_card_ids() -> Dictionary:
 
 func _pool_for_cube(cube_ids) -> Array:
 	return CubeRules.filter_pool(CardLoader.load_cards(), cube_ids)
+
+
+## Card pool for the ranked queue — the full collection unless an admin has
+## set an active ranked catalogue (server.set_ranked_catalogue; see the admin
+## tool's Catalogues tab). Falls back to the full collection if that
+## catalogue was deleted out from under a still-active setting, rather than
+## erroring out ranked matchmaking entirely.
+func _ranked_pool() -> Array:
+	var setting := _store.active_ranked_catalogue()
+	var catalogue_id := int(setting.get("catalogue_id", 0))
+	if catalogue_id == 0:
+		return CardLoader.load_cards()
+	var catalogue := _store.get_catalogue(catalogue_id)
+	if catalogue.is_empty():
+		return CardLoader.load_cards()
+	return CubeRules.filter_pool(CardLoader.load_cards(), catalogue.get("card_ids", []))
 
 
 func _create_pvp_match_for_accounts(account_a: int, account_b: int, ctx: Dictionary) -> Dictionary:
@@ -2683,6 +2714,44 @@ func _rpc_admin_catalogue_list_result(rows: Array) -> void:
 	admin_catalogue_list.emit(rows)
 
 
+# --- admin: ranked ladder catalogue (which pool the ranked queue deals from) -
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_get_ranked_catalogue() -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	if _require_admin(peer_id).is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "get_ranked_catalogue", "account": {}})
+		return
+	_rpc_admin_ranked_catalogue_result.rpc_id(peer_id, _store.active_ranked_catalogue())
+
+
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_set_ranked_catalogue(catalogue_id: int, ends_ts: int) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "set_ranked_catalogue", "account": {}})
+		return
+	var res := _store.set_ranked_catalogue(catalogue_id, ends_ts, int(admin.id))
+	res["action"] = "set_ranked_catalogue"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+	if bool(res.get("ok", false)):
+		_store.log_admin_action(str(admin.get("username", "")), "set_ranked_catalogue",
+			"catalogue #%d, ends_ts %d" % [catalogue_id, ends_ts])
+		_rpc_admin_ranked_catalogue_result.rpc_id(peer_id, res.get("setting", {}))
+
+
+@rpc("authority", "call_remote", "reliable")
+func _rpc_admin_ranked_catalogue_result(setting: Dictionary) -> void:
+	if is_server:
+		return
+	admin_ranked_catalogue.emit(setting)
+
+
 @rpc("authority", "call_remote", "reliable")
 func _rpc_admin_template_list_result(rows: Array) -> void:
 	if is_server:
@@ -3261,7 +3330,7 @@ func _create_custom_match(lobby: Dictionary, joiner_peer: int, joiner_account: i
 
 
 func _create_pvp_match(a: Dictionary, b: Dictionary) -> void:
-	var engine := GameEngine.new(CardLoader.load_cards())
+	var engine := GameEngine.new(_ranked_pool())
 	engine.deal_hands()
 	var name_a := str(_store.get_account(a.account_id).get("display_name", "Player"))
 	var name_b := str(_store.get_account(b.account_id).get("display_name", "Player"))
@@ -3278,7 +3347,7 @@ func _create_pvp_match(a: Dictionary, b: Dictionary) -> void:
 
 
 func _create_bot_match(a: Dictionary) -> void:
-	var engine := GameEngine.new(CardLoader.load_cards())
+	var engine := GameEngine.new(_ranked_pool())
 	engine.deal_hands()
 	var name_a := str(_store.get_account(a.account_id).get("display_name", "Player"))
 	var m := _new_match(
