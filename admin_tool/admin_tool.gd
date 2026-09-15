@@ -1117,11 +1117,16 @@ func _on_admin_ranked_catalogue(setting: Dictionary) -> void:
 	else:
 		var cat := _catalogue_rows.filter(func(c): return int(c.get("id", 0)) == cid)
 		var name := str(cat[0]["name"]) if not cat.is_empty() else "catalogue #%d" % cid
+		var n := (setting.get("card_ids", []) as Array).size()
 		var ends := int(setting.get("ends_ts", 0))
+		# "snapshot" is the point: editing this catalogue's cards afterward
+		# does nothing to ranked until Apply is pressed again — see
+		# ServerStore.set_ranked_catalogue's comment.
+		var base := "Currently: %s snapshot, %d cards" % [name, n]
 		if ends > 0:
-			%RankedCatalogueStatusLabel.text = "Currently: %s — reverts %s UTC" % [name, Time.get_datetime_string_from_unix_time(ends, true)]
+			%RankedCatalogueStatusLabel.text = "%s — reverts %s UTC" % [base, Time.get_datetime_string_from_unix_time(ends, true)]
 		else:
-			%RankedCatalogueStatusLabel.text = "Currently: %s — no expiry" % name
+			%RankedCatalogueStatusLabel.text = "%s — no expiry" % base
 	_reselect_ranked_catalogue_option()
 
 

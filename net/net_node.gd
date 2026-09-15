@@ -1634,19 +1634,17 @@ func _pool_for_cube(cube_ids) -> Array:
 
 
 ## Card pool for the ranked queue — the full collection unless an admin has
-## set an active ranked catalogue (server.set_ranked_catalogue; see the admin
-## tool's Catalogues tab). Falls back to the full collection if that
-## catalogue was deleted out from under a still-active setting, rather than
-## erroring out ranked matchmaking entirely.
+## set an active ranked catalogue (ServerStore.set_ranked_catalogue; see the
+## admin tool's Catalogues tab). Deliberately reads the FROZEN card_ids
+## snapshot the setting was applied with, not a live lookup of the catalogue
+## by id — editing that catalogue's contents afterward must not silently
+## change ranked out from under an admin who didn't touch this setting;
+## re-applying it is what pushes an update.
 func _ranked_pool() -> Array:
 	var setting := _store.active_ranked_catalogue()
-	var catalogue_id := int(setting.get("catalogue_id", 0))
-	if catalogue_id == 0:
+	if int(setting.get("catalogue_id", 0)) == 0:
 		return CardLoader.load_cards()
-	var catalogue := _store.get_catalogue(catalogue_id)
-	if catalogue.is_empty():
-		return CardLoader.load_cards()
-	return CubeRules.filter_pool(CardLoader.load_cards(), catalogue.get("card_ids", []))
+	return CubeRules.filter_pool(CardLoader.load_cards(), setting.get("card_ids", []))
 
 
 func _create_pvp_match_for_accounts(account_a: int, account_b: int, ctx: Dictionary) -> Dictionary:

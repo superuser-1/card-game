@@ -35,9 +35,11 @@ var _admin_log: Array
 var _presence_samples: Array
 var _tournament_templates: Array
 var _catalogues: Array
-## {catalogue_id: int (0 = full collection/default), ends_ts: int (0 = no
-## expiry), set_by_account_id: int, set_ts: int}. Applies to every ranked
-## queue match server-wide — see net_node.gd's _ranked_pool().
+## {catalogue_id: int (0 = full collection/default, else just a display
+## reference), card_ids: Array (the actual pool — a frozen snapshot, not
+## re-resolved from catalogue_id), ends_ts: int (0 = no expiry),
+## set_by_account_id: int, set_ts: int}. Applies to every ranked queue match
+## server-wide — see net_node.gd's _ranked_pool().
 var _ranked_catalogue: Dictionary
 var _next_account_id: int
 
@@ -71,7 +73,7 @@ func open(dir := "user://flickbattle/") -> void:
 	_presence_samples = []
 	_tournament_templates = []
 	_catalogues = []
-	_ranked_catalogue = {"catalogue_id": 0, "ends_ts": 0, "set_by_account_id": 0, "set_ts": 0}
+	_ranked_catalogue = {"catalogue_id": 0, "card_ids": [], "ends_ts": 0, "set_by_account_id": 0, "set_ts": 0}
 	_next_account_id = 1
 	_next_match_id = 1
 	_next_tournament_id = 1
@@ -1951,14 +1953,27 @@ func delete_catalogue(catalogue_id: int) -> bool:
 # deals from. Lets an admin either swap the standing default or run a
 # time-boxed "special ranked week" that reverts on its own (tick_ranked_
 # catalogue(), called from net_node.gd's existing 5s tournament timer).
+#
+# card_ids is a FROZEN SNAPSHOT taken at the moment set_ranked_catalogue()
+# runs — same safeguard a tournament/template already gets (see
+# create_tournament's cube_ids comment). Editing the source catalogue's
+# contents afterward does NOT change what ranked is dealing; the admin has
+# to explicitly hit Apply again to push an update live. catalogue_id is kept
+# only so the admin tool can show which catalogue it came from — it's never
+# re-resolved.
 
 ## catalogue_id 0 means "full collection" (the historical default).
 ## ends_ts 0 means no expiry — stays until changed again.
 func set_ranked_catalogue(catalogue_id: int, ends_ts: int, admin_account_id: int) -> Dictionary:
-	if catalogue_id != 0 and get_catalogue(catalogue_id).is_empty():
-		return {"ok": false, "error": "no_such_catalogue", "setting": {}}
+	var card_ids := []
+	if catalogue_id != 0:
+		var cat := get_catalogue(catalogue_id)
+		if cat.is_empty():
+			return {"ok": false, "error": "no_such_catalogue", "setting": {}}
+		card_ids = (cat.get("card_ids", []) as Array).duplicate()
 	_ranked_catalogue = {
 		"catalogue_id": catalogue_id,
+		"card_ids": card_ids,
 		"ends_ts": maxi(0, ends_ts),
 		"set_by_account_id": admin_account_id,
 		"set_ts": int(Time.get_unix_time_from_system()),
@@ -1980,7 +1995,7 @@ func tick_ranked_catalogue(now := -1) -> bool:
 	var ends := int(_ranked_catalogue.get("ends_ts", 0))
 	if ends <= 0 or now < ends or int(_ranked_catalogue.get("catalogue_id", 0)) == 0:
 		return false
-	_ranked_catalogue = {"catalogue_id": 0, "ends_ts": 0, "set_by_account_id": 0, "set_ts": now}
+	_ranked_catalogue = {"catalogue_id": 0, "card_ids": [], "ends_ts": 0, "set_by_account_id": 0, "set_ts": now}
 	_save_ranked_catalogue()
 	return true
 
