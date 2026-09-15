@@ -10225,6 +10225,7 @@
       "genres": [
         "Action",
         "Adventure",
+        "Animation",
         "Fantasy"
       ],
       "genres_raw": [
@@ -10238,8 +10239,9 @@
       "title": "Bleach the Movie: The DiamondDust Rebellion",
       "genres": [
         "Action",
-        "Fantasy",
-        "Adventure"
+        "Adventure",
+        "Animation",
+        "Fantasy"
       ],
       "genres_raw": [
         "action film",
@@ -10253,6 +10255,7 @@
       "genres": [
         "Action",
         "Adventure",
+        "Animation",
         "Fantasy",
         "Romance"
       ],
@@ -10269,6 +10272,7 @@
       "genres": [
         "Action",
         "Adventure",
+        "Animation",
         "Fantasy"
       ],
       "genres_raw": [
@@ -10282,7 +10286,8 @@
       "title": "Naruto the Movie: Ninja Clash in the Land of Snow",
       "genres": [
         "Action",
-        "Adventure"
+        "Adventure",
+        "Animation"
       ],
       "genres_raw": [
         "action film",
@@ -10294,7 +10299,8 @@
       "title": "Naruto the Movie 2: Legend of the Stone of Gelel",
       "genres": [
         "Action",
-        "Adventure"
+        "Adventure",
+        "Animation"
       ],
       "genres_raw": [
         "action film",
@@ -10307,6 +10313,7 @@
       "genres": [
         "Action",
         "Adventure",
+        "Animation",
         "Fantasy"
       ],
       "genres_raw": [
@@ -10321,6 +10328,7 @@
       "genres": [
         "Action",
         "Adventure",
+        "Animation",
         "Fantasy"
       ],
       "genres_raw": [
@@ -10334,7 +10342,8 @@
       "title": "Naruto Shippuden the Movie: Bonds",
       "genres": [
         "Action",
-        "Adventure"
+        "Adventure",
+        "Animation"
       ],
       "genres_raw": [
         "action film",
@@ -10346,7 +10355,8 @@
       "title": "Road to Ninja: Naruto the Movie",
       "genres": [
         "Action",
-        "Adventure"
+        "Adventure",
+        "Animation"
       ],
       "genres_raw": [
         "action film",
@@ -10357,8 +10367,9 @@
     "card_670": {
       "title": "The Last: Naruto the Movie",
       "genres": [
-        "Adventure",
         "Action",
+        "Adventure",
+        "Animation",
         "Romance"
       ],
       "genres_raw": [
@@ -10371,8 +10382,9 @@
     "card_672": {
       "title": "One Piece: The Movie",
       "genres": [
-        "Adventure",
         "Action",
+        "Adventure",
+        "Animation",
         "Fantasy"
       ],
       "genres_raw": [
@@ -10385,8 +10397,9 @@
     "card_673": {
       "title": "One Piece: Clockwork Island Adventure",
       "genres": [
-        "Adventure",
         "Action",
+        "Adventure",
+        "Animation",
         "Comedy"
       ],
       "genres_raw": [
@@ -10399,8 +10412,9 @@
     "card_674": {
       "title": "One Piece: Chopper's Kingdom on the Island of Strange Animals",
       "genres": [
-        "Adventure",
         "Action",
+        "Adventure",
+        "Animation",
         "Comedy"
       ],
       "genres_raw": [
@@ -10413,8 +10427,9 @@
     "card_675": {
       "title": "One Piece: Dead End Adventure",
       "genres": [
-        "Adventure",
         "Action",
+        "Adventure",
+        "Animation",
         "Comedy"
       ],
       "genres_raw": [
@@ -10427,11 +10442,12 @@
     "card_677": {
       "title": "One Piece: Baron Omatsuri and the Secret Island",
       "genres": [
-        "Adventure",
         "Action",
+        "Adventure",
+        "Animation",
         "Comedy",
-        "Thriller",
-        "Horror"
+        "Horror",
+        "Thriller"
       ],
       "genres_raw": [
         "adventure film",
@@ -10445,10 +10461,11 @@
     "card_678": {
       "title": "One Piece: The Giant Mechanical Soldier of Karakuri Castle",
       "genres": [
-        "Comedy",
         "Action",
-        "Fantasy",
-        "Adventure"
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Fantasy"
       ],
       "genres_raw": [
         "comedy film",
@@ -10462,8 +10479,9 @@
       "title": "One Piece Film: Strong World",
       "genres": [
         "Action",
-        "Fantasy",
-        "Adventure"
+        "Adventure",
+        "Animation",
+        "Fantasy"
       ],
       "genres_raw": [
         "action film",
@@ -10476,8 +10494,9 @@
       "title": "One Piece Film: Z",
       "genres": [
         "Action",
-        "Fantasy",
-        "Adventure"
+        "Adventure",
+        "Animation",
+        "Fantasy"
       ],
       "genres_raw": [
         "action film",
@@ -10491,6 +10510,7 @@
       "genres": [
         "Action",
         "Adventure",
+        "Animation",
         "Fantasy"
       ],
       "genres_raw": [
@@ -10503,9 +10523,10 @@
     "card_682": {
       "title": "One Piece: Stampede",
       "genres": [
-        "Fantasy",
         "Action",
-        "Adventure"
+        "Adventure",
+        "Animation",
+        "Fantasy"
       ],
       "genres_raw": [
         "anime film",
@@ -10518,9 +10539,10 @@
     "card_683": {
       "title": "One Piece Film: Red",
       "genres": [
-        "Adventure",
-        "Comedy",
         "Action",
+        "Adventure",
+        "Animation",
+        "Comedy",
         "Fantasy"
       ],
       "genres_raw": [
@@ -10670,6 +10692,7 @@
     "card_694": {
       "title": "Grave of the Fireflies",
       "genres": [
+        "Animation",
         "Drama",
         "War"
       ],
@@ -10683,8 +10706,9 @@
     "card_695": {
       "title": "Kiki's Delivery Service",
       "genres": [
-        "Fantasy",
-        "Family"
+        "Animation",
+        "Family",
+        "Fantasy"
       ],
       "genres_raw": [
         "fantasy film",
@@ -10696,6 +10720,7 @@
     "card_696": {
       "title": "Only Yesterday",
       "genres": [
+        "Animation",
         "Drama"
       ],
       "genres_raw": [
@@ -10708,8 +10733,9 @@
     "card_697": {
       "title": "Porco Rosso",
       "genres": [
-        "Fantasy",
-        "Adventure"
+        "Adventure",
+        "Animation",
+        "Fantasy"
       ],
       "genres_raw": [
         "fantasy film",
@@ -10721,9 +10747,10 @@
     "card_698": {
       "title": "Pom Poko",
       "genres": [
+        "Animation",
         "Comedy",
-        "Fantasy",
-        "Drama"
+        "Drama",
+        "Fantasy"
       ],
       "genres_raw": [
         "comedy film",
@@ -10736,9 +10763,10 @@
     "card_699": {
       "title": "Whisper of the Heart",
       "genres": [
+        "Adventure",
+        "Animation",
         "Drama",
-        "Romance",
-        "Adventure"
+        "Romance"
       ],
       "genres_raw": [
         "drama film",
@@ -10750,9 +10778,10 @@
     "card_700": {
       "title": "Spirited Away",
       "genres": [
-        "Fantasy",
+        "Animation",
+        "Drama",
         "Family",
-        "Drama"
+        "Fantasy"
       ],
       "genres_raw": [
         "fantasy film",
@@ -10764,10 +10793,11 @@
     "card_701": {
       "title": "The Cat Returns",
       "genres": [
-        "Drama",
-        "Fantasy",
         "Adventure",
-        "Family"
+        "Animation",
+        "Drama",
+        "Family",
+        "Fantasy"
       ],
       "genres_raw": [
         "drama anime and manga",
@@ -10782,9 +10812,10 @@
     "card_702": {
       "title": "Ponyo",
       "genres": [
-        "Fantasy",
+        "Adventure",
+        "Animation",
         "Family",
-        "Adventure"
+        "Fantasy"
       ],
       "genres_raw": [
         "fantasy film",
@@ -10796,8 +10827,9 @@
     "card_703": {
       "title": "The Secret World of Arrietty",
       "genres": [
-        "Fantasy",
-        "Family"
+        "Animation",
+        "Family",
+        "Fantasy"
       ],
       "genres_raw": [
         "fantasy film",
@@ -10810,6 +10842,7 @@
     "card_704": {
       "title": "From Up on Poppy Hill",
       "genres": [
+        "Animation",
         "Drama",
         "Romance"
       ],
@@ -10823,8 +10856,9 @@
     "card_705": {
       "title": "The Wind Rises",
       "genres": [
-        "Drama",
-        "Biography"
+        "Animation",
+        "Biography",
+        "Drama"
       ],
       "genres_raw": [
         "drama film",
@@ -10836,6 +10870,7 @@
     "card_706": {
       "title": "When Marnie Was There",
       "genres": [
+        "Animation",
         "Drama",
         "Mystery"
       ],
@@ -10849,6 +10884,7 @@
       "title": "The Boy and the Heron",
       "genres": [
         "Adventure",
+        "Animation",
         "Drama",
         "Fantasy"
       ],
