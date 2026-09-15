@@ -10598,6 +10598,49 @@
         "fantasy film"
       ],
       "source": "wikidata"
+    },
+    "card_684": {
+      "title": "Avatar",
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "action film",
+        "adventure film",
+        "military science fiction"
+      ],
+      "source": "wikidata"
+    },
+    "card_685": {
+      "title": "Avatar: The Way of Water",
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Adventure",
+        "Drama"
+      ],
+      "genres_raw": [
+        "science fiction film",
+        "action film",
+        "adventure film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_686": {
+      "title": "Avatar: Fire and Ash",
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "action film",
+        "science fiction film"
+      ],
+      "source": "wikidata"
     }
   }
 }

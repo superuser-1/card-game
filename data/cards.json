@@ -14474,6 +14474,69 @@
       "director_age_at_release": 56,
       "streaming_release": false,
       "profit_cost_ratio_pct": 1132
+    },
+    {
+      "id": "card_684",
+      "title": "Avatar",
+      "director": "James Cameron",
+      "release_year": 2009,
+      "box_office_usd": 2924000000,
+      "budget_usd": 237000000,
+      "runtime_minutes": 162,
+      "oscars_won": 3,
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 75,
+      "director_oscars_won": 3,
+      "director_birth_year": 1954,
+      "director_age_at_release": 55,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1134
+    },
+    {
+      "id": "card_685",
+      "title": "Avatar: The Way of Water",
+      "director": "James Cameron",
+      "release_year": 2022,
+      "box_office_usd": 2334000000,
+      "budget_usd": 400000000,
+      "runtime_minutes": 192,
+      "oscars_won": 1,
+      "genres": [
+        "Sci-Fi",
+        "Action",
+        "Adventure",
+        "Drama"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 3,
+      "director_birth_year": 1954,
+      "director_age_at_release": 68,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 484
+    },
+    {
+      "id": "card_686",
+      "title": "Avatar: Fire and Ash",
+      "director": "James Cameron",
+      "release_year": 2025,
+      "box_office_usd": 1490000000,
+      "budget_usd": 375000000,
+      "runtime_minutes": 197,
+      "oscars_won": 1,
+      "genres": [
+        "Action",
+        "Sci-Fi"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 3,
+      "director_birth_year": 1954,
+      "director_age_at_release": 71,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 297
     }
   ]
 }
