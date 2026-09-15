@@ -13992,6 +13992,232 @@
       "director_age_at_release": 49,
       "streaming_release": false,
       "profit_cost_ratio_pct": 56
+    },
+    {
+      "id": "card_661",
+      "title": "Naruto the Movie: Ninja Clash in the Land of Snow",
+      "director": "Tensai Okamura",
+      "release_year": 2004,
+      "box_office_usd": 11100000,
+      "budget_usd": 4000000,
+      "runtime_minutes": 82,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 63,
+      "director_oscars_won": 0,
+      "director_birth_year": 1961,
+      "director_age_at_release": 43,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 178
+    },
+    {
+      "id": "card_662",
+      "title": "Naruto the Movie 2: Legend of the Stone of Gelel",
+      "director": "Hirotsugu Kawasaki",
+      "release_year": 2005,
+      "box_office_usd": 10200000,
+      "budget_usd": 4000000,
+      "runtime_minutes": 97,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 56,
+      "director_oscars_won": 0,
+      "director_birth_year": 1958,
+      "director_age_at_release": 47,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 155
+    },
+    {
+      "id": "card_663",
+      "title": "Naruto the Movie 3: Guardians of the Crescent Moon Kingdom",
+      "director": "Toshiyuki Tsuru",
+      "release_year": 2006,
+      "box_office_usd": 3224005,
+      "budget_usd": 4000000,
+      "runtime_minutes": 95,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 59,
+      "director_oscars_won": 0,
+      "director_birth_year": null,
+      "director_age_at_release": null,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": -19
+    },
+    {
+      "id": "card_664",
+      "title": "Naruto Shippuden the Movie",
+      "director": "Hajime Kamegaki",
+      "release_year": 2007,
+      "box_office_usd": 10000000,
+      "budget_usd": 4500000,
+      "runtime_minutes": 95,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 65,
+      "director_oscars_won": 0,
+      "director_birth_year": 1957,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 122
+    },
+    {
+      "id": "card_665",
+      "title": "Naruto Shippuden the Movie: Bonds",
+      "director": "Hajime Kamegaki",
+      "release_year": 2008,
+      "box_office_usd": 10600000,
+      "budget_usd": 4500000,
+      "runtime_minutes": 93,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 0,
+      "director_birth_year": 1957,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 136
+    },
+    {
+      "id": "card_666",
+      "title": "Naruto Shippuden the Movie: The Will of Fire",
+      "director": "Masahiko Murata",
+      "release_year": 2009,
+      "box_office_usd": 8100000,
+      "budget_usd": 4500000,
+      "runtime_minutes": 96,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": null,
+      "director_age_at_release": null,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 80
+    },
+    {
+      "id": "card_667",
+      "title": "Naruto Shippuden the Movie: The Lost Tower",
+      "director": "Masahiko Murata",
+      "release_year": 2010,
+      "box_office_usd": 8500000,
+      "budget_usd": 4500000,
+      "runtime_minutes": 85,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 62,
+      "director_oscars_won": 0,
+      "director_birth_year": null,
+      "director_age_at_release": null,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 89
+    },
+    {
+      "id": "card_668",
+      "title": "Naruto Shippuden the Movie: Blood Prison",
+      "director": "Masahiko Murata",
+      "release_year": 2011,
+      "box_office_usd": 9100000,
+      "budget_usd": 4500000,
+      "runtime_minutes": 103,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": null,
+      "director_age_at_release": null,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 102
+    },
+    {
+      "id": "card_669",
+      "title": "Road to Ninja: Naruto the Movie",
+      "director": "Hayato Date",
+      "release_year": 2012,
+      "box_office_usd": 17900000,
+      "budget_usd": 5000000,
+      "runtime_minutes": 109,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 70,
+      "director_oscars_won": 0,
+      "director_birth_year": 1962,
+      "director_age_at_release": 50,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 258
+    },
+    {
+      "id": "card_670",
+      "title": "The Last: Naruto the Movie",
+      "director": "Tsuneo Kobayashi",
+      "release_year": 2014,
+      "box_office_usd": 19840000,
+      "budget_usd": 1010000,
+      "runtime_minutes": 112,
+      "oscars_won": 0,
+      "genres": [
+        "Adventure",
+        "Action",
+        "Romance"
+      ],
+      "audience_score": 71,
+      "director_oscars_won": 0,
+      "director_birth_year": 1965,
+      "director_age_at_release": 49,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1864
+    },
+    {
+      "id": "card_671",
+      "title": "Boruto: Naruto the Movie",
+      "director": "Hiroyuki Yamashita",
+      "release_year": 2015,
+      "box_office_usd": 38500000,
+      "budget_usd": 21000000,
+      "runtime_minutes": 96,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": null,
+      "director_age_at_release": null,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 83
     }
   ]
 }

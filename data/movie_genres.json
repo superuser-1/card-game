@@ -10277,6 +10277,150 @@
         "fantasy film"
       ],
       "source": "wikidata"
+    },
+    "card_661": {
+      "title": "Naruto the Movie: Ninja Clash in the Land of Snow",
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_662": {
+      "title": "Naruto the Movie 2: Legend of the Stone of Gelel",
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_663": {
+      "title": "Naruto the Movie 3: Guardians of the Crescent Moon Kingdom",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_664": {
+      "title": "Naruto Shippuden the Movie",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_665": {
+      "title": "Naruto Shippuden the Movie: Bonds",
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_666": {
+      "title": "Naruto Shippuden the Movie: The Will of Fire",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_667": {
+      "title": "Naruto Shippuden the Movie: The Lost Tower",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_668": {
+      "title": "Naruto Shippuden the Movie: Blood Prison",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_669": {
+      "title": "Road to Ninja: Naruto the Movie",
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_670": {
+      "title": "The Last: Naruto the Movie",
+      "genres": [
+        "Adventure",
+        "Action",
+        "Romance"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "action film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_671": {
+      "title": "Boruto: Naruto the Movie",
+      "genres": [
+        "Action",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film"
+      ],
+      "source": "wikidata"
     }
   }
 }
