@@ -10109,6 +10109,116 @@
         "action film"
       ],
       "source": "wikidata"
+    },
+    "card_650": {
+      "title": "Moana",
+      "genres": [
+        "Comedy",
+        "Musical",
+        "Adventure",
+        "Action"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "musical film",
+        "adventure film",
+        "comedy drama",
+        "action film"
+      ],
+      "source": "wikidata"
+    },
+    "card_651": {
+      "title": "Ralph Breaks the Internet",
+      "genres": [
+        "Family",
+        "Adventure",
+        "Comedy",
+        "Action",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "family film",
+        "adventure film",
+        "comedy film",
+        "action film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_652": {
+      "title": "Frozen II",
+      "genres": [
+        "Family",
+        "Fantasy",
+        "Adventure",
+        "Drama",
+        "Musical"
+      ],
+      "genres_raw": [
+        "family film",
+        "fantasy film",
+        "adventure film",
+        "drama film",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_653": {
+      "title": "Raya and the Last Dragon",
+      "genres": [
+        "Adventure",
+        "Fantasy",
+        "Comedy"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "fantasy film",
+        "comedy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_654": {
+      "title": "Encanto",
+      "genres": [
+        "Fantasy",
+        "Musical"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "musical film"
+      ],
+      "source": "wikidata"
+    },
+    "card_655": {
+      "title": "Strange World",
+      "genres": [
+        "Adventure",
+        "Fantasy",
+        "Sci-Fi"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "fantasy film",
+        "science fiction"
+      ],
+      "source": "wikidata"
+    },
+    "card_656": {
+      "title": "Wish",
+      "genres": [
+        "Adventure",
+        "Family",
+        "Fantasy",
+        "Musical"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "family film",
+        "fantasy film",
+        "musical film",
+        "cinematic fairy tale"
+      ],
+      "source": "wikidata"
     }
   }
 }
