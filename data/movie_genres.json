@@ -10734,6 +10734,100 @@
         "science fiction film"
       ],
       "source": "wikidata"
+    },
+    "card_694": {
+      "title": "Grave of the Fireflies",
+      "genres": [
+        "Drama",
+        "War"
+      ],
+      "genres_raw": [
+        "drama anime and manga",
+        "drama film",
+        "anti-war film"
+      ],
+      "source": "wikidata"
+    },
+    "card_695": {
+      "title": "Kiki's Delivery Service",
+      "genres": [
+        "Fantasy",
+        "Family"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "children's film",
+        "coming-of-age film"
+      ],
+      "source": "wikidata"
+    },
+    "card_696": {
+      "title": "Only Yesterday",
+      "genres": [
+        "Drama"
+      ],
+      "genres_raw": [
+        "anime film",
+        "coming-of-age film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_697": {
+      "title": "Porco Rosso",
+      "genres": [
+        "Fantasy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "adventure anime and manga",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_698": {
+      "title": "Pom Poko",
+      "genres": [
+        "Comedy",
+        "Fantasy",
+        "Drama"
+      ],
+      "genres_raw": [
+        "comedy film",
+        "comedy drama",
+        "fantasy film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_699": {
+      "title": "Whisper of the Heart",
+      "genres": [
+        "Drama",
+        "Romance",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "drama film",
+        "romance film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_700": {
+      "title": "Spirited Away",
+      "genres": [
+        "Fantasy",
+        "Family",
+        "Drama"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "children's film",
+        "drama film"
+      ],
+      "source": "wikidata"
     }
   }
 }

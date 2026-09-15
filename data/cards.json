@@ -14681,6 +14681,148 @@
       "director_age_at_release": 35,
       "streaming_release": false,
       "profit_cost_ratio_pct": 121
+    },
+    {
+      "id": "card_694",
+      "title": "Grave of the Fireflies",
+      "director": "Isao Takahata",
+      "release_year": 1988,
+      "box_office_usd": 17000000,
+      "budget_usd": 3700000,
+      "runtime_minutes": 89,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "War"
+      ],
+      "audience_score": 90,
+      "director_oscars_won": 0,
+      "director_birth_year": 1935,
+      "director_age_at_release": 53,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 359
+    },
+    {
+      "id": "card_695",
+      "title": "Kiki's Delivery Service",
+      "director": "Hayao Miyazaki",
+      "release_year": 1989,
+      "box_office_usd": 41800000,
+      "budget_usd": 6900000,
+      "runtime_minutes": 102,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Family"
+      ],
+      "audience_score": 83,
+      "director_oscars_won": 2,
+      "director_birth_year": 1941,
+      "director_age_at_release": 48,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 506
+    },
+    {
+      "id": "card_696",
+      "title": "Only Yesterday",
+      "director": "Isao Takahata",
+      "release_year": 1991,
+      "box_office_usd": 26500000,
+      "budget_usd": 4000000,
+      "runtime_minutes": 118,
+      "oscars_won": 0,
+      "genres": [
+        "Drama"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 0,
+      "director_birth_year": 1935,
+      "director_age_at_release": 56,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 562
+    },
+    {
+      "id": "card_697",
+      "title": "Porco Rosso",
+      "director": "Hayao Miyazaki",
+      "release_year": 1992,
+      "box_office_usd": 44600000,
+      "budget_usd": 1800000,
+      "runtime_minutes": 94,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Adventure"
+      ],
+      "audience_score": 81,
+      "director_oscars_won": 2,
+      "director_birth_year": 1941,
+      "director_age_at_release": 51,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 2378
+    },
+    {
+      "id": "card_698",
+      "title": "Pom Poko",
+      "director": "Isao Takahata",
+      "release_year": 1994,
+      "box_office_usd": 41800000,
+      "budget_usd": 20000000,
+      "runtime_minutes": 119,
+      "oscars_won": 0,
+      "genres": [
+        "Comedy",
+        "Fantasy",
+        "Drama"
+      ],
+      "audience_score": 74,
+      "director_oscars_won": 0,
+      "director_birth_year": 1935,
+      "director_age_at_release": 59,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 109
+    },
+    {
+      "id": "card_699",
+      "title": "Whisper of the Heart",
+      "director": "Yoshifumi Kondo",
+      "release_year": 1995,
+      "box_office_usd": 34900000,
+      "budget_usd": 15000000,
+      "runtime_minutes": 111,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Romance",
+        "Adventure"
+      ],
+      "audience_score": 82,
+      "director_oscars_won": 0,
+      "director_birth_year": 1950,
+      "director_age_at_release": 45,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 133
+    },
+    {
+      "id": "card_700",
+      "title": "Spirited Away",
+      "director": "Hayao Miyazaki",
+      "release_year": 2001,
+      "box_office_usd": 396000000,
+      "budget_usd": 19200000,
+      "runtime_minutes": 124,
+      "oscars_won": 1,
+      "genres": [
+        "Fantasy",
+        "Family",
+        "Drama"
+      ],
+      "audience_score": 89,
+      "director_oscars_won": 2,
+      "director_birth_year": 1941,
+      "director_age_at_release": 60,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 1962
     }
   ]
 }
