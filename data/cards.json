@@ -13907,6 +13907,91 @@
       "director_age_at_release": null,
       "streaming_release": false,
       "profit_cost_ratio_pct": 28
+    },
+    {
+      "id": "card_657",
+      "title": "Bleach the Movie: Memories of Nobody",
+      "director": "Noriyuki Abe",
+      "release_year": 2006,
+      "box_office_usd": 5700000,
+      "budget_usd": 4000000,
+      "runtime_minutes": 93,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 67,
+      "director_oscars_won": 0,
+      "director_birth_year": 1961,
+      "director_age_at_release": 45,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 42
+    },
+    {
+      "id": "card_658",
+      "title": "Bleach the Movie: The DiamondDust Rebellion",
+      "director": "Noriyuki Abe",
+      "release_year": 2007,
+      "box_office_usd": 6800000,
+      "budget_usd": 4000000,
+      "runtime_minutes": 95,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Adventure"
+      ],
+      "audience_score": 64,
+      "director_oscars_won": 0,
+      "director_birth_year": 1961,
+      "director_age_at_release": 46,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 70
+    },
+    {
+      "id": "card_659",
+      "title": "Bleach the Movie: Fade to Black",
+      "director": "Noriyuki Abe",
+      "release_year": 2008,
+      "box_office_usd": 6800000,
+      "budget_usd": 4000000,
+      "runtime_minutes": 95,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Romance"
+      ],
+      "audience_score": 66,
+      "director_oscars_won": 0,
+      "director_birth_year": 1961,
+      "director_age_at_release": 47,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 70
+    },
+    {
+      "id": "card_660",
+      "title": "Bleach the Movie: Hell Verse",
+      "director": "Noriyuki Abe",
+      "release_year": 2010,
+      "box_office_usd": 7000000,
+      "budget_usd": 4500000,
+      "runtime_minutes": 94,
+      "oscars_won": 0,
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "audience_score": 69,
+      "director_oscars_won": 0,
+      "director_birth_year": 1961,
+      "director_age_at_release": 49,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 56
     }
   ]
 }

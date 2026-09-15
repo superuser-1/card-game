@@ -10219,6 +10219,64 @@
         "cinematic fairy tale"
       ],
       "source": "wikidata"
+    },
+    "card_657": {
+      "title": "Bleach the Movie: Memories of Nobody",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
+    },
+    "card_658": {
+      "title": "Bleach the Movie: The DiamondDust Rebellion",
+      "genres": [
+        "Action",
+        "Fantasy",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "action film",
+        "fantasy film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_659": {
+      "title": "Bleach the Movie: Fade to Black",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy",
+        "Romance"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film",
+        "romance film"
+      ],
+      "source": "wikidata"
+    },
+    "card_660": {
+      "title": "Bleach the Movie: Hell Verse",
+      "genres": [
+        "Action",
+        "Adventure",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "action film",
+        "adventure film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
     }
   }
 }
