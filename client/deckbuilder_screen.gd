@@ -144,7 +144,7 @@ func _apply_filter() -> void:
 	var shown := 0
 	for c: Dictionary in _all_cards:
 		var ok := true
-		if needle != "" and not str(c["title"]).to_lower().contains(needle):
+		if needle != "" and not str(c["title"]).to_lower().contains(needle) and not str(c.get("director", "")).to_lower().contains(needle):
 			ok = false
 		if ok and genre != "" and genre not in (c.get("genres", []) as Array):
 			ok = false
