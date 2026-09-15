@@ -56,6 +56,20 @@ const _CATALOGUE_SEL_BORDER := Color(0.36, 0.78, 0.45, 1.0)
 ## first admin_get_ranked_catalogue() reply arrives.
 var _ranked_catalogue_setting: Dictionary = {}
 
+# --- calendar (weekly/monthly schedule view) --------------------------------
+# Shares _tournament_rows with the Tournaments tab — both read the same
+# admin_list_tournaments RPC/signal, just with different `days`/`limit`
+# (Calendar asks for a much wider window so past+future both show).
+var _calendar_built := false
+var _calendar_view_mode := 0        # 0 = week, 1 = month (matches CalendarViewOption item order)
+var _calendar_filter := 0           # 0 = all, 1 = official, 2 = player-made
+var _calendar_anchor_ts := 0        # any UTC-midnight timestamp inside the displayed week/month
+var _calendar_cells: Array = []     # [{panel, date_label, entries}] — rebuilt each render
+var _selected_calendar_tournament_id := 0
+const _CALENDAR_CANCELLABLE_STATUSES := ["signup_private", "signup", "pre_check_in", "check_in"]
+const _CALENDAR_MONTH_NAMES := ["", "January", "February", "March", "April", "May", "June",
+	"July", "August", "September", "October", "November", "December"]
+
 
 func _ready() -> void:
 	DisplayServer.window_set_title("Flick Battle — Admin Tool")
@@ -151,6 +165,23 @@ func _ready() -> void:
 			Net.admin_set_ranked_catalogue(0, 0)
 		)
 	)
+
+	%CalendarPrevButton.pressed.connect(func(): _calendar_step(-1))
+	%CalendarNextButton.pressed.connect(func(): _calendar_step(1))
+	%CalendarTodayButton.pressed.connect(func():
+		_calendar_anchor_ts = _calendar_day_start(int(Time.get_unix_time_from_system()))
+		_render_calendar()
+	)
+	%CalendarViewOption.item_selected.connect(func(i):
+		_calendar_view_mode = i
+		_rebuild_calendar_cells()
+		_render_calendar()
+	)
+	%CalendarFilterOption.item_selected.connect(func(i):
+		_calendar_filter = i
+		_render_calendar()
+	)
+	%CalendarCancelButton.pressed.connect(_on_calendar_cancel_pressed)
 
 	%Range24hButton.pressed.connect(func(): _set_stats_range(24, %Range24hButton))
 	%Range7dButton.pressed.connect(func(): _set_stats_range(24 * 7, %Range7dButton))
@@ -529,6 +560,12 @@ func _on_admin_action_result(result: Dictionary) -> void:
 			if _selected_tournament_id != 0:
 				Net.admin_get_tournament(_selected_tournament_id)
 			Net.admin_list_tournaments(int(%TournamentDaysField.text.strip_edges()) if %TournamentDaysField.text.strip_edges().is_valid_int() else 30)
+		"cancel_tournament":
+			%StatusLabel.text = "Tournament cancelled."
+			%CalendarDetailLabel.text = "Click a tournament on the calendar to see details here."
+			%CalendarCancelButton.disabled = true
+			_selected_calendar_tournament_id = 0
+			Net.admin_list_tournaments(3650, 2000)
 		"force_end_match":
 			Net.admin_list_live_ranked()
 			Net.admin_list_custom_games()
@@ -635,6 +672,8 @@ func _on_refresh_tournaments_pressed() -> void:
 func _on_admin_tournament_list(rows: Array) -> void:
 	_tournament_rows = rows
 	_render_tournament_list()
+	if _calendar_built:
+		_render_calendar()
 
 
 func _filtered_tournaments() -> Array:
@@ -1130,6 +1169,197 @@ func _on_admin_ranked_catalogue(setting: Dictionary) -> void:
 	_reselect_ranked_catalogue_option()
 
 
+# --- calendar (weekly/monthly schedule view) --------------------------------
+
+func _ensure_calendar_built() -> void:
+	if _calendar_built:
+		return
+	_calendar_built = true
+	if _calendar_anchor_ts == 0:
+		_calendar_anchor_ts = _calendar_day_start(int(Time.get_unix_time_from_system()))
+	_rebuild_calendar_cells()
+
+
+## Midnight UTC of whatever day `ts` falls on.
+func _calendar_day_start(ts: int) -> int:
+	return ts - (ts % 86400)
+
+
+func _calendar_step(direction: int) -> void:
+	if _calendar_view_mode == 0:
+		_calendar_anchor_ts += direction * 7 * 86400
+	else:
+		var dt := Time.get_datetime_dict_from_unix_time(_calendar_anchor_ts)
+		var month := int(dt.month) + direction
+		var year := int(dt.year)
+		if month < 1:
+			month = 12
+			year -= 1
+		elif month > 12:
+			month = 1
+			year += 1
+		_calendar_anchor_ts = int(Time.get_unix_time_from_datetime_dict(
+			{"year": year, "month": month, "day": 15, "hour": 0, "minute": 0, "second": 0}
+		))
+	_render_calendar()
+
+
+## (Re)builds the day-cell Controls in %CalendarGrid to match the current
+## view mode's cell count (7 for a week, 42 for a fixed 6-row month grid) —
+## called only when the view mode changes or the tab is first opened, not on
+## every render (rendering just refills these cells' contents).
+func _rebuild_calendar_cells() -> void:
+	var grid: GridContainer = %CalendarGrid
+	for c in grid.get_children():
+		grid.remove_child(c)
+		c.queue_free()
+	_calendar_cells = []
+	var n := 7 if _calendar_view_mode == 0 else 42
+	var cell_height := 260 if _calendar_view_mode == 0 else 92
+	for i in n:
+		var panel := PanelContainer.new()
+		panel.custom_minimum_size = Vector2(108, cell_height)
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(1, 1, 1, 0.03)
+		sb.set_border_width_all(1)
+		sb.border_color = Color(1, 1, 1, 0.12)
+		sb.set_content_margin_all(4)
+		panel.add_theme_stylebox_override("panel", sb)
+
+		var vbox := VBoxContainer.new()
+		vbox.add_theme_constant_override("separation", 2)
+		panel.add_child(vbox)
+
+		var date_label := Label.new()
+		date_label.add_theme_font_size_override("font_size", 11)
+		vbox.add_child(date_label)
+
+		var entries := VBoxContainer.new()
+		entries.add_theme_constant_override("separation", 1)
+		vbox.add_child(entries)
+
+		grid.add_child(panel)
+		_calendar_cells.append({"panel": panel, "date_label": date_label, "entries": entries})
+
+
+func _calendar_period_days() -> Array:
+	if _calendar_view_mode == 0:
+		var dt := Time.get_datetime_dict_from_unix_time(_calendar_anchor_ts)
+		var week_start := _calendar_anchor_ts - int(dt.weekday) * 86400
+		var days := []
+		for i in 7:
+			days.append(week_start + i * 86400)
+		return days
+	var dt := Time.get_datetime_dict_from_unix_time(_calendar_anchor_ts)
+	var first_of_month := int(Time.get_unix_time_from_datetime_dict(
+		{"year": int(dt.year), "month": int(dt.month), "day": 1, "hour": 0, "minute": 0, "second": 0}
+	))
+	var first_weekday := int(Time.get_datetime_dict_from_unix_time(first_of_month).weekday)
+	var grid_start := first_of_month - first_weekday * 86400
+	var days := []
+	for i in 42:
+		days.append(grid_start + i * 86400)
+	return days
+
+
+func _calendar_filtered_rows() -> Array:
+	if _calendar_filter == 0:
+		return _tournament_rows
+	var want_official := _calendar_filter == 1
+	return _tournament_rows.filter(func(t): return bool(t.get("is_official", false)) == want_official)
+
+
+func _render_calendar() -> void:
+	if not _calendar_built:
+		return
+	var dt := Time.get_datetime_dict_from_unix_time(_calendar_anchor_ts)
+	if _calendar_view_mode == 0:
+		var days := _calendar_period_days()
+		%CalendarPeriodLabel.text = "%s – %s UTC" % [
+			Time.get_date_string_from_unix_time(days[0]), Time.get_date_string_from_unix_time(days[6])
+		]
+	else:
+		%CalendarPeriodLabel.text = "%s %d UTC" % [_CALENDAR_MONTH_NAMES[int(dt.month)], int(dt.year)]
+
+	var days := _calendar_period_days()
+	if days.size() != _calendar_cells.size():
+		_rebuild_calendar_cells()
+
+	var by_day := {}
+	for t in _calendar_filtered_rows():
+		var day_ts := _calendar_day_start(int(t.get("start_ts", 0)))
+		if not by_day.has(day_ts):
+			by_day[day_ts] = []
+		(by_day[day_ts] as Array).append(t)
+	for bucket in by_day.values():
+		(bucket as Array).sort_custom(func(a, b): return int(a.start_ts) < int(b.start_ts))
+
+	var this_month := int(dt.month)
+	var today_start := _calendar_day_start(int(Time.get_unix_time_from_system()))
+	for i in days.size():
+		var day_ts: int = days[i]
+		var cell: Dictionary = _calendar_cells[i]
+		var day_dt := Time.get_datetime_dict_from_unix_time(day_ts)
+		var label: Label = cell["date_label"]
+		label.text = str(int(day_dt.day)) if _calendar_view_mode == 1 else "%s %d" % [
+			["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][int(day_dt.weekday)], int(day_dt.day)
+		]
+		# Dim days outside the current month (month view) and highlight today.
+		var faded := _calendar_view_mode == 1 and int(day_dt.month) != this_month
+		label.modulate = Color(1, 1, 1, 0.35 if faded else 1.0)
+		var panel: PanelContainer = cell["panel"]
+		var sb := panel.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
+		sb.border_color = Color(0.36, 0.78, 0.45, 0.8) if day_ts == today_start else Color(1, 1, 1, 0.12)
+		panel.add_theme_stylebox_override("panel", sb)
+
+		var entries: VBoxContainer = cell["entries"]
+		for c in entries.get_children():
+			entries.remove_child(c)
+			c.queue_free()
+		for t in (by_day.get(day_ts, []) as Array):
+			var time_str := Time.get_time_string_from_unix_time(int(t.start_ts)).substr(0, 5)
+			var tag := "" if bool(t.get("is_official", false)) else " [P]"
+			var status_mark := str({"cancelled": " ✕", "completed": " ✓", "in_progress": " ▶"}.get(str(t.status), ""))
+			var btn := Button.new()
+			btn.text = "%s %s%s%s" % [time_str, str(t.name), tag, status_mark]
+			btn.clip_text = true
+			btn.custom_minimum_size = Vector2(0, 18)
+			btn.add_theme_font_size_override("font_size", 10)
+			btn.tooltip_text = str(t.name)
+			btn.pressed.connect(_on_calendar_tournament_selected.bind(int(t.id)))
+			entries.add_child(btn)
+
+
+func _on_calendar_tournament_selected(tournament_id: int) -> void:
+	_selected_calendar_tournament_id = tournament_id
+	var matches := _tournament_rows.filter(func(t): return int(t.get("id", 0)) == tournament_id)
+	if matches.is_empty():
+		return
+	var t: Dictionary = matches[0]
+	var origin := "Official" if bool(t.get("is_official", false)) else "Player-made (%s)" % str(t.get("creator_username", "—"))
+	var lines := [
+		"#%d  %s" % [int(t.id), str(t.name)],
+		"Status: %s   %s" % [str(t.status).capitalize(), origin],
+		"Start: %s UTC" % Time.get_datetime_string_from_unix_time(int(t.start_ts), true),
+		"Availability: %s   Bracket size: %d   Participants: %d" % [
+			str(t.availability).capitalize(), int(t.bracket_size), int(t.participant_count)
+		],
+	]
+	%CalendarDetailLabel.text = "\n".join(lines)
+	%CalendarCancelButton.disabled = str(t.status) not in _CALENDAR_CANCELLABLE_STATUSES
+
+
+func _on_calendar_cancel_pressed() -> void:
+	if _selected_calendar_tournament_id == 0:
+		return
+	var tid := _selected_calendar_tournament_id
+	var matches := _tournament_rows.filter(func(t): return int(t.get("id", 0)) == tid)
+	var name := str(matches[0].get("name", "")) if not matches.is_empty() else "#%d" % tid
+	_confirm("Cancel tournament \"%s\"? Anyone signed up will see it disappear; the creator's escrowed prize points (if any) are refunded." % name, func():
+		Net.admin_cancel_tournament(tid, "cancelled_by_admin")
+	)
+
+
 # --- catalogues (custom card pools for tournaments) -------------------------
 
 func _ensure_catalogue_grid_built() -> void:
@@ -1483,6 +1713,10 @@ func _on_tab_changed(_tab: int) -> void:
 			_ensure_catalogue_grid_built()
 			Net.admin_list_catalogues()
 			Net.admin_get_ranked_catalogue()
+		"Calendar":
+			%LiveRefreshTimer.stop()
+			_ensure_calendar_built()
+			Net.admin_list_tournaments(3650, 2000)
 		_:
 			%LiveRefreshTimer.stop()
 

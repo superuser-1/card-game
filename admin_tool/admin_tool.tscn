@@ -1123,6 +1123,148 @@ columns = 5
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 
+[node name="Calendar" type="VBoxContainer" parent="MainPanel/Tabs"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CalendarTopBar" type="HBoxContainer" parent="MainPanel/Tabs/Calendar"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CalendarPrevButton" type="Button" parent="MainPanel/Tabs/Calendar/CalendarTopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "◀"
+
+[node name="CalendarTodayButton" type="Button" parent="MainPanel/Tabs/Calendar/CalendarTopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Today"
+
+[node name="CalendarNextButton" type="Button" parent="MainPanel/Tabs/Calendar/CalendarTopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "▶"
+
+[node name="CalendarPeriodLabel" type="Label" parent="MainPanel/Tabs/Calendar/CalendarTopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "—"
+
+[node name="CalendarTopSpacer" type="Control" parent="MainPanel/Tabs/Calendar/CalendarTopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CalendarViewOption" type="OptionButton" parent="MainPanel/Tabs/Calendar/CalendarTopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 2
+selected = 0
+popup/item_0/text = "Week"
+popup/item_0/id = 0
+popup/item_1/text = "Month"
+popup/item_1/id = 1
+
+[node name="CalendarFilterOption" type="OptionButton" parent="MainPanel/Tabs/Calendar/CalendarTopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+selected = 0
+popup/item_0/text = "All tournaments"
+popup/item_0/id = 0
+popup/item_1/text = "Official only"
+popup/item_1/id = 1
+popup/item_2/text = "Player-made only"
+popup/item_2/id = 2
+
+[node name="CalendarHeaderGrid" type="GridContainer" parent="MainPanel/Tabs/Calendar"]
+layout_mode = 2
+columns = 7
+
+[node name="CalendarHeaderSun" type="Label" parent="MainPanel/Tabs/Calendar/CalendarHeaderGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+text = "Sun"
+
+[node name="CalendarHeaderMon" type="Label" parent="MainPanel/Tabs/Calendar/CalendarHeaderGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+text = "Mon"
+
+[node name="CalendarHeaderTue" type="Label" parent="MainPanel/Tabs/Calendar/CalendarHeaderGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+text = "Tue"
+
+[node name="CalendarHeaderWed" type="Label" parent="MainPanel/Tabs/Calendar/CalendarHeaderGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+text = "Wed"
+
+[node name="CalendarHeaderThu" type="Label" parent="MainPanel/Tabs/Calendar/CalendarHeaderGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+text = "Thu"
+
+[node name="CalendarHeaderFri" type="Label" parent="MainPanel/Tabs/Calendar/CalendarHeaderGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+text = "Fri"
+
+[node name="CalendarHeaderSat" type="Label" parent="MainPanel/Tabs/Calendar/CalendarHeaderGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+text = "Sat"
+
+[node name="CalendarGridScroll" type="ScrollContainer" parent="MainPanel/Tabs/Calendar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CalendarGrid" type="GridContainer" parent="MainPanel/Tabs/Calendar/CalendarGridScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 7
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+
+[node name="CalendarDetailPanel" type="PanelContainer" parent="MainPanel/Tabs/Calendar"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 110)
+
+[node name="CalendarDetailVBox" type="VBoxContainer" parent="MainPanel/Tabs/Calendar/CalendarDetailPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CalendarDetailLabel" type="Label" parent="MainPanel/Tabs/Calendar/CalendarDetailPanel/CalendarDetailVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Click a tournament on the calendar to see details here."
+
+[node name="CalendarCancelButton" type="Button" parent="MainPanel/Tabs/Calendar/CalendarDetailPanel/CalendarDetailVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "Cancel This Tournament"
+
 [node name="ConfirmDialog" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true
 title = "Please confirm"

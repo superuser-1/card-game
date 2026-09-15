@@ -169,6 +169,16 @@ tool unlocks automatically.
   confirmation first) — it does NOT touch elo or quest/achievement
   progress from the matches actually played, only the prize itself, and
   only works once prizes have actually been paid.
+- **Calendar** — every tournament, past and scheduled, in a week or month
+  grid (UTC). Prev/Next/Today to navigate, a filter for All / Official
+  (admin-created) / Player-made. Click a tournament chip to see its full
+  details below the grid; **Cancel This Tournament** is enabled for anything
+  still upcoming (signup/check-in, before it's actually started) — refunds
+  the creator's escrowed prize points if any, and is disabled once a
+  tournament has started or finished (use Force-End on Live Ranked/Custom
+  for an in-progress one, or Rollback Prizes on the Tournaments tab for a
+  finished one's payouts — this is specifically for cancelling something
+  that hasn't started yet).
 - **Live Ranked** — every ranked match currently in progress, live score,
   both players' elo, auto-refreshes every 5s while this tab is open. A
   name filter box, and a **Force-End** button (asks for confirmation) that

@@ -492,8 +492,8 @@ func admin_get_account_activity(account_id: int) -> void:
 	_rpc_admin_get_account_activity.rpc_id(1, account_id)
 
 
-func admin_list_tournaments(days: int = 30) -> void:
-	_rpc_admin_list_tournaments.rpc_id(1, days)
+func admin_list_tournaments(days: int = 30, limit: int = 100) -> void:
+	_rpc_admin_list_tournaments.rpc_id(1, days, limit)
 
 
 func admin_get_tournament(tournament_id: int) -> void:
@@ -502,6 +502,10 @@ func admin_get_tournament(tournament_id: int) -> void:
 
 func admin_rollback_tournament(tournament_id: int) -> void:
 	_rpc_admin_rollback_tournament.rpc_id(1, tournament_id)
+
+
+func admin_cancel_tournament(tournament_id: int, reason: String) -> void:
+	_rpc_admin_cancel_tournament.rpc_id(1, tournament_id, reason)
 
 
 func admin_list_live_ranked() -> void:
@@ -2342,14 +2346,14 @@ func _rpc_admin_get_account_activity(account_id: int) -> void:
 
 
 @rpc("any_peer", "call_remote", "reliable")
-func _rpc_admin_list_tournaments(days: int) -> void:
+func _rpc_admin_list_tournaments(days: int, limit: int = 100) -> void:
 	if not is_server or is_solo:
 		return
 	var peer_id := multiplayer.get_remote_sender_id()
 	if _require_admin(peer_id).is_empty():
 		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "list_tournaments", "account": {}})
 		return
-	_rpc_admin_tournament_list_result.rpc_id(peer_id, _store.recent_tournaments(clampi(days, 1, 3650)))
+	_rpc_admin_tournament_list_result.rpc_id(peer_id, _store.recent_tournaments(clampi(days, 1, 3650), clampi(limit, 1, 2000)))
 
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -2379,6 +2383,29 @@ func _rpc_admin_rollback_tournament(tournament_id: int) -> void:
 		var t: Dictionary = res.get("tournament", {})
 		for p in (t.get("participants", []) as Array):
 			_push_account_snapshot(int(p.get("account_id", 0)))
+
+
+## Cancels a still-upcoming tournament (Calendar tab) — refunds the creator's
+## escrow same as the existing insufficient-check-ins auto-cancel path, and
+## broadcasts the cancellation to anyone signed up who's still connected
+## (they were watching the lobby; _broadcast_tournament is the same call the
+## bracket flow already uses for every other status change).
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_cancel_tournament(tournament_id: int, reason: String) -> void:
+	if not is_server or is_solo:
+		return
+	var peer_id := multiplayer.get_remote_sender_id()
+	var admin := _require_admin(peer_id)
+	if admin.is_empty():
+		_rpc_admin_action_result.rpc_id(peer_id, {"ok": false, "error": "not_admin", "action": "cancel_tournament", "account": {}})
+		return
+	var res := _store.admin_cancel_tournament(tournament_id, reason)
+	res["action"] = "cancel_tournament"
+	_rpc_admin_action_result.rpc_id(peer_id, res)
+	if bool(res.get("ok", false)):
+		_store.log_admin_action(str(admin.get("username", "")), "cancel_tournament",
+			"tournament #%d '%s' (%s)" % [tournament_id, str(res.get("tournament", {}).get("name", "")), reason])
+		_broadcast_tournament(res.get("tournament", {}))
 
 
 @rpc("any_peer", "call_remote", "reliable")

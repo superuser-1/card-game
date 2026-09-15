@@ -898,7 +898,9 @@ func account_activity(account_id: int) -> Dictionary:
 
 ## Tournaments that started within the last `days` days, most recent first,
 ## capped at `limit`. Mirrors list_tournaments()'s row shape plus admin-only
-## fields (winner, total prize pool, rollback state).
+## fields (winner, total prize pool, rollback state). Since `start_ts` has no
+## UPPER bound check, this also includes future-scheduled tournaments (still
+## in signup/check-in) — the admin Calendar tab relies on that.
 func recent_tournaments(days := 30, limit := 100) -> Array:
 	var cutoff := int(Time.get_unix_time_from_system()) - days * 86400
 	var rows := []
@@ -908,6 +910,7 @@ func recent_tournaments(days := 30, limit := 100) -> Array:
 		var prize_total := 0
 		for bucket in (t.get("prizes", {}) as Dictionary).values():
 			prize_total += int((bucket as Dictionary).get("points", 0))
+		var creator_id := int(t.get("created_by_account_id", 0))
 		rows.append({
 			"id": int(t.get("id", 0)),
 			"name": str(t.get("name", "")),
@@ -919,6 +922,14 @@ func recent_tournaments(days := 30, limit := 100) -> Array:
 			"prize_pool_points": prize_total,
 			"prizes_paid": bool(t.get("prizes_paid", false)),
 			"rolled_back": bool(t.get("rolled_back", false)),
+			# --- calendar-tab fields ---
+			"availability": str(t.get("availability", "open")),
+			"signup_close_ts": int(t.get("signup_close_ts", 0)),
+			"check_in_open_ts": int(t.get("check_in_open_ts", 0)),
+			"bracket_size": int(t.get("bracket_size", 0)),
+			"created_by_account_id": creator_id,
+			"creator_username": str(get_account(creator_id).get("username", "")),
+			"is_official": is_admin_account(get_account(creator_id)),
 		})
 	rows.sort_custom(func(a, b): return int(a.start_ts) > int(b.start_ts))
 	if rows.size() > limit:
@@ -1792,6 +1803,26 @@ func admin_create_tournament(admin_account_id: int, spec: Dictionary) -> Diction
 		spec.get("prize_spec", {}),
 		true,
 	)
+
+
+## Cancels a still-UPCOMING tournament (any pre-start status) from the admin
+## Calendar tab — refuses once it's actually started or finished, since those
+## have their own paths (force-end a live match, admin_rollback_tournament
+## for a completed one's payouts). Refunds the creator's prize escrow same as
+## the existing insufficient-check-ins auto-cancel path does; there's no
+## participant entry fee to refund (see sign_up/check_in — free to join).
+const _CANCELLABLE_STATUSES := ["signup_private", "signup", "pre_check_in", "check_in"]
+
+func admin_cancel_tournament(tournament_id: int, reason: String) -> Dictionary:
+	var t := get_tournament(tournament_id)
+	if t.is_empty():
+		return {"ok": false, "error": "no_such_tournament", "tournament": {}}
+	if str(t.get("status", "")) not in _CANCELLABLE_STATUSES:
+		return {"ok": false, "error": "not_cancellable", "tournament": {}}
+	var res := cancel_tournament(tournament_id, reason if reason != "" else "cancelled_by_admin")
+	if bool(res.get("ok", false)):
+		refund_tournament_escrow(res.tournament)
+	return res
 
 
 ## `spec.weekdays`: Array of int 0-6 (Sunday=0 .. Saturday=6, matching Godot's
