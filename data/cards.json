@@ -14823,6 +14823,150 @@
       "director_age_at_release": 60,
       "streaming_release": false,
       "profit_cost_ratio_pct": 1962
+    },
+    {
+      "id": "card_701",
+      "title": "The Cat Returns",
+      "director": "Hiroyuki Morita",
+      "release_year": 2002,
+      "box_office_usd": 65000000,
+      "budget_usd": 20000000,
+      "runtime_minutes": 75,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Fantasy",
+        "Adventure",
+        "Family"
+      ],
+      "audience_score": 73,
+      "director_oscars_won": 0,
+      "director_birth_year": 1964,
+      "director_age_at_release": 38,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 225
+    },
+    {
+      "id": "card_702",
+      "title": "Ponyo",
+      "director": "Hayao Miyazaki",
+      "release_year": 2008,
+      "box_office_usd": 205900000,
+      "budget_usd": 34000000,
+      "runtime_minutes": 101,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Family",
+        "Adventure"
+      ],
+      "audience_score": 80,
+      "director_oscars_won": 2,
+      "director_birth_year": 1941,
+      "director_age_at_release": 67,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 506
+    },
+    {
+      "id": "card_703",
+      "title": "The Secret World of Arrietty",
+      "director": "Hiromasa Yonebayashi",
+      "release_year": 2010,
+      "box_office_usd": 149000000,
+      "budget_usd": 23000000,
+      "runtime_minutes": 95,
+      "oscars_won": 0,
+      "genres": [
+        "Fantasy",
+        "Family"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 0,
+      "director_birth_year": 1973,
+      "director_age_at_release": 37,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 548
+    },
+    {
+      "id": "card_704",
+      "title": "From Up on Poppy Hill",
+      "director": "Goro Miyazaki",
+      "release_year": 2011,
+      "box_office_usd": 61500000,
+      "budget_usd": 22000000,
+      "runtime_minutes": 92,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Romance"
+      ],
+      "audience_score": 76,
+      "director_oscars_won": 0,
+      "director_birth_year": 1967,
+      "director_age_at_release": 44,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 180
+    },
+    {
+      "id": "card_705",
+      "title": "The Wind Rises",
+      "director": "Hayao Miyazaki",
+      "release_year": 2013,
+      "box_office_usd": 136500000,
+      "budget_usd": 30000000,
+      "runtime_minutes": 126,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Biography"
+      ],
+      "audience_score": 83,
+      "director_oscars_won": 2,
+      "director_birth_year": 1941,
+      "director_age_at_release": 72,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 355
+    },
+    {
+      "id": "card_706",
+      "title": "When Marnie Was There",
+      "director": "Hiromasa Yonebayashi",
+      "release_year": 2014,
+      "box_office_usd": 35700000,
+      "budget_usd": 10500000,
+      "runtime_minutes": 103,
+      "oscars_won": 0,
+      "genres": [
+        "Drama",
+        "Mystery"
+      ],
+      "audience_score": 79,
+      "director_oscars_won": 0,
+      "director_birth_year": 1973,
+      "director_age_at_release": 41,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 240
+    },
+    {
+      "id": "card_707",
+      "title": "The Boy and the Heron",
+      "director": "Hayao Miyazaki",
+      "release_year": 2023,
+      "box_office_usd": 294200000,
+      "budget_usd": 53000000,
+      "runtime_minutes": 124,
+      "oscars_won": 1,
+      "genres": [
+        "Adventure",
+        "Drama",
+        "Fantasy"
+      ],
+      "audience_score": 78,
+      "director_oscars_won": 2,
+      "director_birth_year": 1941,
+      "director_age_at_release": 82,
+      "streaming_release": false,
+      "profit_cost_ratio_pct": 455
     }
   ]
 }

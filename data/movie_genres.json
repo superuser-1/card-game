@@ -10828,6 +10828,104 @@
         "drama film"
       ],
       "source": "wikidata"
+    },
+    "card_701": {
+      "title": "The Cat Returns",
+      "genres": [
+        "Drama",
+        "Fantasy",
+        "Adventure",
+        "Family"
+      ],
+      "genres_raw": [
+        "drama anime and manga",
+        "fantasy anime and manga",
+        "adventure anime and manga",
+        "fantasy film",
+        "children's film",
+        "drama film"
+      ],
+      "source": "wikidata"
+    },
+    "card_702": {
+      "title": "Ponyo",
+      "genres": [
+        "Fantasy",
+        "Family",
+        "Adventure"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "children's film",
+        "adventure film"
+      ],
+      "source": "wikidata"
+    },
+    "card_703": {
+      "title": "The Secret World of Arrietty",
+      "genres": [
+        "Fantasy",
+        "Family"
+      ],
+      "genres_raw": [
+        "fantasy film",
+        "children's film",
+        "coming-of-age film",
+        "supernatural anime"
+      ],
+      "source": "wikidata"
+    },
+    "card_704": {
+      "title": "From Up on Poppy Hill",
+      "genres": [
+        "Drama",
+        "Romance"
+      ],
+      "genres_raw": [
+        "drama film",
+        "romance film",
+        "coming-of-age film"
+      ],
+      "source": "wikidata"
+    },
+    "card_705": {
+      "title": "The Wind Rises",
+      "genres": [
+        "Drama",
+        "Biography"
+      ],
+      "genres_raw": [
+        "drama film",
+        "biographical film",
+        "coming-of-age film"
+      ],
+      "source": "wikidata"
+    },
+    "card_706": {
+      "title": "When Marnie Was There",
+      "genres": [
+        "Drama",
+        "Mystery"
+      ],
+      "genres_raw": [
+        "drama film",
+        "mystery anime"
+      ],
+      "source": "wikidata"
+    },
+    "card_707": {
+      "title": "The Boy and the Heron",
+      "genres": [
+        "Adventure",
+        "Drama",
+        "Fantasy"
+      ],
+      "genres_raw": [
+        "adventure film",
+        "drama film",
+        "fantasy film"
+      ],
+      "source": "wikidata"
     }
   }
 }
